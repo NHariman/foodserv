@@ -1,3 +1,0 @@
-/home/nhariman/test/CMakeFiles/rebuild_cache.dir
-/home/nhariman/test/CMakeFiles/edit_cache.dir
-/home/nhariman/test/CMakeFiles/runTests.dir
