@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   main.cpp                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
+/*   Updated: 2022/06/27 14:46:40 by nhariman      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -28,6 +40,7 @@ int main(int ac, char **av)
 		}
 		//load in default config file and parse
 	}
+	config_file_location.close();
 	// do other stuff
 	return (0);
 }

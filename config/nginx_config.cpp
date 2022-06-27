@@ -6,12 +6,13 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/06/20 20:24:56 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/06/27 14:45:09 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nginx_config.hpp"
 #include <fstream>
+#include <iostream>
 
 // default constructor
 NginxConfig::NginxConfig() {} 
@@ -19,7 +20,7 @@ NginxConfig::NginxConfig() {}
 // constructor which holds the file name of the nginx config
 NginxConfig::NginxConfig(std::ifstream& config_file) {
 	// read line by line and fill the NginxConfig class
-
+	std::cout << "lmao nailed it" << std::endl;
 	
 	// this part in main?
 	// step 1. check if string is not empty
