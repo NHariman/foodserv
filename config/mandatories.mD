@@ -44,6 +44,13 @@ Multiple location blocks can be found inside a server block.
 `$uri` - the URI that nginx is currently processing. Contains the normalised URI (Uniform resource identifier).
 For example, the URL http://example.org/wiki/Main_Page refers to a resource identified as /wiki/Main_Page (the URI).
 
+# Comments
+Comments are defined with a `#`, anything after the `#` and before a newline will be ignored.
+ie.
+```
+this won't be ignored #but this will be
+```
+
 
 # Information on NGINX config files:
 [how to configure nginx](https://www.linode.com/docs/guides/how-to-configure-nginx/)

@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/06/20 20:50:18 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/06/27 17:58:07 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@
 
 class ServerBlock {
 	private:
-		std::vector<LocationBlock>	*location_blocks;
+		std::vector<LocationBlock>	location_blocks;
 		int							listen;
-		std::vector<std::string>	*server_name;
+		std::vector<std::string>	server_name;
 		std::string					root;
-		std::vector<std::string>	*index;
+		std::vector<std::string>	index;
 		int							client_max_body_size;
 		std::map<int, std::string>	error_page;
 };

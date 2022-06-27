@@ -6,13 +6,14 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/06/27 14:45:09 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/06/27 18:11:10 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nginx_config.hpp"
 #include <fstream>
 #include <iostream>
+#include <string>
 
 // default constructor
 NginxConfig::NginxConfig() {} 
@@ -21,7 +22,16 @@ NginxConfig::NginxConfig() {}
 NginxConfig::NginxConfig(std::ifstream& config_file) {
 	// read line by line and fill the NginxConfig class
 	std::cout << "lmao nailed it" << std::endl;
-	
+	std::string tp;
+	std::string content;
+	while(std::getline(config_file, tp))
+	{
+		size_t found = tp.find("http");
+		if (found == std::string::npos)
+			std::cerr << "No http block found."
+		content.append(tp + "\n");
+	}
+	std::cout << content << std::endl;
 	// this part in main?
 	// step 1. check if string is not empty
 	// std::ifstream config;

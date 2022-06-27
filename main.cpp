@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/06/27 14:46:40 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/06/27 17:54:59 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int main(int ac, char **av)
 	std::ifstream config_file_location;
 	if (!av[1]) {
 		av[1] = "config/default.conf";
+		std::cerr << ">> WARNING! No config file given, config/default.conf used." << std::endl;
 		// throw error? OR because presistence is key, automatically default to a basic config file
 	}
 	config_file_location.open(av[1]);
@@ -30,12 +31,11 @@ int main(int ac, char **av)
 	else
 	{
 		config_file_location.open("config/default.conf");
-		NginxConfig nginx_config(config_file_location);
 		if (config_file_location.is_open())
 			NginxConfig nginx_config(config_file_location);
 		else
 		{
-			std::cerr << "No config file provided and Default config file missing, cannot create server" << std::endl;
+			std::cerr << ">> WARNING! No config file provided and Default config file missing, cannot create server." << std::endl;
 			return 1;
 		}
 		//load in default config file and parse
