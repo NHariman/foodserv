@@ -11,6 +11,9 @@
         - `location ~\.php$ {}` - location block for fastcgi/python
     - `client_max_body_size` - defines upload size
 
+### TREE
+<img src="https://discord.com/channels/856460136758771722/856460136758771726/990966854572970026">
+
 ### DEFAULTS
 - http : should always be there. if not error.
 - server: should always be there. if not error.
