@@ -12,7 +12,7 @@
     - `client_max_body_size` - defines upload size
 
 ### TREE
-<img src="https://discord.com/channels/856460136758771722/856460136758771726/990966854572970026">
+<img src="https://cdn.discordapp.com/attachments/856460136758771726/990966854396821564/image_1.png">
 
 ### DEFAULTS
 - http : should always be there. if not error.
