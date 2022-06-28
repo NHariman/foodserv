@@ -5,6 +5,7 @@
 
 #include "exception.hpp"
 #include "uri_state_parser.hpp"
+#include "uri_state_enums.hpp"
 
 using namespace std;
 
@@ -36,6 +37,9 @@ class URI {
 		string	_host;
 		string	_path;
 		string	_query;
+
+		void	ParseInput();
+		string	ConstructParsedURI();
 };
 
 #endif /* URI_HPP */

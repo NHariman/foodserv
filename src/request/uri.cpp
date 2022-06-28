@@ -28,8 +28,7 @@ URI::URI(URI const& other)
 
 // String constructor
 URI::URI(string const& uri_string) : _uri_input(uri_string) {
-	URIStateParser	parser(*this);
-	_uri_parsed = _host + _path + _query;
+	ParseInput();
 }
 
 // Assignment operator
@@ -53,8 +52,7 @@ URI&	URI::operator=(string const& uri_string) {
 	_query.clear();
 	_uri_input = uri_string;
 
-	URIStateParser	parser(*this);
-	_uri_parsed = _host + _path + _query;
+	ParseInput();
 	return *this;
 }
 
@@ -73,11 +71,11 @@ string	URI::GetURIDebug() {
 	string	uri;
 
 	if (!_host.empty())
-		uri += " host: " + _host;
+		uri += "host: \"" + _host + "\" | ";
 	if (!_path.empty())
-		uri += " path: " + _path;
+		uri += "path: \"" + _path + "\" | ";
 	if (!_query.empty())
-		uri += " query: " + _query;
+		uri += "query: \"" + _query + "\"";
 	return uri;
 }
 
@@ -114,4 +112,22 @@ void	URI::SetPath(string const& path) {
 
 void	URI::SetQuery(string const& query) {
 	_query = query;
+}
+
+void	URI::ParseInput() {
+	URIStateParser	parser(*this);
+	parser.Parse(_uri_input);
+	_uri_parsed = ConstructParsedURI();
+}
+
+string	URI::ConstructParsedURI() {
+	string	uri;
+
+	if (!_host.empty())
+		uri += _host;
+	if (!_path.empty())
+		uri += _path;
+	if (!_query.empty())
+		uri += "?" + _query;
+	return uri;
 }
