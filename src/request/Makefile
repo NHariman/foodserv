@@ -1,0 +1,85 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         ::::::::             #
+#    Makefile                                           :+:    :+:             #
+#                                                      +:+                     #
+#    By: mjiam <mjiam@student.codam.nl>               +#+                      #
+#                                                    +#+                       #
+#    Created: 2022/06/28 20:58:28 by mjiam         #+#    #+#                  #
+#    Updated: 2022/06/28 21:28:33 by mjiam         ########   odam.nl          #
+#                                                                              #
+# **************************************************************************** #
+
+NAME		=	request
+
+CC			= 	clang++
+
+FLAGS		= 	-Wall -Wextra -Werror -std=c++98
+
+ifdef DEBUG
+FLAGS		+=	-fsanitize=address -fno-omit-frame-pointer -g
+endif
+
+SRC			= 	main.cpp request_parser.cpp \
+				request_utils.cpp uri_state_parser.cpp \
+				uri.cpp
+
+OBJ			= 	$(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
+
+TEST		=	$(addprefix $(EG_DIR)/, 1_getwithquery \
+										2_getmultislashquery \
+										3_getpercent \
+										4_postsimple)
+
+# DIRECTORIES
+REQ_DIR		=	request
+EG_DIR		=	examples
+OBJ_DIR		=	obj
+
+# COLORS
+CYAN		= 	\033[0;36m
+PURPLE		= 	\033[0;35m
+BLUE		= 	\033[0;34m
+YELLOW		=	\033[0;33m
+GREEN		= 	\033[0;32m
+RESET		= 	\033[0m
+
+all: $(NAME)
+
+$(NAME): $(OBJ)
+	@$(CC) $(FLAGS) $(OBJ) -o $@
+	@echo "Executable $(CYAN)$@$(RESET) made"
+
+# compiles and runs with each test file in EG_DIR as input
+run: all
+	@echo "$(YELLOW)Testing request parser against request examples\n$(RESET)"
+	@for f in $(EG_DIR)/*; do ./$(NAME) $$f && echo "\n" || exit 1; done
+
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	@echo "$(PURPLE)Compiling: $<$(RESET)"
+	@$(CC) $(FLAGS) -c $< -o $@
+
+debug: $(OBJ)
+	@echo "$(GREEN)Debug mode: compiling with address sanitizer$(RESET)"
+	@$(MAKE) DEBUG=1
+
+clean:
+	@echo "$(BLUE)Cleaning$(RESET)"
+	@rm -rf $(OBJ_DIR)
+	@echo "$(BLUE)Removed: $(OBJ_DIR) folder$(RESET)"
+
+quietclean:
+	@rm -rf $(OBJ_DIR)
+
+fclean: clean
+	@echo "$(BLUE)Removing: $(NAME)$(RESET)"
+	@rm -rf $(NAME)
+	@echo "$(BLUE)Clean af$(RESET)"
+
+re:
+	@echo "$(BLUE)Once more from the top$(RESET)"
+	@$(MAKE) fclean
+	@$(MAKE) all
+
+.PHONY: all run debug clean fclean re compare
