@@ -2,48 +2,35 @@
 #define URI_STATE_PARSER_HPP
 
 #include "uri.hpp"
+#include "uri_state_enums.hpp"
 #include "request_utils.hpp"
 
 using namespace std;
 
 class URI;
 
-enum URIState {
-	kStart = 0,
-	kPath,
-	kPercent,
-	kPercent_H1,
-	kPercent_H2,
-	kQuery,
-	kQPercent,
-	kQPercent_H1,
-	kQPercent_H2,
-	kDone,
-	kInvalid
-};
-
 class	URIStateParser {
 	public:
+		// URI constructor
 		URIStateParser(URI& uri);
 		~URIStateParser();
 
+		void	Parse(string uri_string, URIPart part = pt_Path);
+
 	private:
 		URI		*_uri;
-		string	_scheme;
-		string	_host;
-		string	_path;
-		string	_query;
+		string	_uri_input;
+		string	_buffer;
+		URIPart _part;
 
-		void		Parse(string const& uri_string);
+		void		ParseHost(string const& uri_string);
+		void		ParsePathOriginForm(string const& uri_string);
+		void		FillPathQueryFields();
 		URIState	StartHandler(char uri_char);
 		URIState	PathHandler(char uri_char);
 		URIState	PercentHandler(char uri_char);
-		URIState	PercentH1Handler(char uri_char);
-		URIState	PercentH2Handler(char uri_char);
+		URIState	PercentDoneHandler(char uri_char);
 		URIState	QueryHandler(char uri_char);
-		URIState	QPercentHandler(char uri_char);
-		URIState	QPercentH1Handler(char uri_char);
-		URIState	QPercentH2Handler(char uri_char);
 };
 
 #endif /* URI_STATE_PARSER_HPP */
