@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   nginx_config.hpp                                   :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
+/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/06/20 20:54:50 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/06/28 17:14:24 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@
 #include "ServerBlock.hpp"
 
 class NginxConfig {
-	private:
+	protected:
 		std::map<std::string, std::string>	global_configurations;
-		std::vector<ServerBlock>			*server_blocks;
+		std::vector<ServerBlock>			server_blocks;
 		int									main_body_client_max_body_size;
 		std::map<int, std::string>			error_page;
+		int									access_log;
 
 
 		NginxConfig(); // cant call default, as file must be added in as argument
