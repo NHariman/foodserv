@@ -17,12 +17,12 @@ TEST(RequestTargetTest, ParseQuerySimple) {
 	EXPECT_EQ(request_uri.GetParsedURI(), "/where?q=now");
 	EXPECT_TRUE(request_uri.GetHost().empty());
 	EXPECT_EQ(request_uri.GetPath(), "/where");
-	EXPECT_EQ(request_uri.GetQuery(), "?q=now");
+	EXPECT_EQ(request_uri.GetQuery(), "q=now");
 	request_uri = "/where?q=nowwithhash#";
 	EXPECT_EQ(request_uri.GetParsedURI(), "/where?q=nowwithhash");
 	EXPECT_TRUE(request_uri.GetHost().empty());
 	EXPECT_EQ(request_uri.GetPath(), "/where");
-	EXPECT_EQ(request_uri.GetQuery(), "?q=nowwithhash");
+	EXPECT_EQ(request_uri.GetQuery(), "q=nowwithhash");
 }
 
 TEST(RequestTargetTest, ParsePathMultiSlash) {
@@ -38,12 +38,12 @@ TEST(RequestTargetTest, ParsePathMultiQueryMulti) {
 	EXPECT_EQ(request_uri.GetParsedURI(), "/path/to/query?param1=value&param2=value2");
 	EXPECT_TRUE(request_uri.GetHost().empty());
 	EXPECT_EQ(request_uri.GetPath(), "/path/to/query");
-	EXPECT_EQ(request_uri.GetQuery(), "?param1=value&param2=value2");
+	EXPECT_EQ(request_uri.GetQuery(), "param1=value&param2=value2");
 	request_uri = "/path/to/query?new=/google.com";
 	EXPECT_EQ(request_uri.GetParsedURI(), "/path/to/query?new=/google.com");
 	EXPECT_TRUE(request_uri.GetHost().empty());
 	EXPECT_EQ(request_uri.GetPath(), "/path/to/query");
-	EXPECT_EQ(request_uri.GetQuery(), "?new=/google.com");
+	EXPECT_EQ(request_uri.GetQuery(), "new=/google.com");
 }
 
 TEST(RequestTargetTest, ParsePercentEncoded) {
@@ -51,7 +51,7 @@ TEST(RequestTargetTest, ParsePercentEncoded) {
 	EXPECT_EQ(request_uri.GetParsedURI(), "/where%20/are/we?q=now?text=Hello+G%C3%BCnter");
 	EXPECT_TRUE(request_uri.GetHost().empty());
 	EXPECT_EQ(request_uri.GetPath(), "/where%20/are/we");
-	EXPECT_EQ(request_uri.GetQuery(), "?q=now?text=Hello+G%C3%BCnter");
+	EXPECT_EQ(request_uri.GetQuery(), "q=now?text=Hello+G%C3%BCnter");
 }
 
 TEST(RequestTargetTest, InvalidPathStart) {
