@@ -58,6 +58,7 @@ size_t	RequestParser::ParseRequestLine(string const& message) {
 		read += ParseMethod(message);
 		cout << "Parsed method: " << _request_line.method << endl; // DEBUG
 		read += ParseTarget(message, read);
+		cout << "Target input: " << _request_line.target.GetInputURI() << endl; // DEBUG
 		cout << "Parsed target: " << _request_line.target.GetURIDebug() << endl; // DEBUG
 		return read;
 	}
