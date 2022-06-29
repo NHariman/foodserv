@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/06/28 17:14:24 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/06/29 18:04:16 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,15 @@
 #include "ServerBlock.hpp"
 
 class NginxConfig {
+	private:
+		struct s_components
+		{
+			bool	error_page = false;
+			bool	access_log = false;
+			bool	client_max_body_size = false;
+			int		server_block = 0;
+		}	components;
+		
 	protected:
 		std::map<std::string, std::string>	global_configurations;
 		std::vector<ServerBlock>			server_blocks;

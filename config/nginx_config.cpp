@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/06/28 17:02:18 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/06/29 18:17:17 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,44 +25,58 @@ NginxConfig::NginxConfig(std::ifstream& config_file) {
 	std::cout << "lmao nailed it" << std::endl;
 	std::string tp;
 	std::string content;
+	size_t		found;
 	while(std::getline(config_file, tp))
 	{
-		// this structure is SO wrong but it's a first draft
-		size_t found = tp.find("http{");
-		if (found == std::string::npos)
+		found = tp.find("http{");
+		if (found)
+			break ;
+		else if (config_file.eof())
 		{
 			std::cerr << "[ERROR] No http block found." << std::endl;
-			return ; // maybe throw??
+			return ;
 		}
-		found = tp.find("client_max_body_size ", found + 1);
-		if (found == std::string::npos)
+	}
+	while(std::getline(config_file, tp))
+	{
+		found = 0;
+		// this structure is SO wrong but it's a first draft
+		found = tp.find("client_max_body_size ");
+		if (found)
 		{
-			std::cerr << "[WARNING] No global client max body size set. Default has been set (1mb)" << std::endl;
-			this->main_body_client_max_body_size = 1;
+			components.client_max_body_size = true;
+			std::cout << "client_max_body_size identified" << std::endl;
+			// move to error
+			// std::cerr << "[WARNING] No global client max body size set. Default has been set (1mb)" << std::endl;
+			// this->main_body_client_max_body_size = 1;
 		}
-		found = tp.find("access_log ", found + 1);
-		if (found == std::string::npos)
+		found = 0;
+		found = tp.find("access_log ");
+		if (found)
 		{
-			std::cerr << "[WARNING] No access_log status set. Default has been set (on)" << std::endl;
-			this->access_log = 1;
+			components.access_log = true;
+			std::cout << "access_log identified" << std::endl;
+			// move to error
+			// std::cerr << "[WARNING] No access_log status set. Default has been set (on)" << std::endl;
+			// this->access_log = 1;
 		}
-		found = tp.find("error_page ", found + 1);
-		if (found == std::string::npos)
+		found = tp.find("error_page ");
+		if (found)
 		{
-			std::cerr << "[WARNING] No error_page set. Defaults have been set" << std::endl;
-			this->access_log = 1;
+			components.error_page = true;
+			std::cout << "error_page identified" << std::endl;
+			// std::cerr << "[WARNING] No error_page set. Defaults have been set" << std::endl;
+			// this->access_log = 1;
 		}
-		else
+		found = tp.find("server{");
+		if (found)
 		{
-			// set access_log
-		}
-		found = tp.find("server{", found + 1);
-		if (found == std::string::npos)
-		{
+			std::cout << "server_block identified" << std::endl;
+			components.server_block++;
+			// initiate the serverblock constructor
 			// check if other servers have been set or not, if not print warning, otherwise just continue.
-			std::cerr << "[WARNING] No servers set. Default has been set." << std::endl;
+			//std::cerr << "[WARNING] No servers set. Default has been set." << std::endl;
 		}
-
 		// enter http parsing block
 		// look for server blocks, client_max_body_siz, error_log
 		// if server block, initialise server block in vector
