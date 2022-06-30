@@ -17,13 +17,13 @@
 ### DEFAULTS
 - http : should always be there. if not error.
 - server: should always be there. if not error.
-- listen: if non: default to 80
+- listen: if none: default to 80
 - server_name: if non: default to localhost
-- root: if non: will start in root dir of computer: `/`
-- index: if non: have a default html page to display
-- location: default error pages:
-- autoindex: if non: default: on
-- client-max-body-size: if non: default 2mb
+- root: if none: will start in root dir of computer: `/`
+- index: if none: have a default html page to display
+- location: default error pages
+- autoindex: if none: default: on
+- client-max-body-size: if none: default 2mb
 
 ### NOTES
 - tree like structure - parse treelike
