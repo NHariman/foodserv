@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/06/29 18:04:16 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/01 20:10:12 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,24 @@
 #include <map>
 #include <vector>
 #include <fstream>
-#include "ServerBlock.hpp"
+#include "server_block.hpp"
 
 class NginxConfig {
 	private:
 		struct s_components
 		{
-			bool	error_page = false;
-			bool	access_log = false;
-			bool	client_max_body_size = false;
-			int		server_block = 0;
+			bool	error_page;
+			bool	access_log;
+			bool	client_max_body_size;
+			int		server_block;
 		}	components;
 		
 	protected:
-		std::map<std::string, std::string>	global_configurations;
 		std::vector<ServerBlock>			server_blocks;
 		int									main_body_client_max_body_size;
 		std::map<int, std::string>			error_page;
 		int									access_log;
-
-
+		void	ComponentChecker(s_components component);
 		NginxConfig(); // cant call default, as file must be added in as argument
 		void	loadConfigMap(void);
 

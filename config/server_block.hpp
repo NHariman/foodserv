@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ServerBlock.hpp                                    :+:    :+:            */
+/*   server_block.hpp                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/06/28 17:12:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/01 19:25:53 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVERBLOCK_HPP
-# define SERVERBLOCK_HPP
+#ifndef SERVER_BLOCK_HPP
+# define SERVER_BLOCK_HPP
 #include <iostream>
 #include <map>
-#include "LocationBlock.hpp"
+#include "location_block.hpp"
 
 class ServerBlock {
 	protected:

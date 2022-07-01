@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   LocationBlock.hpp                                  :+:    :+:            */
+/*   location_block.hpp                                 :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:39 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/06/28 17:15:32 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/01 19:26:19 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LOCATIONBLOCK_HPP
-# define LOCATIONBLOCK_HPP
+#ifndef LOCATION_BLOCK_HPP
+# define LOCATION_BLOCK_HPP
 
 #include <iostream>
 #include <map>
