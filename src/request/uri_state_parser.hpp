@@ -33,6 +33,7 @@ class	URIStateParser {
 		URIState	QueryHandler(char uri_char);
 		URIState	PercentHandler(char uri_char);
 		URIState	PercentDoneHandler(char uri_char);
+		void		DecodePercent(void);
 };
 
 #endif /* URI_STATE_PARSER_HPP */

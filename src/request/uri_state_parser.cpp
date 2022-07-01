@@ -149,6 +149,7 @@ URIState		URIStateParser::PercentHandler(char uri_char) {
 // in URIPart enum and st_Path & Query state values in the URIState enum.
 // So if we're at Path part, we return the Path state. Ditto for query.
 URIState		URIStateParser::PercentDoneHandler(char uri_char) {
+	DecodePercent();
 	switch (uri_char) {
 		case '\0':
 			return st_Done;
@@ -168,3 +169,14 @@ URIState		URIStateParser::PercentDoneHandler(char uri_char) {
 				return st_Invalid;
 	}
 }
+
+// Called after validating percent-encoded tokens and in PercentDone state.
+void	URIStateParser::DecodePercent() {
+	size_t percent_start = _buffer.size() - 3;
+	string	new_buffer = _buffer.substr(0, percent_start);
+	// cout << "percent_start: " << percent_start << " new_buff: " << new_buffer << endl;
+	for (size_t i = percent_start + 1; _buffer[i]; i++) {
+		char c = static_cast<char>(_buffer[i]);
+		new_buffer += c;
+	}
+} 
