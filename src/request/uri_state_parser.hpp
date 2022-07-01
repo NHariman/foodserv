@@ -5,6 +5,8 @@
 #include "uri_state_enums.hpp"
 #include "request_utils.hpp"
 
+#define DEBUG 0 // REMOVE
+
 using namespace std;
 
 class URI;
@@ -25,7 +27,7 @@ class	URIStateParser {
 
 		void		ParseHost(string const& uri_string);
 		void		ParsePathOriginForm(string const& uri_string);
-		void		FillPathQueryFields();
+		void		PushBuffertoField(URIPart part);
 		URIState	StartHandler(char uri_char);
 		URIState	PathHandler(char uri_char);
 		URIState	QueryHandler(char uri_char);
