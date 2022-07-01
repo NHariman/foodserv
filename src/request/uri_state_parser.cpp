@@ -32,9 +32,9 @@ void	URIStateParser::ParsePathOriginForm(string const& uri_string) {
 	static URIState (URIStateParser::*uri_jumptable[10])(char uri_char) = {
 			&URIStateParser::StartHandler,
 			&URIStateParser::PathHandler,
+			&URIStateParser::QueryHandler,
 			&URIStateParser::PercentHandler,
 			&URIStateParser::PercentDoneHandler,
-			&URIStateParser::QueryHandler,
 			nullptr
 	};
 
@@ -76,10 +76,10 @@ URIState		URIStateParser::PathHandler(char uri_char) {
 	switch (uri_char) {
 		case '\0':
 			return st_Done;
-		case '?':
-			return st_Query;
 		case '%':
 			return st_Percent;
+		case '?':
+			return st_Query;
 		case '/':
 			if (_buffer.back() != '/')
 				return st_Path;
@@ -91,20 +91,16 @@ URIState		URIStateParser::PathHandler(char uri_char) {
 	}
 }
 
-// URIState		URIStateParser::PathHandler(char uri_char) {
-// 	_part = pt_Path;
-// 	switch (uri_char)
-// 	if (uri_char == '\0')
-// 		return st_Done;
-// 	else if (uri_char == '?')
-// 		return st_Query;
-// 	else if (uri_char == '%')
-// 		return st_Percent;
-// 	else if ((uri_char == '/' && _buffer.back() != '/')
-// 				|| IsPChar(uri_char))
-// 		return st_Path;
-// 	return st_Invalid;
-// }
+URIState		URIStateParser::QueryHandler(char uri_char) {
+	_part = pt_Query;
+	if (uri_char == '#' || uri_char == '\0')
+		return st_Done;
+	if (uri_char == '%')
+		return st_Percent;
+	else if (uri_char == '/' || uri_char == '?' || IsPChar(uri_char))
+		return st_Query;
+	return st_Invalid;
+}
 
 URIState		URIStateParser::PercentHandler(char uri_char) {
 	if (_buffer.back() == '%' && IsHexDig(uri_char))
@@ -115,29 +111,26 @@ URIState		URIStateParser::PercentHandler(char uri_char) {
 }
 
 URIState		URIStateParser::PercentDoneHandler(char uri_char) {
-	if (uri_char == '\0' || (_part == pt_Query && uri_char == '#'))
-		return st_Done;
-	else if (uri_char == '%')
-		return st_Percent;
-	else if (uri_char == '?')
-		return st_Query;
-	if (uri_char == '/' || IsPChar(uri_char)) {
-		if (_part == pt_Path)
-			return st_Path;
-		else
+	switch (uri_char) {
+		case '\0':
+			return st_Done;
+		case '#':
+			if (_part == pt_Query)
+				return st_Done;
+		case '%':
+			return st_Percent;
+		case '?':
 			return st_Query;
-		return st_Path;
-	}
-	return st_Invalid;
-}
+		case '/':
+			return URIState(_part);
+				// Values of the pt_Path & _Query parts in URIPart enum are equivalent
+				// to the st_Path & Querystate values in the URIState enum.
+				// So if we're at Path part, we return the Path state. Ditto for query.
+		default:
+			if (IsPChar(uri_char))
+				return URIState(_part);
+			else
+				return st_Invalid;
 
-URIState		URIStateParser::QueryHandler(char uri_char) {
-	_part = pt_Query;
-	if (uri_char == '#' || uri_char == '\0')
-		return st_Done;
-	if (uri_char == '%')
-		return st_Percent;
-	else if (uri_char == '/' || uri_char == '?' || IsPChar(uri_char))
-		return st_Query;
-	return st_Invalid;
+	}
 }

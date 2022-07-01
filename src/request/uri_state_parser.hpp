@@ -28,9 +28,9 @@ class	URIStateParser {
 		void		FillPathQueryFields();
 		URIState	StartHandler(char uri_char);
 		URIState	PathHandler(char uri_char);
+		URIState	QueryHandler(char uri_char);
 		URIState	PercentHandler(char uri_char);
 		URIState	PercentDoneHandler(char uri_char);
-		URIState	QueryHandler(char uri_char);
 };
 
 #endif /* URI_STATE_PARSER_HPP */
