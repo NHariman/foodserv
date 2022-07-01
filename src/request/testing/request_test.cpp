@@ -52,6 +52,11 @@ TEST(RequestTargetTest, ParsePercentEncoded) {
 	EXPECT_TRUE(request_uri.GetHost().empty());
 	EXPECT_EQ(request_uri.GetPath(), "/where%20/are/we");
 	EXPECT_EQ(request_uri.GetQuery(), "q=now?text=Hello+G%C3%BCnter");
+	request_uri ="/where%c3/are/we?q=now";
+	EXPECT_EQ(request_uri.GetParsedURI(), "/where%C3/are/we?q=now");
+	EXPECT_TRUE(request_uri.GetHost().empty());
+	EXPECT_EQ(request_uri.GetPath(), "/where%C3/are/we");
+	EXPECT_EQ(request_uri.GetQuery(), "q=now");
 }
 
 TEST(RequestTargetTest, InvalidPathStart) {

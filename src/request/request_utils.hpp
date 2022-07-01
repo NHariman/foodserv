@@ -1,12 +1,12 @@
 #ifndef REQUEST_UTILS_HPP
 #define REQUEST_UTILS_HPP
 
-#include <cctype> // isalpha, isdigit
+#include <cctype> // isalpha, isdigit, toupper
 #include <iostream>
 
 using namespace std;
 
-bool	IsHexDig(char c);
+bool	IsHexDig(char& c);
 bool	IsPChar(char c);
 bool	IsTChar(char c);
 bool	IsSpace(char c);
