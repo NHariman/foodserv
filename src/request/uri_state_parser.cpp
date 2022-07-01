@@ -28,6 +28,9 @@ void	URIStateParser::ParseHost(string const& uri_string) {
 	(void)uri_string;
 }
 
+// Finite state machine parser that parses URI string input byte-by-byte,
+// using a jump table of handler functions for each state, which sets
+// the next state based on current input character.
 void	URIStateParser::ParsePathOriginForm(string const& uri_string) {
 	static URIState (URIStateParser::*uri_jumptable[10])(char uri_char) = {
 			&URIStateParser::StartHandler,
@@ -64,13 +67,16 @@ void	URIStateParser::FillPathQueryFields() {
 		_uri->SetQuery(_buffer.substr(query + 1, query_end - query));
 }
 
-
+// Starting state transition handler. Only accepts '/' according to origin form rules.
 URIState		URIStateParser::StartHandler(char uri_char) {
 	if (uri_char == '/')
 		return st_Path;
 	return st_Invalid;
 }
 
+// Handles transition after '/' input indicating path section in URI.
+// Always checks that no 2 consecutive '/' are given, which is only used
+// by authority URI components.
 URIState		URIStateParser::PathHandler(char uri_char) {
 	_part = pt_Path;
 	switch (uri_char) {
@@ -91,17 +97,27 @@ URIState		URIStateParser::PathHandler(char uri_char) {
 	}
 }
 
+// Handles transition after '?' input indicating queries is found.
+// '#' is accepted alternative to EOL signaling end of query string.
 URIState		URIStateParser::QueryHandler(char uri_char) {
 	_part = pt_Query;
-	if (uri_char == '#' || uri_char == '\0')
-		return st_Done;
-	if (uri_char == '%')
-		return st_Percent;
-	else if (uri_char == '/' || uri_char == '?' || IsPChar(uri_char))
-		return st_Query;
-	return st_Invalid;
+	switch (uri_char) {
+		case '\0': case '#':
+			return st_Done;
+		case '%':
+			return st_Percent;
+		case '/': case '?':
+			return st_Query;
+		default:
+			if (IsPChar(uri_char))
+				return st_Query;
+			else
+				return st_Invalid;
+	}
 }
 
+// Handles transition after percent-encoding has been found (% input).
+// Checks if subsequent 2 characters are valid hexadecimal digits.
 URIState		URIStateParser::PercentHandler(char uri_char) {
 	if (_buffer.back() == '%' && IsHexDig(uri_char))
 		return st_Percent;
@@ -110,6 +126,12 @@ URIState		URIStateParser::PercentHandler(char uri_char) {
 	return st_Invalid;
 }
 
+// Handles transition after a valid %HH sequence.
+// PChar & '/' input trigger transition to either Query or Path state
+// depending on if we're at the Path or Query part of the URI.
+// "return URIState(_path)" leverages equivalency between pt_Path & pt_Query values
+// in URIPart enum and st_Path & Query state values in the URIState enum.
+// So if we're at Path part, we return the Path state. Ditto for query.
 URIState		URIStateParser::PercentDoneHandler(char uri_char) {
 	switch (uri_char) {
 		case '\0':
@@ -122,15 +144,11 @@ URIState		URIStateParser::PercentDoneHandler(char uri_char) {
 		case '?':
 			return st_Query;
 		case '/':
-			return URIState(_part);
-				// Values of the pt_Path & _Query parts in URIPart enum are equivalent
-				// to the st_Path & Querystate values in the URIState enum.
-				// So if we're at Path part, we return the Path state. Ditto for query.
+			return URIState(_part); // pt_Path == st_Path; pt_Query == st_Query
 		default:
 			if (IsPChar(uri_char))
 				return URIState(_part);
 			else
 				return st_Invalid;
-
 	}
 }

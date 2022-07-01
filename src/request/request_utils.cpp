@@ -10,10 +10,6 @@ bool	IsHexDig(char& c) {
 	return (isdigit(c) || (c >= 'A' && c <= 'F'));
 }
 
-// bool	IsPercentEncoded(char c) {
-
-// }
-
 // Used by IsPChar.
 bool	IsUnreserved(char c) {
 	return (c == '-' || c == '.' || c == '_' || c == '~'
