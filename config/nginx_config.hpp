@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/01 20:10:12 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/02 16:28:36 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,14 @@ class NginxConfig {
 		
 	protected:
 		std::vector<ServerBlock>			server_blocks;
-		int									main_body_client_max_body_size;
+		int									http_client_max_body_size;
 		std::map<int, std::string>			error_page;
-		int									access_log;
+		bool								access_log;
 		void	ComponentChecker(s_components component);
-		NginxConfig(); // cant call default, as file must be added in as argument
-		void	loadConfigMap(void);
 
 	public:
-		NginxConfig(std::ifstream& config_file);
+		NginxConfig(); // sets defaults
+		int		ParseConfigFile(std::ifstream& config_file);
 		// .. bla bla add in conplien
 };
 
