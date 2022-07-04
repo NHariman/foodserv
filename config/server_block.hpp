@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/04 14:24:03 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/04 14:30:28 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class ServerBlock {
 		std::string					listen; // parse in here -> or make listen a class
 		std::string					server_name; // make it a class
 		std::string					root;
-		std::vector<std::string>	index;
+		std::string					index;
 		int							client_max_body_size; // inherits from NginxConfig if undefined
 		std::map<int, std::string>	error_page; // inherits from NginxConfig if undefined
 		ServerBlock(){};

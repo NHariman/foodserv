@@ -6,9 +6,14 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/04 14:24:50 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/04 14:32:42 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
+
+// GOAL OF NGINX_CONFIG CLASS
+// - is the config file valid
+// - comments deleten
+// - fills a vector of multiple server_block classes
 
 #include "nginx_config.hpp"
 #include <fstream>
