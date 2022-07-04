@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/02 16:28:27 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/04 14:24:50 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@
 // clang++ main.cpp config/server_block.cpp config/location_block.cpp config/nginx_config.cpp
 
 // default constructor that sets all the defaults, these are later overwritten by actual configuration stuff
-NginxConfig::NginxConfig() 
-{
+NginxConfig::NginxConfig() {
 	components.error_page = false;
 	components.access_log = false;
 	components.client_max_body_size = false;
@@ -32,73 +31,58 @@ NginxConfig::NginxConfig()
 }
 
 // parses the received config file to overwrite defaults
-int		NginxConfig::ParseConfigFile(std::ifstream& config_file)
-{
+int		NginxConfig::ParseConfigFile(std::ifstream& config_file) {
 	// move to a new function, the defauconstructor only sets defaults.
 	// maybe this only sets the defaults and actual parsing occurs later?
 	// read line by line and fill the NginxConfig class
-	std::string tp;
+	std::string config_string;
 	std::string content;
 	size_t		found;
-	while(std::getline(config_file, tp))
-	{
-		content.append(tp + "\n");
-		found = tp.find("http{");
+	while(std::getline(config_file, config_string)) {
+		content.append(config_string + "\n");
+		found = config_string.find("http{");
 		if (found != std::string::npos)
 			break ;
-		else if (config_file.eof())
-		{
+		else if (config_file.eof()) {
 			std::cerr << "[ERROR] No http block found." << std::endl;
-			return ;
+			return 1; // change error code
 		}
 	}
-	while(std::getline(config_file, tp))
-	{
+	while(std::getline(config_file, config_string)) {
 		//content.append(tp + "\n");
-		if (tp.find("#") != std::string::npos) // deletes any comments found in the line
-			tp.erase(tp.find("#"));
+		if (config_string.find("#") != std::string::npos) // deletes any comments found in the line
+			config_string.erase(config_string.find("#"));
 		// TODO:
 		// add exit condition if } is found for the http block
 		found = std::string::npos;
-		if ((found = tp.find("client_max_body_size ")) != std::string::npos)
-		{
+		if ((found = config_string.find("client_max_body_size ")) != std::string::npos) {
 			components.client_max_body_size = true;
 			// TODO:
 			// add parser that finds the client max body size number and saves it.
 			std::cout << "client_max_body_size identified" << std::endl;
 		}
-		else if ((found = tp.find("access_log ")) != std::string::npos)
-		{
-			components.access_log = true;
-			// TODO:
-			// add parser that finds the access_log identifier (true/false) and saves it.
-			std::cout << "access_log identified" << std::endl;
-		}
-		else if ((found = tp.find("error_page ")) != std::string::npos)
-		{
+		else if ((found = config_string.find("error_page ")) != std::string::npos) {
 			components.error_page = true;
 			// TODO:
 			// add parser that gets the error_page data and saves it.
 			std::cout << "error_page identified" << std::endl;
 		}
-		else if ((found = tp.find("server{")) != std::string::npos)
-		{
-						// TODO:
+		else if ((found = config_string.find("server{")) != std::string::npos) {
+			// TODO:
 			// this should call the serverblock class which works similarly to the NginxConfig class
 			// it first sets some defaults
 			// then parses from server{ to }
 			std::cout << "server_block identified" << std::endl;
 			components.server_block++;
 		}
-		content.append(tp + "\n");
+		content.append(config_string + "\n");
 	}
 	std::cout << content << std::endl;
 	ComponentChecker(components);
 }
 
 // checks which components have been found in the http block
-void	NginxConfig::ComponentChecker(s_components component)
-{
+void	NginxConfig::ComponentChecker(s_components component) {
 	if (component.error_page == false)
 		std::cerr << "[WARNING] No error_page set in http{}. Defaults have been set" << std::endl;
 	if (component.access_log == false) 

@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/01 19:25:53 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/04 14:24:03 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 class ServerBlock {
 	protected:
 		std::vector<LocationBlock>	location_blocks;
-		int							listen;
-		std::vector<std::string>	server_name;
+		std::string					listen; // parse in here -> or make listen a class
+		std::string					server_name; // make it a class
 		std::string					root;
 		std::vector<std::string>	index;
 		int							client_max_body_size; // inherits from NginxConfig if undefined
