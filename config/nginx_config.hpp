@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/04 18:54:00 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/05 19:59:18 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,34 +18,38 @@
 #include <string>
 #include "server_block.hpp"
 
-/*
-Coplien form:
+// Coplien form:
 
-class A final
-{
-   public:
-      A ();
-      A (const A &a);
-      ~A ();
-      A & operator = (const A &a);
-};
-*/
+// class A final
+// {
+//    public:
+//       A ();
+//       A (const A &a);
+//       ~A ();
+//       A & operator = (const A &a);
+// };
+
 
 class NginxConfig {
 	private:
-		std::string		_config_file;
+		std::string					_config_file;
+		std::vector<ServerBlock>	_servers;
+		size_t						_amount_server_blocks;
 
-		NginxConfig(){};
+		bool		IsServerBlock(size_t *start_position);
 
 	public:
 		// coplien form
-		NginxConfig(std::ifstream	configuration_file);
+		NginxConfig();
 		NginxConfig(const NginxConfig& obj);
 		~NginxConfig(){};
 		NginxConfig & operator= (const NginxConfig& obj);
 
-		std::string	RemoveComments(std::string str);
 		std::string	GetConfigFile() const;
+		size_t		FindServerBlocks();
+		void		LoadConfigFile(std::ifstream&	configuration_file);
+		size_t		GetServerBlockAmount() const;
+		std::vector<ServerBlock>	GetServers() const;
 		// NginxConfig(); // sets defaults
 		// int		ParseConfigFile(std::ifstream& config_file);
 		// .. bla bla add in conplien
