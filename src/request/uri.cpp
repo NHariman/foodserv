@@ -124,7 +124,7 @@ string	URI::ConstructParsedURI() {
 	string	uri;
 
 	if (!_host.empty())
-		uri += _host;
+		uri += "//" + _host;
 	if (!_path.empty())
 		uri += _path;
 	if (!_query.empty())
