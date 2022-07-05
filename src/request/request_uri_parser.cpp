@@ -1,8 +1,8 @@
-#include "uri_state_parser.hpp"
+#include "request_uri_parser.hpp"
 
-URIStateParser::URIStateParser(URI& uri) : _uri(&uri) {}
+RequestURIParser::RequestURIParser(URI& uri) : _uri(&uri) {}
 
-URIStateParser::~URIStateParser() {}
+RequestURIParser::~RequestURIParser() {}
 
 /*
 	Transition table for origin form URI states.
@@ -18,66 +18,74 @@ URIStateParser::~URIStateParser() {}
 	// static URIState const uri_transitions[10][256] // REMOVE
 */
 
-// Optional `part` argument for later parsing of host field or query field.
-void	URIStateParser::Parse(string uri_string, URIPart part) {
+void	RequestURIParser::Init(string const& uri_string, URIPart part) {
 	_part = part;
 	_uri_input = uri_string;
 	if (_part == pt_Host)
 		ParseHost(uri_string);
-	ParsePathOriginForm(uri_string);
+	Parse(uri_string);
 }
 
-void	URIStateParser::ParseHost(string const& uri_string) {
+void	RequestURIParser::ParseHost(string const& uri_string) {
 	(void)uri_string;
 }
 
-// Finite state machine parser that parses URI string input byte-by-byte,
-// using a jump table of handler functions for each state, which sets
-// the next state based on current input character.
-void	URIStateParser::ParsePathOriginForm(string const& uri_string) {
-	static URIState (URIStateParser::*uri_jumptable[10])(char uri_char) = {
-			&URIStateParser::StartHandler,
-			&URIStateParser::PathHandler,
-			&URIStateParser::QueryHandler,
-			&URIStateParser::PercentHandler,
-			&URIStateParser::PercentDoneHandler,
+
+URIState	RequestURIParser::SetStartState() const {
+	return u_Start;
+}
+
+URIState	RequestURIParser::GetNextState(char c) {
+	static 	URIState (RequestURIParser::*table[6])(char uri_char) = {
+			&RequestURIParser::StartHandler,
+			&RequestURIParser::PathHandler,
+			&RequestURIParser::QueryHandler,
+			&RequestURIParser::PercentHandler,
+			&RequestURIParser::PercentDoneHandler,
 			nullptr
 	};
-	size_t i;
 
-	if (uri_string.size() > 8190)
-		throw URITooLongException();
+	return (this->*table[cur_state])(c);
+}
 
-	URIState state = u_Start;
-	for (i = 0; i <= uri_string.size(); i++) {
-		state = (this->*uri_jumptable[state])(uri_string[i]);
-		if (state == u_Invalid)
-			throw BadRequestException();
-		else if (state == u_Done) {
-			PushBuffertoField(_part);
-			break;
-		}
-		_buffer += uri_string[i];
+void	RequestURIParser::InvalidStateCheck() const {
+	if (cur_state == u_Invalid)
+		throw BadRequestException();
+}
+
+bool	RequestURIParser::DoneStateCheck() {
+	if (cur_state == u_Done) {
+		PushBuffertoField(_part);
+		return true;
 	}
-	if (state == u_Done && i < uri_string.size() - 1)
+	return false;
+}
+
+void	RequestURIParser::PreParseCheck() const {
+	if (_uri_input.size() > 8190)
+		throw URITooLongException();
+}
+
+void	RequestURIParser::AfterParseCheck(size_t pos) const {
+	if (cur_state == u_Done && pos < _uri_input.size() - 1)
 		throw BadRequestException();
 }
 
 // Pushes buffer to appropriate URI field when valid ending token indicates
 // transition out of current (path/query) state to next or final state.
-void	URIStateParser::PushBuffertoField(URIPart part) {
+void	RequestURIParser::PushBuffertoField(URIPart part) {
 	if (part == pt_Path) {
-		size_t query_start = _buffer.find_first_of("?");
-		_uri->SetPath(_buffer.substr(0, query_start));
+		size_t query_start = buffer.find_first_of("?");
+		_uri->SetPath(buffer.substr(0, query_start));
 	}
 	else {
-		_uri->SetQuery(_buffer);
+		_uri->SetQuery(buffer);
 	}
-	_buffer.clear();
+	buffer.clear();
 }
 
 // Starting state transition handler. Only accepts '/' according to origin form rules.
-URIState		URIStateParser::StartHandler(char uri_char) {
+URIState		RequestURIParser::StartHandler(char uri_char) {
 	if (uri_char == '/')
 		return u_Path;
 	return u_Invalid;
@@ -86,10 +94,10 @@ URIState		URIStateParser::StartHandler(char uri_char) {
 // Handles transition after '/' input indicating path section in URI.
 // Always checks that no 2 consecutive '/' are given, which is only used
 // by authority URI components.
-URIState		URIStateParser::PathHandler(char uri_char) {
+URIState		RequestURIParser::PathHandler(char uri_char) {
 	_part = pt_Path;
 	if (DEBUG)
-		cout << "PH at char [" << uri_char << "], buffer: " << _buffer << endl; // DEBUG 
+		cout << "PH at char [" << uri_char << "], buffer: " << buffer << endl; // DEBUG 
 	switch (uri_char) {
 		case '\0':
 			return u_Done;
@@ -98,7 +106,7 @@ URIState		URIStateParser::PathHandler(char uri_char) {
 		case '?':
 			return u_Query;
 		case '/':
-			if (_buffer.back() != '/')
+			if (buffer.back() != '/')
 				return u_Path;
 		default:
 			if (IsPChar(uri_char))
@@ -110,9 +118,9 @@ URIState		URIStateParser::PathHandler(char uri_char) {
 
 // Handles transition after '?' input indicating queries is found.
 // '#' is accepted alternative to EOL signaling end of query string.
-URIState		URIStateParser::QueryHandler(char uri_char) {
+URIState		RequestURIParser::QueryHandler(char uri_char) {
 	if (DEBUG)
-		cout << "QH at char [" << uri_char << "], buffer: " << _buffer << endl; // DEBUG
+		cout << "QH at char [" << uri_char << "], buffer: " << buffer << endl; // DEBUG
 	if (_part == pt_Path)
 		PushBuffertoField(_part);
 	_part = pt_Query;
@@ -133,12 +141,12 @@ URIState		URIStateParser::QueryHandler(char uri_char) {
 
 // Handles transition after percent-encoding has been found (% input).
 // Checks if subsequent 2 characters are valid hexadecimal digits.
-URIState		URIStateParser::PercentHandler(char uri_char) {
+URIState		RequestURIParser::PercentHandler(char uri_char) {
 	if (DEBUG)
-		cout << "%H at char [" << uri_char << "], buffer: " << _buffer << endl; // DEBUG 
-	if (_buffer.back() == '%' && IsHexDig(uri_char))
+		cout << "%H at char [" << uri_char << "], buffer: " << buffer << endl; // DEBUG 
+	if (buffer.back() == '%' && IsHexDig(uri_char))
 		return u_Percent;
-	else if (IsHexDig(_buffer.back()) && IsHexDig(uri_char))
+	else if (IsHexDig(buffer.back()) && IsHexDig(uri_char))
 		return u_Percent_Done;
 	return u_Invalid;
 }
@@ -149,7 +157,7 @@ URIState		URIStateParser::PercentHandler(char uri_char) {
 // "return URIState(_path)" leverages equivalency between pt_Path & pt_Query values
 // in URIPart enum and u_Path & Query state values in the URIState enum.
 // So if we're at Path part, we return the Path state. Ditto for query.
-URIState		URIStateParser::PercentDoneHandler(char uri_char) {
+URIState		RequestURIParser::PercentDoneHandler(char uri_char) {
 	DecodePercent();
 	switch (uri_char) {
 		case '\0':
@@ -172,11 +180,11 @@ URIState		URIStateParser::PercentDoneHandler(char uri_char) {
 }
 
 // Called after validating percent-encoded tokens and in PercentDone state.
-void	URIStateParser::DecodePercent() {
-	size_t	percent_start = _buffer.size() - 3;
-	string	new_buffer = _buffer.substr(0, percent_start);
-	string	hex = _buffer.substr(percent_start + 1, percent_start + 2);
+void	RequestURIParser::DecodePercent() {
+	size_t	percent_start = buffer.size() - 3;
+	string	newbuffer = buffer.substr(0, percent_start);
+	string	hex = buffer.substr(percent_start + 1, percent_start + 2);
 	char	c = std::stoi(hex, nullptr, 16);
-	new_buffer += c;
-	_buffer = new_buffer;
+	newbuffer += c;
+	buffer = newbuffer;
 } 
