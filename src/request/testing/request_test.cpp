@@ -102,4 +102,7 @@ TEST(RequestTargetTest, InvalidQuery) {
 	EXPECT_THROW({
 		URI	request_uri("/path/to?q=1^");
 	}, BadRequestException);
+	EXPECT_THROW({
+		URI	request_uri("/path/to?q=1#bad");
+	}, BadRequestException);
 }

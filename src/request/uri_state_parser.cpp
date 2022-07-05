@@ -43,12 +43,13 @@ void	URIStateParser::ParsePathOriginForm(string const& uri_string) {
 			&URIStateParser::PercentDoneHandler,
 			nullptr
 	};
+	size_t i;
 
 	if (uri_string.size() > 8190)
 		throw URITooLongException();
 
 	URIState state = st_Start;
-	for (size_t i = 0; i <= uri_string.size(); i++) {
+	for (i = 0; i <= uri_string.size(); i++) {
 		state = (this->*uri_jumptable[state])(uri_string[i]);
 		if (state == st_Invalid)
 			throw BadRequestException();
@@ -57,10 +58,9 @@ void	URIStateParser::ParsePathOriginForm(string const& uri_string) {
 			break;
 		}
 		_buffer += uri_string[i];
-		// TODO: check if need to throw when finish state is indicated but still characters in string
 	}
-
-	// cout << "ParsePathOriginForm: state at end is " << state << endl; // DEBUG
+	if (state == st_Done && i < uri_string.size() - 1)
+		throw BadRequestException();
 }
 
 // Pushes buffer to appropriate URI field when valid ending token indicates
@@ -174,8 +174,8 @@ URIState		URIStateParser::PercentDoneHandler(char uri_char) {
 // Called after validating percent-encoded tokens and in PercentDone state.
 void	URIStateParser::DecodePercent() {
 	size_t	percent_start = _buffer.size() - 3;
-	string	hex = _buffer.substr(percent_start + 1, percent_start + 2);
 	string	new_buffer = _buffer.substr(0, percent_start);
+	string	hex = _buffer.substr(percent_start + 1, percent_start + 2);
 	char	c = std::stoi(hex, nullptr, 16);
 	new_buffer += c;
 	_buffer = new_buffer;
