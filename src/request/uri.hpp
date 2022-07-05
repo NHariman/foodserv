@@ -18,6 +18,7 @@ class URI {
 		URI&	operator=(string const& uri_string);
 		~URI();
 
+		string	Get();
 		string	GetInputURI();
 		string	GetParsedURI();
 		string	GetURIDebug();

@@ -59,6 +59,11 @@ URI&	URI::operator=(string const& uri_string) {
 // Destructor
 URI::~URI() {}
 
+// Simplified method for retrieving parsed URI string meant for external classes/users.
+string	URI::Get() {
+	return _uri_parsed;
+}
+
 string	URI::GetInputURI() {
 	return _uri_input;
 }
