@@ -9,6 +9,7 @@
 			|_ pchar = unreserved / pct-encoded / sub-delims / ":" / "@" (see URI ABNF)
 			|_ scheme =	ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
 		|_ HTTP-version = HTTP-name "/" DIGIT "." DIGIT
+			|_ HTTP-name = %x48.54.54.50 ; HTTP
 		
 	|_ header-field = field-name ":" OWS field-value OWS
 		|_ field-name =		token

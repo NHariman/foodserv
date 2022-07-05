@@ -19,7 +19,9 @@ enable_testing()
 # List all test files you want to compile
 add_executable(
   request_test # test executable name
-  request_test.cpp
+  request_line.cpp
+  request_target.cpp
+  ../request_parser.cpp
   ../uri.cpp
   ../request_utils.cpp
   ../uri_state_parser.cpp
