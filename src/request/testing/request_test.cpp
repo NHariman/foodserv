@@ -47,15 +47,15 @@ TEST(RequestTargetTest, ParsePathMultiQueryMulti) {
 }
 
 TEST(RequestTargetTest, ParsePercentEncoded) {
-	URI	request_uri("/where%20/are/we?q=now?text=Hello+G%C3%BCnter");
-	EXPECT_EQ(request_uri.GetParsedURI(), "/where%20/are/we?q=now?text=Hello+G%C3%BCnter");
+	URI	request_uri("/where%20/are%7E/we?q=now?text=Hello+G%C3%BCnter");
+	EXPECT_EQ(request_uri.GetParsedURI(), "/where /are~/we?q=now?text=Hello+Günter");
 	EXPECT_TRUE(request_uri.GetHost().empty());
-	EXPECT_EQ(request_uri.GetPath(), "/where%20/are/we");
-	EXPECT_EQ(request_uri.GetQuery(), "q=now?text=Hello+G%C3%BCnter");
-	request_uri ="/where%c3/are/we?q=now";
-	EXPECT_EQ(request_uri.GetParsedURI(), "/where%C3/are/we?q=now");
+	EXPECT_EQ(request_uri.GetPath(), "/where /are~/we");
+	EXPECT_EQ(request_uri.GetQuery(), "q=now?text=Hello+Günter");
+	request_uri ="/where/are%7e/we?q=now"; // lowercase hexdigit to test normalization
+	EXPECT_EQ(request_uri.GetParsedURI(), "/where/are~/we?q=now");
 	EXPECT_TRUE(request_uri.GetHost().empty());
-	EXPECT_EQ(request_uri.GetPath(), "/where%C3/are/we");
+	EXPECT_EQ(request_uri.GetPath(), "/where/are~/we");
 	EXPECT_EQ(request_uri.GetQuery(), "q=now");
 }
 

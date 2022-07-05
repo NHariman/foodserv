@@ -59,6 +59,7 @@ void	URIStateParser::ParsePathOriginForm(string const& uri_string) {
 		_buffer += uri_string[i];
 		// TODO: check if need to throw when finish state is indicated but still characters in string
 	}
+
 	// cout << "ParsePathOriginForm: state at end is " << state << endl; // DEBUG
 }
 
@@ -172,11 +173,10 @@ URIState		URIStateParser::PercentDoneHandler(char uri_char) {
 
 // Called after validating percent-encoded tokens and in PercentDone state.
 void	URIStateParser::DecodePercent() {
-	size_t percent_start = _buffer.size() - 3;
+	size_t	percent_start = _buffer.size() - 3;
+	string	hex = _buffer.substr(percent_start + 1, percent_start + 2);
 	string	new_buffer = _buffer.substr(0, percent_start);
-	// cout << "percent_start: " << percent_start << " new_buff: " << new_buffer << endl;
-	for (size_t i = percent_start + 1; _buffer[i]; i++) {
-		char c = static_cast<char>(_buffer[i]);
-		new_buffer += c;
-	}
+	char	c = std::stoi(hex, nullptr, 16);
+	new_buffer += c;
+	_buffer = new_buffer;
 } 
