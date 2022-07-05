@@ -14,7 +14,7 @@ class BadRequestException : public exception {
 		}
 };
 
-// Used for: URI exceeding 8190 bytes.
+// Used for: URI exceeding 8192 bytes (8kb).
 // Should return 414 code.
 class URITooLongException : public exception {
 	public:

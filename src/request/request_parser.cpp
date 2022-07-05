@@ -18,34 +18,96 @@ HandleRequest
 CreateResponse
 |_ 
 
+	r_Start = 0,
+	r_Method,
+	r_URI,
+	r_Version,
+	r_Key,
+	r_Value,
+	r_Done,
+	r_Invalid
 */
 
-size_t	RequestParser::ParseTarget(string const& message, size_t start) {
-	cout << "ParseTarget\n"; // DEBUG
+// Default constructor
+RequestParser::RequestParser() : _bytes_read(0) {
 	
-	size_t sp_pos = message.find_first_of(" ", start);
-	string target = message.substr(start, sp_pos - start);
-	// TODO: add valid target check
-
-	if (IsSpace(message[sp_pos + 1])) // if there's more than 1 space
-		throw BadRequestException();
-	_request_line.target = target;
-	return sp_pos + 1;
 }
 
-size_t	RequestParser::ParseMethod(string const& message) {
-	cout << "ParseMethod\n"; // DEBUG
+// Destructor
+RequestParser::~RequestParser() {
 	
-	size_t sp_pos = message.find_first_of(" ");
-	string method = message.substr(0, sp_pos);
-
-	// if method breaks grammar rules or there's more than 1 space, throw Bad Request exception
-	if (method.size() == 0 || !IsValidString(IsTChar, method) || IsSpace(message[sp_pos + 1]))
-		throw BadRequestException();
-	// TODO: add not-implemented-method check
-	_request_line.method = method;
-	return sp_pos + 1;
 }
+
+void	RequestParser::Init(char const* buffer) {
+	string	request(buffer);
+
+	Parse(request);
+}
+
+RequestState	RequestParser::SetStartState() const {
+	return r_Start;
+}
+
+RequestState	RequestParser::GetNextState(char c) {
+	static RequestState (RequestParser::*table[7])(char req_char) = {
+			&RequestParser::StartHandler,
+			&RequestParser::MethodHandler,
+			&RequestParser::TargetHandler,
+			&RequestParser::VersionHandler,
+			&RequestParser::FieldNameHandler,
+			&RequestParser::FieldValueHandler,
+			nullptr
+	};
+
+	return (this->*table[cur_state])(c);
+}
+
+void			RequestParser::InvalidStateCheck() const {
+	if (cur_state == r_Invalid)
+		throw BadRequestException();
+}
+
+bool			RequestParser::DoneStateCheck() {
+	if (cur_state == r_Done) {
+		return true;
+	}
+	return false;
+}
+
+// Checks if request is missing required LF line terminator.
+void			RequestParser::PreParseCheck() const {
+	if (input.find_first_of("\n") == string::npos) // recognizes single LF as linebreak for robustness
+		throw BadRequestException();
+}
+
+void			RequestParser::AfterParseCheck(size_t pos) const {
+
+}
+
+RequestState RequestParser::StartHandler(char uri_char) {
+
+}
+
+RequestState RequestParser::MethodHandler(char uri_char) {
+
+}
+
+RequestState RequestParser::TargetHandler(char uri_char) {
+
+}
+
+RequestState RequestParser::VersionHandler(char uri_char) {
+
+}
+
+RequestState RequestParser::FieldNameHandler(char uri_char) {
+
+}
+
+RequestState RequestParser::FieldValueHandler(char uri_char) {
+
+}
+
 
 size_t	RequestParser::ParseRequestLine(string const& message) {
 	size_t read = 0;
@@ -65,18 +127,44 @@ size_t	RequestParser::ParseRequestLine(string const& message) {
 	return read;
 }
 
-void	RequestParser::ParseRequest(char const* buffer) {
-	string	message(buffer);
+size_t	RequestParser::ParseMethod(string const& message) {
+	cout << "ParseMethod\n"; // DEBUG
+	
+	size_t sp_pos = message.find_first_of(" ");
+	string method = message.substr(0, sp_pos);
 
-	this->_bytes_read = ParseRequestLine(message);
+	// if method breaks grammar rules or there's more than 1 space, throw Bad Request exception
+	if (method.size() == 0 || !IsValidString(IsTChar, method) || IsSpace(message[sp_pos + 1]))
+		throw BadRequestException();
+	// TODO: add not-implemented-method check
+	_request_line.method = method;
+	return sp_pos + 1;
 }
 
-// Default constructor
-RequestParser::RequestParser() : _bytes_read(0) {
+size_t	RequestParser::ParseTarget(string const& message, size_t start) {
+	cout << "ParseTarget\n"; // DEBUG
 	
+	size_t sp_pos = message.find_first_of(" ", start);
+	string target = message.substr(start, sp_pos - start);
+
+	if (IsSpace(message[sp_pos + 1])) // if there's more than 1 space
+		throw BadRequestException();
+	_request_line.target = target;
+	return sp_pos + 1;
 }
 
-// Destructor
-RequestParser::~RequestParser() {
-	
+string	RequestParser::GetMethod() {
+	return _request_line.method;
+}
+
+string	RequestParser::GetTarget() {
+	return _request_line.target.Get();
+}
+
+string	RequestParser::GetVersion() {
+	return _request_line.version;
+}
+
+string	RequestParser::GetMessageBody() {
+	return _msg_body;
 }

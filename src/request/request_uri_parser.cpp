@@ -20,7 +20,7 @@ RequestURIParser::~RequestURIParser() {}
 
 void	RequestURIParser::Init(string const& uri_string, URIPart part) {
 	_part = part;
-	_uri_input = uri_string;
+	input = uri_string;
 	if (_part == pt_Host)
 		ParseHost(uri_string);
 	Parse(uri_string);
@@ -61,13 +61,14 @@ bool	RequestURIParser::DoneStateCheck() {
 	return false;
 }
 
+// Checks if URI string is greater than 8kb (limit of most web servers)
 void	RequestURIParser::PreParseCheck() const {
-	if (_uri_input.size() > 8190)
+	if (input.size() > 8192)
 		throw URITooLongException();
 }
 
 void	RequestURIParser::AfterParseCheck(size_t pos) const {
-	if (cur_state == u_Done && pos < _uri_input.size() - 1)
+	if (cur_state == u_Done && pos < input.size() - 1)
 		throw BadRequestException();
 }
 

@@ -23,7 +23,6 @@ class	RequestURIParser : public StateParser<URIState> {
 
 	private:
 		URI		*_uri;
-		string	_uri_input;
 		URIPart _part;
 
 		void		ParseHost(string const& uri_string); // TODO: review later if should be moved

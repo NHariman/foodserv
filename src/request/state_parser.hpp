@@ -23,6 +23,7 @@ class StateParser {
 		// State	table[](char uri_char);
 		State	cur_state;
 		string	buffer;
+		string	input;
 
 		virtual State	SetStartState() const = 0;
 		virtual State	GetNextState(char c) = 0;
