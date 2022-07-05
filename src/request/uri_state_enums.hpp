@@ -8,13 +8,13 @@ enum URIPart {
 };
 
 enum URIState {
-	st_Start = 0,
-	st_Path,
-	st_Query,
-	st_Percent,
-	st_Percent_Done,
-	st_Done,
-	st_Invalid
+	u_Start = 0,
+	u_Path,
+	u_Query,
+	u_Percent,
+	u_Percent_Done,
+	u_Done,
+	u_Invalid
 };
 
 #endif /* URI_STATE_ENUMS_HPP */
