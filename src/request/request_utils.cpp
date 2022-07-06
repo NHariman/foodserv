@@ -40,6 +40,11 @@ bool	IsTChar(char c) {
 			|| isalpha(c) || isdigit(c));
 }
 
+// Used for header field value parsing.
+bool	IsVChar(char c) {
+	return (c >= '!' && c <= '~');
+}
+
 bool	IsSpace(char c) {
 	return c == ' ';
 }
