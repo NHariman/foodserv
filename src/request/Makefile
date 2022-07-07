@@ -6,7 +6,7 @@
 #    By: mjiam <mjiam@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/06/28 20:58:28 by mjiam         #+#    #+#                  #
-#    Updated: 2022/07/05 22:09:17 by mjiam         ########   odam.nl          #
+#    Updated: 2022/07/07 22:13:13 by mjiam         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,14 +14,14 @@ NAME		=	request
 
 CC			= 	clang++
 
-FLAGS		= 	-Wall -Wextra -Werror -std=c++98
+FLAGS		= 	-Wall -Wextra -Werror -std=c++11
 
 ifdef DEBUG
 FLAGS		+=	-fsanitize=address -fno-omit-frame-pointer -g
 endif
 
 SRC			= 	main.cpp request_parser.cpp \
-				request_utils.cpp request_uri_parser.cpp \
+				request_utils.cpp request_target_parser.cpp \
 				uri.cpp
 
 OBJ			= 	$(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))

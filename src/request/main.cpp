@@ -10,10 +10,10 @@ int	main(int ac, char **argv) {
 	ifstream file(argv[1]);
 	char buffer[30000] = {0};
 	file.read(buffer, 3000);
-	RequestParser parser;
+	RequestParser request_parser;
 
 	try {
-		parser.ParseRequest(buffer);
+		request_parser.Parse(buffer);
 	}
 	catch (BadRequestException &e) {
 		cout << e.what() << endl;

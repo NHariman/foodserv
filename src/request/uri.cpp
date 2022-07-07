@@ -120,8 +120,8 @@ void	URI::SetQuery(string const& query) {
 }
 
 void	URI::ParseInput() {
-	RequestURIParser	parser(*this);
-	parser.Init(_uri_input);
+	RequestTargetParser	parser(*this);
+	parser.Parse(_uri_input);
 	_uri_parsed = ConstructParsedURI();
 }
 

@@ -14,6 +14,8 @@
 	|_ header-field = field-name ":" OWS field-value OWS
 		|_ field-name =		token
 		|_ field-value =	*( field-content )
+			|_ field-content =	field-vchar [ 1*( SP / HTAB ) field-vchar ]
+				|_ VCHAR          =  %x21-7E ; visible (printing) characters
 
 	|_ message-body = *OCTET
 

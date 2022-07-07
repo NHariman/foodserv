@@ -1,8 +1,8 @@
-#include "request_uri_parser.hpp"
+#include "request_target_parser.hpp"
 
-RequestURIParser::RequestURIParser(URI& uri) : _uri(&uri) {}
+RequestTargetParser::RequestTargetParser(URI& uri) : _uri(&uri) {}
 
-RequestURIParser::~RequestURIParser() {}
+RequestTargetParser::~RequestTargetParser() {}
 
 /*
 	Transition table for origin form URI states.
@@ -14,46 +14,45 @@ RequestURIParser::~RequestURIParser() {}
 	{  x,        x,       x,       x,        PH/PD,   x,       x     }, // Percent
 	{  PT/QR,    PR,      QR,      PT/QR,    PT/QR,   x/DONE,  DONE  }, // PercentDone
 	{  QR,       PR,      QR,      QR,       QR,      DONE,    DONE  }, // Query
-
-	// static URIState const uri_transitions[10][256] // REMOVE
 */
 
-void	RequestURIParser::Init(string const& uri_string, URIPart part) {
+void	RequestTargetParser::Parse(string const& uri_string, URIPart part) {
 	_part = part;
-	input = uri_string;
 	if (_part == pt_Host)
 		ParseHost(uri_string);
-	Parse(uri_string);
+	ParseString(uri_string);
 }
 
-void	RequestURIParser::ParseHost(string const& uri_string) {
+void	RequestTargetParser::ParseHost(string const& uri_string) {
 	(void)uri_string;
 }
 
 
-URIState	RequestURIParser::SetStartState() const {
+URIState	RequestTargetParser::SetStartState() const {
 	return u_Start;
 }
 
-URIState	RequestURIParser::GetNextState(char c) {
-	static 	URIState (RequestURIParser::*table[6])(char uri_char) = {
-			&RequestURIParser::StartHandler,
-			&RequestURIParser::PathHandler,
-			&RequestURIParser::QueryHandler,
-			&RequestURIParser::PercentHandler,
-			&RequestURIParser::PercentDoneHandler,
+URIState	RequestTargetParser::GetNextState(size_t pos) {
+	static 	URIState (RequestTargetParser::*table[6])(char uri_char) = {
+			&RequestTargetParser::StartHandler,
+			&RequestTargetParser::PathHandler,
+			&RequestTargetParser::QueryHandler,
+			&RequestTargetParser::PercentHandler,
+			&RequestTargetParser::PercentDoneHandler,
 			nullptr
 	};
 
-	return (this->*table[cur_state])(c);
+	return (this->*table[cur_state])(input[pos]);
 }
 
-void	RequestURIParser::InvalidStateCheck() const {
+void	RequestTargetParser::InvalidStateCheck() const {
 	if (cur_state == u_Invalid)
 		throw BadRequestException();
 }
 
-bool	RequestURIParser::DoneStateCheck() {
+// If terminating state is indicated, pushes parsed string 
+// into appropriate URI field (as indicated by _part) and stops loop.
+bool	RequestTargetParser::DoneStateCheck() {
 	if (cur_state == u_Done) {
 		PushBuffertoField(_part);
 		return true;
@@ -62,19 +61,20 @@ bool	RequestURIParser::DoneStateCheck() {
 }
 
 // Checks if URI string is greater than 8kb (limit of most web servers)
-void	RequestURIParser::PreParseCheck() const {
+void	RequestTargetParser::PreParseCheck() {
 	if (input.size() > 8192)
 		throw URITooLongException();
 }
 
-void	RequestURIParser::AfterParseCheck(size_t pos) const {
+// Checks if there's illegal characters after terminating char.
+void	RequestTargetParser::AfterParseCheck(size_t pos) {
 	if (cur_state == u_Done && pos < input.size() - 1)
 		throw BadRequestException();
 }
 
 // Pushes buffer to appropriate URI field when valid ending token indicates
 // transition out of current (path/query) state to next or final state.
-void	RequestURIParser::PushBuffertoField(URIPart part) {
+void	RequestTargetParser::PushBuffertoField(URIPart part) {
 	if (part == pt_Path) {
 		size_t query_start = buffer.find_first_of("?");
 		_uri->SetPath(buffer.substr(0, query_start));
@@ -86,7 +86,7 @@ void	RequestURIParser::PushBuffertoField(URIPart part) {
 }
 
 // Starting state transition handler. Only accepts '/' according to origin form rules.
-URIState		RequestURIParser::StartHandler(char uri_char) {
+URIState		RequestTargetParser::StartHandler(char uri_char) {
 	if (uri_char == '/')
 		return u_Path;
 	return u_Invalid;
@@ -95,7 +95,7 @@ URIState		RequestURIParser::StartHandler(char uri_char) {
 // Handles transition after '/' input indicating path section in URI.
 // Always checks that no 2 consecutive '/' are given, which is only used
 // by authority URI components.
-URIState		RequestURIParser::PathHandler(char uri_char) {
+URIState		RequestTargetParser::PathHandler(char uri_char) {
 	_part = pt_Path;
 	if (DEBUG)
 		cout << "PH at char [" << uri_char << "], buffer: " << buffer << endl; // DEBUG 
@@ -119,7 +119,7 @@ URIState		RequestURIParser::PathHandler(char uri_char) {
 
 // Handles transition after '?' input indicating queries is found.
 // '#' is accepted alternative to EOL signaling end of query string.
-URIState		RequestURIParser::QueryHandler(char uri_char) {
+URIState		RequestTargetParser::QueryHandler(char uri_char) {
 	if (DEBUG)
 		cout << "QH at char [" << uri_char << "], buffer: " << buffer << endl; // DEBUG
 	if (_part == pt_Path)
@@ -142,7 +142,7 @@ URIState		RequestURIParser::QueryHandler(char uri_char) {
 
 // Handles transition after percent-encoding has been found (% input).
 // Checks if subsequent 2 characters are valid hexadecimal digits.
-URIState		RequestURIParser::PercentHandler(char uri_char) {
+URIState		RequestTargetParser::PercentHandler(char uri_char) {
 	if (DEBUG)
 		cout << "%H at char [" << uri_char << "], buffer: " << buffer << endl; // DEBUG 
 	if (buffer.back() == '%' && IsHexDig(uri_char))
@@ -158,7 +158,7 @@ URIState		RequestURIParser::PercentHandler(char uri_char) {
 // "return URIState(_path)" leverages equivalency between pt_Path & pt_Query values
 // in URIPart enum and u_Path & Query state values in the URIState enum.
 // So if we're at Path part, we return the Path state. Ditto for query.
-URIState		RequestURIParser::PercentDoneHandler(char uri_char) {
+URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	DecodePercent();
 	switch (uri_char) {
 		case '\0':
@@ -181,7 +181,7 @@ URIState		RequestURIParser::PercentDoneHandler(char uri_char) {
 }
 
 // Called after validating percent-encoded tokens and in PercentDone state.
-void	RequestURIParser::DecodePercent() {
+void	RequestTargetParser::DecodePercent() {
 	size_t	percent_start = buffer.size() - 3;
 	string	newbuffer = buffer.substr(0, percent_start);
 	string	hex = buffer.substr(percent_start + 1, percent_start + 2);

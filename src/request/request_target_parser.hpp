@@ -1,5 +1,5 @@
-#ifndef URI_STATE_PARSER_HPP
-#define URI_STATE_PARSER_HPP
+#ifndef REQUEST_TARGET_PARSER_HPP
+#define REQUEST_TARGET_PARSER_HPP
 
 #include "uri.hpp"
 #include "uri_state_enums.hpp"
@@ -12,14 +12,14 @@ using namespace std;
 
 class URI;
 
-class	RequestURIParser : public StateParser<URIState> {
+class	RequestTargetParser : public StateParser<URIState> {
 	public:
 		// URI constructor
-		RequestURIParser(URI& uri);
-		~RequestURIParser();
+		RequestTargetParser(URI& uri);
+		~RequestTargetParser();
 
-		void	Init(string const& uri_string, URIPart part = pt_Path);
 
+		void	Parse(string const& uri_string, URIPart part = pt_Path);
 
 	private:
 		URI		*_uri;
@@ -38,11 +38,11 @@ class	RequestURIParser : public StateParser<URIState> {
 	
 	protected:
 		URIState	SetStartState() const;
-		URIState	GetNextState(char c);
+		URIState	GetNextState(size_t pos);
 		void		InvalidStateCheck() const;
 		bool		DoneStateCheck();
-		void		PreParseCheck() const;
-		void		AfterParseCheck(size_t pos) const;
+		void		PreParseCheck();
+		void		AfterParseCheck(size_t pos);
 };
 
-#endif /* URI_STATE_PARSER_HPP */
+#endif /* REQUEST_TARGET_PARSER_HPP */

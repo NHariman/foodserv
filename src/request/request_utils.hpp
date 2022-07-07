@@ -11,6 +11,6 @@ bool	IsPChar(char c);
 bool	IsTChar(char c);
 bool	IsVChar(char c);
 bool	IsSpace(char c);
-bool	IsValidString(bool (*validity_checker)(char), string const& s);
+bool	IsValidString(bool (*validity_checker)(char), string const& s); // TODO: Remove if not used
 
 #endif /* REQUEST_UTILS */
