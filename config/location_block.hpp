@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:39 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/05 14:27:51 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/07 21:25:43 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,39 @@
 #include <map>
 #include <vector>
 
+// Coplien form:
+
+// class A final
+// {
+//    public:
+//       A ();
+//       A (const A &a);
+//       ~A ();
+//       A & operator = (const A &a);
+// };
+
 class LocationBlock {
 	private:
-		std::string					uri;
-		bool						autoindex;
-		std::string					root;
-		std::vector<std::string>	index;
-		int							client_max_body_size;
-		std::map<int, std::string>	error_page;
+		std::string					_uri;
+		bool						_autoindex;
+		std::string					_root;
+		std::string					_index;
+		int							_client_max_body_size;
+		std::map<int, std::string>	_error_page;
 		LocationBlock(){};
 	public:
-		LocationBlock(std::ifstream &file, size_t *start); // uses a pointer so it can skip through the server bits on its own when it returns
+		LocationBlock(std::string data);
 		~LocationBlock(){};
+		LocationBlock& operator= (const LocationBlock& location_block);
+		LocationBlock(const LocationBlock& location_block);
+
+		// getters
+		std::string					GetUri() const;
+		bool						GetAutoindex() const;
+		std::string					GetRoot() const;
+		std::string					GetIndex() const;
+		int							GetClientMaxBodySize() const;
+		std::map<int, std::string>	GetErrorPage() const;
 };
 
 #endif

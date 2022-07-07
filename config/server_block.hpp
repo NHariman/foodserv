@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/05 20:01:51 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/07 21:00:13 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "location_block.hpp"
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 class ServerBlock {
 	private:
@@ -32,13 +33,17 @@ class ServerBlock {
 		}	_check_list; // check list of found keywords in serverblock
 
 		std::vector<LocationBlock>	_location_blocks;
-		std::string					_listen; // parse in here -> or make listen a class
-		std::string					_server_name; // make it a class
+		std::string					_listen; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
+		std::string					_server_name; // SANNE: FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS
 		std::string					_root;
 		std::string					_index;
-		int							_client_max_body_size; // inherits from NginxConfig if undefined
-		std::map<int, std::string>	_error_page; // inherits from NginxConfig if undefined
+		int							_client_max_body_size;
+		std::map<int, std::string>	_error_page;
 
+		int							IsKey(std::string key);
+		int							SetValue(int key, std::string value);
+		std::string					TrimValue(std::string value);
+		void						CheckListVerification();
 		
 	public:
 		ServerBlock(std::ifstream &file, size_t *start); // uses a pointer so it can skip through the server bits on its own when it returns
@@ -47,14 +52,30 @@ class ServerBlock {
 		ServerBlock & operator= (const ServerBlock &server_block);
 		~ServerBlock(){};
 		
-		size_t		FindKeyValuePairs(size_t *start_position, std::string config_file);
+		size_t						FindKeyValuePairs(size_t *start_position, std::string config_file);
 		std::vector<LocationBlock>	GetLocationBlocks() const;
-		std::string					GetListen() const; // parse in here -> or make listen a class
-		std::string					GetServerName() const; // make it a class
+		std::string					GetListen() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
+		std::string					GetServerName() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS
 		std::string					GetRoot() const;
 		std::string					GetIndex() const;
-		int							GetClientMaxBodySize() const; // inherits from NginxConfig if undefined
-		std::map<int, std::string>	GetErrorPage() const; // inherits from NginxConfig if undefined		
+		int							GetClientMaxBodySize() const;
+		std::map<int, std::string>	GetErrorPage() const;
+
+		// exception classes
+		class InvalidKeyException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Invalid Key detected.";
+				}
+		};
+		class MultipleListensException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple listen keys detected.";
+				}
+		};
 
 };
 

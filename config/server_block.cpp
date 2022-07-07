@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/05 20:10:23 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/07 21:30:45 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,71 +22,195 @@
 ;
 
 ServerBlock::ServerBlock() : _client_max_body_size(0){
-	this->_listen = "80";
-	this->_server_name = "localhost";
-	this->_root = "/var/www/html";
-	this->_index = "index.html";
-	this->_client_max_body_size = 0;
+	_listen = "80";
+	_server_name = "localhost";
+	_root = "/var/www/html";
+	_index = "index.html";
+	_client_max_body_size = 0;
     //this->_error_page.insert(std::pair<int, std::string>(404, "/404.html")); \
     // if by the end of the FindKeyValuePairs() function no locationblocks or error_pages are found, fill them in?
     // TODO:
     // add defaults for location_blocks
 
     // _check_list copy
-    this->_check_list.location_block = false;
-	this->_check_list.listen = false;
-	this->_check_list.server_name = false;
-	this->_check_list.root = false;
-	this->_check_list.index = false;
-	this->_check_list.client_max_body_size = false;
-	this->_check_list.error_page = false;
+    _check_list.location_block = false;
+	_check_list.listen = false;
+	_check_list.server_name = false;
+	_check_list.root = false;
+	_check_list.index = false;
+	_check_list.client_max_body_size = false;
+	_check_list.error_page = false;
 };
 
 ServerBlock::ServerBlock(const ServerBlock& obj) {
-	this->_location_blocks = obj.GetLocationBlocks();
-	this->_listen = obj.GetListen();
-	this->_server_name = obj.GetServerName();
-	this->_root = obj.GetRoot();
-	this->_index = obj.GetIndex();
-	this->_client_max_body_size = obj.GetClientMaxBodySize();
-	this->_error_page = obj.GetErrorPage();
+	_location_blocks = obj.GetLocationBlocks();
+	_listen = obj.GetListen();
+	_server_name = obj.GetServerName();
+	_root = obj.GetRoot();
+	_index = obj.GetIndex();
+	_client_max_body_size = obj.GetClientMaxBodySize();
+	_error_page = obj.GetErrorPage();
 
     // _check_list copy
-    this->_check_list.location_block = false;
-	this->_check_list.listen = false;
-	this->_check_list.server_name = false;
-	this->_check_list.root = false;
-	this->_check_list.index = false;
-	this->_check_list.client_max_body_size = false;
-	this->_check_list.error_page = false;
+    _check_list.location_block = false;
+	_check_list.listen = false;
+	_check_list.server_name = false;
+	_check_list.root = false;
+	_check_list.index = false;
+	_check_list.client_max_body_size = false;
+	_check_list.error_page = false;
 }
 
 ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
     if (this == &obj)
         return (*this);
-	this->_location_blocks = obj.GetLocationBlocks();
-	this->_listen = obj.GetListen();
-	this->_server_name = obj.GetServerName();
-	this->_root = obj.GetRoot();
-	this->_index = obj.GetIndex();
-	this->_client_max_body_size = obj.GetClientMaxBodySize();
-	this->_error_page = obj.GetErrorPage();
+	_location_blocks = obj.GetLocationBlocks();
+	_listen = obj.GetListen();
+	_server_name = obj.GetServerName();
+	_root = obj.GetRoot();
+	_index = obj.GetIndex();
+	_client_max_body_size = obj.GetClientMaxBodySize();
+	_error_page = obj.GetErrorPage();
     
     // _check_list copy
-    this->_check_list.location_block = false;
-	this->_check_list.listen = false;
-	this->_check_list.server_name = false;
-	this->_check_list.root = false;
-	this->_check_list.index = false;
-	this->_check_list.client_max_body_size = false;
-	this->_check_list.error_page = false;
+    _check_list.location_block = false;
+	_check_list.listen = false;
+	_check_list.server_name = false;
+	_check_list.root = false;
+	_check_list.index = false;
+	_check_list.client_max_body_size = false;
+	_check_list.error_page = false;
 	return (*this);
 }
 
-size_t          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string config_file)
-{
-    std::cout << "yea" << std::endl;
-    std::cout << config_file.substr(*start_position) << std::endl;
+// trims whitespaces from the front and back
+std::string	ServerBlock::TrimValue(std::string value){
+	size_t	start = 0;
+	size_t	end = 0;
+
+	start = value.find_first_not_of(" \t\n\v\f\r");
+	end = value.find_last_not_of(" \t\n\v\f\r");
+	return (value.substr(start, end - start + 1));
+}
+
+// compares found key with possible key values and either returns the number in the list
+// or throws an error because a bad key has been found
+int			ServerBlock::IsKey(std::string key){
+	const std::string	key_name[] = {"location", "listen", "server_name", "root", "index", "client_max_body_size", "error_page"};
+	
+	std::cout << "key: " << key << std::endl;
+	int	is_key = std::find(key_name, key_name + 7, key) - key_name;
+	if (is_key < 0 || is_key > 6)
+		throw InvalidKeyException();
+	else
+		return (is_key);
+}
+
+// sets the value in the right key within the server class based off the IsKey return value
+int				ServerBlock::SetValue(int key, std::string value){
+	std::string		trimmed_value;
+
+	trimmed_value = TrimValue(value);
+	std::cout << "value: |" << trimmed_value << "|" << std::endl;
+
+	if (key == 0) {
+		_check_list.location_block = true;
+		LocationBlock	location(trimmed_value);
+		_location_blocks.push_back(location);
+	}
+	else {
+		switch(key) {
+			case 1:
+				if (_check_list.listen == true)
+					throw MultipleListensException();
+				_check_list.listen = true;
+				// SANNE: TRIMMED_VALUE CONTAINS THE STRING CONTAINING THE VALUE FOR LISTEN
+				// YOU CAN PUT YOU CAN INITIALISE YOUR LISTEN CLASS HERE AND USE THE TRIMMED_VALUE
+				// VARIABLE AS STRING
+				//_listen = value;
+				break ;
+			case 2:
+				_check_list.server_name = true;
+				// SANNE: TRIMMED_VALUE CONTAINS THE STRING CONTAINING THE VALUE FOR SERVER_NAME
+				// YOU CAN PUT YOU CAN INITIALISE YOUR SERVER_NAME CLASS HERE AND USE THE TRIMMED_VALUE
+				// VARIABLE AS STRING
+				//_server_name = value;
+				break ;
+			case 3:
+				_check_list.root = true;
+				_root = value;
+				break ;
+			case 4:
+				_check_list.index = true;
+				_index = value;
+				break ;
+			case 5:
+				_check_list.client_max_body_size = true;
+				_client_max_body_size = std::atoi(value.c_str());
+				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				break ;
+			case 6:
+				_check_list.error_page = true;
+				// TODO: DEPENDENT ON LOCATION
+				break ;
+		}
+	}
+	return (0);
+}
+
+// checks if the necessary blocks have been set and otherwise prints a warning
+// if something MUST be set, we should throw an exception
+void			ServerBlock::CheckListVerification(){
+	if (_check_list.location_block == false)
+		std::cerr << "WARNING! No location blocks detected. Default have been set." << std::endl;
+	if (_check_list.listen == false)
+		std::cerr << "WARNING! No listen detected. Default have been set." << std::endl;
+	if (_check_list.server_name == false)
+		std::cerr << "WARNING! No server_name detected. Default have been set." << std::endl;
+	if (_check_list.root == false)
+		std::cerr << "WARNING! No server root detected. Default have been set." << std::endl;
+	if (_check_list.index == false)
+		std::cerr << "WARNING! No index detected. Default have been set." << std::endl;
+	if (_check_list.client_max_body_size == false)
+		std::cerr << "WARNING! No client_max_body_size detected. Default have been set." << std::endl;
+	if (_check_list.error_page == false)
+		std::cerr << "WARNING! No error_page detected. Default have been set." << std::endl;
+}
+
+// starts after the { of the server{ 
+// finds the key and compares it with the possible keys.
+// if the key is deemed valid, it checks if a location key has been found
+// if so, it grabs the location block to use by looking for the first available }
+// otherwise it finds the ';' and sends that substring
+// to SetValue, which sets the value in the right key.
+// this function keeps checking until the end of the ServerBlock is reached.
+size_t          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string config_file) {
+	
+    int					i = *start_position;
+	size_t				key_start = 0;
+	size_t				key_end = 0;
+	size_t				value_end = 0;
+	int					ret;
+
+	while (config_file[i] != '}') {
+		key_start = config_file.find_first_not_of(" \t\n\v\f\r", i);
+		if (config_file[key_start] == '}') {
+			i = key_start;
+			break ;
+		}
+		key_end = config_file.find_first_of(" \t\n\v\f\r", key_start);
+		ret = IsKey(config_file.substr(key_start, key_end - key_start));
+		if (ret == 0) {
+			std::cout << "location block found" << std::endl;
+			value_end = config_file.find_first_of('}', key_end);
+		}
+		else
+			value_end = config_file.find_first_of(';', key_end);
+		SetValue(ret, config_file.substr(key_end, value_end - key_end));
+		i = value_end + 1;
+	}
+	*start_position = i;
+	CheckListVerification();
     return (*start_position);
 }
 

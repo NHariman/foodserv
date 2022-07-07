@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/05 19:59:18 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/07 19:43:13 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 //       A & operator = (const A &a);
 // };
 
+// TODO:
+// create basic error checking, open brackets etc.
 
 class NginxConfig {
 	private:
@@ -36,11 +38,13 @@ class NginxConfig {
 		std::vector<ServerBlock>	_servers;
 		size_t						_amount_server_blocks;
 
+		NginxConfig();
 		bool		IsServerBlock(size_t *start_position);
+		bool		CheckBrackets();
 
 	public:
 		// coplien form
-		NginxConfig();
+		NginxConfig(const char*		location);
 		NginxConfig(const NginxConfig& obj);
 		~NginxConfig(){};
 		NginxConfig & operator= (const NginxConfig& obj);
@@ -50,9 +54,36 @@ class NginxConfig {
 		void		LoadConfigFile(std::ifstream&	configuration_file);
 		size_t		GetServerBlockAmount() const;
 		std::vector<ServerBlock>	GetServers() const;
-		// NginxConfig(); // sets defaults
-		// int		ParseConfigFile(std::ifstream& config_file);
-		// .. bla bla add in conplien
+
+		//exceptions
+		class GetLineFailureException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! std::getline failure.";
+				}
+		};
+		class OpenBracketsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Open brackets detected.";
+				}
+		};
+		class NoServerBlocksException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! No servers detected.";
+				}
+		};
+		class InvalidFileLocationException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Cannot open specified file.";
+				}
+		};
 };
 
 #endif
