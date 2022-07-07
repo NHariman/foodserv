@@ -6,14 +6,14 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:36 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/07 21:27:58 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/07 21:34:38 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location_block.hpp"
 
 LocationBlock::LocationBlock(std::string data) {
-
+    std::cerr << "In LocationBlock now" << std::endl;
 }
 
 LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {

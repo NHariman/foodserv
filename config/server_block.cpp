@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/07 21:30:45 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/07 21:34:08 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@
 // "<head><title>404 Not Found</title></head>" CRLF
 // "<body>" CRLF
 // "<center><h1>404 Not Found</h1></center>" CRLF
-;
+//;
+
+// clang++ main.cpp config/server_block.cpp config/location_block.cpp config/nginx_config.cpp && ./a.out 
 
 ServerBlock::ServerBlock() : _client_max_body_size(0){
 	_listen = "80";
@@ -84,6 +86,7 @@ ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
 }
 
 // trims whitespaces from the front and back
+// could probably be made into something general. but for now this'll do.
 std::string	ServerBlock::TrimValue(std::string value){
 	size_t	start = 0;
 	size_t	end = 0;
