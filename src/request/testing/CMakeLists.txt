@@ -21,7 +21,7 @@ add_executable(
   request_test # test executable name
   request_line.cpp
   request_target.cpp
-  ../request_parser0.cpp
+  ../request_parser.cpp
   ../uri.cpp
   ../request_utils.cpp
   ../request_target_parser.cpp

@@ -42,10 +42,11 @@ struct RequestLine {
 class RequestParser  : public StateParser<RequestState> {
 	public:
 		RequestParser();
+		// char array constructor
+		RequestParser(char const* buffer);
 		~RequestParser();
 
 		void	Parse(char const* buffer);
-		void	ParseRequest(char const* buffer);
 		string	GetMethod();
 		string	GetTarget();
 		string	GetVersion();
@@ -59,9 +60,6 @@ class RequestParser  : public StateParser<RequestState> {
 		size_t	_bytes_read;
 		size_t	_header_fields_size;
 
-		size_t	ParseRequestLine(string const& message);
-		size_t	ParseMethod(string const& message);
-		size_t	ParseTarget(string const& message, size_t start);
 		RequestState	StartHandler(size_t pos);
 		RequestState	MethodHandler(size_t pos);
 		RequestState	MethodDoneHandler(size_t pos);

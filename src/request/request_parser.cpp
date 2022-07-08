@@ -51,23 +51,20 @@ CreateResponse
 #define DEBUG 0 // TODO: REMOVE
 
 // Default constructor
-RequestParser::RequestParser() : _bytes_read(0) {
-	
+RequestParser::RequestParser() : _bytes_read(0) {}
+
+// Char array constructor
+RequestParser::RequestParser(char const* buffer) : _bytes_read(0) {
+	Parse(buffer);
 }
 
 // Destructor
-RequestParser::~RequestParser() {
-	
-}
+RequestParser::~RequestParser() {}
 
 void	RequestParser::Parse(char const* buffer) {
 	string	request(buffer);
 
 	ParseString(request);
-	cout << "Parsed method: " << _request_line.method << endl; // DEBUG
-	cout << "Target input: " << _request_line.target.GetInputURI() << endl; // DEBUG
-	cout << "Parsed target: " << _request_line.target.GetURIDebug() << endl; // DEBUG
-	cout << "Parsed version: " << _request_line.version << endl;  // DEBUG
 }
 
 RequestState	RequestParser::SetStartState() const {
@@ -121,6 +118,10 @@ void	RequestParser::PreParseCheck() {
 void	RequestParser::AfterParseCheck(size_t pos) {
 	// if (cur_state == r_Done && pos < input.size() - 1)
 	// 	throw BadRequestException();
+	cout << "Parsed method: " << _request_line.method << endl; // DEBUG
+	cout << "Target input: " << _request_line.target.GetInputURI() << endl; // DEBUG
+	cout << "Parsed target: " << _request_line.target.GetURIDebug() << endl; // DEBUG
+	cout << "Parsed version: " << _request_line.version << endl;  // DEBUG
 	(void)pos;
 }
 
@@ -200,15 +201,25 @@ RequestState RequestParser::TargetDoneHandler(size_t pos) {
 	return ValidDelimiter(IsSpace, pos);
 }
 
+static size_t	GetVersionEnd(string input, size_t pos) {
+	size_t	nl_pos = GetEndPos(input, '\n', pos);
+	size_t	cr_pos = GetEndPos(input, '\r', pos);
+
+	if (nl_pos == pos)
+		throw BadRequestException();
+	if (cr_pos != pos)
+		return cr_pos;
+	return nl_pos;
+}
+
 // Checks if HTTP version is valid (only 1.1 is accepted).
 RequestState RequestParser::VersionHandler(size_t pos) {
 	if (DEBUG) cout << "[Version Handler]\n";
 
-	size_t	version_end = GetEndPos(input, '\n', pos);
-	if (version_end == pos)
-		throw BadRequestException();
-
+	size_t	version_end = GetVersionEnd(input, pos);
 	string	version = input.substr(pos, version_end);
+	if (version.front() != 'H' || !isdigit(version.back()))
+		throw BadRequestException();
 	if (version != "HTTP/1.1")
 		throw HTTPVersionNotSupportedException();
 	_request_line.version = version;
@@ -241,57 +252,13 @@ RequestState RequestParser::VersionDoneHandler(size_t pos) {
 
 RequestState RequestParser::FieldNameHandler(size_t pos) {
 	(void)pos;
+	_header_fields_size += 1;
 	return r_Done;
 }
 
 // RequestState RequestParser::FieldValueHandler(size_t pos) {
 
 // }
-
-
-size_t	RequestParser::ParseRequestLine(string const& message) {
-	size_t read = 0;
-	size_t read_until = message.find_first_of("\n"); // recognizes single LF as linebreak for robustness
-
-	if (read_until == string::npos)  // if no line terminator found
-		throw BadRequestException();
-
-	while (read < read_until) {
-		read += ParseMethod(message);
-		cout << "Parsed method: " << _request_line.method << endl; // DEBUG
-		read += ParseTarget(message, read);
-		cout << "Target input: " << _request_line.target.GetInputURI() << endl; // DEBUG
-		cout << "Parsed target: " << _request_line.target.GetURIDebug() << endl; // DEBUG
-		return read;
-	}
-	return read;
-}
-
-size_t	RequestParser::ParseMethod(string const& message) {
-	cout << "ParseMethod\n"; // DEBUG
-	
-	size_t method_end = message.find_first_of(" ");
-	string method = message.substr(0, method_end);
-
-	// if method breaks grammar rules or there's more than 1 space, throw Bad Request exception
-	if (method.size() == 0 || !IsValidString(IsTChar, method) || IsSpace(message[method_end + 1]))
-		throw BadRequestException();
-	// TODO: add not-implemented-method check
-	_request_line.method = method;
-	return method_end + 1;
-}
-
-size_t	RequestParser::ParseTarget(string const& message, size_t start) {
-	cout << "ParseTarget\n"; // DEBUG
-	
-	size_t method_end = message.find_first_of(" ", start);
-	string target = message.substr(start, method_end - start);
-
-	if (IsSpace(message[method_end + 1])) // if there's more than 1 space
-		throw BadRequestException();
-	_request_line.target = target;
-	return method_end + 1;
-}
 
 string	RequestParser::GetMethod() {
 	return _request_line.method;
