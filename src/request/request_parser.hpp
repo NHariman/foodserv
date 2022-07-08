@@ -24,7 +24,6 @@ enum RequestState {
 	r_Target_Done,
 	r_Version,
 	r_Version_Done,
-	r_FieldStart,
 	r_FieldName,
 	r_FieldValue,
 	r_FieldDone,
@@ -58,6 +57,7 @@ class RequestParser  : public StateParser<RequestState> {
 		map<string, string>	_header_fields;
 		string	_msg_body;
 		size_t	_bytes_read;
+		size_t	_header_fields_size;
 
 		size_t	ParseRequestLine(string const& message);
 		size_t	ParseMethod(string const& message);
@@ -67,10 +67,11 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestState	MethodDoneHandler(size_t pos);
 		RequestState	TargetHandler(size_t pos);
 		RequestState	TargetDoneHandler(size_t pos);
-		// RequestState	VersionHandler(size_t pos);
-		// RequestState	FieldNameHandler(size_t pos);
+		RequestState	VersionHandler(size_t pos);
+		RequestState	VersionDoneHandler(size_t pos);
+		RequestState	FieldNameHandler(size_t pos);
 		// RequestState	FieldValueHandler(size_t pos);
-		RequestState	ValidSeparator(bool (*valid)(char), size_t pos);
+		RequestState	ValidDelimiter(bool (*valid)(char), size_t pos);
 
 	protected:
 		RequestState	SetStartState() const;

@@ -6,8 +6,6 @@
 #include "request_utils.hpp"
 #include "state_parser.hpp"
 
-#define DEBUG 0 // REMOVE
-
 using namespace std;
 
 class URI;

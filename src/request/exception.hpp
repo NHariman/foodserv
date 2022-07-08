@@ -23,12 +23,31 @@ class URITooLongException : public exception {
 		}
 };
 
+// Used for: request header fields in total or a single one exceeds
+// 8192 bytes (8kb) (following IBM & Apache).
+// Should return 431 code.
+class RequestHeaderFieldsTooLargeException : public exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("431: Request Header Fields Too Large");
+		}
+};
+
 // Used for: method not implemented.
 // Should return 501 code.
 class NotImplementedException : public exception {
 	public:
 		virtual const char* what() const throw() {
 			return ("501: Not Implemented");
+		}
+};
+
+// Used for: when request states something other than HTTP/1.1.
+// Should return 505 code.
+class HTTPVersionNotSupportedException : public exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("505: HTTP Version Not Supported");
 		}
 };
 

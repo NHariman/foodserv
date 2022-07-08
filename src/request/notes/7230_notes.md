@@ -138,6 +138,13 @@ Source:
 [Section 3.1.1](https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1)
 <br/><br/>
 
+### Field limits:
+>  A server that receives a request header field, or set of fields, larger than it wishes to process MUST respond with an appropriate 4xx (Client Error) status code.  Ignoring such header fields would increase the server's vulnerability to request smuggling attacks.  
+
+Source:
+[Section 3.2.5](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.5)
+<br/><br/>
+
 
 ## Errors
 
@@ -192,13 +199,6 @@ Source:
 [Section 3.1.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.2)
 <br/><br/>
 
-
-### :
->  .  
-
-Source:
-[]()
-<br/><br/>
 
 ### :
 >  .  

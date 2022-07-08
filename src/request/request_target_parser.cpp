@@ -1,5 +1,7 @@
 #include "request_target_parser.hpp"
 
+#define DEBUG 0 // REMOVE
+
 RequestTargetParser::RequestTargetParser(URI& uri) : _uri(&uri) {}
 
 RequestTargetParser::~RequestTargetParser() {}
@@ -189,3 +191,4 @@ void	RequestTargetParser::DecodePercent() {
 	newbuffer += c;
 	buffer = newbuffer;
 } 
+#undef DEBUG // REMOVE
