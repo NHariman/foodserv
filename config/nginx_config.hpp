@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/09 00:07:36 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/09 01:42:23 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class NginxConfig {
 		size_t						_amount_server_blocks;
 
 		NginxConfig();
-		bool		IsServerBlock(size_t *start_position);
+		bool		IsServerBlock(std::string value, size_t *start_pos);
 		void		CheckBrackets();
 		void		FindServerBlocks();
 		void		LoadConfigFile(std::ifstream&	configuration_file);
@@ -89,7 +89,7 @@ class NginxConfig {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! No servers detected.";
+					return "ERROR! Bad server keyword detected.";
 				}
 		};
 		class InvalidFileLocationException : public std::exception

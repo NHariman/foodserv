@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/09 00:58:13 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/09 01:41:42 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,24 +95,21 @@ void	NginxConfig::LoadConfigFile(std::ifstream& configuration_file) {
 }
 
 // checks if the server block is correctly written
-bool		NginxConfig::IsServerBlock(size_t *start_position) {
-	size_t	end_position = _config_file.find_first_of(" \t\n\v\f\r", *start_position);
-	// std::string	key = _config_file.substr(*start_position, end_position - *start_position);
-	size_t	found = _config_file.find("server", *start_position);
-
-	if (found == std::string::npos)
-		return false;
-	else if (_config_file[found + 6] == '{' || std::isspace(_config_file[found + 6])) {
-		found = found + 6; // moves to the end of "server"
-		while (std::isspace(_config_file[found]))
-			found++;
-		if (_config_file[found] != '{')
+bool		NginxConfig::IsServerBlock(std::string value, size_t *start_pos) {
+	if (value.compare("server") || value.compare("server{")) {
+		if (_config_file[*start_pos + 6] == '{' || std::isspace(_config_file[*start_pos + 6])) {
+		*start_pos = *start_pos + 6; // moves to the end of "server"
+		while (std::isspace(_config_file[*start_pos]))
+			*start_pos = *start_pos + 1;
+		if (_config_file[*start_pos] != '{')
 			throw BadServerBlockException();
-		*start_position = found + 1;
+		*start_pos = *start_pos + 1;
 		return true;
 	}
-	// else if (key.compare("server") != 0)
-	// 	throw BadKeywordException();
+	else
+		throw BadServerBlockException();
+	}
+	throw BadServerBlockException();
 	return false;
 }
 
@@ -120,16 +117,21 @@ bool		NginxConfig::IsServerBlock(size_t *start_position) {
 // when it finds one, it increases the _amount_server_block count and adds the server to the vector.
 // if no server blocks are found, an error is thrown
 void		NginxConfig::FindServerBlocks() {
-	size_t		i = _config_file.find_first_not_of(" \t\n\v\f\r", i);
+	size_t		i = 0;
+	size_t		key_start = 0;
+	size_t		key_end = 0;
 
-	while(_config_file[i] != std::string::npos) {
-		if (IsServerBlock(&i))
-		{
-			std::cout << "found a ServerBlock" << std::endl;
-			this->_amount_server_blocks++;
-			ServerBlock server(&i, _config_file);
-			this->_servers.push_back(server);
-			//std::cout << _config_file.substr(i);
+	while (_config_file[i] != std::string::npos) {
+		key_start = _config_file.find_first_not_of(" \t\n\v\f\r", i);
+		key_end = _config_file.find_first_of(" \t\n\v\f\r", key_start);
+		if (key_start != std::string::npos && key_end != std::string::npos) {
+			i = key_start;
+			if (IsServerBlock(_config_file.substr(key_start, key_end - key_start), &i)) {
+				std::cout << "found a ServerBlock" << std::endl;
+				this->_amount_server_blocks++;
+				ServerBlock server(&i, _config_file);
+				this->_servers.push_back(server);
+			}
 		}
 		i++;
 	}
