@@ -16,6 +16,8 @@
 		|_ field-value =	*( field-content )
 			|_ field-content =	field-vchar [ 1*( SP / HTAB ) field-vchar ]
 				|_ VCHAR          =  %x21-7E ; visible (printing) characters
+		|_  OWS =	*( SP / HTAB ) ; optional whitespace
+     		RWS =	1*( SP / HTAB ) ; required whitespace
 
 	|_ message-body = *OCTET
 
