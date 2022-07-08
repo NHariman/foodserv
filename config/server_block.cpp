@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/07 21:34:08 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 16:49:01 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,12 @@
 // clang++ main.cpp config/server_block.cpp config/location_block.cpp config/nginx_config.cpp && ./a.out 
 
 ServerBlock::ServerBlock() : _client_max_body_size(0){
-	_listen = "80";
-	_server_name = "localhost";
+	// _listen = "80";
+	// changed by sanne
+	_listen.first = 80;
+	_listen.second = 0;
+	// _server_name = "localhost";
+	_server_name.push_back("localhost"); // feel like we need to take this out
 	_root = "/var/www/html";
 	_index = "index.html";
 	_client_max_body_size = 0;
@@ -124,6 +128,7 @@ int				ServerBlock::SetValue(int key, std::string value){
 	else {
 		switch(key) {
 			case 1:
+			{
 				if (_check_list.listen == true)
 					throw MultipleListensException();
 				_check_list.listen = true;
@@ -131,14 +136,24 @@ int				ServerBlock::SetValue(int key, std::string value){
 				// YOU CAN PUT YOU CAN INITIALISE YOUR LISTEN CLASS HERE AND USE THE TRIMMED_VALUE
 				// VARIABLE AS STRING
 				//_listen = value;
+				// changed by sanne
+				Listen	listen_port_ip(value);
+				_listen.first = listen_port_ip.getIpNumber();
+				_listen.second = listen_port_ip.getIpNumber();
 				break ;
+			}
 			case 2:
+			{
 				_check_list.server_name = true;
 				// SANNE: TRIMMED_VALUE CONTAINS THE STRING CONTAINING THE VALUE FOR SERVER_NAME
 				// YOU CAN PUT YOU CAN INITIALISE YOUR SERVER_NAME CLASS HERE AND USE THE TRIMMED_VALUE
 				// VARIABLE AS STRING
+				// changed by sanne
+				ServerName	server_name(value);
+				_server_name = server_name.GetServerNames();
 				//_server_name = value;
 				break ;
+			}
 			case 3:
 				_check_list.root = true;
 				_root = value;
@@ -222,11 +237,11 @@ std::vector<LocationBlock>	ServerBlock::GetLocationBlocks() const {
     return this->_location_blocks;
 }
 
-std::string					ServerBlock::GetListen() const {
+std::pair<in_addr_t, int>	ServerBlock::GetListen() const {
     return this->_listen;
 }
 
-std::string					ServerBlock::GetServerName() const {
+std::vector<std::string>	ServerBlock::GetServerName() const {
     return this->_server_name;
 }
 

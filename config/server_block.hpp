@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/07 21:00:13 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 16:56:15 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <iostream>
 #include <map>
 #include "location_block.hpp"
+#include "server_name.hpp"
+#include "listen.hpp"
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -33,8 +35,8 @@ class ServerBlock {
 		}	_check_list; // check list of found keywords in serverblock
 
 		std::vector<LocationBlock>	_location_blocks;
-		std::string					_listen; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
-		std::string					_server_name; // SANNE: FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS
+		std::pair<in_addr_t, int>	_listen; // changed by sanne
+		std::vector<std::string>	_server_name; // changed by sanne
 		std::string					_root;
 		std::string					_index;
 		int							_client_max_body_size;
@@ -54,8 +56,8 @@ class ServerBlock {
 		
 		size_t						FindKeyValuePairs(size_t *start_position, std::string config_file);
 		std::vector<LocationBlock>	GetLocationBlocks() const;
-		std::string					GetListen() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
-		std::string					GetServerName() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS
+		std::pair<in_addr_t, int>	GetListen() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
+		std::vector<std::string>	GetServerName() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS
 		std::string					GetRoot() const;
 		std::string					GetIndex() const;
 		int							GetClientMaxBodySize() const;
