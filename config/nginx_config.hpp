@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/07 19:43:13 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/09 00:07:36 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ class NginxConfig {
 
 		NginxConfig();
 		bool		IsServerBlock(size_t *start_position);
-		bool		CheckBrackets();
+		void		CheckBrackets();
+		void		FindServerBlocks();
+		void		LoadConfigFile(std::ifstream&	configuration_file);
 
 	public:
 		// coplien form
@@ -49,9 +51,8 @@ class NginxConfig {
 		~NginxConfig(){};
 		NginxConfig & operator= (const NginxConfig& obj);
 
+		// getters
 		std::string	GetConfigFile() const;
-		size_t		FindServerBlocks();
-		void		LoadConfigFile(std::ifstream&	configuration_file);
 		size_t		GetServerBlockAmount() const;
 		std::vector<ServerBlock>	GetServers() const;
 
@@ -70,7 +71,21 @@ class NginxConfig {
 					return "ERROR! Open brackets detected.";
 				}
 		};
+		class BadKeywordException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Bad Keyword, not a server block.";
+				}
+		};
 		class NoServerBlocksException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! No servers detected.";
+				}
+		};
+		class BadServerBlockException : public std::exception
 		{
 			public:
 				const char *what() const throw() {

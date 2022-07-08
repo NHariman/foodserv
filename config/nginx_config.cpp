@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 20:55:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/09 00:58:13 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ NginxConfig & NginxConfig::operator=(const NginxConfig& obj) {
 }
 
 // checks if there are no open brackets
-bool	NginxConfig::CheckBrackets(){
+void	NginxConfig::CheckBrackets(){
 	int open_brackets = 0;
 	int closed_brackets = 0;
 	int	i = 0;
@@ -72,9 +72,9 @@ bool	NginxConfig::CheckBrackets(){
 		i++;
 	}
 	if (open_brackets == closed_brackets)
-		return true;
+		return ;
 	else
-		return false;
+		throw OpenBracketsException();
 }
 
 // gets the content from the file and removes all comments
@@ -91,12 +91,13 @@ void	NginxConfig::LoadConfigFile(std::ifstream& configuration_file) {
 		if (current_string.empty() == false && current_string.find_first_not_of(" \t\n\v\f\r") != std::string::npos)
 			_config_file.append(current_string + '\n');
 	}
-	if (CheckBrackets() == false)
-		throw OpenBracketsException();
+	CheckBrackets();
 }
 
 // checks if the server block is correctly written
 bool		NginxConfig::IsServerBlock(size_t *start_position) {
+	size_t	end_position = _config_file.find_first_of(" \t\n\v\f\r", *start_position);
+	// std::string	key = _config_file.substr(*start_position, end_position - *start_position);
 	size_t	found = _config_file.find("server", *start_position);
 
 	if (found == std::string::npos)
@@ -106,33 +107,35 @@ bool		NginxConfig::IsServerBlock(size_t *start_position) {
 		while (std::isspace(_config_file[found]))
 			found++;
 		if (_config_file[found] != '{')
-			return false;
+			throw BadServerBlockException();
 		*start_position = found + 1;
 		return true;
 	}
+	// else if (key.compare("server") != 0)
+	// 	throw BadKeywordException();
 	return false;
 }
 
 // looks for server{}s
 // when it finds one, it increases the _amount_server_block count and adds the server to the vector.
 // if no server blocks are found, an error is thrown
-size_t		NginxConfig::FindServerBlocks() {
-	size_t		i = _config_file.find_first_not_of(" \t\n\v\f\r");
+void		NginxConfig::FindServerBlocks() {
+	size_t		i = _config_file.find_first_not_of(" \t\n\v\f\r", i);
 
 	while(_config_file[i] != std::string::npos) {
 		if (IsServerBlock(&i))
 		{
 			std::cout << "found a ServerBlock" << std::endl;
 			this->_amount_server_blocks++;
-			ServerBlock server;
-			server.FindKeyValuePairs(&i, _config_file);
+			ServerBlock server(&i, _config_file);
 			this->_servers.push_back(server);
+			//std::cout << _config_file.substr(i);
 		}
 		i++;
 	}
 	if (_amount_server_blocks == 0)
 		throw NoServerBlocksException();
-	return (_amount_server_blocks);
+	return ;
 }
 
 

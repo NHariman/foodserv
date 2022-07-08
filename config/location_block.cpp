@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:36 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 20:45:59 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 22:01:49 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ LocationBlock::LocationBlock(std::string data) {
     _check_list.root = false;
     _check_list.index = false;
     _check_list.client_max_body_size = false;
-    _check_list.error_page = false;
-    //GetKeyValuePairs(data);
+	_check_list.error_page = false;
+    _check_list.proxy_pass = false;
+    GetKeyValuePairs(data);
 }
 
 LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
@@ -40,7 +41,8 @@ LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
     _root = location_block.GetRoot();
     _index = location_block.GetIndex();
     _client_max_body_size = location_block.GetClientMaxBodySize();
-    _error_page = location_block.GetErrorPage();
+	_error_page = location_block.GetErrorPage();
+    _proxy_pass = location_block.GetProxyPass();
     return (*this);
 }
 LocationBlock::LocationBlock(const LocationBlock& location_block) {
@@ -49,15 +51,18 @@ LocationBlock::LocationBlock(const LocationBlock& location_block) {
     _root = location_block.GetRoot();
     _index = location_block.GetIndex();
     _client_max_body_size = location_block.GetClientMaxBodySize();
-    _error_page = location_block.GetErrorPage();
+	_error_page = location_block.GetErrorPage();
+    _proxy_pass = location_block.GetProxyPass();
 }
 
 int			            LocationBlock::IsKey(std::string key){
-	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page"};
+	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "proxy_pass"};
 	
 	std::cout << "key: " << key << std::endl;
-	int	is_key = std::find(key_name, key_name + 5, key) - key_name;
-	if (is_key < 0 || is_key > 4)
+    if (_check_list.uri == false)
+        return 6;
+	int	is_key = std::find(key_name, key_name + 6, key) - key_name;
+	if (is_key < 0 || is_key > 5)
 		throw InvalidKeyException();
 	else
 		return (is_key);
@@ -69,33 +74,37 @@ void				LocationBlock::SetValue(int key, std::string value){
 	trimmed_value = TrimValue(value);
 	std::cout << "value: |" << trimmed_value << "|" << std::endl;
 
-	if (key == 0) {
+	if (key == 6) {
 		_check_list.uri = true;
         //do thing
 	}
 	else {
 		switch(key) {
-			case 1:
+			case 0:
 			{
 				_check_list.autoindex = true;
 				break ;
 			}
-			case 2:
+			case 1:
 				_check_list.root = true;
 				_root = value;
 				break ;
-			case 3:
+			case 2:
 				_check_list.index = true;
 				_index = value;
 				break ;
-			case 4:
+			case 3:
 				_check_list.client_max_body_size = true;
 				_client_max_body_size = std::atoi(value.c_str());
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
-			case 5:
+            case 4:
 				_check_list.error_page = true;
-				// TODO: DEPENDENT ON LOCATION
+				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				break ;
+            case 5:
+				_check_list.proxy_pass = true;
+				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
 		}
 	}
@@ -112,8 +121,8 @@ void			LocationBlock::CheckListVerification(){
 		std::cerr << "WARNING! No location index detected. Default have been set." << std::endl;
 	if (_check_list.client_max_body_size == false)
 		std::cerr << "WARNING! No client_max_body_size in locationblock detected. Default have been set." << std::endl;
-	if (_check_list.error_page == false)
-		std::cerr << "WARNING! No error_page in locationblock detected. Default have been set." << std::endl;
+	if (_check_list.proxy_pass == false)
+		std::cerr << "WARNING! No proxy_pass in locationblock detected. Default have been set." << std::endl;
 }
 
 void                        LocationBlock::GetKeyValuePairs(std::string data) {
@@ -123,20 +132,22 @@ void                        LocationBlock::GetKeyValuePairs(std::string data) {
 	int					ret;
     int                 i = 0;
     
-    while (data[i] != std::string::npos) {
+    while (data[i] != '}') {
 		key_start = data.find_first_not_of(" \t\n\v\f\r", i);
-		if (data[key_start] == std::string::npos) {
+		if (data[key_start] == '}') {
 			break ;
 		}
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
 		ret = IsKey(data.substr(key_start, key_end - key_start));
-		if (ret == 0) {
-			std::cout << "location block found" << std::endl;
-			value_end = data.find_first_of('}', key_end);
+		if (ret == 6) {
+			std::cout << "uri block found" << std::endl;
+            SetValue(ret, data.substr(key_start, key_end - key_start));
+			value_end = data.find_first_of('{', key_end);
 		}
-		else
-			value_end = data.find_first_of(';', key_end);
-		SetValue(ret, data.substr(key_end, value_end - key_end));
+		else {
+            value_end = data.find_first_of(';', key_end);
+		    SetValue(ret, data.substr(key_end, value_end - key_end));
+        }
 		i = value_end + 1;
 	}
 	CheckListVerification();
@@ -163,6 +174,10 @@ int							LocationBlock::GetClientMaxBodySize() const {
     return this->_client_max_body_size;
 }
 
-std::map<int, std::string>	LocationBlock::GetErrorPage() const {
+std::string	                LocationBlock::GetErrorPage() const {
     return this->_error_page;
+}
+
+std::string	                LocationBlock::GetProxyPass() const {
+    return this->_proxy_pass;
 }

@@ -34,12 +34,33 @@ The locations are literal string matches.
 Multiple location blocks can be found inside a server block.
 
 ### Contains
+- uri, literal string before the {} part [(more info here)](https://www.plesk.com/blog/various/nginx-configuration-guide/)
 - root, indicates which folder to start looking for files in
 - index, indicates which index files to select
+- proxy_pass
 - fastcgi_pass (OPTIONAL)
 - fastcgi_index (OPTIONAL)
 - fastcgi_param (OPTIONAL)
     - fastcgi tells nginx to forward requests from clients to a backend server. [(more info here)](https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx)
+ examples:
+ ```
+                location / {
+                       autoindex on;
+                       # First attempt to serve request as file, then
+                       # as directory, then fall back to displaying a 404.
+                       try_files $uri $uri/ =404;
+               }
+              location /test/ {
+                       autoindex on;
+                       # First attempt to serve request as file, then
+                       # as directory, then fall back to displaying a 404.
+                       try_files $uri $uri/ =404;
+               }
+
+               location /cgi-bin {
+                     proxy_pass http://127.0.0.1:8080;
+              }
+```
 
 # Variables to implement ($var)
 `$uri` - the URI that nginx is currently processing. Contains the normalised URI (Uniform resource identifier).

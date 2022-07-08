@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 20:42:49 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 22:43:49 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,19 +43,19 @@ class ServerBlock {
 		std::map<int, std::string>	_error_page;
 
 		int							IsKey(std::string key);
-		int							SetValue(int key, std::string value);
+		void						SetValue(int key, std::string value);
 		void						CheckListVerification();
+		void						FindKeyValuePairs(size_t *start_position, std::string config_file);
 		
 		
 	public:
-		ServerBlock(std::ifstream &file, size_t *start); // uses a pointer so it can skip through the server bits on its own when it returns
+		ServerBlock(size_t *start, std::string config_file); // uses a pointer so it can skip through the server bits on its own when it returns
 		ServerBlock();
 		ServerBlock(const ServerBlock &server_block);
 		ServerBlock & operator= (const ServerBlock &server_block);
 		~ServerBlock(){};
 		
-		size_t						FindKeyValuePairs(size_t *start_position, std::string config_file);
-		
+		//getters
 		std::vector<LocationBlock>	GetLocationBlocks() const;
 		std::pair<in_addr_t, int>	GetListen() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
 		std::vector<std::string>	GetServerName() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS

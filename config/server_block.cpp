@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 20:35:50 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 22:45:27 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,32 @@
 //;
 
 // clang++ main.cpp config/server_block.cpp config/location_block.cpp config/nginx_config.cpp && ./a.out 
+ServerBlock::ServerBlock(size_t *start, std::string config_file) {
+	// _listen = "80";
+	// changed by sanne
+	_listen.first = 80;
+	_listen.second = 0;
+	// _server_name = "localhost";
+	_server_name.push_back("localhost"); // feel like we need to take this out
+	_root = "/var/www/html";
+	_index = "index.html";
+	_client_max_body_size = 0;
+    //this->_error_page.insert(std::pair<int, std::string>(404, "/404.html")); \
+    // if by the end of the FindKeyValuePairs() function no locationblocks or error_pages are found, fill them in?
+    // TODO:
+    // add defaults for location_blocks
+
+    // _check_list copy
+    _check_list.location_block = false;
+	_check_list.listen = false;
+	_check_list.server_name = false;
+	_check_list.root = false;
+	_check_list.index = false;
+	_check_list.client_max_body_size = false;
+	_check_list.error_page = false;
+	FindKeyValuePairs(start, config_file);
+}
+
 
 ServerBlock::ServerBlock() : _client_max_body_size(0){
 	// _listen = "80";
@@ -114,7 +140,7 @@ int			ServerBlock::IsKey(std::string key){
 }
 
 // sets the value in the right key within the server class based off the IsKey return value
-int				ServerBlock::SetValue(int key, std::string value){
+void				ServerBlock::SetValue(int key, std::string value){
 	std::string		trimmed_value;
 
 	trimmed_value = TrimValue(value);
@@ -137,7 +163,7 @@ int				ServerBlock::SetValue(int key, std::string value){
 				// VARIABLE AS STRING
 				//_listen = value;
 				// changed by sanne
-				Listen	listen_port_ip(value);
+				Listen	listen_port_ip(trimmed_value);
 				_listen.first = listen_port_ip.getIpNumber();
 				_listen.second = listen_port_ip.getIpNumber();
 				break ;
@@ -149,7 +175,7 @@ int				ServerBlock::SetValue(int key, std::string value){
 				// YOU CAN PUT YOU CAN INITIALISE YOUR SERVER_NAME CLASS HERE AND USE THE TRIMMED_VALUE
 				// VARIABLE AS STRING
 				// changed by sanne
-				ServerName	server_name(value);
+				ServerName	server_name(trimmed_value);
 				_server_name = server_name.GetServerNames();
 				//_server_name = value;
 				break ;
@@ -173,7 +199,7 @@ int				ServerBlock::SetValue(int key, std::string value){
 				break ;
 		}
 	}
-	return (0);
+	return ;
 }
 
 // checks if the necessary blocks have been set and otherwise prints a warning
@@ -202,7 +228,7 @@ void			ServerBlock::CheckListVerification(){
 // otherwise it finds the ';' and sends that substring
 // to SetValue, which sets the value in the right key.
 // this function keeps checking until the end of the ServerBlock is reached.
-size_t          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string config_file) {
+void          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string config_file) {
 	
     int					i = *start_position;
 	size_t				key_start = 0;
@@ -221,15 +247,17 @@ size_t          ServerBlock::FindKeyValuePairs(size_t *start_position, std::stri
 		if (ret == 0) {
 			std::cout << "location block found" << std::endl;
 			value_end = config_file.find_first_of('}', key_end);
+			SetValue(ret, config_file.substr(key_end, value_end - key_end + 1));
 		}
-		else
+		else {
 			value_end = config_file.find_first_of(';', key_end);
-		SetValue(ret, config_file.substr(key_end, value_end - key_end));
+			SetValue(ret, config_file.substr(key_end, value_end - key_end));
+		}
+
 		i = value_end + 1;
 	}
 	*start_position = i;
 	CheckListVerification();
-    return (*start_position);
 }
 
 //getters

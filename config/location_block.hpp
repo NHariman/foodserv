@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:39 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 20:38:55 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 22:25:40 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,23 @@ class LocationBlock {
 			bool	index;
 			bool	client_max_body_size;
 			bool	error_page;
+			bool	proxy_pass;
 		}	_check_list; // check list of found keywords in locationblock
 		std::string					_uri;
 		bool						_autoindex;
 		std::string					_root;
 		std::string					_index;
 		int							_client_max_body_size;
-		std::map<int, std::string>	_error_page;
+		std::string					_error_page;
+		std::string					_proxy_pass;
 		LocationBlock(){};
 		void						GetKeyValuePairs(std::string data);
 		int							IsKey(std::string key);
 		void						SetValue(int key, std::string value);
 		void						CheckListVerification();
+
+		// input validation
+		void						SetUri(std::string uri);
 
 	public:
 		LocationBlock(std::string data);
@@ -66,7 +71,8 @@ class LocationBlock {
 		std::string					GetRoot() const;
 		std::string					GetIndex() const;
 		int							GetClientMaxBodySize() const;
-		std::map<int, std::string>	GetErrorPage() const;
+		std::string					GetProxyPass() const;
+		std::string					GetErrorPage() const;
 
 		// exception classes
 		class InvalidKeyException : public std::exception
