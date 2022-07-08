@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/07 21:29:00 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 20:55:28 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ NginxConfig & NginxConfig::operator=(const NginxConfig& obj) {
 bool	NginxConfig::CheckBrackets(){
 	int open_brackets = 0;
 	int closed_brackets = 0;
-	int	i;
+	int	i = 0;
 
 	while(_config_file[i] != std::string::npos)
 	{

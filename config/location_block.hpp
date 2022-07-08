@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:39 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/07 21:25:43 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 20:38:55 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,20 @@
 //       A & operator = (const A &a);
 // };
 
+//string trimming util for serverblocks and location blocks
+std::string	TrimValue(std::string value);
+
 class LocationBlock {
 	private:
+		struct s_components
+		{
+			bool	uri;
+			bool	autoindex;
+			bool	root;
+			bool	index;
+			bool	client_max_body_size;
+			bool	error_page;
+		}	_check_list; // check list of found keywords in locationblock
 		std::string					_uri;
 		bool						_autoindex;
 		std::string					_root;
@@ -37,6 +49,11 @@ class LocationBlock {
 		int							_client_max_body_size;
 		std::map<int, std::string>	_error_page;
 		LocationBlock(){};
+		void						GetKeyValuePairs(std::string data);
+		int							IsKey(std::string key);
+		void						SetValue(int key, std::string value);
+		void						CheckListVerification();
+
 	public:
 		LocationBlock(std::string data);
 		~LocationBlock(){};
@@ -50,6 +67,15 @@ class LocationBlock {
 		std::string					GetIndex() const;
 		int							GetClientMaxBodySize() const;
 		std::map<int, std::string>	GetErrorPage() const;
+
+		// exception classes
+		class InvalidKeyException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Invalid Key detected in LocationBlock.";
+				}
+		};
 };
 
 #endif

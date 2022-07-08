@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 16:56:15 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/08 20:42:49 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ class ServerBlock {
 
 		int							IsKey(std::string key);
 		int							SetValue(int key, std::string value);
-		std::string					TrimValue(std::string value);
 		void						CheckListVerification();
+		
 		
 	public:
 		ServerBlock(std::ifstream &file, size_t *start); // uses a pointer so it can skip through the server bits on its own when it returns
@@ -55,6 +55,7 @@ class ServerBlock {
 		~ServerBlock(){};
 		
 		size_t						FindKeyValuePairs(size_t *start_position, std::string config_file);
+		
 		std::vector<LocationBlock>	GetLocationBlocks() const;
 		std::pair<in_addr_t, int>	GetListen() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
 		std::vector<std::string>	GetServerName() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS

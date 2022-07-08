@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/07 21:29:04 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/08 20:12:24 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@
 #include "config/server_block.hpp"
 
 int main(int ac, const char **av) {
-	// parse av[1] and use gnl or something like that to get the data out
-	// put the info in classes intended per information
+	(void)ac;
 	try {
 		NginxConfig		input_file(av[1]);
 

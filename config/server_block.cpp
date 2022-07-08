@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 16:49:01 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/08 20:35:50 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,14 +91,14 @@ ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
 
 // trims whitespaces from the front and back
 // could probably be made into something general. but for now this'll do.
-std::string	ServerBlock::TrimValue(std::string value){
-	size_t	start = 0;
-	size_t	end = 0;
+// std::string	ServerBlock::TrimValue(std::string value){
+// 	size_t	start = 0;
+// 	size_t	end = 0;
 
-	start = value.find_first_not_of(" \t\n\v\f\r");
-	end = value.find_last_not_of(" \t\n\v\f\r");
-	return (value.substr(start, end - start + 1));
-}
+// 	start = value.find_first_not_of(" \t\n\v\f\r");
+// 	end = value.find_last_not_of(" \t\n\v\f\r");
+// 	return (value.substr(start, end - start + 1));
+// }
 
 // compares found key with possible key values and either returns the number in the list
 // or throws an error because a bad key has been found
