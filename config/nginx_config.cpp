@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/09 01:45:15 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/09 23:46:36 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@
 // a newline per getline read is added in to avoid cases where for example:
 // a key-value pair is on two different lines to avoid accidentally connecting two values with one another.
 
-NginxConfig::NginxConfig() : _amount_server_blocks(0){};
+NginxConfig::NginxConfig() : _amount_server_blocks(0) {};
 
 // uses av[1] in the main and attempts to open the file.
 // throws error if fails
 // if it loads the _config_file variable
 // and closes the file again.
-NginxConfig::NginxConfig(const char*	location) : _amount_server_blocks(0){
+NginxConfig::NginxConfig(const char*	location) : _amount_server_blocks(0) {
 	std::ifstream	config_file_fd;
 
 	if (!location) {
@@ -58,13 +58,13 @@ NginxConfig & NginxConfig::operator=(const NginxConfig& obj) {
 }
 
 // checks if there are no open brackets
-void	NginxConfig::CheckBrackets(){
+void	NginxConfig::CheckBrackets() {
 	int open_brackets = 0;
 	int closed_brackets = 0;
 	int	i = 0;
 
-	while(_config_file[i] != std::string::npos)
-	{
+	// while (_config_file[i] != std::string::npos) {
+	while (_config_file[i]) {
 		if (_config_file[i] == '{')
 			open_brackets++;
 		else if (_config_file[i] == '}')
@@ -119,7 +119,8 @@ void		NginxConfig::FindServerBlocks() {
 	size_t		key_start = 0;
 	size_t		key_end = 0;
 
-	while (_config_file[i] != std::string::npos) {
+	// while (_config_file[i] != std::string::npos) {
+		while (_config_file[i]) {
 		key_start = _config_file.find_first_not_of(" \t\n\v\f\r", i);
 		key_end = _config_file.find_first_of(" \t\n\v\f\r", key_start);
 		if (key_start != std::string::npos && key_end != std::string::npos) {
