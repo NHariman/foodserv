@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/09 01:41:42 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/09 01:45:15 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,7 @@ bool		NginxConfig::IsServerBlock(std::string value, size_t *start_pos) {
 			throw BadServerBlockException();
 		*start_pos = *start_pos + 1;
 		return true;
-	}
-	else
-		throw BadServerBlockException();
+		}
 	}
 	throw BadServerBlockException();
 	return false;
