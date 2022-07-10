@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/07 15:17:09 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/10 19:08:13 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,13 @@ Listen::Listen(std::string listen) : _listen(listen), _ip_number(-1), _port_numb
 	std::cout << "String in listen: " << _listen << std::endl;
 	if (CheckCharacters() == false || SplitPortIP() == false) {
 		std::cout << "webserv: invalid port/ip in \"" << _listen << "\" of the \"listen\" directive." << std::endl;
-		_ip_number = -1; // dit is 4294967295
-		_port_number = -1;
+		// _ip_number = -1; // dit is 4294967295
+		// _port_number = -1;
+		// implement what happens when this is invalid
 		return ;
 	}
+	if (_ip_number == in_addr_t(std::string::npos))
+		_ip_number = 0;
 }
 
 // checks for any invalid characters
@@ -63,6 +66,7 @@ bool		Listen::SplitPortIP() {
 
 bool		Listen::CheckPortNumber(std::string port_number) {			
 	std::size_t	char_check;
+	std::cout << "in port number with: " << port_number << std::endl;
 	char_check = port_number.find_first_not_of("0123456789");
 	if (char_check != std::string::npos)
 		return false;
@@ -87,9 +91,11 @@ bool		Listen::CheckIpAddress(std::string ip_address) {
 }
 
 int			Listen::getPortNumber() {
+	std::cout << "return in getPortNubmer: " << _port_number << std::endl;
 	return _port_number;
 }
 
 in_addr_t	Listen::getIpNumber() {
+	std::cout << "return in getIPNumber: " << _ip_number << std::endl;
 	return _ip_number;
 }

@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/09 23:46:36 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/10 19:10:04 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ NginxConfig::NginxConfig() : _amount_server_blocks(0) {};
 // throws error if fails
 // if it loads the _config_file variable
 // and closes the file again.
-NginxConfig::NginxConfig(const char*	location) : _amount_server_blocks(0) {
+NginxConfig::NginxConfig(const char *location) : _amount_server_blocks(0) {
 	std::ifstream	config_file_fd;
 
 	if (!location) {
@@ -36,7 +36,7 @@ NginxConfig::NginxConfig(const char*	location) : _amount_server_blocks(0) {
 	config_file_fd.open(location);
 	if (config_file_fd.is_open()) 
 		LoadConfigFile(config_file_fd);
-	else 
+	else
 		throw InvalidFileLocationException();
 	config_file_fd.close();
 	FindServerBlocks();
@@ -83,9 +83,8 @@ void	NginxConfig::LoadConfigFile(std::ifstream& configuration_file) {
 	size_t		found;
 	
 	while(std::getline(configuration_file, current_string)) {
-		if (configuration_file.fail()) {
+		if (configuration_file.fail())
 			throw GetLineFailureException();
-		}
 		if (current_string.find("#") != std::string::npos)
 			current_string.erase(current_string.find("#"));
 		if (current_string.empty() == false && current_string.find_first_not_of(" \t\n\v\f\r") != std::string::npos)
@@ -96,15 +95,15 @@ void	NginxConfig::LoadConfigFile(std::ifstream& configuration_file) {
 
 // checks if the server block is correctly written
 bool		NginxConfig::IsServerBlock(std::string value, size_t *start_pos) {
-	if (value.compare("server") || value.compare("server{")) {
+	if (value.compare("server") || value.compare("server{")) { 
 		if (_config_file[*start_pos + 6] == '{' || std::isspace(_config_file[*start_pos + 6])) {
-		*start_pos = *start_pos + 6; // moves to the end of "server"
-		while (std::isspace(_config_file[*start_pos]))
+			*start_pos = *start_pos + 6; // moves to the end of "server"
+			while (std::isspace(_config_file[*start_pos]))
+				*start_pos = *start_pos + 1;
+			if (_config_file[*start_pos] != '{')
+				throw BadServerBlockException();
 			*start_pos = *start_pos + 1;
-		if (_config_file[*start_pos] != '{')
-			throw BadServerBlockException();
-		*start_pos = *start_pos + 1;
-		return true;
+			return true;
 		}
 	}
 	throw BadServerBlockException();
@@ -120,7 +119,7 @@ void		NginxConfig::FindServerBlocks() {
 	size_t		key_end = 0;
 
 	// while (_config_file[i] != std::string::npos) {
-		while (_config_file[i]) {
+	while (_config_file[i]) {
 		key_start = _config_file.find_first_not_of(" \t\n\v\f\r", i);
 		key_end = _config_file.find_first_of(" \t\n\v\f\r", key_start);
 		if (key_start != std::string::npos && key_end != std::string::npos) {
@@ -139,6 +138,18 @@ void		NginxConfig::FindServerBlocks() {
 	return ;
 }
 
+// SANNE: a function to print what is in the server blocks vector
+void	NginxConfig::PrintServerBlocksVectors() {
+	for (std::vector<ServerBlock>::iterator it = _servers.begin(); it != _servers.end(); it++) {
+		std::cout << "In server block print for loop: " << std::endl;
+		std::cout << it->GetListen().first << std::endl;
+		std::cout << it->GetListen().second << std::endl;
+		// std::cout << it.GetServerName() << std::endl;
+	}
+}
+
+// SANNE: add the functions to select which server block to choose
+
 
 // getters
 std::string NginxConfig::GetConfigFile() const {
@@ -152,3 +163,5 @@ size_t		NginxConfig::GetServerBlockAmount() const {
 std::vector<ServerBlock>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
+
+NginxConfig::~NginxConfig() {}

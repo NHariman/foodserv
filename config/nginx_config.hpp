@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/09 01:42:23 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/10 13:49:45 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include "server_block.hpp"
 
 // Coplien form:
@@ -46,54 +47,58 @@ class NginxConfig {
 
 	public:
 		// coplien form
-		NginxConfig(const char*		location);
+		NginxConfig(const char*	location);
 		NginxConfig(const NginxConfig& obj);
-		~NginxConfig(){};
-		NginxConfig & operator= (const NginxConfig& obj);
+		~NginxConfig();
+		NginxConfig & operator=(const NginxConfig& obj);
 
 		// getters
 		std::string	GetConfigFile() const;
 		size_t		GetServerBlockAmount() const;
 		std::vector<ServerBlock>	GetServers() const;
+		
+		// SANNE: adding in a function for the server block algorithm
+		// you have a vector full of server blocks _servers,
+		// first print the outcome of this vector?
+		void	PrintServerBlocksVectors();
 
 		//exceptions
-		class GetLineFailureException : public std::exception
-		{
+		class GetLineFailureException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! std::getline failure.";
 				}
 		};
-		class OpenBracketsException : public std::exception
-		{
+		
+		class OpenBracketsException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Open brackets detected.";
 				}
 		};
-		class BadKeywordException : public std::exception
-		{
+		
+		class BadKeywordException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Bad Keyword, not a server block.";
 				}
 		};
-		class NoServerBlocksException : public std::exception
-		{
+		
+		class NoServerBlocksException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! No servers detected.";
 				}
 		};
-		class BadServerBlockException : public std::exception
-		{
+
+		class BadServerBlockException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Bad server keyword detected.";
 				}
 		};
-		class InvalidFileLocationException : public std::exception
-		{
+		
+		class InvalidFileLocationException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Cannot open specified file.";

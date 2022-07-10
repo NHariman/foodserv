@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 22:45:27 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/10 19:10:53 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,26 +158,17 @@ void				ServerBlock::SetValue(int key, std::string value){
 				if (_check_list.listen == true)
 					throw MultipleListensException();
 				_check_list.listen = true;
-				// SANNE: TRIMMED_VALUE CONTAINS THE STRING CONTAINING THE VALUE FOR LISTEN
-				// YOU CAN PUT YOU CAN INITIALISE YOUR LISTEN CLASS HERE AND USE THE TRIMMED_VALUE
-				// VARIABLE AS STRING
-				//_listen = value;
-				// changed by sanne
 				Listen	listen_port_ip(trimmed_value);
 				_listen.first = listen_port_ip.getIpNumber();
-				_listen.second = listen_port_ip.getIpNumber();
+				_listen.second = listen_port_ip.getPortNumber();
 				break ;
 			}
 			case 2:
 			{
+				// TODO: still check these
 				_check_list.server_name = true;
-				// SANNE: TRIMMED_VALUE CONTAINS THE STRING CONTAINING THE VALUE FOR SERVER_NAME
-				// YOU CAN PUT YOU CAN INITIALISE YOUR SERVER_NAME CLASS HERE AND USE THE TRIMMED_VALUE
-				// VARIABLE AS STRING
-				// changed by sanne
 				ServerName	server_name(trimmed_value);
 				_server_name = server_name.GetServerNames();
-				//_server_name = value;
 				break ;
 			}
 			case 3:

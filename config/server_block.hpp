@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 22:43:49 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/10 19:08:47 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ class ServerBlock {
 		
 		//getters
 		std::vector<LocationBlock>	GetLocationBlocks() const;
-		std::pair<in_addr_t, int>	GetListen() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR LISTEN CLASS
-		std::vector<std::string>	GetServerName() const; // SANNE: CHANGE FUNCTION TYPE TO VECTOR OF YOUR SERVER_NAME CLASS
+		std::pair<in_addr_t, int>	GetListen() const;
+		std::vector<std::string>	GetServerName() const;
 		std::string					GetRoot() const;
 		std::string					GetIndex() const;
 		int							GetClientMaxBodySize() const;
