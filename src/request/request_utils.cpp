@@ -56,3 +56,14 @@ bool	IsValidString(bool (*validity_checker)(char), string const& s) {
 	}
 	return true;
 }
+
+// Used by RequestParser::FieldNameHandler to normalize field names.
+// std::tolower's behaviour is undefined if argument is not unsigned char
+// and cannot be used with standard algorithms like std::transform when the
+// value type is char or signed char. So here we convert to unsigned char.
+// Possible alternative is to use C++11 lambda:
+// std::transform(s.begin(), s.end(), s.begin(),
+// 					[](unsigned char c){ return std::tolower(c); });
+char	ToLower(unsigned char c) {
+	return tolower(c);
+}

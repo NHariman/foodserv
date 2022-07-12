@@ -12,5 +12,6 @@ bool	IsTChar(char c);
 bool	IsVChar(char c);
 bool	IsSpace(char c);
 bool	IsValidString(bool (*validity_checker)(char), string const& s); // TODO: Remove if not used
+char	ToLower(unsigned char c);
 
 #endif /* REQUEST_UTILS */
