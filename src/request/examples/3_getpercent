@@ -1,2 +1,2 @@
-GET /where%20/are%7E/we?q=now?text=Hello+G%c3%BCnter# HTTP/1.1
+GET /where%20/are%7e/we?q=now?text=Hello+G%c3%BCnter# HTTP/1.1
 Host: www.example.org

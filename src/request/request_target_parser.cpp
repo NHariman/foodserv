@@ -156,15 +156,15 @@ URIState		RequestTargetParser::PercentHandler(char uri_char) {
 	return u_Invalid;
 }
 
-// Normalizes lowercase hexadecimal digits 'a' to 'f' to uppercase
-// as they are equivalent in the context of URIs (RFC 3986 2.1).
-// Called by PercentDoneHandler before decoding.
-static void	NormalizeHex(string& buffer) {
-	for (size_t i = buffer.size() - 2; i < buffer.size(); i++) {
-		if (buffer[i] >= 'a' && buffer[i] <= 'f')
-			buffer[i] = toupper(buffer[i]);
-	}
-}
+// Called after validating percent-encoded tokens and in PercentDone state.
+static void	DecodePercent(string& buffer) {
+	size_t	percent_start = buffer.size() - 3;
+	string	newbuffer = buffer.substr(0, percent_start);
+	string	hex = buffer.substr(percent_start + 1, percent_start + 2);
+	char	c = std::stoi(hex, nullptr, 16);
+	newbuffer += c;
+	buffer = newbuffer;
+} 
 
 // Handles transition after a valid %HH sequence.
 // PChar & '/' input trigger transition to either Query or Path state
@@ -173,8 +173,8 @@ static void	NormalizeHex(string& buffer) {
 // in URIPart enum and u_Path & Query state values in the URIState enum.
 // So if we're at Path part, we return the Path state. Ditto for query.
 URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
-	NormalizeHex(buffer);
-	DecodePercent();
+	NormalizeString(toupper, buffer, buffer.size() - 2);
+	DecodePercent(buffer);
 	switch (uri_char) {
 		case '\0':
 			return u_Done;
@@ -195,13 +195,4 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	}
 }
 
-// Called after validating percent-encoded tokens and in PercentDone state.
-void	RequestTargetParser::DecodePercent() {
-	size_t	percent_start = buffer.size() - 3;
-	string	newbuffer = buffer.substr(0, percent_start);
-	string	hex = buffer.substr(percent_start + 1, percent_start + 2);
-	char	c = std::stoi(hex, nullptr, 16);
-	newbuffer += c;
-	buffer = newbuffer;
-} 
 #undef DEBUG // REMOVE

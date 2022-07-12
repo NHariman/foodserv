@@ -31,8 +31,6 @@ class	RequestTargetParser : public StateParser<URIState> {
 		URIState	QueryHandler(char uri_char);
 		URIState	PercentHandler(char uri_char);
 		URIState	PercentDoneHandler(char uri_char);
-		void		DecodePercent(void);
-
 	
 	protected:
 		URIState	SetStartState() const;
