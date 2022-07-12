@@ -47,6 +47,11 @@ bool	IsSpace(char c) {
 	return c == ' ';
 }
 
+// Checks if character is whitespace as defined by RFC 7230 (space or horizontal tab).
+bool	IsWhitespace(char c) {
+	return (c == ' ' || c == '\t');
+}
+
 // Checks if string `s` is valid according to rules of `validity_checker`
 // function that's passed as argument.
 bool	IsValidString(bool (*validity_checker)(char), string const& s) {
