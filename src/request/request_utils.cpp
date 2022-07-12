@@ -1,13 +1,11 @@
 #include "request_utils.hpp"
 
 // Used for validating hexademical digits following '%' inputs indicating
-// percent-encoding. According to RFC 3986 2.1, lowercase digits are treated
-// the same as uppercase digits. This function therefore does conversion to
-// uppercase and normalizes lowercase characters.
-bool	IsHexDig(char& c) {
-	if (c >= 'a' && c <= 'f')
-		c = toupper(c);
-	return (isdigit(c) || (c >= 'A' && c <= 'F'));
+// percent-encoding.
+bool	IsHexDig(char c) {
+	return (isdigit(c)
+			|| (c >= 'A' && c <= 'F')
+			|| (c >= 'a' && c <= 'f'));
 }
 
 // Used by IsPChar.

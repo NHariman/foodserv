@@ -6,7 +6,7 @@
 
 using namespace std;
 
-bool	IsHexDig(char& c);
+bool	IsHexDig(char c);
 bool	IsPChar(char c);
 bool	IsTChar(char c);
 bool	IsVChar(char c);
