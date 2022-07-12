@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   location_block.cpp                                 :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
+/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:36 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 22:01:49 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/12 16:52:12 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void				LocationBlock::SetValue(int key, std::string value){
 
 	if (key == 6) {
 		_check_list.uri = true;
+		_uri = trimmed_value;
         //do thing
 	}
 	else {

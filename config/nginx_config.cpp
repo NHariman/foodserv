@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   nginx_config.cpp                                   :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
+/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/10 19:10:04 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/12 15:16:29 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_blocks(0) {
 	std::ifstream	config_file_fd;
 
 	if (!location) {
-		location = "config/default.conf";
+		location = "config_files/default.conf";
 		std::cerr << ">> WARNING! No config file given, config/default.conf used." << std::endl;
 	}
 	config_file_fd.open(location);

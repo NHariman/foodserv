@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/10 19:08:47 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/12 16:31:26 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,37 @@ class ServerBlock {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Invalid Key detected.";
+					return "ERROR! Invalid Key detected in Server block.";
 				}
 		};
 		class MultipleListensException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple listen keys detected.";
+					return "ERROR! Multiple listen keys detected in Server block.";
 				}
 		};
-
+		class MultipleRootException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple root keys detected in Server block.";
+				}
+		};
+		class MultipleClientMaxBodySizeException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple Client_max_body_size keys detected in Server block.";
+				}
+		};
+		class DuplicateLocationUriException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Duplicate Location URI detected in Server block.";
+				}
+		};
 };
 
 #endif

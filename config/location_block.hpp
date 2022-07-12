@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:39 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 22:25:40 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/12 16:36:38 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 //       ~A ();
 //       A & operator = (const A &a);
 // };
+
+// if duplicate root is found, throw error
+
 
 //string trimming util for serverblocks and location blocks
 std::string	TrimValue(std::string value);
@@ -80,6 +83,20 @@ class LocationBlock {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Invalid Key detected in LocationBlock.";
+				}
+		};
+		class MultipleRootException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple root keys detected in Location block.";
+				}
+		};
+		class MultipleClientMaxBodySizeException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple Client_max_body_size keys detected in Location block.";
 				}
 		};
 };

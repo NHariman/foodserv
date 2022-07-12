@@ -3,15 +3,15 @@
 /*                                                        ::::::::            */
 /*   server_block.cpp                                   :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
+/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/10 19:10:53 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/12 17:03:52 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_block.hpp"
-#include <utility>
+# include <algorithm>
 
 // error pages are hardcoded in the real nginx:
 // static char ngx_http_error_404_page[] =
@@ -21,13 +21,17 @@
 // "<center><h1>404 Not Found</h1></center>" CRLF
 //;
 
-// clang++ main.cpp config/server_block.cpp config/location_block.cpp config/nginx_config.cpp && ./a.out 
+// when to throw:
+// when multiple listen blocks
+// when multiple client_max_body_size
+// when two location blocks have the same uri
+// when multiple roots
+
+
 ServerBlock::ServerBlock(size_t *start, std::string config_file) {
-	// _listen = "80";
-	// changed by sanne
+
 	_listen.first = 80;
 	_listen.second = 0;
-	// _server_name = "localhost";
 	_server_name.push_back("localhost"); // feel like we need to take this out
 	_root = "/var/www/html";
 	_index = "index.html";
@@ -115,17 +119,6 @@ ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
 	return (*this);
 }
 
-// trims whitespaces from the front and back
-// could probably be made into something general. but for now this'll do.
-// std::string	ServerBlock::TrimValue(std::string value){
-// 	size_t	start = 0;
-// 	size_t	end = 0;
-
-// 	start = value.find_first_not_of(" \t\n\v\f\r");
-// 	end = value.find_last_not_of(" \t\n\v\f\r");
-// 	return (value.substr(start, end - start + 1));
-// }
-
 // compares found key with possible key values and either returns the number in the list
 // or throws an error because a bad key has been found
 int			ServerBlock::IsKey(std::string key){
@@ -149,6 +142,10 @@ void				ServerBlock::SetValue(int key, std::string value){
 	if (key == 0) {
 		_check_list.location_block = true;
 		LocationBlock	location(trimmed_value);
+		for (int i = 0 ; i < _location_blocks.size(); ++i){
+			if (_location_blocks[i].GetUri().compare(location.GetUri()) == 0)
+			throw DuplicateLocationUriException();
+		}
 		_location_blocks.push_back(location);
 	}
 	else {
@@ -172,21 +169,27 @@ void				ServerBlock::SetValue(int key, std::string value){
 				break ;
 			}
 			case 3:
+				if (_check_list.root == true)
+					throw MultipleRootException();
 				_check_list.root = true;
 				_root = value;
 				break ;
 			case 4:
+				// can have multiple indexes
 				_check_list.index = true;
-				_index = value;
+				_index = _index.append(trimmed_value);
 				break ;
 			case 5:
+				if (_check_list.client_max_body_size == true)
+					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
 				_client_max_body_size = std::atoi(value.c_str());
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
 			case 6:
 				_check_list.error_page = true;
-				// TODO: DEPENDENT ON LOCATION
+				// TODO: create an error_page class for parsing
+				// this can then also be used in LocationBlock
 				break ;
 		}
 	}
