@@ -6,12 +6,12 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/08 22:24:28 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/08 22:44:19 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/12 22:00:10 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location_block.hpp"
 
 void            LocationBlock::SetUri(std::string uri) {
-    
+    (void)uri;
 }

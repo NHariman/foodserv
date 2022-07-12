@@ -6,13 +6,13 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/10 19:08:13 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/12 21:57:36 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "listen.hpp"
 
-Listen::Listen(std::string listen) : _listen(listen), _ip_number(-1), _port_number(-1) {
+Listen::Listen(std::string listen) : _listen(listen), _port_number(-1), _ip_number(-1) {
 	std::cout << "String in listen: " << _listen << std::endl;
 	if (CheckCharacters() == false || SplitPortIP() == false) {
 		std::cout << "webserv: invalid port/ip in \"" << _listen << "\" of the \"listen\" directive." << std::endl;

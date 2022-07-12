@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 17:03:52 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/12 21:59:53 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ void				ServerBlock::SetValue(int key, std::string value){
 	if (key == 0) {
 		_check_list.location_block = true;
 		LocationBlock	location(trimmed_value);
-		for (int i = 0 ; i < _location_blocks.size(); ++i){
+		for (size_t i = 0 ; i < _location_blocks.size(); ++i){
 			if (_location_blocks[i].GetUri().compare(location.GetUri()) == 0)
 			throw DuplicateLocationUriException();
 		}

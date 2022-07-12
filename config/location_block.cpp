@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:36 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 16:52:12 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/12 21:58:29 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ LocationBlock::LocationBlock(const LocationBlock& location_block) {
     _proxy_pass = location_block.GetProxyPass();
 }
 
-int			            LocationBlock::IsKey(std::string key){
+int			            LocationBlock::IsKey(std::string key) {
 	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "proxy_pass"};
 	
 	std::cout << "key: " << key << std::endl;
@@ -68,7 +68,7 @@ int			            LocationBlock::IsKey(std::string key){
 		return (is_key);
 }
 
-void				LocationBlock::SetValue(int key, std::string value){
+void				LocationBlock::SetValue(int key, std::string value) {
 	std::string		trimmed_value;
 
 	trimmed_value = TrimValue(value);
@@ -81,8 +81,7 @@ void				LocationBlock::SetValue(int key, std::string value){
 	}
 	else {
 		switch(key) {
-			case 0:
-			{
+			case 0: {
 				_check_list.autoindex = true;
 				break ;
 			}

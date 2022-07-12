@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 15:16:29 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/12 21:58:02 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ void	NginxConfig::CheckBrackets() {
 // gets the content from the file and removes all comments
 void	NginxConfig::LoadConfigFile(std::ifstream& configuration_file) {
 	std::string	current_string;
-	size_t		found;
 	
 	while(std::getline(configuration_file, current_string)) {
 		if (configuration_file.fail())
