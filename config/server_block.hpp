@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 15:55:14 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/13 17:09:22 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ class ServerBlock {
 		std::string					GetIndex() const;
 		int							GetClientMaxBodySize() const;
 		std::map<int, std::string>	GetErrorPage() const;
+		bool						IsErrorPageSet() const;
 
 		// exception classes
 		class InvalidKeyException : public std::exception
@@ -93,14 +94,28 @@ class ServerBlock {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple Client_max_body_size keys detected in Server block.";
+					return "ERROR! Multiple client_max_body_size keys detected in Server block.";
 				}
 		};
 		class DuplicateLocationUriException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Duplicate Location URI detected in Server block.";
+					return "ERROR! Duplicate location URI detected in Server block.";
+				}
+		};
+		class MultipleServerNameException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple server_name keys detected in Server block.";
+				}
+		};
+		class MultipleIndexException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple index keys detected in Server block.";
 				}
 		};
 };

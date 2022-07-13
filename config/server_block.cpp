@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 16:04:07 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 17:16:28 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,6 @@
 
 ServerBlock::ServerBlock(size_t *start, std::string config_file) {
 
-	_listen.first = 80;
-	_listen.second = 0;
-	_server_name.push_back("localhost"); // feel like we need to take this out
-	_root = "/var/www/html";
-	_index = "index.html";
-	_client_max_body_size = 0;
-    //this->_error_page.insert(std::pair<int, std::string>(404, "/404.html")); \
-    // if by the end of the FindKeyValuePairs() function no locationblocks or error_pages are found, fill them in?
-    // TODO:
-    // add defaults for location_blocks
-
     // _check_list copy
     _check_list.location_block = false;
 	_check_list.listen = false;
@@ -53,21 +42,7 @@ ServerBlock::ServerBlock(size_t *start, std::string config_file) {
 }
 
 
-ServerBlock::ServerBlock() : _client_max_body_size(0){
-	// _listen = "80";
-	// changed by sanne
-	_listen.first = 80;
-	_listen.second = 0;
-	// _server_name = "localhost";
-	_server_name.push_back("localhost"); // feel like we need to take this out
-	_root = "/var/www/html";
-	_index = "index.html";
-	_client_max_body_size = 0;
-    //this->_error_page.insert(std::pair<int, std::string>(404, "/404.html")); \
-    // if by the end of the FindKeyValuePairs() function no locationblocks or error_pages are found, fill them in?
-    // TODO:
-    // add defaults for location_blocks
-
+ServerBlock::ServerBlock() {
     // _check_list copy
     _check_list.location_block = false;
 	_check_list.listen = false;
@@ -163,6 +138,8 @@ void				ServerBlock::SetValue(int key, std::string value){
 			case 2:
 			{
 				// TODO: still check these
+				if (_check_list.server_name == true)
+					throw MultipleServerNameException();
 				_check_list.server_name = true;
 				ServerName	server_name(trimmed_value);
 				_server_name = server_name.GetServerNames();
@@ -172,24 +149,25 @@ void				ServerBlock::SetValue(int key, std::string value){
 				if (_check_list.root == true)
 					throw MultipleRootException();
 				_check_list.root = true;
-				_root = value;
+				_root = value; // create a root class and use the GetRoot() function in there to paste root here if valid
 				break ;
 			case 4:
-				// can have multiple indexes
+				if (_check_list.index == true)
+					throw MultipleIndexException();
 				_check_list.index = true;
-				_index = _index.append(trimmed_value);
+				_index = _index.append(trimmed_value); // create an index class and use the GetIndex() function in there to paste index here if valid
 				break ;
 			case 5:
 				if (_check_list.client_max_body_size == true)
 					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
 				_client_max_body_size = std::atoi(value.c_str());
-				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				/// create an CMBS class and use the GetCMBS() function in there to paste CMBS here if valid
 				break ;
 			case 6:
 				_check_list.error_page = true;
 				// TODO: create an error_page class for parsing
-				// this can then also be used in LocationBlock
+				// use getter to paste it here if valid
 				break ;
 		}
 	}
@@ -199,20 +177,35 @@ void				ServerBlock::SetValue(int key, std::string value){
 // checks if the necessary blocks have been set and otherwise prints a warning
 // if something MUST be set, we should throw an exception
 void			ServerBlock::CheckListVerification(){
-	if (_check_list.location_block == false)
+	if (_check_list.location_block == false) {
+		//TODO: create a locationBlock constructor that creates the standard / location
 		std::cerr << "WARNING! No location blocks detected. Default have been set." << std::endl;
-	if (_check_list.listen == false)
+	}
+	if (_check_list.listen == false) {
+		_listen.first = 80;
+		_listen.second = 0;
 		std::cerr << "WARNING! No listen detected. Default have been set." << std::endl;
-	if (_check_list.server_name == false)
+	}
+	if (_check_list.server_name == false) {
+		_server_name.push_back("localhost");
 		std::cerr << "WARNING! No server_name detected. Default have been set." << std::endl;
-	if (_check_list.root == false)
+	}
+	if (_check_list.root == false) {
+		_root = "/var/www/html";
 		std::cerr << "WARNING! No server root detected. Default have been set." << std::endl;
-	if (_check_list.index == false)
+	}
+	if (_check_list.index == false) {
+		_index = "index.html";
 		std::cerr << "WARNING! No index detected. Default have been set." << std::endl;
-	if (_check_list.client_max_body_size == false)
+	}
+	if (_check_list.client_max_body_size == false) {
+		_client_max_body_size = 0;
 		std::cerr << "WARNING! No client_max_body_size detected. Default have been set." << std::endl;
-	if (_check_list.error_page == false)
+	}
+	if (_check_list.error_page == false) {
+		// hardcoded error pages are used instead?
 		std::cerr << "WARNING! No error_page detected. Default have been set." << std::endl;
+	}
 }
 
 size_t						ServerBlock::FindLocationBlockEnd(std::string config_file, size_t start) {
@@ -301,6 +294,10 @@ std::string					ServerBlock::GetIndex() const {
 
 int							ServerBlock::GetClientMaxBodySize() const {
     return this->_client_max_body_size;
+}
+
+bool						ServerBlock::IsErrorPageSet() const {
+	return this->_check_list.error_page;
 }
 
 std::map<int, std::string>	ServerBlock::GetErrorPage() const {

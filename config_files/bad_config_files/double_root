@@ -3,11 +3,10 @@ server{
                server_name localhost www.localhost;
 
                root /var/www/html;
+               root /var/www/html;
 
                # Add index.php to the list if you are using PHP
                index index.php index.html index.htm index.nginx-debian.html;
-
-               server_name _ localhost www.localhost;
 
                location / {
                        autoindex on;
@@ -45,7 +44,6 @@ server{
               #         deny all;
               #  }
                client_max_body_size 64M;
-                client_max_body_size 64M;
 }
 
 

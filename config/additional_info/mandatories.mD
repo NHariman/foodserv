@@ -1,18 +1,9 @@
 # Mandatory parts of a config file for our webserver
 
-## HTTP block
-Each config file MUST start with an HTTP block, it contains server blocks and global settings.
-Because contexts can be layers within one another, Nginx provides a level of directive inheritance. As a general rule: if a directive is valid in multiple nested scopes, a declaration on a broader context will be passed on to any child context as a default value. (ie. if a client_max_body_size is set in http, it can be overwritten by a client_max_body_size in a server block, otherwise the global is set.)
-
-http blocks contain directives for handling web traffic. These directives are often universal as they are passed on to all website configurations NGINX serves. A list of available directives for http blocks are available on official NGINX http block documentation.
-
-### Contains:
-- Client_max_body_size (default 1mb)
-- access_log (default logs/access.log), works a little different from the og access_log, as it puts everything in there
-It will also contain any server blocks that need to be configured. A server block outside of an http block will be ignored.
-- Server Blocks
-
-**only a SINGLE http block will be configured, extra http blocks will be ignored.**
+## When is something a valid nginx config file
+Because our server is based on nginx config files, we use the nginx command to check if a config file is valid or not.
+To do that, nginx must be installed on the system and then one can do:
+`nginx -c {Path_to_config_file_starting_from_root} -t`
 
 ## Server Block
 Each config file MUST contain server blocks inside the http block. Server blocks outside the http block will be ignored.
@@ -38,6 +29,14 @@ Multiple location blocks can be found inside a server block.
 - root, indicates which folder to start looking for files in
 - index, indicates which index files to select
 - proxy_pass
+- limit_except, specifies http methods [(more info here)](http://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except)
+examples:
+```
+limit_except GET {
+         allow 192.168.1.0/32;
+         deny  all;
+ }
+```
 - fastcgi_pass (OPTIONAL)
 - fastcgi_index (OPTIONAL)
 - fastcgi_param (OPTIONAL)
@@ -72,7 +71,8 @@ ie.
 ```
 this won't be ignored # but this will be
 ```
-
+# TREE
+<img src="https://cdn.discordapp.com/attachments/856460136758771726/990966854396821564/image_1.png">
 
 # Information on NGINX config files:
 [how to configure nginx](https://www.linode.com/docs/guides/how-to-configure-nginx/)

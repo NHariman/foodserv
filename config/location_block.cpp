@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:36 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 14:31:46 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/13 16:23:45 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,6 @@ void                        LocationBlock::GetKeyValuePairs(std::string data) {
 		else if (ret == 6) {
 			value_end = data.find_first_of('}', key_end);
 			SetValue(ret, data.substr(key_end, value_end - key_end + 1));
-			std::cout << data.substr(value_end) << std::endl;
 		}
 		else {
             value_end = data.find_first_of(';', key_end);
