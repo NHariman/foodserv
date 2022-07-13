@@ -2,6 +2,7 @@
 #define REQUEST_PARSER_HPP
 
 #include <iostream>
+#include <algorithm> // transform
 #include <map>
 #include <string>
 #include <vector>
@@ -19,9 +20,9 @@ using namespace std;
 enum RequestState {
 	r_Start = 0,
 	r_Method,
-	r_Method_Done,
+	// r_Method_Done,
 	r_Target,
-	r_Target_Done,
+	// r_Target_Done,
 	r_Version,
 	r_Version_Done,
 	r_FieldName,
@@ -56,20 +57,23 @@ class RequestParser  : public StateParser<RequestState> {
 	private:
 		struct RequestLine	_request_line;
 		map<string, string>	_header_fields;
+		string	_cur_field;
 		string	_msg_body;
 		size_t	_bytes_read;
-		size_t	_header_fields_size;
+		size_t	_fields_bytes_read;
 
 		RequestState	StartHandler(size_t pos);
 		RequestState	MethodHandler(size_t pos);
-		RequestState	MethodDoneHandler(size_t pos);
+		// RequestState	MethodDoneHandler(size_t pos);
 		RequestState	TargetHandler(size_t pos);
-		RequestState	TargetDoneHandler(size_t pos);
+		// RequestState	TargetDoneHandler(size_t pos);
 		RequestState	VersionHandler(size_t pos);
 		RequestState	VersionDoneHandler(size_t pos);
 		RequestState	FieldNameHandler(size_t pos);
-		// RequestState	FieldValueHandler(size_t pos);
-		RequestState	ValidDelimiter(bool (*valid)(char), size_t pos);
+		RequestState	FieldValueHandler(size_t pos);
+		RequestState	FieldDoneHandler(size_t pos);
+		RequestState	HeaderDoneHandler(size_t pos);
+		RequestState	ValidDelimiter(bool (*valid)(char), size_t pos); // TODO: remove if unused
 
 	protected:
 		RequestState	SetStartState() const;

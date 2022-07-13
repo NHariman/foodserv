@@ -70,6 +70,15 @@ Source:
 [Section 3.2.4](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.4)
 <br/><br/>
 
+### Multiply-defined header fields:
+>  A sender MUST NOT generate multiple header fields with the same field name in a message unless either the entire field value for that header field is defined as a comma-separated list [i.e., #(values)] or the header field is a well-known exception (as noted below).  
+
+> In practice, the "Set-Cookie" header field ([RFC6265]) often appears multiple times in a response message and does not use  list syntax, violating the above requirements on multiple header fields with the same name.  Since it cannot be combined into a single field-value, recipients ought to handle "Set-Cookie" as a special case while processing header fields.
+
+Source:
+[Section 3.2.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.2)
+<br/><br/>
+
 
 ## Formatting
 
@@ -93,9 +102,7 @@ If the target URI's path component is empty, the client MUST send "/" as the pat
     |_ absolute-path = 1*( "/" *pchar )
     |_ query = *( pchar / "/" / "?" )
 
-> For example, a client wishing to retrieve a representation of the resource identified as  
-http://www.example.org/where?q=now  
-directly from the origin server would open (or reuse) a TCP connection to port 80 of the host "www.example.org" and send the lines:
+> For example, a client wishing to retrieve a representation of the resource identified as http://www.example.org/where?q=now directly from the origin server would open (or reuse) a TCP connection to port 80 of the host "www.example.org" and send the lines:
 
     GET /where?q=now HTTP/1.1  
     Host: www.example.org  
