@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/10 13:49:18 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 17:22:03 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
-#include "config/nginx_config.hpp"
-#include "config/server_block.hpp"
+#include "src/config/nginx_config.hpp"
+#include "src/config/server_block.hpp"
 
 int main(int ac, const char **av) {
 	(void)ac;
