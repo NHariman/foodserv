@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 15:56:23 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/13 16:04:07 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ ServerBlock::ServerBlock() : _client_max_body_size(0){
 ServerBlock::ServerBlock(const ServerBlock& obj) {
 	_location_blocks = obj.GetLocationBlocks();
 	_listen = obj.GetListen();
-	_server_name = obj.GetServerNames();
+	_server_name = obj.GetServerNameVector();
 	_root = obj.GetRoot();
 	_index = obj.GetIndex();
 	_client_max_body_size = obj.GetClientMaxBodySize();
@@ -102,7 +102,7 @@ ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
         return (*this);
 	_location_blocks = obj.GetLocationBlocks();
 	_listen = obj.GetListen();
-	_server_name = obj.GetServerNames();
+	_server_name = obj.GetServerNameVector();
 	_root = obj.GetRoot();
 	_index = obj.GetIndex();
 	_client_max_body_size = obj.GetClientMaxBodySize();
@@ -287,7 +287,7 @@ int							ServerBlock::GetPortNumber() const {
 	return (this->_listen.second);
 }
 
-std::vector<std::string>	ServerBlock::GetServerNames() const {
+std::vector<std::string>	ServerBlock::GetServerNameVector() const {
     return this->_server_name;
 }
 
