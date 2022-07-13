@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 15:05:43 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 15:32:31 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ void	NginxConfig::PrintServerBlocksVectors() {
 		std::cout << "PortNumber: " << it->GetIPAddress() << std::endl;
 		std::cout << "IPAddress: " << it->GetPortNumber() << std::endl;
 		// DANGLING POINTER ERROR: 
-		for (std::vector<std::string>::iterator it2 = it->GetServerName().begin(); it2 != it->GetServerName().end(); it2++) {
+		for (std::vector<std::string>::iterator it2 = it->GetServerNameVector().begin(); it2 != it->GetServerNameVector().end(); it2++) {
 			std::cout << "In servername vector printing: " << std::endl;
 			std::cout << *it2 << std::endl;
 		}
