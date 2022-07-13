@@ -1,0 +1,79 @@
+server{
+               listen 80;
+                 listen 80;
+               server_name localhost www.localhost;
+
+               root /var/www/html;
+
+               # Add index.php to the list if you are using PHP
+               index index.php index.html index.htm index.nginx-debian.html;
+
+               location / {
+                       autoindex on;
+                       root /a_place/;
+                       index a_name;
+                       client_max_body_size 5M;
+                       # First attempt to serve request as file, then
+                       # as directory, then fall back to displaying a 404.
+                       #try_files $uri $uri/ =404;
+               }
+              location /test/ {
+                       autoindex on;
+                       # First attempt to serve request as file, then
+                       # as directory, then fall back to displaying a 404.
+                       #try_files $uri $uri/ =404;
+               }
+
+               location /cgi-bin {
+                     proxy_pass http://127.0.0.1:8080;
+              }
+
+               # pass PHP scripts to FastCGI server
+               #
+              #  location ~ \.php$ {
+              #         include snippets/fastcgi-php.conf;
+              #  #
+              #  #       # With php-fpm (or other unix sockets):
+              #         fastcgi_pass unix:/run/php/php7.3-fpm.sock; #testcase
+              #  }
+
+               # deny access to .htaccess files, if Apache's document root
+               # concurs with nginx's one
+               #
+              #  location ~ /\.ht {
+              #         deny all;
+              #  }
+               client_max_body_size 64M;
+}
+
+
+# another example
+# server {
+#     listen       80 default_server;
+#     listen       [::]:80 default_server;
+#     server_name  example.com;
+#     root         /var/www/html/;
+#     index        index.php;
+
+#     error_log    /var/log/nginx/error.log;
+#     access_log   /var/log/nginx/access.log;
+
+#     location / {
+#         try_files $uri $uri/ /index.php?$query_string;
+#     }
+
+#     location ~ \.php$ {
+#         include fastcgi_params;
+#         fastcgi_pass 127.0.0.1:9000;
+#         fastcgi_intercept_errors on;
+#         fastcgi_index app.php;
+#         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+#         fastcgi_read_timeout 600;
+#     }
+
+#     error_page 404 /error/404.html;
+#     error_page 500 502 503 504 /error/50x.html;
+#     location ^~ /error/ {
+#         root /usr/share/nginx/html/;
+#     }
+# }

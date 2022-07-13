@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   main.cpp                                           :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
+/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/04/16 18:06:26 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/04/16 21:27:26 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/05/17 19:11:22 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@
 // sudo apt-get install libgtest-dev
 // sudo apt-get install cmake
 
-// then run cmake CMakeLists.txt
+// then run 
+//      cmake CMakeLists.txt
 // then make to create the executable called runTests (found in the CMakeLists.txt file)
 
 // every TEST is a group of tests you want to perform on a function
