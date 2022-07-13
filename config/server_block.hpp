@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 15:32:31 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 15:55:14 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ class ServerBlock {
 		void						SetValue(int key, std::string value);
 		void						CheckListVerification();
 		void						FindKeyValuePairs(size_t *start_position, std::string config_file);
+		size_t						FindLocationBlockEnd(std::string config_file, size_t start);
 		
 		
 	public:

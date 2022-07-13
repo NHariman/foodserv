@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 15:32:31 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 15:56:23 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ ServerBlock::ServerBlock() : _client_max_body_size(0){
 ServerBlock::ServerBlock(const ServerBlock& obj) {
 	_location_blocks = obj.GetLocationBlocks();
 	_listen = obj.GetListen();
-	_server_name = obj.GetServerNameVector();
+	_server_name = obj.GetServerNames();
 	_root = obj.GetRoot();
 	_index = obj.GetIndex();
 	_client_max_body_size = obj.GetClientMaxBodySize();
@@ -102,7 +102,7 @@ ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
         return (*this);
 	_location_blocks = obj.GetLocationBlocks();
 	_listen = obj.GetListen();
-	_server_name = obj.GetServerNameVector();
+	_server_name = obj.GetServerNames();
 	_root = obj.GetRoot();
 	_index = obj.GetIndex();
 	_client_max_body_size = obj.GetClientMaxBodySize();
@@ -215,6 +215,22 @@ void			ServerBlock::CheckListVerification(){
 		std::cerr << "WARNING! No error_page detected. Default have been set." << std::endl;
 }
 
+size_t						ServerBlock::FindLocationBlockEnd(std::string config_file, size_t start) {
+	size_t i = start;
+	size_t open_bracket = 0;
+	
+	while (config_file[i]) {
+		if (config_file[i] == '{')
+			open_bracket++;
+		else if (config_file[i] == '}' && open_bracket > 0)
+			open_bracket--;
+		if (config_file[i] == '}' && open_bracket == 0)
+			break ;
+		i++;
+	}
+	return (i);
+}
+
 // starts after the { of the server{ 
 // finds the key and compares it with the possible keys.
 // if the key is deemed valid, it checks if a location key has been found
@@ -240,7 +256,7 @@ void          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string
 		ret = IsKey(config_file.substr(key_start, key_end - key_start));
 		if (ret == 0) {
 			std::cout << "location block found" << std::endl;
-			value_end = config_file.find_first_of('}', key_end);
+			value_end = FindLocationBlockEnd(config_file, key_end); //config_file.find_first_of('}', key_end);
 			SetValue(ret, config_file.substr(key_end, value_end - key_end + 1));
 		}
 		else {
@@ -271,7 +287,7 @@ int							ServerBlock::GetPortNumber() const {
 	return (this->_listen.second);
 }
 
-std::vector<std::string>	ServerBlock::GetServerNameVector() const {
+std::vector<std::string>	ServerBlock::GetServerNames() const {
     return this->_server_name;
 }
 

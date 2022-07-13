@@ -36,3 +36,4 @@ Makefile
 config/Makefile
 webserv
 google_test_nginx_conf/
+.DS_Store
