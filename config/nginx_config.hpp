@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/10 13:49:45 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 11:28:28 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,6 @@ class NginxConfig {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Open brackets detected.";
-				}
-		};
-		
-		class BadKeywordException : public std::exception {
-			public:
-				const char *what() const throw() {
-					return "ERROR! Bad Keyword, not a server block.";
 				}
 		};
 		

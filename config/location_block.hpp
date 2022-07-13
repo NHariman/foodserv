@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:39 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 16:36:38 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/13 12:34:26 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class LocationBlock {
 			bool	client_max_body_size;
 			bool	error_page;
 			bool	proxy_pass;
+			bool	limit_except;
 		}	_check_list; // check list of found keywords in locationblock
 		std::string					_uri;
 		bool						_autoindex;
@@ -53,6 +54,7 @@ class LocationBlock {
 		int							_client_max_body_size;
 		std::string					_error_page;
 		std::string					_proxy_pass;
+		std::string					_limit_except;
 		LocationBlock(){};
 		void						GetKeyValuePairs(std::string data);
 		int							IsKey(std::string key);
@@ -76,6 +78,7 @@ class LocationBlock {
 		int							GetClientMaxBodySize() const;
 		std::string					GetProxyPass() const;
 		std::string					GetErrorPage() const;
+		std::string					GetLimitExcept() const;
 
 		// exception classes
 		class InvalidKeyException : public std::exception

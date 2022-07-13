@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:49:36 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 21:58:29 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 14:31:46 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ LocationBlock::LocationBlock(std::string data) {
     _check_list.client_max_body_size = false;
 	_check_list.error_page = false;
     _check_list.proxy_pass = false;
+	_check_list.limit_except = false;
     GetKeyValuePairs(data);
 }
 
@@ -43,6 +44,7 @@ LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
     _client_max_body_size = location_block.GetClientMaxBodySize();
 	_error_page = location_block.GetErrorPage();
     _proxy_pass = location_block.GetProxyPass();
+	_limit_except = location_block.GetLimitExcept();
     return (*this);
 }
 LocationBlock::LocationBlock(const LocationBlock& location_block) {
@@ -53,16 +55,17 @@ LocationBlock::LocationBlock(const LocationBlock& location_block) {
     _client_max_body_size = location_block.GetClientMaxBodySize();
 	_error_page = location_block.GetErrorPage();
     _proxy_pass = location_block.GetProxyPass();
+	_limit_except = location_block.GetLimitExcept();
 }
 
 int			            LocationBlock::IsKey(std::string key) {
-	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "proxy_pass"};
+	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "proxy_pass", "limit_except"};
 	
 	std::cout << "key: " << key << std::endl;
     if (_check_list.uri == false)
-        return 6;
-	int	is_key = std::find(key_name, key_name + 6, key) - key_name;
-	if (is_key < 0 || is_key > 5)
+        return 7;
+	int	is_key = std::find(key_name, key_name + 7, key) - key_name;
+	if (is_key < 0 || is_key > 6)
 		throw InvalidKeyException();
 	else
 		return (is_key);
@@ -74,7 +77,7 @@ void				LocationBlock::SetValue(int key, std::string value) {
 	trimmed_value = TrimValue(value);
 	std::cout << "value: |" << trimmed_value << "|" << std::endl;
 
-	if (key == 6) {
+	if (key == 7) {
 		_check_list.uri = true;
 		_uri = trimmed_value;
         //do thing
@@ -104,6 +107,10 @@ void				LocationBlock::SetValue(int key, std::string value) {
 				break ;
             case 5:
 				_check_list.proxy_pass = true;
+				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				break ;
+            case 6:
+				_check_list.limit_except = true;
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
 		}
@@ -139,10 +146,15 @@ void                        LocationBlock::GetKeyValuePairs(std::string data) {
 		}
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
 		ret = IsKey(data.substr(key_start, key_end - key_start));
-		if (ret == 6) {
+		if (ret == 7) {
 			std::cout << "uri block found" << std::endl;
             SetValue(ret, data.substr(key_start, key_end - key_start));
 			value_end = data.find_first_of('{', key_end);
+		}
+		else if (ret == 6) {
+			value_end = data.find_first_of('}', key_end);
+			SetValue(ret, data.substr(key_end, value_end - key_end + 1));
+			std::cout << data.substr(value_end) << std::endl;
 		}
 		else {
             value_end = data.find_first_of(';', key_end);
@@ -180,4 +192,8 @@ std::string	                LocationBlock::GetErrorPage() const {
 
 std::string	                LocationBlock::GetProxyPass() const {
     return this->_proxy_pass;
+}
+
+std::string	                LocationBlock::GetLimitExcept() const {
+    return this->_limit_except;
 }

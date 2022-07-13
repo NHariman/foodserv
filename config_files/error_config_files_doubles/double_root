@@ -3,6 +3,7 @@ server{
                server_name localhost www.localhost;
 
                root /var/www/html;
+               root /var/www/html;
 
                # Add index.php to the list if you are using PHP
                index index.php index.html index.htm index.nginx-debian.html;
@@ -13,10 +14,6 @@ server{
                        autoindex on;
                        root /a_place/;
                        index a_name;
-                #        limit_except GET {
-                #                 allow 192.168.1.0/32;
-                #                 deny  all;
-                #         }
                        client_max_body_size 5M;
                        # First attempt to serve request as file, then
                        # as directory, then fall back to displaying a 404.
@@ -50,7 +47,6 @@ server{
               #  }
                client_max_body_size 64M;
 }
-
 
 
 # another example
