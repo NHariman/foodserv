@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 16:31:26 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/13 15:03:31 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ class ServerBlock {
 		//getters
 		std::vector<LocationBlock>	GetLocationBlocks() const;
 		std::pair<in_addr_t, int>	GetListen() const;
+		in_addr_t					GetIPAddress() const;
+		int							GetPortNumber() const;
 		std::vector<std::string>	GetServerName() const;
 		std::string					GetRoot() const;
 		std::string					GetIndex() const;

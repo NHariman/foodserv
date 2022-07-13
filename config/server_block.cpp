@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 21:59:53 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 15:03:13 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,6 +261,14 @@ std::vector<LocationBlock>	ServerBlock::GetLocationBlocks() const {
 
 std::pair<in_addr_t, int>	ServerBlock::GetListen() const {
     return this->_listen;
+}
+
+in_addr_t					ServerBlock::GetIPAddress() const {
+	return (this->_listen.first);
+}
+
+int							ServerBlock::GetPortNumber() const {
+	return (this->_listen.second);
 }
 
 std::vector<std::string>	ServerBlock::GetServerName() const {
