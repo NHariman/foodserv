@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/12 21:58:02 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 09:48:53 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ void		NginxConfig::FindServerBlocks() {
 	if (_amount_server_blocks == 0)
 		throw NoServerBlocksException();
 	return ;
+	
 }
 
 // SANNE: a function to print what is in the server blocks vector
@@ -143,7 +144,11 @@ void	NginxConfig::PrintServerBlocksVectors() {
 		std::cout << "In server block print for loop: " << std::endl;
 		std::cout << it->GetListen().first << std::endl;
 		std::cout << it->GetListen().second << std::endl;
-		// std::cout << it.GetServerName() << std::endl;
+		// DANGLING POINTER ERROR: 
+		for (std::vector<std::string>::iterator it2 = it->GetServerName().begin(); it2 != it->GetServerName().end(); it2++) {
+			std::cout << "In servername vector printing: " << std::endl;
+			std::cout << *it2 << std::endl;
+		}
 	}
 }
 

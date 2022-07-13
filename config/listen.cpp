@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/12 21:57:36 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/13 09:21:57 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ bool		Listen::SplitPortIP() {
 
 bool		Listen::CheckPortNumber(std::string port_number) {			
 	std::size_t	char_check;
-	std::cout << "in port number with: " << port_number << std::endl;
 	char_check = port_number.find_first_not_of("0123456789");
 	if (char_check != std::string::npos)
 		return false;
@@ -91,11 +90,9 @@ bool		Listen::CheckIpAddress(std::string ip_address) {
 }
 
 int			Listen::getPortNumber() {
-	std::cout << "return in getPortNubmer: " << _port_number << std::endl;
 	return _port_number;
 }
 
 in_addr_t	Listen::getIpNumber() {
-	std::cout << "return in getIPNumber: " << _ip_number << std::endl;
 	return _ip_number;
 }
