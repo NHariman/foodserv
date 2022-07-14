@@ -15,11 +15,17 @@ using namespace std;
 
 class URI {
 	public:
+		// Default constructor
 		URI();
+		// Copy constructor
 		URI(URI const& other);
+		// String constructor
 		URI(string const& uri_string);
+		// Assignment operator
 		URI&	operator=(URI const& other);
+		// Overloaded assignment operator taking string
 		URI&	operator=(string const& uri_string);
+		// Destructor
 		~URI();
 
 		string	Get();

@@ -13,9 +13,7 @@ pchar   S1   S1   S2
 */
 
 // Default constructor
-URI::URI(){
-	
-}
+URI::URI() {}
 
 // Copy constructor
 URI::URI(URI const& other)
@@ -114,8 +112,8 @@ void	URI::SetQuery(string const& query) {
 
 // Parses origin-form URIs only (without host).
 void	URI::ParseInput() {
-	RequestTargetParser	parser(*this);
-	parser.Parse(_uri_input);
+	RequestTargetParser	parser;
+	parser.Parse(*this, _uri_input);
 	_uri_parsed = ConstructParsedURI();
 }
 

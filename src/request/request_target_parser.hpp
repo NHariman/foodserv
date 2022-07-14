@@ -12,12 +12,13 @@ class URI;
 
 class	RequestTargetParser : public StateParser<URIState> {
 	public:
-		// URI constructor
-		RequestTargetParser(URI& uri);
+		// Default constructor
+		RequestTargetParser();
+		// Destructor
 		~RequestTargetParser();
 
 
-		void	Parse(string const& uri_string);
+		void	Parse(URI& uri, string const& uri_string);
 
 	private:
 		URI		*_uri;

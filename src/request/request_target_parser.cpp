@@ -2,7 +2,7 @@
 
 #define DEBUG 0 // REMOVE
 
-RequestTargetParser::RequestTargetParser(URI& uri) : _uri(&uri) {}
+RequestTargetParser::RequestTargetParser() {}
 
 RequestTargetParser::~RequestTargetParser() {}
 
@@ -18,7 +18,8 @@ RequestTargetParser::~RequestTargetParser() {}
 	{  QR,       PR,      QR,      QR,       QR,      DONE,    DONE  }, // Query
 */
 
-void	RequestTargetParser::Parse(string const& uri_string) {
+void	RequestTargetParser::Parse(URI& uri, string const& uri_string) {
+	_uri = &uri;
 	_part = pt_Path;
 	// if (_part == pt_Host)
 	// 	ParseHost(uri_string);
@@ -28,7 +29,6 @@ void	RequestTargetParser::Parse(string const& uri_string) {
 // void	RequestTargetParser::ParseHost(string const& uri_string) {
 // 	(void)uri_string;
 // }
-
 
 URIState	RequestTargetParser::SetStartState() const {
 	return u_Start;
