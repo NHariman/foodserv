@@ -1,0 +1,42 @@
+# Prerequisites
+*.d
+*.vscode/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+.gitignore
+Makefile
+.DS_Store
+
+#files not to submit when submitting to main
+src/config/server*
+src/config/nginx*
+src/config/listen*
