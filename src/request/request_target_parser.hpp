@@ -17,13 +17,13 @@ class	RequestTargetParser : public StateParser<URIState> {
 		~RequestTargetParser();
 
 
-		void	Parse(string const& uri_string, URIPart part = pt_Path);
+		void	Parse(string const& uri_string);
 
 	private:
 		URI		*_uri;
 		URIPart _part;
 
-		void		ParseHost(string const& uri_string); // TODO: review later if should be moved
+		// void		ParseHost(string const& uri_string); // TODO: review later if should be moved
 		// void		ParsePathOriginForm(string const& uri_string);
 		void		PushBuffertoField(URIPart part);
 		URIState	StartHandler(char uri_char);
