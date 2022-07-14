@@ -1,6 +1,6 @@
 ### Request ABNF rules:
 	HTTP-message = request-line *( header-field CRLF ) CRLF [ message-body ]
-	|_ request-lin = method SP request-target SP HTTP-version CRLF
+	|_ request-line = method SP request-target SP HTTP-version CRLF
 		|_ method =	token
 		|_ request-target =	1*( "/" *pchar ) [ "?" query ] OR
 							scheme ":" hier-part [ "?" query ] OR (only for proxy servers)
@@ -44,3 +44,9 @@ Source: [unreserved](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3),
 > The form content is only encoded in the URL's query string when the form submission method is GET. The same encoding is used by default when the submission method is POST, but the result is submitted as the HTTP request body rather than being included in a modified URL.  
 
 Source: [Query string wiki](https://en.wikipedia.org/wiki/Query_string)
+
+### Host header field:
+	Host = uri-host [ ":" port ]
+	|_ uri-host =	IP-literal / IPv4address / reg-name
+		|_ IP-literal = "[" ( IPv6address / IPvFuture  ) "]"
+	|_ port =		*DIGIT

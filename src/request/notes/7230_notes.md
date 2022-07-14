@@ -79,6 +79,13 @@ Source:
 [Section 3.2.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.2)
 <br/><br/>
 
+### Content-Length not reached:
+> If the final response to the last request on a connection has been completely received and there remains additional data to read, a user agent MAY discard the remaining data or attempt to determine if that data belongs as part of the prior response body, which might be the case if the prior message's Content-Length value is incorrect.  A client MUST NOT process, cache, or forward such extra data as a separate response, since such behavior would be vulnerable to cache poisoning.
+
+Source:
+[Section 3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
+<br/><br/>
+
 
 ## Formatting
 
@@ -180,10 +187,24 @@ Source:
 [Section 3.2.4](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.4)
 <br/><br/>
 
+### Missing or multiple Host header field:
+>  A server MUST respond with a 400 (Bad Request) status code to any HTTP/1.1 request message that lacks a Host header field and to any request message that contains more than one Host header field or a Host header field with an invalid field-value..  
+
+Source:
+[Section 5.4](https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.2)
+<br/><br/>
+
 ### Transfer-Encoding:
 >  If a Transfer-Encoding header field is present in a request and the chunked transfer coding is not the final encoding, the message body length cannot be determined reliably; the server MUST respond with the 400 (Bad Request) status code and then close the connection..  
 
 >  If a message is received without Transfer-Encoding and with either multiple Content-Length header fields having differing field-values or a single Content-Length header field having an invalid value, then the message framing is invalid and the recipient MUST treat it as an unrecoverable error.  If this is a request message, the server MUST respond with a 400 (Bad Request) status code and then close the connection.
+
+Source:
+[3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
+<br/><br/>
+
+### Content-Length:
+> A server MAY reject a request that contains a message body but not a Content-Length by responding with 411 (Length Required).
 
 Source:
 [3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
@@ -206,19 +227,11 @@ Source:
 [Section 3.1.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.2)
 <br/><br/>
 
-
-### :
->  .  
-
-Source:
-[]()
-<br/><br/>
-
-### :
->  .  
+### Content-Length:
+>  Aside from the cases defined above, in the absence of Transfer-Encoding, an origin server SHOULD send a Content-Length header field when the payload body size is known prior to sending the complete header section.  This will allow downstream recipients to measure transfer progress, know when a received message is complete, and potentially reuse the connection for additional requests..  
 
 Source:
-[]()
+[Section 3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2)
 <br/><br/>
 
 ### :
