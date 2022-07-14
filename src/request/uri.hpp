@@ -9,6 +9,10 @@
 
 using namespace std;
 
+// Constructs a URI object composed of: scheme, host, path, query.
+// Parses during construction using RequestTargetParser, which throws
+// BadRequestException if an invalid URI is passed.
+
 class URI {
 	public:
 		URI();
@@ -22,11 +26,9 @@ class URI {
 		string	GetInputURI();
 		string	GetParsedURI();
 		string	GetURIDebug();
-		string	GetScheme();
 		string	GetHost();
 		string	GetPath();
 		string	GetQuery();
-		void	SetScheme(string const& scheme);
 		void	SetHost(string const& host);
 		void	SetPath(string const& path);
 		void	SetQuery(string const& query);
@@ -34,7 +36,6 @@ class URI {
 	private:
 		string	_uri_input;
 		string	_uri_parsed;
-		string	_scheme;
 		string	_host;
 		string	_path;
 		string	_query;

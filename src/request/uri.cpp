@@ -21,7 +21,6 @@ URI::URI(){
 URI::URI(URI const& other)
 	:	_uri_input(other._uri_input),
 		_uri_parsed(other._uri_parsed),
-		_scheme(other._scheme),
 		_host(other._host),
 		_path(other._path),
 		_query(other._query) {}
@@ -36,7 +35,6 @@ URI&	URI::operator=(URI const& other) {
 	if (this != &other) {
 		this->_uri_input = other._uri_input;
 		this->_uri_parsed = other._uri_parsed;
-		this->_scheme = other._scheme;
 		this->_host = other._host;
 		this->_path = other._path;
 		this->_query = other._query;
@@ -84,10 +82,6 @@ string	URI::GetURIDebug() {
 	return uri;
 }
 
-string	URI::GetScheme() {
-	return _scheme;
-}
-
 string	URI::GetHost() {
 	return _host;
 }
@@ -102,23 +96,23 @@ string	URI::GetQuery() {
 	return _query;
 }
 
-
-void	URI::SetScheme(string const& scheme) {
-    _scheme = scheme;
-}
-
 void	URI::SetHost(string const& host) {
+	// TODO: call Host parser to validate?
 	_host = host;
+	_uri_parsed = ConstructParsedURI();
 }
 
 void	URI::SetPath(string const& path) {
 	_path = path;
+	_uri_parsed = ConstructParsedURI();
 }
 
 void	URI::SetQuery(string const& query) {
 	_query = query;
+	_uri_parsed = ConstructParsedURI();
 }
 
+// Parses origin-form URIs only (without host).
 void	URI::ParseInput() {
 	RequestTargetParser	parser(*this);
 	parser.Parse(_uri_input);
