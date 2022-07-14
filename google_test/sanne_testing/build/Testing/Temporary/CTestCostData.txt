@@ -1,0 +1,3 @@
+ConfigTest.BasicAssertions 2 0
+---
+ConfigTest.BasicAssertions

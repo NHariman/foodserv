@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 15:32:31 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/14 21:43:07 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_blocks(0) {
 		throw InvalidFileLocationException();
 	config_file_fd.close();
 	FindServerBlocks();
+	// server blocks listen and server_name part: Sanne
+	PrintServerBlocksVectors();
+	ChooseServerBlock();
 }
 
 NginxConfig::NginxConfig(const NginxConfig& obj) {
@@ -117,7 +120,6 @@ void		NginxConfig::FindServerBlocks() {
 	size_t		key_start = 0;
 	size_t		key_end = 0;
 
-	// while (_config_file[i] != std::string::npos) {
 	while (_config_file[i]) {
 		key_start = _config_file.find_first_not_of(" \t\n\v\f\r", i);
 		key_end = _config_file.find_first_of(" \t\n\v\f\r", key_start);
@@ -142,18 +144,52 @@ void		NginxConfig::FindServerBlocks() {
 void	NginxConfig::PrintServerBlocksVectors() {
 	for (std::vector<ServerBlock>::iterator it = _servers.begin(); it != _servers.end(); it++) {
 		std::cout << "\nIn server block print for loop: " << std::endl;
-		std::cout << "PortNumber: " << it->GetIPAddress() << std::endl;
-		std::cout << "IPAddress: " << it->GetPortNumber() << std::endl;
-		// DANGLING POINTER ERROR: 
-		for (std::vector<std::string>::iterator it2 = it->GetServerNameVector().begin(); it2 != it->GetServerNameVector().end(); it2++) {
+		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
+		std::cout << "IPAddress: " << it->GetIPAddress() << std::endl;
+		std::vector<std::string> server = it->GetServerNameVector();
+		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
 			std::cout << "In servername vector printing: " << std::endl;
 			std::cout << *it2 << std::endl;
 		}
 	}
 }
 
+// for now use example strings that represent the host header:
+// Host = uri-host [ ":" port ] ;
+// string: www.example.com
+// string: example.com:80
+// string:
 // SANNE: add the functions to select which server block to choose
+void	NginxConfig::ChooseServerBlock() {
+	// std::string	request_host = "example.com:80";
+	std::string request_server_name = "";
+	std::string request_host = "www.example.com";
 
+	int found = request_host.find(':');
+	if (found != std::string::npos) {
+		std::cout << ": is in the string" << std::endl;
+		// split the host out of the string
+		std::string port_numb = request_host.substr(found + 1, request_host.length());
+		std::cout << "PORT NUMB: " << port_numb << std::endl;
+		
+		request_server_name = request_host.substr(0, found);
+	}
+	else {
+		request_server_name = request_host;
+	}
+	std::cout << "SERVER NAME: " << request_server_name << std::endl;
+}
+
+// step1: split the string in server_name and host. request_server_name and request_port
+// step2: make a vector of possible server blocks, so where the ports match each other
+// 			note: if no port is given, default request_port = 80
+// step3: If there is just one match: BINGO this is the server block to use
+// step4: If there are multiple matches: start looking at the server_name variable
+// step5: First try to find a erver block with a server_name that matches the value request_server_name EXACTLY.
+// 			if multiple are found it will use the first one.
+// step6:
+// step7: If no match is found, Ningx selects the default server block for that IP address and port.
+//			The default for IP/port combo will eather be the first block.
 
 // getters
 std::string NginxConfig::GetConfigFile() const {

@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/13 11:28:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/14 21:07:47 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class NginxConfig {
 		// you have a vector full of server blocks _servers,
 		// first print the outcome of this vector?
 		void	PrintServerBlocksVectors();
+		void	ChooseServerBlock();
 
 		//exceptions
 		class GetLineFailureException : public std::exception {
