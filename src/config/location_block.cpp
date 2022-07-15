@@ -1,16 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   location_block.cpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/06/20 20:49:36 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 16:23:45 by nhariman      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "location_block.hpp"
+#include "key_validation/client_max_body_size.hpp"
 
 std::string	TrimValue(std::string value){
 	size_t	start = 0;
@@ -30,7 +20,7 @@ LocationBlock::LocationBlock(std::string data) {
     _check_list.client_max_body_size = false;
 	_check_list.error_page = false;
     _check_list.proxy_pass = false;
-	_check_list.limit_except = false;
+	_check_list.allowed_methods = false;
     GetKeyValuePairs(data);
 }
 
@@ -44,7 +34,7 @@ LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
     _client_max_body_size = location_block.GetClientMaxBodySize();
 	_error_page = location_block.GetErrorPage();
     _proxy_pass = location_block.GetProxyPass();
-	_limit_except = location_block.GetLimitExcept();
+	_allowed_methods = location_block.GetAllowedMethods();
     return (*this);
 }
 LocationBlock::LocationBlock(const LocationBlock& location_block) {
@@ -55,15 +45,17 @@ LocationBlock::LocationBlock(const LocationBlock& location_block) {
     _client_max_body_size = location_block.GetClientMaxBodySize();
 	_error_page = location_block.GetErrorPage();
     _proxy_pass = location_block.GetProxyPass();
-	_limit_except = location_block.GetLimitExcept();
+	_allowed_methods = location_block.GetAllowedMethods();
 }
 
 int			            LocationBlock::IsKey(std::string key) {
-	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "proxy_pass", "limit_except"};
+	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "proxy_pass", "allowed_methods"};
 	
 	std::cout << "key: " << key << std::endl;
-    if (_check_list.uri == false)
-        return 7;
+    if (_check_list.uri == false) {
+		// validate URI here
+		return 7;
+	}
 	int	is_key = std::find(key_name, key_name + 7, key) - key_name;
 	if (is_key < 0 || is_key > 6)
 		throw InvalidKeyException();
@@ -88,31 +80,46 @@ void				LocationBlock::SetValue(int key, std::string value) {
 				_check_list.autoindex = true;
 				break ;
 			}
-			case 1:
+			case 1: {
+				if (_check_list.root == true)
+					throw MultipleRootException();
 				_check_list.root = true;
-				_root = value;
+				_root = trimmed_value;
 				break ;
-			case 2:
+			}
+			case 2: {
+				if (_check_list.index == true)
+					throw MultipleIndexException();
 				_check_list.index = true;
-				_index = value;
+				_index = trimmed_value;
 				break ;
-			case 3:
+			}
+			case 3: {
+				if (_check_list.client_max_body_size == true)
+					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
+				ClientMaxBodySize	cmbs_value(trimmed_value);
 				_client_max_body_size = std::atoi(value.c_str());
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
-            case 4:
+			}
+            case 4: {
 				_check_list.error_page = true;
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
-            case 5:
+			}
+            case 5: {
 				_check_list.proxy_pass = true;
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
-            case 6:
-				_check_list.limit_except = true;
+			}
+            case 6: {
+				if (_check_list.allowed_methods == true)
+					throw MultipleAllowedMethodsException();
+				_check_list.allowed_methods = true;
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
+			}
 		}
 	}
 }
@@ -130,6 +137,8 @@ void			LocationBlock::CheckListVerification(){
 		std::cerr << "WARNING! No client_max_body_size in locationblock detected. Default have been set." << std::endl;
 	if (_check_list.proxy_pass == false)
 		std::cerr << "WARNING! No proxy_pass in locationblock detected. Default have been set." << std::endl;
+	if (_check_list.allowed_methods == false)
+		std::cerr << "WARNING! No allowed_methods in locationblock detected. Default have been set." << std::endl;
 }
 
 void                        LocationBlock::GetKeyValuePairs(std::string data) {
@@ -150,10 +159,6 @@ void                        LocationBlock::GetKeyValuePairs(std::string data) {
 			std::cout << "uri block found" << std::endl;
             SetValue(ret, data.substr(key_start, key_end - key_start));
 			value_end = data.find_first_of('{', key_end);
-		}
-		else if (ret == 6) {
-			value_end = data.find_first_of('}', key_end);
-			SetValue(ret, data.substr(key_end, value_end - key_end + 1));
 		}
 		else {
             value_end = data.find_first_of(';', key_end);
@@ -193,6 +198,6 @@ std::string	                LocationBlock::GetProxyPass() const {
     return this->_proxy_pass;
 }
 
-std::string	                LocationBlock::GetLimitExcept() const {
-    return this->_limit_except;
+std::string	                LocationBlock::GetAllowedMethods() const {
+    return this->_allowed_methods;
 }

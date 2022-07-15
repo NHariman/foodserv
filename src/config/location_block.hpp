@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   location_block.hpp                                 :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/06/20 20:49:39 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 12:34:26 by nhariman      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef LOCATION_BLOCK_HPP
 # define LOCATION_BLOCK_HPP
@@ -16,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 // Coplien form:
 
@@ -45,7 +35,7 @@ class LocationBlock {
 			bool	client_max_body_size;
 			bool	error_page;
 			bool	proxy_pass;
-			bool	limit_except;
+			bool	allowed_methods;
 		}	_check_list; // check list of found keywords in locationblock
 		std::string					_uri;
 		bool						_autoindex;
@@ -54,7 +44,7 @@ class LocationBlock {
 		int							_client_max_body_size;
 		std::string					_error_page;
 		std::string					_proxy_pass;
-		std::string					_limit_except;
+		std::string					_allowed_methods;
 		LocationBlock(){};
 		void						GetKeyValuePairs(std::string data);
 		int							IsKey(std::string key);
@@ -78,7 +68,7 @@ class LocationBlock {
 		int							GetClientMaxBodySize() const;
 		std::string					GetProxyPass() const;
 		std::string					GetErrorPage() const;
-		std::string					GetLimitExcept() const;
+		std::string					GetAllowedMethods() const;
 
 		// exception classes
 		class InvalidKeyException : public std::exception
@@ -95,11 +85,32 @@ class LocationBlock {
 					return "ERROR! Multiple root keys detected in Location block.";
 				}
 		};
+		class MultipleIndexException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple index keys detected in Location block.";
+				}
+		};
+		class MultipleAllowedMethodsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple allowed_methods keys detected in Location block.";
+				}
+		};
 		class MultipleClientMaxBodySizeException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
 					return "ERROR! Multiple Client_max_body_size keys detected in Location block.";
+				}
+		};
+		class BadURIException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Invalid URI detected in Location block.";
 				}
 		};
 };

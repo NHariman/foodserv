@@ -1,0 +1,5 @@
+add_test( CMBSTest.ValidTests /home/nhariman/foodserv/google_test/test_client_max_body_size/build/try_test [==[--gtest_filter=CMBSTest.ValidTests]==] --gtest_also_run_disabled_tests)
+set_tests_properties( CMBSTest.ValidTests PROPERTIES WORKING_DIRECTORY /home/nhariman/foodserv/google_test/test_client_max_body_size/build)
+add_test( CMBSTest.InvalidInputTests /home/nhariman/foodserv/google_test/test_client_max_body_size/build/try_test [==[--gtest_filter=CMBSTest.InvalidInputTests]==] --gtest_also_run_disabled_tests)
+set_tests_properties( CMBSTest.InvalidInputTests PROPERTIES WORKING_DIRECTORY /home/nhariman/foodserv/google_test/test_client_max_body_size/build)
+set( try_test_TESTS CMBSTest.ValidTests CMBSTest.InvalidInputTests)

@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nhariman/foodserv/src/config/key_validation/client_max_body_size.cpp
+client_max_body_size.hpp
+/home/nhariman/foodserv/src/config/key_validation/client_max_body_size.hpp
+
+/home/nhariman/foodserv/src/config/key_validation/client_max_body_size.hpp
+iostream
+-
+stdexcept
+-
+
