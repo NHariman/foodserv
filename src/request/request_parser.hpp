@@ -1,13 +1,13 @@
 #ifndef REQUEST_PARSER_HPP
 #define REQUEST_PARSER_HPP
 
-#include <iostream>
 #include <algorithm> // transform
 #include <map>
 #include <string>
 #include <vector>
 
 #include "exception.hpp"
+#include "header_field_parser.hpp"
 #include "request_utils.hpp"
 #include "state_parser.hpp"
 #include "uri.hpp"
@@ -26,8 +26,8 @@ enum RequestState {
 	r_Version,
 	r_Version_Done,
 	r_FieldName,
-	r_FieldValue,
-	r_FieldDone,
+	// r_FieldValue,
+	// r_FieldDone,
 	r_Header_Done,
 	r_MsgBody,
 	r_Done,
@@ -42,9 +42,11 @@ struct RequestLine {
 
 class RequestParser  : public StateParser<RequestState> {
 	public:
+		// Default constructor
 		RequestParser();
-		// char array constructor
+		// C-string constructor
 		RequestParser(char const* buffer);
+		// Destructor
 		~RequestParser();
 
 		void	Parse(char const* buffer);
@@ -55,12 +57,12 @@ class RequestParser  : public StateParser<RequestState> {
 		string	GetMessageBody();
 
 	private:
-		struct RequestLine	_request_line;
 		map<string, string>	_header_fields;
-		string	_cur_field;
+		// HeaderFieldParser	_header_parser;
+		struct RequestLine	_request_line;
+		
 		string	_msg_body;
 		size_t	_bytes_read;
-		size_t	_fields_bytes_read;
 
 		RequestState	StartHandler(size_t pos);
 		RequestState	MethodHandler(size_t pos);
@@ -70,8 +72,8 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestState	VersionHandler(size_t pos);
 		RequestState	VersionDoneHandler(size_t pos);
 		RequestState	FieldNameHandler(size_t pos);
-		RequestState	FieldValueHandler(size_t pos);
-		RequestState	FieldDoneHandler(size_t pos);
+		// RequestState	FieldValueHandler(size_t pos);
+		// RequestState	FieldDoneHandler(size_t pos);
 		RequestState	HeaderDoneHandler(size_t pos);
 		RequestState	ValidDelimiter(bool (*valid)(char), size_t pos); // TODO: remove if unused
 

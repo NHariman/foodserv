@@ -2,13 +2,28 @@
 #define REQUEST_TARGET_PARSER_HPP
 
 #include "uri.hpp"
-#include "uri_state_enums.hpp"
 #include "request_utils.hpp"
 #include "state_parser.hpp"
 
 using namespace std;
 
 class URI;
+
+enum URIPart {
+	pt_Host = 0,
+	pt_Path,
+	pt_Query
+};
+
+enum URIState {
+	u_Start = 0,
+	u_Path,
+	u_Query,
+	u_Percent,
+	u_Percent_Done,
+	u_Done,
+	u_Invalid
+};
 
 class	RequestTargetParser : public StateParser<URIState> {
 	public:

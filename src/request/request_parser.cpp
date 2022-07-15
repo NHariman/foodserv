@@ -53,7 +53,7 @@ CreateResponse
 // Default constructor
 RequestParser::RequestParser() : _bytes_read(0) {}
 
-// Char array constructor
+// C-string constructor
 RequestParser::RequestParser(char const* buffer) : _bytes_read(0) {
 	Parse(buffer);
 }
@@ -81,8 +81,8 @@ RequestState	RequestParser::GetNextState(size_t pos) {
 			&RequestParser::VersionHandler,
 			&RequestParser::VersionDoneHandler,
 			&RequestParser::FieldNameHandler,
-			&RequestParser::FieldValueHandler,
-			&RequestParser::FieldDoneHandler,
+			// &RequestParser::FieldValueHandler,
+			// &RequestParser::FieldDoneHandler,
 			&RequestParser::HeaderDoneHandler,
 			// &RequestParser::MessageBodyHandler,
 			nullptr
@@ -257,73 +257,81 @@ RequestState	RequestParser::VersionDoneHandler(size_t pos) {
 	}
 }
 
+RequestState	RequestParser::FieldNameHandler(size_t pos) {
+	if (DEBUG) cout << "[Field Name Handler] at: " << input[pos] << endl;
+	HeaderFieldParser	_header_parser;
+	_header_parser.Parse(_header_fields, input.substr(pos));
+	return r_Done;
+	return r_Header_Done;
+}
+
 // Checks if field name is appropriately delimited by : and is made of valid
 // TChars. Then converts string to lowercase (field names are case-insensitive)
 // and saves into header_fields map. Also increments header_fields_size by
 // read bytes.
-RequestState	RequestParser::FieldNameHandler(size_t pos) {
-	if (DEBUG) cout << "[Field Name Handler] at: " << input[pos] << endl;
+// RequestState	RequestParser::FieldNameHandler(size_t pos) {
+// 	if (DEBUG) cout << "[Field Name Handler] at: " << input[pos] << endl;
 
-	if (input[pos] == '\n' || input[pos] == '\0') {
-		_bytes_read += 1;
-		return r_Header_Done;
-	}
-	size_t	name_end = GetEndPos(input, ':', pos);
-	string	field_name = input.substr(pos, name_end);
-	// checks if missing required : ending or has non TChar characters
-	if (name_end == pos || !IsValidString(IsTChar, field_name))
-		throw BadRequestException();
-	NormalizeString(tolower, field_name, 0);
-	_cur_field = field_name;
-	_fields_bytes_read += name_end + 1;
-	_bytes_read += name_end + 1;
-	return r_FieldValue;
-}
+// 	if (input[pos] == '\n' || input[pos] == '\0') {
+// 		_bytes_read += 1;
+// 		return r_Header_Done;
+// 	}
+// 	size_t	name_end = GetEndPos(input, ':', pos);
+// 	string	field_name = input.substr(pos, name_end);
+// 	// checks if missing required : ending or has non TChar characters
+// 	if (name_end == pos || !IsValidString(IsTChar, field_name))
+// 		throw BadRequestException();
+// 	NormalizeString(tolower, field_name, 0);
+// 	_cur_field = field_name;
+// 	_fields_bytes_read += name_end + 1;
+// 	_bytes_read += name_end + 1;
+// 	return r_FieldValue;
+// }
 
-// Trims off whitespace (' '  or \t) from beginning and end of string.
-static string	EatOptionalWhiteSpace(string& s) {
-	string::iterator	start = s.begin();
-	string::iterator	end = s.end() - 1;
+// // Trims off whitespace (' '  or \t) from beginning and end of string.
+// static string	EatOptionalWhiteSpace(string& s) {
+// 	string::iterator	start = s.begin();
+// 	string::iterator	end = s.end() - 1;
 
-	while (start != end && IsWhitespace(*start))
-		start++;
-	while (start != end && IsWhitespace(*end))
-		end--;
-	return string(start, end + 1);
-}
+// 	while (start != end && IsWhitespace(*start))
+// 		start++;
+// 	while (start != end && IsWhitespace(*end))
+// 		end--;
+// 	return string(start, end + 1);
+// }
 
-RequestState	RequestParser::FieldValueHandler(size_t pos) {
-	if (DEBUG) cout << "[Field Value Handler] at: " << input[pos] << endl;
+// RequestState	RequestParser::FieldValueHandler(size_t pos) {
+// 	if (DEBUG) cout << "[Field Value Handler] at: " << input[pos] << endl;
 
-	size_t	value_end = GetCRLFPos(input, pos);
-	// cout << "input[value_end]: " << input[value_end] << endl;
-	if (value_end == pos) // if required CR/LF ending not found
-		throw BadRequestException();
-	string	field_value = input.substr(pos, value_end);
-	field_value = EatOptionalWhiteSpace(field_value);
-	cout << "field_value after trimming: " << field_value << endl;
-	// TODO: add splitting of values by spaces for multiple value that fails on IsValidString check
-	if (field_value.size() == 0 || !IsValidString(IsVChar, field_value))
-		throw BadRequestException();
-	_header_fields[_cur_field] = field_value;
-	_fields_bytes_read += value_end;
-	_bytes_read += value_end;
-	return r_FieldDone;
-}
+// 	size_t	value_end = GetCRLFPos(input, pos);
+// 	// cout << "input[value_end]: " << input[value_end] << endl;
+// 	if (value_end == pos) // if required CR/LF ending not found
+// 		throw BadRequestException();
+// 	string	field_value = input.substr(pos, value_end);
+// 	field_value = EatOptionalWhiteSpace(field_value);
+// 	cout << "field_value after trimming: " << field_value << endl;
+// 	// TODO: add splitting of values by spaces for multiple value that fails on IsValidString check
+// 	if (field_value.size() == 0 || !IsValidString(IsVChar, field_value))
+// 		throw BadRequestException();
+// 	_header_fields[_cur_field] = field_value;
+// 	_fields_bytes_read += value_end;
+// 	_bytes_read += value_end;
+// 	return r_FieldDone;
+// }
 
-RequestState	RequestParser::FieldDoneHandler(size_t pos) {
-	if (DEBUG) cout << "[Field Done Handler] at: " << (int)input[pos] << endl;
+// RequestState	RequestParser::FieldDoneHandler(size_t pos) {
+// 	if (DEBUG) cout << "[Field Done Handler] at: " << (int)input[pos] << endl;
 
-	size_t	line_breaks = ValidLineBreaks(input, pos);
+// 	size_t	line_breaks = ValidLineBreaks(input, pos);
 
-	if (line_breaks == 0)
-		return r_Invalid;
-	else {
-		_fields_bytes_read += line_breaks;
-		_bytes_read += line_breaks;
-		return r_FieldName;
-	}
-}
+// 	if (line_breaks == 0)
+// 		return r_Invalid;
+// 	else {
+// 		_fields_bytes_read += line_breaks;
+// 		_bytes_read += line_breaks;
+// 		return r_FieldName;
+// 	}
+// }
 
 RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 	if (DEBUG) cout << "[Header Done Handler] at: " << input[pos] << endl;

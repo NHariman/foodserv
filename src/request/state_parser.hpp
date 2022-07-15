@@ -1,6 +1,10 @@
 #ifndef STATE_PARSER_HPP
 #define STATE_PARSER_HPP
 
+#include <iostream>
+
+using namespace std;
+
 template <typename State>
 class StateParser {
 	public:		
