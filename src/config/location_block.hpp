@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include "../utils.hpp"
 
 // Coplien form:
 
@@ -22,7 +23,7 @@
 
 
 //string trimming util for serverblocks and location blocks
-std::string	TrimValue(std::string value);
+
 
 class LocationBlock {
 	private:

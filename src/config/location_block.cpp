@@ -2,15 +2,6 @@
 #include "location_block.hpp"
 #include "key_validation/client_max_body_size.hpp"
 
-std::string	TrimValue(std::string value){
-	size_t	start = 0;
-	size_t	end = 0;
-
-	start = value.find_first_not_of(" \t\n\v\f\r");
-	end = value.find_last_not_of(" \t\n\v\f\r");
-	return (value.substr(start, end - start + 1));
-}
-
 LocationBlock::LocationBlock(std::string data) {
     std::cerr << "In LocationBlock now" << std::endl;
     _check_list.uri = false;
@@ -99,8 +90,7 @@ void				LocationBlock::SetValue(int key, std::string value) {
 					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
 				ClientMaxBodySize	cmbs_value(trimmed_value);
-				_client_max_body_size = std::atoi(value.c_str());
-				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				_client_max_body_size = cmbs_value.GetValue();
 				break ;
 			}
             case 4: {

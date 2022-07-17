@@ -6,12 +6,13 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 17:16:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/17 17:09:10 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_block.hpp"
 # include <algorithm>
+# include "key_validation/client_max_body_size.hpp"
 
 // error pages are hardcoded in the real nginx:
 // static char ngx_http_error_404_page[] =
@@ -161,7 +162,8 @@ void				ServerBlock::SetValue(int key, std::string value){
 				if (_check_list.client_max_body_size == true)
 					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
-				_client_max_body_size = std::atoi(value.c_str());
+				ClientMaxBodySize	cmbs_value(trimmed_value);
+				_client_max_body_size = cmbs_value.GetValue();
 				/// create an CMBS class and use the GetCMBS() function in there to paste CMBS here if valid
 				break ;
 			case 6:

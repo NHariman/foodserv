@@ -11,7 +11,7 @@
     }
 */
 
-TEST(CMBSTest, ValidTests) {
+TEST(CMBSTest, ValidInputTests) {
   EXPECT_NO_THROW({
     ClientMaxBodySize test("123");
   });
@@ -21,9 +21,21 @@ TEST(CMBSTest, ValidTests) {
   EXPECT_NO_THROW({
     ClientMaxBodySize test("123M");
   });
+  EXPECT_NO_THROW({
+    ClientMaxBodySize test("2147483647");
+  });
+  EXPECT_NO_THROW({
+    ClientMaxBodySize test("2147483647m");
+  });
+  EXPECT_NO_THROW({
+    ClientMaxBodySize test("2147483647M");
+  });
 }
 
 TEST(CMBSTest, InvalidInputTests) {
+  EXPECT_THROW({
+    ClientMaxBodySize test("-123");
+  }, ClientMaxBodySize::InvalidClientMaxBodySizeException);
   EXPECT_THROW({
     ClientMaxBodySize test("123b");
   }, ClientMaxBodySize::InvalidClientMaxBodySizeException);
@@ -42,6 +54,34 @@ TEST(CMBSTest, InvalidInputTests) {
   EXPECT_THROW({
     ClientMaxBodySize test("123 m");
   }, ClientMaxBodySize::InvalidClientMaxBodySizeException);
+  EXPECT_THROW({
+    ClientMaxBodySize test("123m1");
+  }, ClientMaxBodySize::InvalidClientMaxBodySizeException);
+  EXPECT_THROW({
+    ClientMaxBodySize test("123Me");
+  }, ClientMaxBodySize::InvalidClientMaxBodySizeException);
+  EXPECT_THROW({
+    ClientMaxBodySize test("asbsd");
+  }, ClientMaxBodySize::InvalidClientMaxBodySizeException);
+  EXPECT_THROW({
+    ClientMaxBodySize test("2147483648");
+  }, ClientMaxBodySize::TooLargeClientMaxBodySizeException);
+  EXPECT_THROW({
+    ClientMaxBodySize test("2147483648m");
+  }, ClientMaxBodySize::TooLargeClientMaxBodySizeException);
+  EXPECT_THROW({
+    ClientMaxBodySize test("2147483648M");
+  }, ClientMaxBodySize::TooLargeClientMaxBodySizeException);
+
+}
+
+TEST(CMBSTest, ReturnInputTests) {
+  EXPECT_EQ(PrintValue("123"), 123);
+  EXPECT_EQ(PrintValue("123m"), 123);
+  EXPECT_EQ(PrintValue("123M"), 123);
+  EXPECT_EQ(PrintValue("2147483647"), 2147483647);
+  EXPECT_EQ(PrintValue("2147483647M"), 2147483647);
+  EXPECT_EQ(PrintValue("2147483647m"), 2147483647);
 }
 
 
