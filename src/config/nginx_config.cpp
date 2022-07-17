@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/14 21:43:07 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/17 18:27:01 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_blocks(0) {
 	FindServerBlocks();
 	// server blocks listen and server_name part: Sanne
 	PrintServerBlocksVectors();
-	ChooseServerBlock();
+	SplitRequestHost();
 }
 
 NginxConfig::NginxConfig(const NginxConfig& obj) {
@@ -160,24 +160,37 @@ void	NginxConfig::PrintServerBlocksVectors() {
 // string: example.com:80
 // string:
 // SANNE: add the functions to select which server block to choose
-void	NginxConfig::ChooseServerBlock() {
-	// std::string	request_host = "example.com:80";
-	std::string request_server_name = "";
-	std::string request_host = "www.example.com";
 
-	int found = request_host.find(':');
+void	NginxConfig::SplitRequestHost() {
+	// std::string	request_host = "example.com:80";
+	std::string	request_host = "www.example.com";
+
+	// both request server_name and port_number stay empty
+	std::string	request_server_name = "";
+	int			request_port_number = -1;
+	int			found;
+
+	// if a ':' is found, this means a port number is specified in the request
+	// split the server_name and the port_number of the request.
+	found = request_host.find(':');
 	if (found != std::string::npos) {
-		std::cout << ": is in the string" << std::endl;
-		// split the host out of the string
-		std::string port_numb = request_host.substr(found + 1, request_host.length());
-		std::cout << "PORT NUMB: " << port_numb << std::endl;
-		
+		request_port_number = std::stoi(request_host.substr(found + 1, request_host.length()));
 		request_server_name = request_host.substr(0, found);
 	}
-	else {
+	else
 		request_server_name = request_host;
-	}
-	std::cout << "SERVER NAME: " << request_server_name << std::endl;
+
+	std::cout << "\nrequest_port_number: " << request_port_number << std::endl;
+	std::cout << "request_server_name: " << request_server_name << std::endl;
+
+	// if (request_port_number == -1)
+		// go to a function that first adds in compatible serverblocks noted on port number
+	// if: its only 1, this is the serverblock
+	// else if: multiple, go to server_name chooser
+}
+
+void	NginxConfig::ChooseServerBlock() {
+	
 }
 
 // step1: split the string in server_name and host. request_server_name and request_port

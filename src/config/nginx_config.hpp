@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/14 21:07:47 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/17 18:22:39 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,9 @@ class NginxConfig {
 		size_t		GetServerBlockAmount() const;
 		std::vector<ServerBlock>	GetServers() const;
 		
-		// SANNE: adding in a function for the server block algorithm
-		// you have a vector full of server blocks _servers,
-		// first print the outcome of this vector?
-		void	PrintServerBlocksVectors();
-		void	ChooseServerBlock();
+		void	SplitRequestHost(); // split server from port in the request host header
+		void	PrintServerBlocksVectors(); // for error checking
+		void	ChooseServerBlock(); // make list of compatible server blocks
 
 		//exceptions
 		class GetLineFailureException : public std::exception {
