@@ -28,3 +28,22 @@ std::string	TrimValue(std::string value){
 	end = value.find_last_not_of(" \t\n\v\f\r");
 	return (value.substr(start, end - start + 1));
 }
+
+std::vector<std::string>	ToStringVector(std::string str) {
+	size_t	i = 0;
+	size_t	start = 0;
+	size_t	end = 0;
+	std::string key;
+	std::vector<std::string> vec;
+
+	while (str[i]) {
+		start = str.find_first_not_of(" \t\n\v\f\r", i);
+		end = str.find_first_of(" \t\n\v\f\r", start);
+		if (start == end)
+			break ;
+		key = str.substr(start, end - start);
+		vec.push_back(key);
+		i = end;
+	}
+	return (vec);
+}

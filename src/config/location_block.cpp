@@ -1,7 +1,7 @@
 
 #include "location_block.hpp"
-#include "key_validation/client_max_body_size.hpp"
-#include "key_validation/autoindex.hpp"
+#include "key_validation/key_validation.hpp"
+
 
 LocationBlock::LocationBlock(std::string data) {
     std::cerr << "In LocationBlock now" << std::endl;
@@ -55,15 +55,15 @@ int			            LocationBlock::IsKey(std::string key) {
 		return (is_key);
 }
 
-void				LocationBlock::SetValue(int key, std::string value) {
-	std::string		trimmed_value;
+void				LocationBlock::SetValue(int key, std::string str) {
+	std::string		value;
 
-	trimmed_value = TrimValue(value);
-	std::cout << "value: |" << trimmed_value << "|" << std::endl;
+	value = TrimValue(str);
+	std::cout << "value: |" << value << "|" << std::endl;
 
 	if (key == 7) {
 		_check_list.uri = true;
-		_uri = trimmed_value;
+		_uri = value;
         //do thing
 	}
 	else {
@@ -72,7 +72,7 @@ void				LocationBlock::SetValue(int key, std::string value) {
 				if (_check_list.autoindex == true)
 					throw MultipleAutoindexException();
 				_check_list.autoindex = true;
-				Autoindex	autoindex_value(trimmed_value);
+				Autoindex	autoindex_value(value);
 				_autoindex = autoindex_value.GetStatus();
 				break ;
 			}
@@ -80,21 +80,22 @@ void				LocationBlock::SetValue(int key, std::string value) {
 				if (_check_list.root == true)
 					throw MultipleRootException();
 				_check_list.root = true;
-				_root = trimmed_value;
+				_root = value;
 				break ;
 			}
 			case 2: {
 				if (_check_list.index == true)
 					throw MultipleIndexException();
 				_check_list.index = true;
-				_index = trimmed_value;
+				Index	index_value(value);
+				_index = index_value.GetIndex();
 				break ;
 			}
 			case 3: {
 				if (_check_list.client_max_body_size == true)
 					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
-				ClientMaxBodySize	cmbs_value(trimmed_value);
+				ClientMaxBodySize	cmbs_value(value);
 				_client_max_body_size = cmbs_value.GetValue();
 				break ;
 			}

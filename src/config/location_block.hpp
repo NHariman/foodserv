@@ -41,7 +41,7 @@ class LocationBlock {
 		std::string					_uri;
 		bool						_autoindex;
 		std::string					_root;
-		std::string					_index;
+		std::vector<std::string>	_index;
 		int							_client_max_body_size;
 		std::string					_error_page;
 		std::string					_proxy_pass;
@@ -49,7 +49,7 @@ class LocationBlock {
 		LocationBlock(){};
 		void						GetKeyValuePairs(std::string data);
 		int							IsKey(std::string key);
-		void						SetValue(int key, std::string value);
+		void						SetValue(int key, std::string str);
 		void						CheckListVerification();
 
 		// input validation
@@ -65,7 +65,7 @@ class LocationBlock {
 		std::string					GetUri() const;
 		bool						GetAutoindex() const;
 		std::string					GetRoot() const;
-		std::string					GetIndex() const;
+		std::vector<std::string>	GetIndex() const;
 		int							GetClientMaxBodySize() const;
 		std::string					GetProxyPass() const;
 		std::string					GetErrorPage() const;
