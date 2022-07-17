@@ -117,7 +117,8 @@ void				LocationBlock::SetValue(int key, std::string str) {
 				if (_check_list.allowed_methods == true)
 					throw MultipleAllowedMethodsException();
 				_check_list.allowed_methods = true;
-				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				AllowedMethods allowed_methods_value(value);
+				_allowed_methods = allowed_methods_value.GetAllowedMethods();
 				break ;
 			}
 		}

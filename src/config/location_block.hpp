@@ -45,7 +45,7 @@ class LocationBlock {
 		int							_client_max_body_size;
 		std::string					_error_page;
 		std::string					_proxy_pass;
-		std::string					_allowed_methods;
+		std::vector<std::string>	_allowed_methods;
 		LocationBlock(){};
 		void						GetKeyValuePairs(std::string data);
 		int							IsKey(std::string key);
@@ -69,7 +69,7 @@ class LocationBlock {
 		int							GetClientMaxBodySize() const;
 		std::string					GetProxyPass() const;
 		std::string					GetErrorPage() const;
-		std::string					GetAllowedMethods() const;
+		std::vector<std::string>	GetAllowedMethods() const;
 
 		// exception classes
 		class InvalidKeyException : public std::exception
