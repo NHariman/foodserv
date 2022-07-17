@@ -1,0 +1,5 @@
+if(EXISTS "/home/nhariman/foodserv/google_test/autoindex_test/build/try_test[1]_tests.cmake")
+  include("/home/nhariman/foodserv/google_test/autoindex_test/build/try_test[1]_tests.cmake")
+else()
+  add_test(try_test_NOT_BUILT try_test_NOT_BUILT)
+endif()

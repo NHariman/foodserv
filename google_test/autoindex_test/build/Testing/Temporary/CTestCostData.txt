@@ -1,0 +1,3 @@
+AutoIndexTest.ValidInput 2 0.00072605
+AutoIndexTest.invalidInput 2 0.00108905
+---

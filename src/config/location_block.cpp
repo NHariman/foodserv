@@ -1,6 +1,7 @@
 
 #include "location_block.hpp"
 #include "key_validation/client_max_body_size.hpp"
+#include "key_validation/autoindex.hpp"
 
 LocationBlock::LocationBlock(std::string data) {
     std::cerr << "In LocationBlock now" << std::endl;
@@ -68,7 +69,11 @@ void				LocationBlock::SetValue(int key, std::string value) {
 	else {
 		switch(key) {
 			case 0: {
+				if (_check_list.autoindex == true)
+					throw MultipleAutoindexException();
 				_check_list.autoindex = true;
+				Autoindex	autoindex_value(trimmed_value);
+				_autoindex = autoindex_value.GetStatus();
 				break ;
 			}
 			case 1: {
@@ -94,11 +99,15 @@ void				LocationBlock::SetValue(int key, std::string value) {
 				break ;
 			}
             case 4: {
+				if (_check_list.error_page == true)
+					throw MultipleErrorPageException();
 				_check_list.error_page = true;
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;
 			}
             case 5: {
+				if (_check_list.proxy_pass == true)
+					throw MultipleProxyPassException();
 				_check_list.proxy_pass = true;
 				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
 				break ;

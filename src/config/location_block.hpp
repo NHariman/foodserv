@@ -79,6 +79,13 @@ class LocationBlock {
 					return "ERROR! Invalid Key detected in LocationBlock.";
 				}
 		};
+		class MultipleAutoindexException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple autoindex keys detected in Location block.";
+				}
+		};
 		class MultipleRootException : public std::exception
 		{
 			public:
@@ -91,6 +98,20 @@ class LocationBlock {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Multiple index keys detected in Location block.";
+				}
+		};
+		class MultipleErrorPageException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple error_page keys detected in Location block.";
+				}
+		};
+		class MultipleProxyPassException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Multiple proxy_pass keys detected in Location block.";
 				}
 		};
 		class MultipleAllowedMethodsException : public std::exception
