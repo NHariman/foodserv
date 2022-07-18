@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/17 18:27:01 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/18 14:37:39 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,15 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_blocks(0) {
 		throw InvalidFileLocationException();
 	config_file_fd.close();
 	FindServerBlocks();
-	// server blocks listen and server_name part: Sanne
-	PrintServerBlocksVectors();
+
+	// SANNE:
+	std::cout << "\nPrinting all server blocks in config file: " << std::endl;
+	PrintServerBlocksVectors(_servers);
+
+	std::cout << "\nPrinting all compatible server blocks after comparing with request host header: " << std::endl;
 	SplitRequestHost();
+	
+	PrintServerBlocksVectors(_compatible_server_blocks);
 }
 
 NginxConfig::NginxConfig(const NginxConfig& obj) {
@@ -66,7 +72,6 @@ void	NginxConfig::CheckBrackets() {
 	int closed_brackets = 0;
 	int	i = 0;
 
-	// while (_config_file[i] != std::string::npos) {
 	while (_config_file[i]) {
 		if (_config_file[i] == '{')
 			open_brackets++;
@@ -141,8 +146,8 @@ void		NginxConfig::FindServerBlocks() {
 }
 
 // SANNE: a function to print what is in the server blocks vector
-void	NginxConfig::PrintServerBlocksVectors() {
-	for (std::vector<ServerBlock>::iterator it = _servers.begin(); it != _servers.end(); it++) {
+void	NginxConfig::PrintServerBlocksVectors(std::vector<ServerBlock>	vec_to_print) {
+	for (std::vector<ServerBlock>::iterator it = vec_to_print.begin(); it != vec_to_print.end(); it++) {
 		std::cout << "\nIn server block print for loop: " << std::endl;
 		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
 		std::cout << "IPAddress: " << it->GetIPAddress() << std::endl;
@@ -162,8 +167,8 @@ void	NginxConfig::PrintServerBlocksVectors() {
 // SANNE: add the functions to select which server block to choose
 
 void	NginxConfig::SplitRequestHost() {
-	// std::string	request_host = "example.com:80";
-	std::string	request_host = "www.example.com";
+	std::string	request_host = "example.com:80";
+	// std::string	request_host = "www.example.com";
 
 	// both request server_name and port_number stay empty
 	std::string	request_server_name = "";
@@ -183,14 +188,47 @@ void	NginxConfig::SplitRequestHost() {
 	std::cout << "\nrequest_port_number: " << request_port_number << std::endl;
 	std::cout << "request_server_name: " << request_server_name << std::endl;
 
-	// if (request_port_number == -1)
-		// go to a function that first adds in compatible serverblocks noted on port number
-	// if: its only 1, this is the serverblock
-	// else if: multiple, go to server_name chooser
+	if (request_port_number != -1) {
+		SelectCompatiblePorts(request_port_number);
+		if (_compatible_server_blocks.size() == 1) {
+			_the_chosen_server_block = _compatible_server_blocks.at(0);
+			return ;
+		}
+	}
+	if (request_server_name.compare("") != 0) {
+		if (_compatible_server_blocks.size() == 0)
+			SelectCompatibleServerNames(request_server_name, _servers);
+		else
+			SelectCompatibleServerNames(request_server_name, _compatible_server_blocks);
+	}
+	else
+		_the_chosen_server_block = _servers.at(0);
+
 }
 
-void	NginxConfig::ChooseServerBlock() {
-	
+void	NginxConfig::SelectCompatiblePorts(int request_port_number) {
+	// see if there are server blocks with compatible port numbers
+	for (std::vector<ServerBlock>::iterator it = _servers.begin(); it != _servers.end(); it++) {
+		if (it->GetPortNumber() == request_port_number) {
+			std::cout << "A compatible server block is found based on port number." << std::endl;
+			_compatible_server_blocks.push_back(*it);
+		}
+	}
+}
+
+void	NginxConfig::SelectCompatibleServerNames(std::string request_server_name, std::vector<ServerBlock> server_vec) {
+	for (std::vector<ServerBlock>::iterator it = server_vec.begin(); it != server_vec.end(); it++) {
+		std::vector<std::string> server = it->GetServerNameVector();
+		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
+			std::cout << "IN COMPATIBLE SERVERNAMES: " << std::endl;
+			std::cout << *it2 << std::endl;
+			if (it2->compare(request_server_name) == 0)
+				std::cout << "SERVER BLOCK MATCH FOUND.";
+				_the_chosen_server_block = *it;
+				// _compatible_server_blocks.push_back(*it);
+				return ;
+		}	
+	}
 }
 
 // step1: split the string in server_name and host. request_server_name and request_port
