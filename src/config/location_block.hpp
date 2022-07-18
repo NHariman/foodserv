@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include "../utils.hpp"
+#include "key_validation/error_page.hpp"
 
 // Coplien form:
 
@@ -35,7 +36,7 @@ class LocationBlock {
 			bool	index;
 			bool	client_max_body_size;
 			bool	error_page;
-			bool	proxy_pass;
+			bool	fastcgi_pass;
 			bool	allowed_methods;
 		}	_check_list; // check list of found keywords in locationblock
 		std::string					_uri;
@@ -43,8 +44,8 @@ class LocationBlock {
 		std::string					_root;
 		std::vector<std::string>	_index;
 		int							_client_max_body_size;
-		std::string					_error_page;
-		std::string					_proxy_pass;
+		std::vector<ErrorPage>		_error_page;
+		std::string					_fastcgi_pass;
 		std::vector<std::string>	_allowed_methods;
 		LocationBlock(){};
 		void						GetKeyValuePairs(std::string data);
@@ -58,8 +59,6 @@ class LocationBlock {
 	public:
 		LocationBlock(std::string data);
 		~LocationBlock(){};
-		LocationBlock& operator= (const LocationBlock& location_block);
-		LocationBlock(const LocationBlock& location_block);
 
 		// getters
 		std::string					GetUri() const;
@@ -67,8 +66,8 @@ class LocationBlock {
 		std::string					GetRoot() const;
 		std::vector<std::string>	GetIndex() const;
 		int							GetClientMaxBodySize() const;
-		std::string					GetProxyPass() const;
-		std::string					GetErrorPage() const;
+		std::string					GetFastCGIPass() const;
+		std::vector<ErrorPage>		GetErrorPage() const;
 		std::vector<std::string>	GetAllowedMethods() const;
 
 		// exception classes

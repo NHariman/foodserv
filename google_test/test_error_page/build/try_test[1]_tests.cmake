@@ -1,0 +1,5 @@
+add_test([=[ErrorPageTest.ValidInput]=]  /Users/nhariman/codam/webserv/google_test/test_error_page/build/try_test [==[--gtest_filter=ErrorPageTest.ValidInput]==] --gtest_also_run_disabled_tests)
+set_tests_properties([=[ErrorPageTest.ValidInput]=]  PROPERTIES WORKING_DIRECTORY /Users/nhariman/codam/webserv/google_test/test_error_page/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test([=[ErrorPageTest.InvalidInput]=]  /Users/nhariman/codam/webserv/google_test/test_error_page/build/try_test [==[--gtest_filter=ErrorPageTest.InvalidInput]==] --gtest_also_run_disabled_tests)
+set_tests_properties([=[ErrorPageTest.InvalidInput]=]  PROPERTIES WORKING_DIRECTORY /Users/nhariman/codam/webserv/google_test/test_error_page/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+set(  try_test_TESTS ErrorPageTest.ValidInput ErrorPageTest.InvalidInput)

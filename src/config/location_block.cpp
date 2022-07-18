@@ -11,7 +11,7 @@ LocationBlock::LocationBlock(std::string data) {
     _check_list.index = false;
     _check_list.client_max_body_size = false;
 	_check_list.error_page = false;
-    _check_list.proxy_pass = false;
+    _check_list.fastcgi_pass = false;
 	_check_list.allowed_methods = false;
     GetKeyValuePairs(data);
 }
@@ -25,7 +25,7 @@ LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
     _index = location_block.GetIndex();
     _client_max_body_size = location_block.GetClientMaxBodySize();
 	_error_page = location_block.GetErrorPage();
-    _proxy_pass = location_block.GetProxyPass();
+    _fastcgi_pass = location_block.GetFastCGIPass();
 	_allowed_methods = location_block.GetAllowedMethods();
     return (*this);
 }
@@ -36,16 +36,15 @@ LocationBlock::LocationBlock(const LocationBlock& location_block) {
     _index = location_block.GetIndex();
     _client_max_body_size = location_block.GetClientMaxBodySize();
 	_error_page = location_block.GetErrorPage();
-    _proxy_pass = location_block.GetProxyPass();
+    _fastcgi_pass = location_block.GetFastCGIPass();
 	_allowed_methods = location_block.GetAllowedMethods();
 }
 
 int			            LocationBlock::IsKey(std::string key) {
-	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "proxy_pass", "allowed_methods"};
+	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods"};
 	
 	std::cout << "key: " << key << std::endl;
     if (_check_list.uri == false) {
-		// validate URI here
 		return 7;
 	}
 	int	is_key = std::find(key_name, key_name + 7, key) - key_name;
@@ -63,6 +62,7 @@ void				LocationBlock::SetValue(int key, std::string str) {
 
 	if (key == 7) {
 		_check_list.uri = true;
+		// validate URI here
 		_uri = value;
         //do thing
 	}
@@ -100,17 +100,16 @@ void				LocationBlock::SetValue(int key, std::string str) {
 				break ;
 			}
             case 4: {
-				if (_check_list.error_page == true)
-					throw MultipleErrorPageException();
 				_check_list.error_page = true;
-				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				ErrorPage	error_page_value(value);
+				_error_page.push_back(error_page_value);
 				break ;
 			}
             case 5: {
-				if (_check_list.proxy_pass == true)
+				if (_check_list.fastcgi_pass == true)
 					throw MultipleProxyPassException();
-				_check_list.proxy_pass = true;
-				// TODO: INPUT CHECK. CHECK IF VALUE IS A NUMBER
+				_check_list.fastcgi_pass = true;
+				_fastcgi_pass = value;
 				break ;
 			}
             case 6: {
@@ -126,20 +125,25 @@ void				LocationBlock::SetValue(int key, std::string str) {
 }
 
 void			LocationBlock::CheckListVerification(){
-	if (_check_list.uri == false)
-		std::cerr << "WARNING! No uri in locationblock detected. Default have been set." << std::endl;
-    if (_check_list.autoindex == false)
-		std::cerr << "WARNING! No autoindex in locationblock detected. Default have been set." << std::endl;
-    if (_check_list.root == false)
-		std::cerr << "WARNING! No location root detected. Default have been set." << std::endl;
-	if (_check_list.index == false)
-		std::cerr << "WARNING! No location index detected. Default have been set." << std::endl;
-	if (_check_list.client_max_body_size == false)
-		std::cerr << "WARNING! No client_max_body_size in locationblock detected. Default have been set." << std::endl;
-	if (_check_list.proxy_pass == false)
-		std::cerr << "WARNING! No proxy_pass in locationblock detected. Default have been set." << std::endl;
+    if (_check_list.autoindex == false) {
+		_autoindex = false;
+		std::cerr << "WARNING! No autoindex in locationblock detected. Default (off) have been set." << std::endl;
+	}
+    if (_check_list.root == false) {
+		_root = "/var/www/html";
+		std::cerr << "WARNING! No location root detected. Default (/var/www/html) have been set." << std::endl;
+	}
+	if (_check_list.index == false) {
+		Index	input_value("index.php index.html index.htm index.nginx-debian.html");
+		_index = input_value.GetIndex();
+		std::cerr << "WARNING! No location index detected. Default (index.php index.html index.htm index.nginx-debian.html) have been set." << std::endl;
+	}
+	if (_check_list.client_max_body_size == false) {
+		_client_max_body_size = 0;
+		std::cerr << "WARNING! No client_max_body_size in locationblock detected. Default (0) have been set." << std::endl;
+	}
 	if (_check_list.allowed_methods == false)
-		std::cerr << "WARNING! No allowed_methods in locationblock detected. Default have been set." << std::endl;
+		std::cerr << "WARNING! No allowed_methods in locationblock detected. Default (No methods allowed) have been set." << std::endl;
 }
 
 void                        LocationBlock::GetKeyValuePairs(std::string data) {
@@ -183,7 +187,7 @@ std::string					LocationBlock::GetRoot() const {
     return this->_root;
 }
 
-std::string					LocationBlock::GetIndex() const {
+std::vector<std::string>		LocationBlock::GetIndex() const {
     return this->_index;
 }
 
@@ -191,14 +195,14 @@ int							LocationBlock::GetClientMaxBodySize() const {
     return this->_client_max_body_size;
 }
 
-std::string	                LocationBlock::GetErrorPage() const {
+std::vector<ErrorPage>	    LocationBlock::GetErrorPage() const {
     return this->_error_page;
 }
 
-std::string	                LocationBlock::GetProxyPass() const {
-    return this->_proxy_pass;
+std::string	                LocationBlock::GetFastCGIPass() const {
+    return this->_fastcgi_pass;
 }
 
-std::string	                LocationBlock::GetAllowedMethods() const {
+std::vector<std::string>	                LocationBlock::GetAllowedMethods() const {
     return this->_allowed_methods;
 }
