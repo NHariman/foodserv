@@ -4,3 +4,5 @@
 // because running the nginx file parsing test says its okay
 // to just have it completely without
 // look into that? maybe just make the forward slash a requirement
+
+// probably needs an is_directory bool.
