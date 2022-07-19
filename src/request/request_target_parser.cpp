@@ -2,7 +2,7 @@
 
 #define DEBUG 0 // REMOVE
 
-RequestTargetParser::RequestTargetParser() {}
+RequestTargetParser::RequestTargetParser() : _uri(NULL), _part(pt_Invalid) {}
 
 RequestTargetParser::~RequestTargetParser() {}
 

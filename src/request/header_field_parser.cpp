@@ -1,21 +1,21 @@
 #include "header_field_parser.hpp"
 
 HeaderFieldParser::HeaderFieldParser()
-	: _skip_buffer(false) {}
+	: _fields(NULL), _skip_buffer(false) {}
 
 HeaderFieldParser::~HeaderFieldParser() {}
 
+// TODO: Remove
 // static FieldState FieldTransitions[5][8] = {
-// 	//	WS			:			TCh			VCh			\r			\n			\0			Other
-// 	{	f_Invalid,	f_Invalid,	f_Name,		f_Invalid,	f_End,		f_Done,		f_Done,		f_Invalid	}, // Start
-// 	{	f_Invalid,	f_Value,	f_Name,		f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid	}, // Name
-// 	{	f_Value,	f_Value,	f_Value,	f_Value,	f_End,		f_Done,		f_Done,		f_Invalid	}, // Value
-// 	{	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,	f_Done,		f_Invalid,	f_Invalid	} // End
+// 	//	WS			:			TCh			VCh			\r				\n			\0			Other
+// 	{	f_Invalid,	f_Invalid,	f_Name,		f_Invalid,	f_ValueEnd,		f_Done,		f_Done,		f_Invalid	}, // Start
+// 	{	f_Invalid,	f_Value,	f_Name,		f_Invalid,	f_Invalid,		f_Invalid,	f_Invalid,	f_Invalid	}, // Name
+// 	{	f_Value,	f_Value,	f_Value,	f_Value,	f_ValueEnd,		f_Done,		f_Done,		f_Invalid	}, // Value
+// 	{	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,		f_Done,		f_Invalid,	f_Invalid	} // End
 
 void	HeaderFieldParser::Parse(map<string, string>& fields, string const& field_string) {
-	// _fields = &fields;
+	_fields = &fields;
 	ParseString(field_string);
-	fields[_cur_field] = buffer;
 }
 
 FieldState	HeaderFieldParser::SetStartState() const {
@@ -23,14 +23,14 @@ FieldState	HeaderFieldParser::SetStartState() const {
 }
 
 FieldState	HeaderFieldParser::GetNextState(size_t pos) {
-	static 	FieldState (HeaderFieldParser::*table[5])(char c) = {
+	static 	FieldState (HeaderFieldParser::*table[])(char c) = {
 			&HeaderFieldParser::StartHandler,
 			&HeaderFieldParser::NameHandler,
+			&HeaderFieldParser::ValueStartHandler,
 			&HeaderFieldParser::ValueHandler,
 			&HeaderFieldParser::ValueEndHandler,
 			nullptr
 	};
-
 	return (this->*table[cur_state])(input[pos]);
 }
 
@@ -41,7 +41,6 @@ void	HeaderFieldParser::InvalidStateCheck() const {
 
 bool	HeaderFieldParser::DoneStateCheck() {
 	if (cur_state == f_Done) {
-		// (*_fields)[_cur_field] = buffer;
 		return true;
 	}
 	return false;
@@ -58,13 +57,16 @@ void	HeaderFieldParser::IncrementCounter(size_t& pos) {
 		throw RequestHeaderFieldsTooLargeException();
 }
 
+// Header field may only start with TChar.
 FieldState	HeaderFieldParser::StartHandler(char c) {
+	_skip_buffer = false;
+	buffer.clear();
 	switch (c) {
 		case '\0': case '\n':
 			return f_Done;
 		case '\r': {
 			_skip_buffer = true;
-			return f_End;
+			return f_ValueEnd;
 		}
 		default:
 			if (IsTChar(c))
@@ -74,12 +76,14 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 	}
 }
 
+// Header field name may only be TChar with no whitespace before the ':'
+// signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
 	switch (c) {
 		case ':': {
-			_cur_field = buffer;
-			buffer.clear();
-			return f_Value;
+			PushFieldName();
+			_skip_buffer = true;
+			return f_ValueStart;
 		}
 		default:
 			if (IsTChar(c))
@@ -89,30 +93,66 @@ FieldState	HeaderFieldParser::NameHandler(char c) {
 	}
 }
 
-FieldState	HeaderFieldParser::ValueHandler(char c) {
+// Skips whitespace following colon but before value starts.
+FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 	_skip_buffer = false;
+	if (IsWhitespace(c)) {
+		_skip_buffer = true;
+		return f_ValueStart;
+	}
+	else
+		return f_Value;
+}
+
+// Accepts VChar or whitespace for field value. If \r found,
+// returns ValueEnd state to check for valid CRLF sequence.
+FieldState	HeaderFieldParser::ValueHandler(char c) {
 	switch (c) {
-		case '\0': case '\n':
+		case '\0': {
+			PushFieldValue();
 			return f_Done;
+		}
+		case '\n': {
+			PushFieldValue();
+			return f_Start;
+		}
 		case '\r': {
 			_skip_buffer = true;
-			return f_End;
+			return f_ValueEnd;
 		}
 		default:
-			if (IsVChar(c))
+			if (IsVChar(c) || IsWhitespace(c))
 				return f_Value;
-			else if (IsWhitespace(c)) {
-				_skip_buffer = true;
-				return f_Value; 
-			}
 			else
 				return f_Invalid;
 	}
 }
 
+// Checks if \r is followed by \n for valid CRLF line ending.
 FieldState	HeaderFieldParser::ValueEndHandler(char c) {
-	if (c =='\n')
-		return f_Done;
+	if (c =='\n') {
+		PushFieldValue();
+		return f_Start;
+	}
 	else
 		return f_Invalid;
+}
+
+// Normalizes field name to lowercase (for easy look-up)
+// and saves buffer to `cur_field` for use once value is parsed.
+void	HeaderFieldParser::PushFieldName() {
+	NormalizeString(tolower, buffer, 0);
+	_cur_field = buffer;
+	buffer.clear();
+}
+
+// Trims trailing whitespace off field value and saves buffer
+// as value of cur_field key in `fields` map that was passed in Parse().
+void	HeaderFieldParser::PushFieldValue() {
+	string::iterator	start = buffer.begin();
+	string::iterator	end = buffer.end() - 1;
+
+	while (start != end && IsWhitespace(*end))
+		end--;
+	(*_fields)[_cur_field] = string(start, end + 1);
 }

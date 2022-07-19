@@ -20,14 +20,10 @@ using namespace std;
 enum RequestState {
 	r_Start = 0,
 	r_Method,
-	// r_Method_Done,
 	r_Target,
-	// r_Target_Done,
 	r_Version,
 	r_Version_Done,
-	r_FieldName,
-	// r_FieldValue,
-	// r_FieldDone,
+	r_Field,
 	r_Header_Done,
 	r_MsgBody,
 	r_Done,
@@ -45,7 +41,7 @@ class RequestParser  : public StateParser<RequestState> {
 		// Default constructor
 		RequestParser();
 		// C-string constructor
-		RequestParser(char const* buffer);
+		explicit RequestParser(char const* buffer);
 		// Destructor
 		~RequestParser();
 
@@ -71,21 +67,19 @@ class RequestParser  : public StateParser<RequestState> {
 		// RequestState	TargetDoneHandler(size_t pos);
 		RequestState	VersionHandler(size_t pos);
 		RequestState	VersionDoneHandler(size_t pos);
-		RequestState	FieldNameHandler(size_t pos);
-		// RequestState	FieldValueHandler(size_t pos);
-		// RequestState	FieldDoneHandler(size_t pos);
+		RequestState	FieldHandler(size_t pos);
 		RequestState	HeaderDoneHandler(size_t pos);
 		RequestState	ValidDelimiter(bool (*valid)(char), size_t pos); // TODO: remove if unused
 
 	protected:
-		RequestState	SetStartState() const;
-		RequestState	GetNextState(size_t pos);
-		void			InvalidStateCheck() const;
-		bool			DoneStateCheck();
+		RequestState	SetStartState() const override;
+		RequestState	GetNextState(size_t pos) override;
+		void			InvalidStateCheck() const override;
+		bool			DoneStateCheck() override;
 		// bool			NotDone(size_t pos) const;
-		void			IncrementCounter(size_t& pos);
-		void			PreParseCheck();
-		void			AfterParseCheck(size_t pos);
+		void			IncrementCounter(size_t& pos) override;
+		void			PreParseCheck() override;
+		void			AfterParseCheck(size_t pos) override;
 };
 
 #endif /* REQUESTPARSER_HPP */

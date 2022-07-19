@@ -6,16 +6,18 @@
 TEST(RequestHeaderTest, ParseSingleField) {
 	RequestParser parser;
 
-	parser.Parse("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\n\n");
+	parser.Parse("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n\n");
 	EXPECT_EQ(parser.GetHeaderFieldValue("host"), "www.example.com");
 }
 
 TEST(RequestHeaderTest, ParseMultiField) {
-	RequestParser parser;
+	RequestParser parser1("GET /hello.txt HTTP/1.1\nUser-Agent: curl/7.16.3\r\nHost: www.example.com\n\n");
+	EXPECT_EQ(parser1.GetHeaderFieldValue("host"), "www.example.com");
+	EXPECT_EQ(parser1.GetHeaderFieldValue("user-agent"), "curl/7.16.3");
 
-	parser.Parse("GET /hello.txt HTTP/1.1\nUser-Agent: curl/7.16.3\r\nHost: www.example.com\n\n");
-	EXPECT_EQ(parser.GetHeaderFieldValue("host"), "www.example.com");
-	EXPECT_EQ(parser.GetHeaderFieldValue("user-agent"), "curl/7.16.3");
+	RequestParser parser2("GET /hello.txt HTTP/1.1\nUser-Agent: curl/7.16.3 libcurl  \r\nHost:   www.example.com\n\n");
+	EXPECT_EQ(parser2.GetHeaderFieldValue("host"), "www.example.com");
+	EXPECT_EQ(parser2.GetHeaderFieldValue("user-agent"), "curl/7.16.3 libcurl");
 }
 
 TEST(RequestHeaderTest, ParseMultiValueField) {
@@ -37,12 +39,15 @@ TEST(RequestHeaderTest, ParseFieldwithOWS) {
 
 TEST(RequestHeaderTest, InvalidFields) {
 	EXPECT_THROW({
-		RequestParser parser("GET /hello.txt HTTP/1.1\nHost: www.example.c om\n\n");
+		RequestParser parser("GET /hello.txt HTTP/1.1\nHost: www.example.c\vom\n\n");
 	}, BadRequestException);
 	EXPECT_THROW({
-		RequestParser parser("GET /hello.txt HTTP/1.1\nHost: www.example.\tcom\n\n");
+		RequestParser parser("GET /hello.txt HTTP/1.1\nHost: www.example.\fcom\n\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		RequestParser parser("GET /hello.txt HTTP/1.1\nHo st: www.example.com\n\n");
+	}, BadRequestException);
+	EXPECT_THROW({
+		RequestParser parser("GET /hello.txt HTTP/1.1\nHost : www.example.com\n\n");
 	}, BadRequestException);
 }

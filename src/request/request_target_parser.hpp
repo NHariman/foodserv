@@ -10,6 +10,7 @@ using namespace std;
 class URI;
 
 enum URIPart {
+	pt_Invalid = -1,
 	pt_Host = 0,
 	pt_Path,
 	pt_Query
@@ -49,12 +50,12 @@ class	RequestTargetParser : public StateParser<URIState> {
 		URIState	PercentDoneHandler(char uri_char);
 	
 	protected:
-		URIState	SetStartState() const;
-		URIState	GetNextState(size_t pos);
-		void		InvalidStateCheck() const;
-		bool		DoneStateCheck();
-		void		PreParseCheck();
-		void		AfterParseCheck(size_t pos);
+		URIState	SetStartState() const override;
+		URIState	GetNextState(size_t pos) override;
+		void		InvalidStateCheck() const override;
+		bool		DoneStateCheck() override;
+		void		PreParseCheck() override;
+		void		AfterParseCheck(size_t pos) override;
 };
 
 #endif /* REQUEST_TARGET_PARSER_HPP */
