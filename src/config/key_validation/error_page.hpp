@@ -44,6 +44,13 @@ class ErrorPage {
 					return "ERROR! Duplicate Uri detected in error_page.";
 				}
 		};
+		class MissingArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Missing Arguments in error_page block.";
+				}
+		};
 };
 
 std::ostream& operator<<(std::ostream& os, const ErrorPage& error_page);

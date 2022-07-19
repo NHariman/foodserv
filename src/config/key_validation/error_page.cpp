@@ -4,6 +4,7 @@
 
 bool	ErrorPage::IsErrorCode(std::string input) {
 	size_t	i = 0;
+
 	while (input[i]) {
 		if (std::isdigit(input[i]) == 0)
 			return false;
@@ -25,6 +26,8 @@ ErrorPage::ErrorPage(std::string input) {
 	std::string key;
 	int			code;
 
+	if (input.compare("") == 0)
+		throw MissingArgumentsException();
 	while (input[i]) {
 		start = input.find_first_not_of(" \t\n\v\f\r", i);
 		end = input.find_first_of(" \t\n\v\f\r", start);

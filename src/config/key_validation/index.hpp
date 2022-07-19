@@ -13,4 +13,11 @@ class Index {
 
 		std::vector<std::string>	GetIndex() const;
 		void						PrintIndex();
+		class MissingArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Missing Arguments in allowed_methods block.";
+				}
+		};
 };

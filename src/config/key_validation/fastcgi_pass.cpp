@@ -1,6 +1,6 @@
-#include "root.hpp"
+#include "fastcgi_pass.hpp"
 
-Root::Root(std::string input) {
+FastCGIPass::FastCGIPass(std::string input) {
     if (input.compare("") == 0)
         throw MissingArgumentsException();
 }

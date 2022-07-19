@@ -6,6 +6,8 @@ AllowedMethods::AllowedMethods(std::string str) {
 	const std::string	key_name[] = {"GET", "POST", "DELETE"};
 	int	is_key = 0;
 
+	if (str.compare("") == 0)
+		throw MissingArgumentsException();
 	_methods = ToStringVector(str);
 	for (size_t i = 0; i < _methods.size(); i++) {
 		std::string key;

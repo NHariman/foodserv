@@ -38,5 +38,14 @@ class ClientMaxBodySize {
                 const char *what() const throw() {
                     return "ERROR! Invalid client_max_body_size, negative value in location block.";
                 }
-        }; 
+        };
+		class MissingArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Missing Arguments in client_max_body_size block.";
+				}
+		};
 };
+
+int PrintValue(std::string value);

@@ -1,5 +1,0 @@
-if(EXISTS "/home/nhariman/foodserv/google_test/test_client_max_body_size/build/try_test[1]_tests.cmake")
-  include("/home/nhariman/foodserv/google_test/test_client_max_body_size/build/try_test[1]_tests.cmake")
-else()
-  add_test(try_test_NOT_BUILT try_test_NOT_BUILT)
-endif()

@@ -80,6 +80,7 @@ void				LocationBlock::SetValue(int key, std::string str) {
 				if (_check_list.root == true)
 					throw MultipleRootException();
 				_check_list.root = true;
+				Root root_value(value);
 				_root = value;
 				break ;
 			}
@@ -107,8 +108,9 @@ void				LocationBlock::SetValue(int key, std::string str) {
 			}
             case 5: {
 				if (_check_list.fastcgi_pass == true)
-					throw MultipleProxyPassException();
+					throw MultipleFastCGIPassException();
 				_check_list.fastcgi_pass = true;
+				FastCGIPass fastcgi_pass_value(value);
 				_fastcgi_pass = value;
 				break ;
 			}

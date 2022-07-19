@@ -2,6 +2,8 @@
 #include <iostream>
 
 Index::Index(std::string value) {
+	if (value.compare("") == 0)
+		throw MissingArgumentsException();
 	_index = ToStringVector(value);
 }
 
@@ -14,9 +16,3 @@ void		Index::PrintIndex() {
 		std::cout << _index.at(i) << std::endl;
 }
 
-// int			main(){
-// 	Index	test("index.php index.html index.htm index.nginx-debian.html");
-
-// 	test.PrintIndex();
-// 	return 0;
-// }

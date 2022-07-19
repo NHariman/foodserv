@@ -1,6 +1,0 @@
-CMBSTest.InputValidation 1 0.0027045
-CMBSTest.ValidTests 3 0.0005399
-CMBSTest.InvalidInputTests 15 0.000103293
-CMBSTest.ValidInputTests 17 9.14471e-05
-CMBSTest.ReturnInputTests 17 7.98353e-05
----

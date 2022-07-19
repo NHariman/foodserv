@@ -20,7 +20,14 @@ class AllowedMethods {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Bad Method in allowed_method detected in LocationBlock.";
+					return "ERROR! Bad Method in allowed_methods detected in LocationBlock.";
+				}
+		};
+		class MissingArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Missing Arguments in allowed_methods block.";
 				}
 		};
 };

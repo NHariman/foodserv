@@ -72,6 +72,9 @@ TEST(CMBSTest, InvalidInputTests) {
   EXPECT_THROW({
     ClientMaxBodySize test("2147483648M");
   }, ClientMaxBodySize::TooLargeClientMaxBodySizeException);
+    EXPECT_THROW({
+    ClientMaxBodySize test("");
+  }, ClientMaxBodySize::MissingArgumentsException);
 
 }
 

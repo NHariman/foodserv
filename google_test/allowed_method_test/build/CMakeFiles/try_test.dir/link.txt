@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/try_test.dir/try_test.cpp.o CMakeFiles/try_test.dir/home/nhariman/foodserv/src/config/key_validation/autoindex.cpp.o  -o try_test  lib/libgtest_main.a lib/libgtest.a -lpthread 

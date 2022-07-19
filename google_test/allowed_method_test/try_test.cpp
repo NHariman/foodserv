@@ -47,4 +47,7 @@ TEST(AllowedMethodsTest, InvalidInput) {
   EXPECT_THROW({
     AllowedMethods test("GETPOST DELETE BB");
   }, AllowedMethods::BadMethodException);
+  EXPECT_THROW({
+    AllowedMethods test("");
+  }, AllowedMethods::MissingArgumentsException);
 }

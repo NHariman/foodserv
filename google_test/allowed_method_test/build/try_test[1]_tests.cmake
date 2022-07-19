@@ -1,5 +1,0 @@
-add_test( AutoIndexTest.ValidInput /home/nhariman/foodserv/google_test/autoindex_test/build/try_test [==[--gtest_filter=AutoIndexTest.ValidInput]==] --gtest_also_run_disabled_tests)
-set_tests_properties( AutoIndexTest.ValidInput PROPERTIES WORKING_DIRECTORY /home/nhariman/foodserv/google_test/autoindex_test/build)
-add_test( AutoIndexTest.invalidInput /home/nhariman/foodserv/google_test/autoindex_test/build/try_test [==[--gtest_filter=AutoIndexTest.invalidInput]==] --gtest_also_run_disabled_tests)
-set_tests_properties( AutoIndexTest.invalidInput PROPERTIES WORKING_DIRECTORY /home/nhariman/foodserv/google_test/autoindex_test/build)
-set( try_test_TESTS AutoIndexTest.ValidInput AutoIndexTest.invalidInput)

@@ -53,9 +53,6 @@ class LocationBlock {
 		void						SetValue(int key, std::string str);
 		void						CheckListVerification();
 
-		// input validation
-		void						SetUri(std::string uri);
-
 	public:
 		LocationBlock(std::string data);
 		~LocationBlock(){};
@@ -106,11 +103,11 @@ class LocationBlock {
 					return "ERROR! Multiple error_page keys detected in Location block.";
 				}
 		};
-		class MultipleProxyPassException : public std::exception
+		class MultipleFastCGIPassException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple proxy_pass keys detected in Location block.";
+					return "ERROR! Multiple fastcgi_pass keys detected in Location block.";
 				}
 		};
 		class MultipleAllowedMethodsException : public std::exception

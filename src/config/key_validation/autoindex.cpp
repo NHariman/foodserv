@@ -1,6 +1,9 @@
 #include "autoindex.hpp"
 
 Autoindex::Autoindex(std::string value) {
+
+    if (value.compare("") == 0)
+        throw MissingArgumentsException();
     if (value.compare("on") != 0 && value.compare("off") != 0)
         throw InvalidAutoindexException();
     if (value.compare("on"))

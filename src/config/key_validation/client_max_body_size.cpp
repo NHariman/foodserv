@@ -1,11 +1,15 @@
 #include "client_max_body_size.hpp"
 #include <climits>
 
+
+
 ClientMaxBodySize::ClientMaxBodySize(std::string value) {
     size_t i = 0;
     size_t found_m = 0;
     long    tmp_value;
 
+    if (value.compare("") == 0)
+        throw MissingArgumentsException();
     while (value[i]) {
         if (std::isdigit(value[i]) == 0 && value[i] != 'm' && value[i] != 'M')
             throw InvalidClientMaxBodySizeException();

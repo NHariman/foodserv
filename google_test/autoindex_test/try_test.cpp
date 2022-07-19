@@ -41,4 +41,7 @@ TEST(AutoIndexTest, invalidInput) {
   EXPECT_THROW({
     Autoindex test("oh off");
   }, Autoindex::InvalidAutoindexException);
+  EXPECT_THROW({
+    Autoindex test("");
+  }, Autoindex::MissingArgumentsException);
 }
