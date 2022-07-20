@@ -20,7 +20,7 @@ enable_testing()
 add_executable(
   try_test # test executable name
   try_test.cpp
-  ../../src/config/key_validation/allowed_methods.cpp
+  ../../src/config/directive_validation/allowed_methods.cpp
   ../../src/utils.cpp
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)

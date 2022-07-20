@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../src/config/key_validation/autoindex.hpp"
+#include "../../src/config/directive_validation/autoindex.hpp"
 
 int Factorial(int n);
 

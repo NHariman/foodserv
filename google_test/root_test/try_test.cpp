@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../src/config/key_validation/root.hpp"
+#include "../../src/config/directive_validation/root.hpp"
 
 // Test syntax
 /*

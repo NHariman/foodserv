@@ -1,6 +1,6 @@
 
 #include "location_block.hpp"
-#include "key_validation/key_validation.hpp"
+#include "directive_validation/directive_validation.hpp"
 
 
 LocationBlock::LocationBlock(std::string data) {
@@ -13,7 +13,7 @@ LocationBlock::LocationBlock(std::string data) {
 	_check_list.error_page = false;
     _check_list.fastcgi_pass = false;
 	_check_list.allowed_methods = false;
-    GetKeyValuePairs(data);
+    GetDirectiveValuePairs(data);
 }
 
 LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
@@ -40,34 +40,32 @@ LocationBlock::LocationBlock(const LocationBlock& location_block) {
 	_allowed_methods = location_block.GetAllowedMethods();
 }
 
-int			            LocationBlock::IsKey(std::string key) {
-	const std::string	key_name[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods"};
+int			            LocationBlock::IsDirective(std::string directive) {
+	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
 	
-	std::cout << "key: " << key << std::endl;
+	std::cout << "directive: " << directive << std::endl;
     if (_check_list.uri == false) {
-		return 7;
+		return 8;
 	}
-	int	is_key = std::find(key_name, key_name + 7, key) - key_name;
-	if (is_key < 0 || is_key > 6)
-		throw InvalidKeyException();
+	int	is_directive = std::find(directives, directives + 8, directive) - directives;
+	if (is_directive < 0 || is_directive > 7)
+		throw InvalidDirectiveException();
 	else
-		return (is_key);
+		return (is_directive);
 }
 
-void				LocationBlock::SetValue(int key, std::string str) {
+void				LocationBlock::SetValue(int directive, std::string input) {
 	std::string		value;
 
-	value = TrimValue(str);
+	value = TrimValue(input);
 	std::cout << "value: |" << value << "|" << std::endl;
 
-	if (key == 7) {
+	if (directive == 8) {
 		_check_list.uri = true;
-		// validate URI here
-		_uri = value;
-        //do thing
+		_uri = uri_value(value);
 	}
 	else {
-		switch(key) {
+		switch(directive) {
 			case 0: {
 				if (_check_list.autoindex == true)
 					throw MultipleAutoindexException();
@@ -122,6 +120,13 @@ void				LocationBlock::SetValue(int key, std::string str) {
 				_allowed_methods = allowed_methods_value.GetAllowedMethods();
 				break ;
 			}
+            case 7: {
+				if (_check_list.return_dir == true)
+					throw MultipleReturnException();
+				_check_list.allowed_methods = true;
+				_allowed_methods = return_dir_value(value);
+				break ;
+			}
 		}
 	}
 }
@@ -148,7 +153,7 @@ void			LocationBlock::CheckListVerification(){
 		std::cerr << "WARNING! No allowed_methods in locationblock detected. Default (No methods allowed) have been set." << std::endl;
 }
 
-void                        LocationBlock::GetKeyValuePairs(std::string data) {
+void                        LocationBlock::GetDirectiveValuePairs(std::string data) {
     size_t				key_start = 0;
 	size_t				key_end = 0;
 	size_t				value_end = 0;
@@ -177,7 +182,7 @@ void                        LocationBlock::GetKeyValuePairs(std::string data) {
 }
 
 // getters
-std::string					LocationBlock::GetUri() const {
+LocationUri					LocationBlock::GetUri() const {
     return this->_uri;
 }
 

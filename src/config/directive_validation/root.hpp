@@ -1,11 +1,14 @@
+#ifndef ROOT_HPP
+# define ROOT_HPP
+
 #include <string>
 
-class FastCGIPass {
+class Root {
     private:
-        FastCGIPass(){};
+        Root(){};
     public:
-        FastCGIPass(std::string input);
-        ~FastCGIPass(){};
+        Root(std::string input);
+        ~Root(){};
         class MissingArgumentsException : public std::exception
 		{
 			public:
@@ -14,3 +17,5 @@ class FastCGIPass {
 				}
 		};
 };
+
+#endif

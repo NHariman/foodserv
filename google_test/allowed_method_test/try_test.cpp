@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../src/config/key_validation/allowed_methods.hpp"
+#include "../../src/config/directive_validation/allowed_methods.hpp"
 
 int Factorial(int n);
 

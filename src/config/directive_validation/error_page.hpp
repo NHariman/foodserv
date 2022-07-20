@@ -7,11 +7,12 @@
 // in the second bit
 // probably need a vector of maps like this tbh
 // because you can assign multiple error page types
+#ifndef ERROR_PAGE_HPP
+# define ERROR_PAGE_HPP
 
-# include <map>
 # include <vector>
 # include <string>
-#include <iostream>
+# include <iostream>
 # include "../../utils.hpp"
 
 class ErrorPage {
@@ -19,13 +20,12 @@ class ErrorPage {
 		std::string			_uri;
 		std::vector<int>	_code;
 		ErrorPage(){};
-
-		bool IsErrorCode(std::string input);
-		bool IsUri(std::string input);
 	
 	public:
 		~ErrorPage(){};
 		ErrorPage(std::string input);
+		ErrorPage(ErrorPage const &obj);
+		ErrorPage&	operator=(ErrorPage const & obj);
 
 		std::string			GetUri() const;
 		std::vector<int>	GetCodes() const;
@@ -44,6 +44,13 @@ class ErrorPage {
 					return "ERROR! Duplicate Uri detected in error_page.";
 				}
 		};
+		class BadErrorCodeException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Bad error code, must be between 300 and 599 in error_page block.";
+				}
+		};
 		class MissingArgumentsException : public std::exception
 		{
 			public:
@@ -54,3 +61,5 @@ class ErrorPage {
 };
 
 std::ostream& operator<<(std::ostream& os, const ErrorPage& error_page);
+
+#endif

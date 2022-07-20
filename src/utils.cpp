@@ -47,3 +47,20 @@ std::vector<std::string>	ToStringVector(std::string str) {
 	}
 	return (vec);
 }
+
+bool	IsNumber(std::string input) {
+	size_t	i = 0;
+
+	while (input[i]) {
+		if (std::isdigit(input[i]) == 0)
+			return false;
+		i++;
+	}
+	return true;
+}
+
+bool	IsUri(std::string input) {
+	if (input[0] == '/')
+		return true;
+	return false;
+}

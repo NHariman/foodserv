@@ -22,24 +22,30 @@ The block contains the server configuration files for a server block for a websi
 A Location block covers requests for specific files and folders. It also allows NGINX to respond to requests for resources within the server.
 The locations are literal string matches.
 
-Multiple location blocks can be found inside a server block.
+Multiple location blocks can be found inside a server block. However, in the event of duplicate uri names, an error is thrown.
 
 ### Contains
-- uri, literal string before the {} part [(more info here)](https://www.plesk.com/blog/various/nginx-configuration-guide/)
+- uri, literal string before the {} part [(more info here)](https://www.plesk.com/blog/various/nginx-configuration-guide/), unlike nginx which accepts uri's without the leading slash, this webserv project _requires_ the loading slash before a uri definition.
+example:
+```
+location /uri {} // GOOD
+
+location uri {} // BAD
+```
+Depending on the uri style a directory or a file can be indicated
+```
+location /uri {} // an exact url
+
+location /uri/ {} // a directory, in this case, one must find an index file within that directory.
+```
 - root, indicates which folder to start looking for files in
 - index, indicates which index files to select
-- proxy_pass
-- limit_except, specifies http methods [(more info here)](http://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except)
-examples:
+- allowed_methods, a custom keyword for webserver that allows a user to specify what methods are allowed within said location block. On default, no methods are allowed and the string will be empty. Only the methods GET, POST and DELETE are implemented.
+example:
 ```
-limit_except GET {
-         allow 192.168.1.0/32;
-         deny  all;
- }
+allowed_methods GET POST DELETE ;
 ```
 - fastcgi_pass (OPTIONAL)
-- fastcgi_index (OPTIONAL)
-- fastcgi_param (OPTIONAL)
     - fastcgi tells nginx to forward requests from clients to a backend server. [(more info here)](https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx)
  examples:
  ```
@@ -82,3 +88,7 @@ this won't be ignored # but this will be
 [Understanding and implementing fastcgi proxy in nginx](https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx)
 
 [Nginx location directive](https://www.keycdn.com/support/nginx-location-directive)
+
+[NGINX Error Codes](https://www.nginx.com/resources/wiki/extending/api/http/)
+
+[All http status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)

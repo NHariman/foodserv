@@ -1,7 +1,0 @@
-#include "client_max_body_size.hpp"
-#include "autoindex.hpp"
-#include "index.hpp"
-#include "allowed_methods.hpp"
-#include "error_page.hpp"
-#include "proxy_pass.cpp"
-#include "root.hpp"

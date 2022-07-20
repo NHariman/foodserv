@@ -7,7 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include "../utils.hpp"
-#include "key_validation/error_page.hpp"
+#include "directive_validation/directive_valiation.hpp"
 
 // Coplien form:
 
@@ -25,7 +25,7 @@
 
 //string trimming util for serverblocks and location blocks
 
-
+// actually this is called a context (sad face)
 class LocationBlock {
 	private:
 		struct s_components
@@ -38,25 +38,29 @@ class LocationBlock {
 			bool	error_page;
 			bool	fastcgi_pass;
 			bool	allowed_methods;
+			bool	return_dir;
 		}	_check_list; // check list of found keywords in locationblock
-		std::string					_uri;
+		LocationUri					_uri;
 		bool						_autoindex;
 		std::string					_root;
 		std::vector<std::string>	_index;
 		int							_client_max_body_size;
 		std::vector<ErrorPage>		_error_page;
 		std::string					_fastcgi_pass;
-		std::vector<std::string>	_allowed_methods;
+		AllowedMethods				_allowed_methods;
+		ReturnDir					_return_dir;
 		LocationBlock(){};
-		void						GetKeyValuePairs(std::string data);
-		int							IsKey(std::string key);
-		void						SetValue(int key, std::string str);
+		void						GetDirectiveValuePairs(std::string data);
+		int							IsDirective(std::string directive);
+		void						SetValue(int directive, std::string input);
 		void						CheckListVerification();
 
 	public:
 		LocationBlock(std::string data);
 		~LocationBlock(){};
 
+		// check if something has been set or not
+		bool						IsSet(std::string key);
 		// getters
 		std::string					GetUri() const;
 		bool						GetAutoindex() const;
@@ -68,60 +72,60 @@ class LocationBlock {
 		std::vector<std::string>	GetAllowedMethods() const;
 
 		// exception classes
-		class InvalidKeyException : public std::exception
+		class InvalidDirectiveException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Invalid Key detected in LocationBlock.";
+					return "ERROR! Invalid directive detected in LocationBlock.";
 				}
 		};
 		class MultipleAutoindexException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple autoindex keys detected in Location block.";
+					return "ERROR! Multiple autoindex directives detected in Location block.";
 				}
 		};
 		class MultipleRootException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple root keys detected in Location block.";
+					return "ERROR! Multiple root directives detected in Location block.";
 				}
 		};
 		class MultipleIndexException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple index keys detected in Location block.";
+					return "ERROR! Multiple index directives detected in Location block.";
 				}
 		};
 		class MultipleErrorPageException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple error_page keys detected in Location block.";
+					return "ERROR! Multiple error_page directives detected in Location block.";
 				}
 		};
 		class MultipleFastCGIPassException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple fastcgi_pass keys detected in Location block.";
+					return "ERROR! Multiple fastcgi_pass directives detected in Location block.";
 				}
 		};
 		class MultipleAllowedMethodsException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple allowed_methods keys detected in Location block.";
+					return "ERROR! Multiple allowed_methods directives detected in Location block.";
 				}
 		};
 		class MultipleClientMaxBodySizeException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple Client_max_body_size keys detected in Location block.";
+					return "ERROR! Multiple Client_max_body_size directives detected in Location block.";
 				}
 		};
 		class BadURIException : public std::exception
@@ -129,6 +133,13 @@ class LocationBlock {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Invalid URI detected in Location block.";
+				}
+		};
+		class MultipleReturnException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! multiple return directive detected in Location block.";
 				}
 		};
 };

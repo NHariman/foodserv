@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 // #include <gmock/gmock.h>
-#include "../../src/config/key_validation/client_max_body_size.hpp"
+#include "../../src/config/directive_validation/client_max_body_size.hpp"
 
 // int Factorial(int n);
 

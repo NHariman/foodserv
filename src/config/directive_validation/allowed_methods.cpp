@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 
+AllowedMethods::AllowedMethods() : _is_set(false) {}
+
 AllowedMethods::AllowedMethods(std::string str) {
 	const std::string	key_name[] = {"GET", "POST", "DELETE"};
 	int	is_key = 0;
@@ -15,9 +17,29 @@ AllowedMethods::AllowedMethods(std::string str) {
 		if (is_key < 0 || is_key > 2)
 			throw BadMethodException();
 	}
+	_is_set = true;
+}
+
+AllowedMethods::AllowedMethods(AllowedMethods const &obj) {
+	_is_set = obj.IsSet();
+	for (size_t i = 0; i < obj.GetAllowedMethods().size() ; i++) {
+		_methods.push_back(obj.GetAllowedMethods().at(i));
+	}
+}
+
+AllowedMethods&		AllowedMethods::operator=(AllowedMethods const &obj) {
+	if (this == &obj)
+		return (*this);
+	_is_set = obj.IsSet();
+	for (size_t i = 0; i < obj.GetAllowedMethods().size() ; i++) {
+		_methods.push_back(obj.GetAllowedMethods().at(i));
+	}
+	return (*this);
 }
 
 std::vector<std::string>	AllowedMethods::GetAllowedMethods() const {
+	if (_methods.empty() || _is_set == false)
+		throw EmptyMethodVectorException();
 	return _methods;
 }
 
@@ -26,9 +48,6 @@ void		AllowedMethods::PrintMethods() {
 		std::cout << _methods.at(i) << std::endl;
 }
 
-// int			main(){
-// 	AllowedMethods	test("POST GET DELETE");
-
-// 	test.PrintMethods();
-// 	return 0;
-// }
+bool		AllowedMethods::IsSet() const {
+	return _is_set;
+}

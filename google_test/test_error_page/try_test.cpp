@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 // #include <gmock/gmock.h>
-#include "../../src/config/key_validation/error_page.hpp"
+#include "../../src/config/directive_validation/error_page.hpp"
 
 // Test syntax
 /*

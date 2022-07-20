@@ -1,3 +1,6 @@
+#ifndef INDEX_HPP
+# define INDEX_HPP
+
 #include <vector>
 #include <string>
 #include "../../utils.hpp"
@@ -21,3 +24,5 @@ class Index {
 				}
 		};
 };
+
+#endif

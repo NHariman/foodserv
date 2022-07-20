@@ -1,23 +1,8 @@
 // input: 404             /404.html
 // input: 500 502 503 504 /50x.html
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 #include "error_page.hpp"
-
-bool	ErrorPage::IsErrorCode(std::string input) {
-	size_t	i = 0;
-
-	while (input[i]) {
-		if (std::isdigit(input[i]) == 0)
-			return false;
-		i++;
-	}
-	return true;
-}
-
-bool	ErrorPage::IsUri(std::string input) {
-	if (input[0] == '/')
-		return true;
-	return false;
-}
 
 ErrorPage::ErrorPage(std::string input) {
 	size_t	i = 0;
@@ -34,10 +19,12 @@ ErrorPage::ErrorPage(std::string input) {
 		if (start == end)
 			break ;
 		key = input.substr(start, end - start);
-		if (IsErrorCode(key) == true) {
+		if (IsNumber(key) == true) {
 			if (_uri.empty() == false)
 				throw InvalidInputException();
 			code = std::atoi(key.c_str());
+			if (code < 300 || code > 599)
+				throw BadErrorCodeException();
 			_code.push_back(code);
 		}
 		else if (IsUri(key) == true) {
@@ -50,6 +37,23 @@ ErrorPage::ErrorPage(std::string input) {
 			throw InvalidInputException();
 		i = end;
 	}
+}
+
+ErrorPage::ErrorPage(ErrorPage const &obj) {
+	_uri = obj.GetUri();
+	for (size_t i = 0 ; i < obj.GetCodes().size(); i++) {
+		_code.push_back(obj.GetCodes().at(i));
+	}
+}
+
+ErrorPage&	ErrorPage::operator=(ErrorPage const & obj) {
+	if (this == &obj)
+		return (*this);
+		_uri = obj.GetUri();
+	for (size_t i = 0 ; i < obj.GetCodes().size(); i++) {
+		_code.push_back(obj.GetCodes().at(i));
+	}
+	return (*this);
 }
 
 void			ErrorPage::PrintCodes() const {

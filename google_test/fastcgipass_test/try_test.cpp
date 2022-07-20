@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../src/config/key_validation/fastcgi_pass.hpp"
+#include "../../src/config/directive_validation/fastcgi_pass.hpp"
 
 // Test syntax
 /*

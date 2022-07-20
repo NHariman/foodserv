@@ -1,3 +1,7 @@
+
+#ifndef AUTOINDEX_HPP
+# define AUTOINDEX_HPP
+
 # include <iostream>
 # include <string>
 
@@ -25,3 +29,5 @@ public:
 				}
 		};
 };
+
+#endif

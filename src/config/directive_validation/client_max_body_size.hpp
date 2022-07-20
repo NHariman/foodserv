@@ -1,3 +1,6 @@
+#ifndef CLIENT_MAX_BODY_SIZE_HPP
+# define CLIENT_MAX_BODY_SIZE_HPP
+
 #include <iostream>
 #include <stdexcept>
 #include "../../utils.hpp"
@@ -49,3 +52,5 @@ class ClientMaxBodySize {
 };
 
 int PrintValue(std::string value);
+
+#endif;
