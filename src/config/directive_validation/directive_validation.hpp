@@ -1,5 +1,5 @@
-#ifndef directive_validation_HPP
-# define directive_validation_HPP
+#ifndef DIRECTIVE_VALIDATION_HPP
+# define DIRECTIVE_VALIDATION_HPP
 
 #include "client_max_body_size.hpp"
 #include "autoindex.hpp"

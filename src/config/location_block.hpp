@@ -9,37 +9,23 @@
 #include "../utils.hpp"
 #include "directive_validation/directive_valiation.hpp"
 
-// Coplien form:
-
-// class A final
-// {
-//    public:
-//       A ();
-//       A (const A &a);
-//       ~A ();
-//       A & operator = (const A &a);
-// };
-
-// if duplicate root is found, throw error
-
-
-//string trimming util for serverblocks and location blocks
+struct s_components
+{
+	bool	uri;
+	bool	autoindex;
+	bool	root;
+	bool	index;
+	bool	client_max_body_size;
+	bool	error_page;
+	bool	fastcgi_pass;
+	bool	allowed_methods;
+	bool	return_dir;
+}	t_flags; // check list of found keywords in locationblock
 
 // actually this is called a context (sad face)
 class LocationBlock {
 	private:
-		struct s_components
-		{
-			bool	uri;
-			bool	autoindex;
-			bool	root;
-			bool	index;
-			bool	client_max_body_size;
-			bool	error_page;
-			bool	fastcgi_pass;
-			bool	allowed_methods;
-			bool	return_dir;
-		}	_check_list; // check list of found keywords in locationblock
+		t_flags						_check_list;
 		LocationUri					_uri;
 		bool						_autoindex;
 		std::string					_root;
@@ -62,6 +48,7 @@ class LocationBlock {
 		// check if something has been set or not
 		bool						IsSet(std::string key);
 		// getters
+		t_flags						GetFlags() const;
 		std::string					GetUri() const;
 		bool						GetAutoindex() const;
 		std::string					GetRoot() const;
@@ -140,6 +127,13 @@ class LocationBlock {
 			public:
 				const char *what() const throw() {
 					return "ERROR! multiple return directive detected in Location block.";
+				}
+		};
+		class InvalidDirectiveSetCheckException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Trying to check if a nonexistent directive has been set in Location block.";
 				}
 		};
 };

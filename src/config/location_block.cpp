@@ -213,3 +213,34 @@ std::string	                LocationBlock::GetFastCGIPass() const {
 std::vector<std::string>	                LocationBlock::GetAllowedMethods() const {
     return this->_allowed_methods;
 }
+
+t_flags					LocationBlock::GetFlags() const {
+	return _check_list;
+}
+
+// use to check if a directive has been set
+bool						LocationBlock::IsSet(std::string directive) {
+	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
+
+	int	is_directive = std::find(directives, directives + 8, directive) - directives;
+	if (is_directive < 0 || is_directive > 7)
+		throw InvalidDirectiveSetCheckException();
+	switch (is_directive) {
+		case 0:
+			return _check_list.autoindex;
+		case 1:
+			return _check_list.root;
+		case 2:
+			return _check_list.index;
+		case 3:
+			return _check_list.client_max_body_size;
+		case 4:
+			return _check_list.error_page;
+		case 5:
+			return _check_list.fastcgi_pass;
+		case 6:
+			return _check_list.allowed_methods;
+		case 7:
+			return _check_list.return_dir;
+	}
+}
