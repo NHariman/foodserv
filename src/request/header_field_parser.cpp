@@ -13,9 +13,9 @@ HeaderFieldParser::~HeaderFieldParser() {}
 // 	{	f_Value,	f_Value,	f_Value,	f_Value,	f_ValueEnd,		f_Done,		f_Done,		f_Invalid	}, // Value
 // 	{	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,		f_Done,		f_Invalid,	f_Invalid	} // End
 
-void	HeaderFieldParser::Parse(map<string, string>& fields, string const& field_string) {
+size_t	HeaderFieldParser::Parse(map<string, string>& fields, string const& field_string) {
 	_fields = &fields;
-	ParseString(field_string);
+	return ParseString(field_string);
 }
 
 FieldState	HeaderFieldParser::SetStartState() const {
@@ -34,12 +34,12 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 	return (this->*table[cur_state])(input[pos]);
 }
 
-void	HeaderFieldParser::InvalidStateCheck() const {
+void	HeaderFieldParser::CheckInvalidState() const {
 	if (cur_state == f_Invalid)
 		throw BadRequestException();
 }
 
-bool	HeaderFieldParser::DoneStateCheck() {
+bool	HeaderFieldParser::CheckDoneState() {
 	if (cur_state == f_Done) {
 		return true;
 	}
@@ -62,8 +62,10 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 	_skip_buffer = false;
 	buffer.clear();
 	switch (c) {
-		case '\0': case '\n':
+		case '\0':
 			return f_Done;
+		case '\n':
+			return f_Start;
 		case '\r': {
 			_skip_buffer = true;
 			return f_ValueEnd;

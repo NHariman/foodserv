@@ -65,7 +65,7 @@ class StateParser {
 		virtual void	PreParseCheck() {};
 		// This is for checks after parsing, e.g. if there are characters after
 		// end state has been reached.
-		virtual void	AfterParseCheck(size_t pos) { (void)pos; };
+		virtual void	AfterParseCheck(size_t& pos) { (void)pos; };
 };
 
 #endif /* STATE_PARSER_HPP */

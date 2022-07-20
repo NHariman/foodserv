@@ -6,7 +6,7 @@
 #    By: mjiam <mjiam@student.codam.nl>               +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/06/28 20:58:28 by mjiam         #+#    #+#                  #
-#    Updated: 2022/07/15 18:34:51 by mjiam         ########   odam.nl          #
+#    Updated: 2022/07/20 21:11:03 by mjiam         ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ endif
 
 SRC			= 	main.cpp request_parser.cpp \
 				request_utils.cpp request_target_parser.cpp \
-				uri.cpp header_field_parser.cpp
+				uri.cpp header_field_parser.cpp \
+				request_line_parser.cpp
 
 OBJ			= 	$(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 

@@ -25,23 +25,21 @@ class HeaderFieldParser : public StateParser<FieldState> {
 		// Destructor
 		~HeaderFieldParser();
 
-		void Parse(map<string, string>& fields, string const& field_string);
+		size_t Parse(map<string, string>& fields, string const& field_string);
 
 	protected:
 		FieldState	SetStartState() const override;
 		FieldState	GetNextState(size_t pos) override;
-		void	InvalidStateCheck() const override;
-		bool	DoneStateCheck() override;
+		void	CheckInvalidState() const override;
+		bool	CheckDoneState() override;
 		void	UpdateBuffer(size_t pos) override;
 		void	IncrementCounter(size_t& pos) override;
 
 	private:
-		// size_t	_fields_bytes_read;
-		map<string,string>	*_fields;
+		map<string,string>*	_fields;
 		string	_cur_field;
 		bool	_skip_buffer;
 
-		// FieldInput	GetTokenType(char c);
 		FieldState	StartHandler(char c);
 		FieldState	NameHandler(char c);
 		FieldState	ValueStartHandler(char c);

@@ -23,6 +23,7 @@ add_executable(
   request_target.cpp
   request_field.cpp
   ../header_field_parser.cpp
+  ../request_line_parser.cpp
   ../request_parser.cpp
   ../request_target_parser.cpp
   ../request_utils.cpp

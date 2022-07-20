@@ -26,7 +26,7 @@ enum URIState {
 	u_Invalid
 };
 
-class	RequestTargetParser : public StateParser<URIState> {
+class RequestTargetParser : public StateParser<URIState> {
 	public:
 		// Default constructor
 		RequestTargetParser();
@@ -34,7 +34,7 @@ class	RequestTargetParser : public StateParser<URIState> {
 		~RequestTargetParser();
 
 
-		void	Parse(URI& uri, string const& uri_string);
+		size_t	Parse(URI& uri, string const& uri_string);
 
 	private:
 		URI		*_uri;
@@ -52,10 +52,10 @@ class	RequestTargetParser : public StateParser<URIState> {
 	protected:
 		URIState	SetStartState() const override;
 		URIState	GetNextState(size_t pos) override;
-		void		InvalidStateCheck() const override;
-		bool		DoneStateCheck() override;
+		void		CheckInvalidState() const override;
+		bool		CheckDoneState() override;
 		void		PreParseCheck() override;
-		void		AfterParseCheck(size_t pos) override;
+		void		AfterParseCheck(size_t& pos) override;
 };
 
 #endif /* REQUEST_TARGET_PARSER_HPP */

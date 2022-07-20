@@ -18,12 +18,12 @@ RequestTargetParser::~RequestTargetParser() {}
 	{  QR,       PR,      QR,      QR,       QR,      DONE,    DONE  }, // Query
 */
 
-void	RequestTargetParser::Parse(URI& uri, string const& uri_string) {
+size_t	RequestTargetParser::Parse(URI& uri, string const& uri_string) {
 	_uri = &uri;
 	_part = pt_Path;
 	// if (_part == pt_Host)
 	// 	ParseHost(uri_string);
-	ParseString(uri_string);
+	return ParseString(uri_string);
 }
 
 // void	RequestTargetParser::ParseHost(string const& uri_string) {
@@ -47,14 +47,14 @@ URIState	RequestTargetParser::GetNextState(size_t pos) {
 	return (this->*table[cur_state])(input[pos]);
 }
 
-void	RequestTargetParser::InvalidStateCheck() const {
+void	RequestTargetParser::CheckInvalidState() const {
 	if (cur_state == u_Invalid)
 		throw BadRequestException();
 }
 
 // If terminating state is indicated, pushes parsed string 
 // into appropriate URI field (as indicated by _part) and stops loop.
-bool	RequestTargetParser::DoneStateCheck() {
+bool	RequestTargetParser::CheckDoneState() {
 	if (cur_state == u_Done) {
 		PushBuffertoField(_part);
 		return true;
@@ -69,7 +69,7 @@ void	RequestTargetParser::PreParseCheck() {
 }
 
 // Checks if there's illegal characters after terminating char.
-void	RequestTargetParser::AfterParseCheck(size_t pos) {
+void	RequestTargetParser::AfterParseCheck(size_t& pos) {
 	if (cur_state == u_Done && pos < input.size() - 1)
 		throw BadRequestException();
 }

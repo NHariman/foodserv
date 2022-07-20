@@ -44,7 +44,7 @@ CreateResponse
 	{  x,        FV,       FV,      DONE,    x,        x,       FV,      x,       FS,      DONE  }, // FieldValue
 */
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 // Default constructor
 RequestParser::RequestParser() : _bytes_read(0) {}
@@ -64,33 +64,28 @@ void	RequestParser::Parse(char const* buffer) {
 }
 
 RequestState	RequestParser::SetStartState() const {
-	return r_Start;
+	return r_RequestLine;
 }
 
 RequestState	RequestParser::GetNextState(size_t pos) {
 	static RequestState (RequestParser::*table[])(size_t pos) = {
-			&RequestParser::StartHandler,
-			&RequestParser::MethodHandler,
-			// &RequestParser::MethodDoneHandler,
-			&RequestParser::TargetHandler,
-			// &RequestParser::TargetDoneHandler,
-			&RequestParser::VersionHandler,
-			&RequestParser::VersionDoneHandler,
-			&RequestParser::FieldHandler,
+			&RequestParser::RequestLineHandler,
+			&RequestParser::HeaderFieldHandler,
 			&RequestParser::HeaderDoneHandler,
 			// &RequestParser::MessageBodyHandler,
 			nullptr
 	};
-	if (DEBUG) cout << "[GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
+
+	if (DEBUG) cout << "[RP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
 	return (this->*table[cur_state])(pos);
 }
 
-void	RequestParser::InvalidStateCheck() const {
+void	RequestParser::CheckInvalidState() const {
 	if (cur_state == r_Invalid)
 		throw BadRequestException();
 }
 
-bool	RequestParser::DoneStateCheck() {
+bool	RequestParser::CheckDoneState() {
 	if (cur_state == r_Done) {
 		return true;
 	}
@@ -109,7 +104,7 @@ void	RequestParser::PreParseCheck() {
 
 }
 
-void	RequestParser::AfterParseCheck(size_t pos) {
+void	RequestParser::AfterParseCheck(size_t& pos) {
 	// if (cur_state == r_Done && pos < input.size() - 1)
 	// 	throw BadRequestException();
 	cout << "Parsed method: " << _request_line.method << endl; // DEBUG
@@ -123,149 +118,34 @@ void	RequestParser::AfterParseCheck(size_t pos) {
 	(void)pos;
 }
 
-// Returns position of `to_find` within string `s` in terms of its distance from
-// `start`, so value can be used immediately with `substr()`, skipping arithmetic.
-// If no such character is found in string, returns `start`;
-static size_t	GetEndPos(string s, char to_find, size_t start) {
-	size_t	end = s.find_first_of(to_find, start);
-	if (end == string::npos || end == start)
-		return start;
-	return end - start;
-}
+RequestState	RequestParser::RequestLineHandler(size_t pos) {
+	if (DEBUG) cout << "[Request Line Handler] at: [" << input[pos] << "]\n";
 
-// Checks if start is a valid TChar (as stated by RFC ABNF rules).
-RequestState	RequestParser::StartHandler(size_t pos) {
-	if (DEBUG) cout << "[StartHandler]\n";
-	if (IsTChar(input[pos]))
-		return r_Method;
-	return r_Invalid;
-}
-
-// Checks input string for first space-delimited string and checks it against
-// vector of accepted method strings. If it's not in the list, throws NotImplementedException.
-// Otherwise saves string and increments `bytes_read`.
-RequestState	RequestParser::MethodHandler(size_t pos) {
-	if (DEBUG) cout << "[MethodHandler]\n";
-
-	static vector<string>	methods = { "GET", "POST", "DELETE" };
-
-	size_t	method_end = GetEndPos(input, ' ', pos);
-	if (method_end == pos) // if required space ending not found
+	size_t	request_line_end = input.find_first_of('\n');
+	if (request_line_end == string::npos)
 		throw BadRequestException();
-
-	string	method = input.substr(pos, method_end);
-	if (find(methods.begin(), methods.end(), method) == methods.end())
-		throw NotImplementedException();
-	_request_line.method = method;
-	_bytes_read += method_end + 1;
-	// return r_Method_Done;
-	return r_Target;
+	string	request_line = input.substr(0, request_line_end + 1);
+	cout << "request_line: [" << request_line << "]\n";
+	_bytes_read += _request_line_parser.Parse(_request_line, request_line);
+	return r_HeaderField;
 }
 
-// // Checks if input[pos] is a valid delimiter according to the `valid` fn passed.
-// // If so, returns the next state.
-// RequestState	RequestParser::ValidDelimiter(bool (*valid)(char), size_t pos) {
-// 	if (valid(input[pos])) {
-// 		RequestState next_state = static_cast<RequestState>(cur_state + 1); // goes to next state in enum
-// 		return next_state;
-// 	}
-// 	return r_Invalid;
-// }
-
-// // Checks if method is followed by a Space. If yes, transitions to Target state.
-// RequestState RequestParser::MethodDoneHandler(size_t pos) {
-// 	if (DEBUG) cout << "method: " << _request_line.method << endl;
-
-// 	// _bytes_read += 1;
-// 	return ValidDelimiter(IsSpace, pos);
-// }
-
-// Validates request target through URI::Parse().
-RequestState	RequestParser::TargetHandler(size_t pos) {
-	if (DEBUG) cout << "[TargetHandler]\n";
-
-	size_t	target_end = GetEndPos(input, ' ', pos);
-	if (target_end == pos) // if required space ending not found
-		throw BadRequestException();
-	_request_line.target = input.substr(pos, target_end); // calls on RequestTargetParser
-	_bytes_read += target_end + 1;
-	return r_Version;
-	// return r_Target_Done;
-}
-
-// // Checks if target is followed by a Space. If yes, transitions to Version state.
-// RequestState RequestParser::TargetDoneHandler(size_t pos) {
-// 	if (DEBUG) cout << "target: " << _request_line.target.GetURIDebug() << endl;
-
-// 	_bytes_read += 1;
-// 	return ValidDelimiter(IsSpace, pos);
-// }
-
-static size_t	GetCRLFPos(string const& input, size_t pos) {
-	size_t	nl_pos = GetEndPos(input, '\n', pos);
-	size_t	cr_pos = GetEndPos(input, '\r', pos);
-
-	if (nl_pos == pos)
-		throw BadRequestException();
-	if (cr_pos != pos && (nl_pos - cr_pos == 1)) // if \r is found and precedes \n
-		return cr_pos;
-	return nl_pos;
-}
-
-// Checks if HTTP version is valid (only 1.1 is accepted).
-RequestState	RequestParser::VersionHandler(size_t pos) {
-	if (DEBUG) cout << "[Version Handler]\n";
-
-	size_t	version_end = GetCRLFPos(input, pos);
-	string	version = input.substr(pos, version_end);
-	// cout << "version: [" << version << "]\n";
-	if (version.front() != 'H' || !isdigit(version.back()))
-		throw BadRequestException();
-	if (version != "HTTP/1.1")
-		throw HTTPVersionNotSupportedException();
-	_request_line.version = version;
-	_bytes_read += version_end; // TODO: consider folding VersionDone into here
-	return r_Version_Done;
-}
-
-// Used by VersionDoneHandler and FieldDoneHandler to check for
-// valid line breaks (CRLF or LF as specified by RFC 7230).
-static size_t	ValidLineBreaks(string input, size_t pos) {
-	if (input[pos] == '\r' && input[pos + 1] == '\n')
-		return 2;
-	else if (input[pos] == '\n')
-		return 1;
-	else
-		return 0;
-}
-
-// Checks if version is followed by CRLF/LF. If yes, transition to FieldStart.
-RequestState	RequestParser::VersionDoneHandler(size_t pos) {
-	size_t	line_breaks = ValidLineBreaks(input, pos);
-
-	if (line_breaks == 0)
-		return r_Invalid;
-	else {
-		_bytes_read += line_breaks;
-		return r_Field;
-	}
-}
-
-RequestState	RequestParser::FieldHandler(size_t pos) {
+RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
 	size_t	field_end = input.find("\n\n", pos);
 	if (field_end == string::npos) // if header is not correctly ended by empty line
 		throw BadRequestException();
-
-	_header_parser.Parse(_header_fields, input.substr(pos, field_end));
-	return r_Header_Done;
+	string	header_field = input.substr(pos, field_end);
+	_bytes_read += _header_parser.Parse(_header_fields, header_field);
+	return r_HeaderDone;
 }
 
 RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
-	if (DEBUG) cout << "[Header Done Handler] at: " << input[pos] << endl;
+	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	// Check parsed headers if message is expected
+	// _bytes_read += 1;
 	return r_Done;
 }
 
