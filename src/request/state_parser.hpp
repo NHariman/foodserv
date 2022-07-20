@@ -7,8 +7,10 @@ using namespace std;
 
 template <typename State>
 class StateParser {
-	public:		
-		void	ParseString(string const& input_string) {
+	public:
+		// State parsing algorithm defined as a template method.
+		// Takes string to parse (byte-by-byte) and returns bytes read.
+		size_t	ParseString(string const& input_string) {
 			size_t i = 0;
 
 			input = input_string;
@@ -23,6 +25,7 @@ class StateParser {
 				IncrementCounter(i);
 			}
 			AfterParseCheck(i);
+			return i;
 		}
 
 	protected:
