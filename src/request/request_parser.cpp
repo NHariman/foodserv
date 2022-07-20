@@ -258,7 +258,6 @@ RequestState	RequestParser::FieldHandler(size_t pos) {
 	if (field_end == string::npos) // if header is not correctly ended by empty line
 		throw BadRequestException();
 
-	HeaderFieldParser	_header_parser;
 	_header_parser.Parse(_header_fields, input.substr(pos, field_end));
 	return r_Header_Done;
 }

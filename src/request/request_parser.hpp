@@ -54,7 +54,7 @@ class RequestParser  : public StateParser<RequestState> {
 
 	private:
 		map<string, string>	_header_fields;
-		// HeaderFieldParser	_header_parser;
+		HeaderFieldParser	_header_parser;
 		struct RequestLine	_request_line;
 		
 		string	_msg_body;
