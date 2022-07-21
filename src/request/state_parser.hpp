@@ -52,7 +52,8 @@ class StateParser {
 		// Concrete methods that can be overridden if custom looping behaviour
 		// is needed.
 		virtual void	UpdateBuffer(size_t pos) {
-			buffer += input[pos];
+			if (!skip_char)
+				buffer += input[pos];
 		}
 		virtual bool			NotDone(size_t pos) const {
 			return (pos <= input.size());

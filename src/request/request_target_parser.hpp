@@ -50,7 +50,6 @@ class RequestTargetParser : public StateParser<URIState> {
 		URIState	PercentDoneHandler(char uri_char);
 	
 	protected:
-		URIState	SetStartState() const override;
 		URIState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
 		bool		CheckDoneState() override;

@@ -71,7 +71,6 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestState	HeaderDoneHandler(size_t pos);
 
 	protected:
-		RequestState	SetStartState() const override;
 		RequestState	GetNextState(size_t pos) override;
 		void			CheckInvalidState() const override;
 		bool			CheckDoneState() override;

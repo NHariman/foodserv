@@ -44,13 +44,14 @@ CreateResponse
 	{  x,        FV,       FV,      DONE,    x,        x,       FV,      x,       FS,      DONE  }, // FieldValue
 */
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 // Default constructor
-RequestParser::RequestParser() : _bytes_read(0) {}
+RequestParser::RequestParser() : StateParser(r_RequestLine), _bytes_read(0) {}
 
 // C-string constructor
-RequestParser::RequestParser(char const* buffer) : _bytes_read(0) {
+RequestParser::RequestParser(char const* buffer)
+		: StateParser(r_RequestLine), _bytes_read(0) {
 	Parse(buffer);
 }
 
@@ -61,10 +62,6 @@ void	RequestParser::Parse(char const* buffer) {
 	string	request(buffer);
 
 	ParseString(request);
-}
-
-RequestState	RequestParser::SetStartState() const {
-	return r_RequestLine;
 }
 
 RequestState	RequestParser::GetNextState(size_t pos) {
@@ -82,7 +79,7 @@ RequestState	RequestParser::GetNextState(size_t pos) {
 
 void	RequestParser::CheckInvalidState() const {
 	if (cur_state == r_Invalid)
-		throw BadRequestException();
+		throw BadRequestException("Invalid token in request");
 }
 
 bool	RequestParser::CheckDoneState() {
@@ -123,9 +120,9 @@ RequestState	RequestParser::RequestLineHandler(size_t pos) {
 
 	size_t	request_line_end = input.find_first_of('\n');
 	if (request_line_end == string::npos)
-		throw BadRequestException();
-	string	request_line = input.substr(0, request_line_end + 1);
-	cout << "request_line: [" << request_line << "]\n";
+		throw BadRequestException("Request line missing CRLF line break");
+	string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
+	// cout << "request_line (len " << request_line.size() << "): [" << request_line << "]\n";
 	_bytes_read += _request_line_parser.Parse(_request_line, request_line);
 	return r_HeaderField;
 }
@@ -133,10 +130,13 @@ RequestState	RequestParser::RequestLineHandler(size_t pos) {
 RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
+	// checks if header is not correctly ended by empty line
 	size_t	field_end = input.find("\n\n", pos);
-	if (field_end == string::npos) // if header is not correctly ended by empty line
-		throw BadRequestException();
+	if (field_end == string::npos)
+		throw BadRequestException("Header field missing line break");
+
 	string	header_field = input.substr(pos, field_end);
+	// cout << "header (len " << header_field.size() << "): [" << header_field << "]\n";
 	_bytes_read += _header_parser.Parse(_header_fields, header_field);
 	return r_HeaderDone;
 }
@@ -162,7 +162,9 @@ string	RequestParser::GetVersion() {
 }
 
 string	RequestParser::GetHeaderFieldValue(string field_name) {
-	NormalizeString(tolower, field_name, 0); // normalizes field name for case-insensitive searching
+	// normalizes field name to lowercase for case-insensitive searching
+	NormalizeString(tolower, field_name, 0);
+
 	map<string, string>::iterator	found =  _header_fields.find(field_name);
 	if (found == _header_fields.end())
 		return NO_VAL;

@@ -35,24 +35,21 @@ class RequestLineParser : public StateParser<RequestLineState> {
 		size_t	Parse(RequestLine& request_line, string const& input);
 
 	protected:
-		RequestLineState	SetStartState() const override;
 		RequestLineState	GetNextState(size_t pos) override;
 		void	CheckInvalidState() const override;
 		bool	CheckDoneState() override;
-		// void	UpdateBuffer(size_t pos) override;
 		void	IncrementCounter(size_t& pos) override;
-		void	AfterParseCheck(size_t& pos) override;
 
 	private:
 		RequestLine*	_request_line;
-		size_t	_increment;
+		size_t			_increment;
 
 		RequestLineState	StartHandler(size_t pos);
 		RequestLineState	MethodHandler(size_t pos);
 		RequestLineState	TargetHandler(size_t pos);
 		RequestLineState	VersionHandler(size_t pos);
 		RequestLineState	VersionEndHandler(size_t pos);
-		size_t	GetEndPos(string s, char to_find, size_t start);
+		size_t	GetEndPos(string const& s, char to_find, size_t start);
 		size_t	GetCRLFPos(string const& input, size_t pos);
 		size_t	ValidLineBreaks(string input, size_t pos);
 };

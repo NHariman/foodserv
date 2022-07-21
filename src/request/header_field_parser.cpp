@@ -1,7 +1,7 @@
 #include "header_field_parser.hpp"
 
 HeaderFieldParser::HeaderFieldParser()
-	: _fields(NULL), _skip_buffer(false) {}
+	: StateParser(f_Start), _fields(NULL) {}
 
 HeaderFieldParser::~HeaderFieldParser() {}
 
@@ -18,10 +18,6 @@ size_t	HeaderFieldParser::Parse(map<string, string>& fields, string const& field
 	return ParseString(field_string);
 }
 
-FieldState	HeaderFieldParser::SetStartState() const {
-	return f_Start;
-}
-
 FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 	static 	FieldState (HeaderFieldParser::*table[])(char c) = {
 			&HeaderFieldParser::StartHandler,
@@ -36,30 +32,22 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 
 void	HeaderFieldParser::CheckInvalidState() const {
 	if (cur_state == f_Invalid)
-		throw BadRequestException();
+		throw BadRequestException("Invalid token in header fields: \"" + buffer + "\"");
 }
 
 bool	HeaderFieldParser::CheckDoneState() {
-	if (cur_state == f_Done) {
-		return true;
-	}
-	return false;
+	return (cur_state == f_Done);
 }
 
-void	HeaderFieldParser::UpdateBuffer(size_t pos) {
-	if (!_skip_buffer)
-		buffer += input[pos];
-}
-
-void	HeaderFieldParser::IncrementCounter(size_t& pos) {
-	pos += 1;
-	if (pos == 8192 && input.size() > pos)
+// Checks if header fields size is greater than 8kb.
+void	HeaderFieldParser::PreParseCheck() {
+	if (input.size() > 8192)
 		throw RequestHeaderFieldsTooLargeException();
 }
 
 // Header field may only start with TChar.
 FieldState	HeaderFieldParser::StartHandler(char c) {
-	_skip_buffer = false;
+	skip_char = false;
 	buffer.clear();
 	switch (c) {
 		case '\0':
@@ -67,7 +55,7 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 		case '\n':
 			return f_Start;
 		case '\r': {
-			_skip_buffer = true;
+			skip_char = true;
 			return f_ValueEnd;
 		}
 		default:
@@ -84,7 +72,7 @@ FieldState	HeaderFieldParser::NameHandler(char c) {
 	switch (c) {
 		case ':': {
 			PushFieldName();
-			_skip_buffer = true;
+			skip_char = true;
 			return f_ValueStart;
 		}
 		default:
@@ -97,9 +85,9 @@ FieldState	HeaderFieldParser::NameHandler(char c) {
 
 // Skips whitespace following colon but before value starts.
 FieldState	HeaderFieldParser::ValueStartHandler(char c) {
-	_skip_buffer = false;
+	skip_char = false;
 	if (IsWhitespace(c)) {
-		_skip_buffer = true;
+		skip_char = true;
 		return f_ValueStart;
 	}
 	else
@@ -119,7 +107,7 @@ FieldState	HeaderFieldParser::ValueHandler(char c) {
 			return f_Start;
 		}
 		case '\r': {
-			_skip_buffer = true;
+			skip_char = true;
 			return f_ValueEnd;
 		}
 		default:
@@ -136,8 +124,10 @@ FieldState	HeaderFieldParser::ValueEndHandler(char c) {
 		PushFieldValue();
 		return f_Start;
 	}
-	else
+	else {
+		buffer += '\r'; // pushes skipped \r character for error printing
 		return f_Invalid;
+	}
 }
 
 // Normalizes field name to lowercase (for easy look-up)

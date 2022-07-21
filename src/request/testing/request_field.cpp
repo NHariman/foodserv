@@ -50,4 +50,7 @@ TEST(RequestHeaderTest, InvalidFields) {
 	EXPECT_THROW({
 		RequestParser parser("GET /hello.txt HTTP/1.1\nHost : www.example.com\n\n");
 	}, BadRequestException);
+	EXPECT_THROW({
+		RequestParser parser("GET /hello.txt HTTP/1.1\nHost: www.example.com\v\n\n");
+	}, BadRequestException);
 }

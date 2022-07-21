@@ -2,7 +2,8 @@
 
 #define DEBUG 0 // REMOVE
 
-RequestTargetParser::RequestTargetParser() : _uri(NULL), _part(pt_Invalid) {}
+RequestTargetParser::RequestTargetParser()
+	: StateParser(u_Start), _uri(NULL), _part(pt_Invalid) {}
 
 RequestTargetParser::~RequestTargetParser() {}
 
@@ -30,10 +31,6 @@ size_t	RequestTargetParser::Parse(URI& uri, string const& uri_string) {
 // 	(void)uri_string;
 // }
 
-URIState	RequestTargetParser::SetStartState() const {
-	return u_Start;
-}
-
 URIState	RequestTargetParser::GetNextState(size_t pos) {
 	static 	URIState (RequestTargetParser::*table[6])(char uri_char) = {
 			&RequestTargetParser::StartHandler,
@@ -43,13 +40,15 @@ URIState	RequestTargetParser::GetNextState(size_t pos) {
 			&RequestTargetParser::PercentDoneHandler,
 			nullptr
 	};
-
-	return (this->*table[cur_state])(input[pos]);
+	URIState	next_state = (this->*table[cur_state])(input[pos]);
+	if (next_state == u_Done)
+		skip_char = true; // skips line endings
+	return next_state;
 }
 
 void	RequestTargetParser::CheckInvalidState() const {
 	if (cur_state == u_Invalid)
-		throw BadRequestException();
+		throw BadRequestException("Invalid token in request target: \"" + buffer + "\"");
 }
 
 // If terminating state is indicated, pushes parsed string 
@@ -71,7 +70,7 @@ void	RequestTargetParser::PreParseCheck() {
 // Checks if there's illegal characters after terminating char.
 void	RequestTargetParser::AfterParseCheck(size_t& pos) {
 	if (cur_state == u_Done && pos < input.size() - 1)
-		throw BadRequestException();
+		throw BadRequestException("Extra characters after terminating token in request target");
 }
 
 // Pushes buffer to appropriate URI field when valid ending token indicates
@@ -171,7 +170,7 @@ static void	DecodePercent(string& buffer) {
 // depending on if we're at the Path or Query part of the URI.
 // "return URIState(_path)" leverages equivalency between pt_Path & pt_Query values
 // in URIPart enum and u_Path & Query state values in the URIState enum.
-// So if we're at Path part, we return the Path state. Ditto for query.
+// So if we're at Path part, we return the Path state. Ditto for Query.
 URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	NormalizeString(toupper, buffer, buffer.size() - 2);
 	DecodePercent(buffer);
