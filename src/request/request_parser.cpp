@@ -83,10 +83,7 @@ void	RequestParser::CheckInvalidState() const {
 }
 
 bool	RequestParser::CheckDoneState() {
-	if (cur_state == r_Done) {
-		return true;
-	}
-	return false;
+	return cur_state == r_Done;
 }
 
 // bool	RequestParser::NotDone(size_t pos) const {
@@ -127,14 +124,23 @@ RequestState	RequestParser::RequestLineHandler(size_t pos) {
 	return r_HeaderField;
 }
 
+// Checks if header is ended with correct CRLF or LF sequence.
+static size_t	FindFieldEnd(string const& input, size_t pos) {
+	size_t	only_nls = input.find("\n\n", pos);
+	size_t	crnl = input.find("\n\r\n", pos);
+
+	if (crnl != string::npos)
+		return crnl;
+	else if (only_nls != string::npos)
+		return only_nls;
+	else
+		throw BadRequestException("Header field missing line break");
+}
+
 RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
-	// checks if header is not correctly ended by empty line
-	size_t	field_end = input.find("\n\n", pos);
-	if (field_end == string::npos)
-		throw BadRequestException("Header field missing line break");
-
+	size_t	field_end = FindFieldEnd(input, pos);
 	string	header_field = input.substr(pos, field_end);
 	// cout << "header (len " << header_field.size() << "): [" << header_field << "]\n";
 	_bytes_read += _header_parser.Parse(_header_fields, header_field);
@@ -162,7 +168,7 @@ string	RequestParser::GetVersion() {
 }
 
 string	RequestParser::GetHeaderFieldValue(string field_name) {
-	// normalizes field name to lowercase for case-insensitive searching
+	// Normalizes field name to lowercase for case-insensitive searching
 	NormalizeString(tolower, field_name, 0);
 
 	map<string, string>::iterator	found =  _header_fields.find(field_name);

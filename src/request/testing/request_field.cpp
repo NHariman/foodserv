@@ -4,10 +4,8 @@
 #include "../exception.hpp"
 
 TEST(RequestHeaderTest, ParseSingleField) {
-	RequestParser parser;
-
-	parser.Parse("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n\n");
-	EXPECT_EQ(parser.GetHeaderFieldValue("host"), "www.example.com");
+	RequestParser parser1("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\n\n");
+	EXPECT_EQ(parser1.GetHeaderFieldValue("host"), "www.example.com");
 }
 
 TEST(RequestHeaderTest, ParseMultiField) {
@@ -27,6 +25,17 @@ TEST(RequestHeaderTest, ParseMultiValueField) {
 	EXPECT_EQ(parser.GetHeaderFieldValue("host"), "www.example.com");
 	EXPECT_EQ(parser.GetHeaderFieldValue("user-agent"), "curl/7.16.3 libcurl/7.16.3");
 	EXPECT_EQ(parser.GetHeaderFieldValue("Accept-Language"), "en, mi");
+}
+
+TEST(RequestHeaderTest, ParseCRLF) {
+	RequestParser parser1("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n\n");
+	EXPECT_EQ(parser1.GetHeaderFieldValue("host"), "www.example.com");
+
+	RequestParser parser2("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n\r\n");
+	EXPECT_EQ(parser2.GetHeaderFieldValue("host"), "www.example.com");
+
+	RequestParser parser3("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\n\r\n");
+	EXPECT_EQ(parser3.GetHeaderFieldValue("host"), "www.example.com");
 }
 
 TEST(RequestHeaderTest, ParseFieldwithOWS) {

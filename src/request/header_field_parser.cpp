@@ -121,7 +121,8 @@ FieldState	HeaderFieldParser::ValueHandler(char c) {
 // Checks if \r is followed by \n for valid CRLF line ending.
 FieldState	HeaderFieldParser::ValueEndHandler(char c) {
 	if (c =='\n') {
-		PushFieldValue();
+		if (!buffer.empty())
+			PushFieldValue();
 		return f_Start;
 	}
 	else {
@@ -147,4 +148,5 @@ void	HeaderFieldParser::PushFieldValue() {
 	while (start != end && IsWhitespace(*end))
 		end--;
 	(*_fields)[_cur_field] = string(start, end + 1);
+	buffer.clear();
 }

@@ -17,7 +17,6 @@
 using namespace std;
 
 enum RequestState {
-	// r_Start = 0,
 	r_RequestLine = 0,
 	r_HeaderField,
 	r_HeaderDone,
@@ -26,20 +25,6 @@ enum RequestState {
 	r_Done,
 	r_Invalid
 };
-
-// enum RequestState {
-// 	r_Start = 0,
-// 	r_Method,
-// 	r_Target,
-// 	r_Version,
-// 	r_Version_Done,
-// 	r_Field,
-// 	r_Header_Done,
-// 	r_MsgBody,
-// 	r_Done,
-// 	r_Invalid
-// };
-// #include <vector>
 
 class RequestParser  : public StateParser<RequestState> {
 	public:
