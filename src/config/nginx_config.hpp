@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/13 11:28:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/21 12:21:23 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "server_block.hpp"
+#include "server_context.hpp"
 
 // Coplien form:
 
@@ -36,8 +36,8 @@
 class NginxConfig {
 	private:
 		std::string					_config_file;
-		std::vector<ServerBlock>	_servers;
-		size_t						_amount_server_blocks;
+		std::vector<ServerContext>	_servers;
+		size_t						_amount_server_contexts;
 
 		NginxConfig();
 		bool		IsServerBlock(std::string value, size_t *start_pos);

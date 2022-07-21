@@ -1,6 +1,6 @@
 
-#ifndef LOCATION_BLOCK_HPP
-# define LOCATION_BLOCK_HPP
+#ifndef LOCATION_CONTEXT_HPP
+# define LOCATION_CONTEXT_HPP
 
 #include <iostream>
 #include <map>
@@ -20,12 +20,12 @@ struct s_components
 	bool	fastcgi_pass;
 	bool	allowed_methods;
 	bool	return_dir;
-}	t_flags; // check list of found keywords in locationblock
+}	t_flags_location; // check list of found keywords in LocationContext
 
 // actually this is called a context (sad face)
-class LocationBlock {
+class LocationContext {
 	private:
-		t_flags						_check_list;
+		t_flags_location			_check_list;
 		LocationUri					_uri;
 		bool						_autoindex;
 		std::string					_root;
@@ -35,20 +35,20 @@ class LocationBlock {
 		std::string					_fastcgi_pass;
 		AllowedMethods				_allowed_methods;
 		ReturnDir					_return_dir;
-		LocationBlock(){};
+		LocationContext(){};
 		void						GetDirectiveValuePairs(std::string data);
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string input);
 		void						CheckListVerification();
 
 	public:
-		LocationBlock(std::string data);
-		~LocationBlock(){};
+		LocationContext(std::string data);
+		~LocationContext(){};
 
 		// check if something has been set or not
 		bool						IsSet(std::string key);
 		// getters
-		t_flags						GetFlags() const;
+		t_flags_location			GetFlags() const;
 		std::string					GetUri() const;
 		bool						GetAutoindex() const;
 		std::string					GetRoot() const;
@@ -63,7 +63,7 @@ class LocationBlock {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Invalid directive detected in LocationBlock.";
+					return "ERROR! Invalid directive detected in LocationContext.";
 				}
 		};
 		class MultipleAutoindexException : public std::exception

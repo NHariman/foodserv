@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 15:32:31 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/21 12:25:39 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@
 // a newline per getline read is added in to avoid cases where for example:
 // a key-value pair is on two different lines to avoid accidentally connecting two values with one another.
 
-NginxConfig::NginxConfig() : _amount_server_blocks(0) {};
+NginxConfig::NginxConfig() : _amount_server_contexts(0) {};
 
 // uses av[1] in the main and attempts to open the file.
 // throws error if fails
 // if it loads the _config_file variable
 // and closes the file again.
-NginxConfig::NginxConfig(const char *location) : _amount_server_blocks(0) {
+NginxConfig::NginxConfig(const char *location) : _amount_server_contexts(0) {
 	std::ifstream	config_file_fd;
 
 	if (!location) {
@@ -45,7 +45,7 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_blocks(0) {
 NginxConfig::NginxConfig(const NginxConfig& obj) {
 	_config_file = obj.GetConfigFile();
 	_servers = obj.GetServers();
-	_amount_server_blocks = obj.GetServerBlockAmount();
+	_amount_server_blocks = obj.GetServerContextAmount();
 }
 
 NginxConfig & NginxConfig::operator=(const NginxConfig& obj) {
@@ -53,7 +53,7 @@ NginxConfig & NginxConfig::operator=(const NginxConfig& obj) {
 		return (*this);
 	_config_file = obj.GetConfigFile();
 	_servers = obj.GetServers();
-	_amount_server_blocks = obj.GetServerBlockAmount();
+	_amount_server_contexts = obj.GetServerContextAmount();
 	return (*this);
 }
 
@@ -93,19 +93,19 @@ void	NginxConfig::LoadConfigFile(std::ifstream& configuration_file) {
 }
 
 // checks if the server block is correctly written
-bool		NginxConfig::IsServerBlock(std::string value, size_t *start_pos) {
+bool		NginxConfig::IsServerContext(std::string value, size_t *start_pos) {
 	if (value.compare("server") || value.compare("server{")) { 
 		if (_config_file[*start_pos + 6] == '{' || std::isspace(_config_file[*start_pos + 6])) {
 			*start_pos = *start_pos + 6; // moves to the end of "server"
 			while (std::isspace(_config_file[*start_pos]))
 				*start_pos = *start_pos + 1;
 			if (_config_file[*start_pos] != '{')
-				throw BadServerBlockException();
+				throw BadServerContextException();
 			*start_pos = *start_pos + 1;
 			return true;
 		}
 	}
-	throw BadServerBlockException();
+	throw BadServerContextException();
 	return false;
 }
 
@@ -132,15 +132,15 @@ void		NginxConfig::FindServerBlocks() {
 		}
 		i++;
 	}
-	if (_amount_server_blocks == 0)
+	if (_amount_server_contexts == 0)
 		throw NoServerBlocksException();
 	return ;
 	
 }
 
 // SANNE: a function to print what is in the server blocks vector
-void	NginxConfig::PrintServerBlocksVectors() {
-	for (std::vector<ServerBlock>::iterator it = _servers.begin(); it != _servers.end(); it++) {
+void	NginxConfig::PrintServerContextsVectors() {
+	for (std::vector<ServerContext>::iterator it = _servers.begin(); it != _servers.end(); it++) {
 		std::cout << "\nIn server block print for loop: " << std::endl;
 		std::cout << "PortNumber: " << it->GetIPAddress() << std::endl;
 		std::cout << "IPAddress: " << it->GetPortNumber() << std::endl;
@@ -160,11 +160,11 @@ std::string NginxConfig::GetConfigFile() const {
 	return this->_config_file;
 }
 
-size_t		NginxConfig::GetServerBlockAmount() const {
-	return this->_amount_server_blocks;
+size_t		NginxConfig::GetServerContextAmount() const {
+	return this->_amount_server_contexts;
 }
 
-std::vector<ServerBlock>		NginxConfig::GetServers() const {
+std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 

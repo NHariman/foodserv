@@ -1,10 +1,9 @@
-
-#include "location_block.hpp"
+#include "location_context.hpp"
 #include "directive_validation/directive_validation.hpp"
 
 
-LocationBlock::LocationBlock(std::string data) {
-    std::cerr << "In LocationBlock now" << std::endl;
+LocationContext::LocationContext(std::string data) {
+    std::cerr << "In LocationContext now" << std::endl;
     _check_list.uri = false;
     _check_list.autoindex = false;
     _check_list.root = false;
@@ -16,7 +15,7 @@ LocationBlock::LocationBlock(std::string data) {
     GetDirectiveValuePairs(data);
 }
 
-LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
+LocationContext& LocationContext::operator= (const LocationContext& location_block) {
     if (this == &location_block)
         return (*this);
     _uri = location_block.GetUri();
@@ -29,7 +28,7 @@ LocationBlock& LocationBlock::operator= (const LocationBlock& location_block) {
 	_allowed_methods = location_block.GetAllowedMethods();
     return (*this);
 }
-LocationBlock::LocationBlock(const LocationBlock& location_block) {
+LocationContext::LocationContext(const LocationContext& location_block) {
     _uri = location_block.GetUri();
     _autoindex = location_block.GetAutoindex();
     _root = location_block.GetRoot();
@@ -40,7 +39,7 @@ LocationBlock::LocationBlock(const LocationBlock& location_block) {
 	_allowed_methods = location_block.GetAllowedMethods();
 }
 
-int			            LocationBlock::IsDirective(std::string directive) {
+int								LocationContext::IsDirective(std::string directive) {
 	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
 	
 	std::cout << "directive: " << directive << std::endl;
@@ -54,7 +53,7 @@ int			            LocationBlock::IsDirective(std::string directive) {
 		return (is_directive);
 }
 
-void				LocationBlock::SetValue(int directive, std::string input) {
+void							LocationContext::SetValue(int directive, std::string input) {
 	std::string		value;
 
 	value = TrimValue(input);
@@ -131,10 +130,10 @@ void				LocationBlock::SetValue(int directive, std::string input) {
 	}
 }
 
-void			LocationBlock::CheckListVerification(){
+void							LocationContext::CheckListVerification(){
     if (_check_list.autoindex == false) {
 		_autoindex = false;
-		std::cerr << "WARNING! No autoindex in locationblock detected. Default (off) have been set." << std::endl;
+		std::cerr << "WARNING! No autoindex in LocationContext detected. Default (off) have been set." << std::endl;
 	}
     if (_check_list.root == false) {
 		_root = "/var/www/html";
@@ -147,13 +146,13 @@ void			LocationBlock::CheckListVerification(){
 	}
 	if (_check_list.client_max_body_size == false) {
 		_client_max_body_size = 0;
-		std::cerr << "WARNING! No client_max_body_size in locationblock detected. Default (0) have been set." << std::endl;
+		std::cerr << "WARNING! No client_max_body_size in LocationContext detected. Default (0) have been set." << std::endl;
 	}
 	if (_check_list.allowed_methods == false)
-		std::cerr << "WARNING! No allowed_methods in locationblock detected. Default (No methods allowed) have been set." << std::endl;
+		std::cerr << "WARNING! No allowed_methods in LocationContext detected. Default (No methods allowed) have been set." << std::endl;
 }
 
-void                        LocationBlock::GetDirectiveValuePairs(std::string data) {
+void							LocationContext::GetDirectiveValuePairs(std::string data) {
     size_t				key_start = 0;
 	size_t				key_end = 0;
 	size_t				value_end = 0;
@@ -182,44 +181,44 @@ void                        LocationBlock::GetDirectiveValuePairs(std::string da
 }
 
 // getters
-LocationUri					LocationBlock::GetUri() const {
+LocationUri							LocationContext::GetUri() const {
     return this->_uri;
 }
 
-bool						LocationBlock::GetAutoindex() const {
+bool								LocationContext::GetAutoindex() const {
     return this->_autoindex;
 }
 
-std::string					LocationBlock::GetRoot() const {
+std::string							LocationContext::GetRoot() const {
     return this->_root;
 }
 
-std::vector<std::string>		LocationBlock::GetIndex() const {
+std::vector<std::string>			LocationContext::GetIndex() const {
     return this->_index;
 }
 
-int							LocationBlock::GetClientMaxBodySize() const {
+int									LocationContext::GetClientMaxBodySize() const {
     return this->_client_max_body_size;
 }
 
-std::vector<ErrorPage>	    LocationBlock::GetErrorPage() const {
+std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
     return this->_error_page;
 }
 
-std::string	                LocationBlock::GetFastCGIPass() const {
+std::string							LocationContext::GetFastCGIPass() const {
     return this->_fastcgi_pass;
 }
 
-std::vector<std::string>	                LocationBlock::GetAllowedMethods() const {
+std::vector<std::string>			LocationContext::GetAllowedMethods() const {
     return this->_allowed_methods;
 }
 
-t_flags					LocationBlock::GetFlags() const {
+t_flags_location					LocationContext::GetFlags() const {
 	return _check_list;
 }
 
 // use to check if a directive has been set
-bool						LocationBlock::IsSet(std::string directive) {
+bool						LocationContext::IsSet(std::string directive) {
 	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
 
 	int	is_directive = std::find(directives, directives + 8, directive) - directives;
