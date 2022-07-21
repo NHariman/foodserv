@@ -1,6 +1,16 @@
 #include "location_context.hpp"
 #include "directive_validation/directive_validation.hpp"
 
+LocationContext::LocationContext() {
+	_check_list.uri = false;
+    _check_list.autoindex = false;
+    _check_list.root = false;
+    _check_list.index = false;
+    _check_list.client_max_body_size = false;
+	_check_list.error_page = false;
+    _check_list.fastcgi_pass = false;
+	_check_list.allowed_methods = false;
+}
 
 LocationContext::LocationContext(std::string data) {
     std::cerr << "In LocationContext now" << std::endl;
@@ -15,7 +25,7 @@ LocationContext::LocationContext(std::string data) {
     GetDirectiveValuePairs(data);
 }
 
-LocationContext& LocationContext::operator= (const LocationContext& location_block) {
+LocationContext& LocationContext::operator= (LocationContext const& location_block) {
     if (this == &location_block)
         return (*this);
     _uri = location_block.GetUri();
@@ -37,7 +47,7 @@ LocationContext& LocationContext::operator= (const LocationContext& location_blo
 	_check_list.allowed_methods = obj.GetFlags().allowed_methods;
     return (*this);
 }
-LocationContext::LocationContext(const LocationContext& location_block) {
+LocationContext::LocationContext(LocationContext const& location_block) {
     _uri = location_block.GetUri();
     _autoindex = location_block.GetAutoindex();
     _root = location_block.GetRoot();
@@ -200,35 +210,35 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 
 // getters
 LocationUri							LocationContext::GetUri() const {
-    return this->_uri;
+    return _uri;
 }
 
 bool								LocationContext::GetAutoindex() const {
-    return this->_autoindex;
+    return _autoindex;
 }
 
 std::string							LocationContext::GetRoot() const {
-    return this->_root;
+    return _root;
 }
 
 std::vector<std::string>			LocationContext::GetIndex() const {
-    return this->_index;
+    return _index;
 }
 
 int									LocationContext::GetClientMaxBodySize() const {
-    return this->_client_max_body_size;
+    return _client_max_body_size;
 }
 
 std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
-    return this->_error_page;
+    return _error_page;
 }
 
 std::string							LocationContext::GetFastCGIPass() const {
-    return this->_fastcgi_pass;
+    return _fastcgi_pass;
 }
 
 std::vector<std::string>			LocationContext::GetAllowedMethods() const {
-    return this->_allowed_methods;
+    return _allowed_methods;
 }
 
 t_flags_location					LocationContext::GetFlags() const {

@@ -50,12 +50,6 @@ ServerContext::ServerContext() {
 	_check_list.index = false;
 	_check_list.client_max_body_size = false;
 	_check_list.error_page = false;
-
-	_listen.first = 80;
-	_listen.second = 0;
-	_server_name.push_back("localhost");;
-	_root = "/var/www/html";
-	_index.push_back("index.html");
 }
 
 ServerContext::ServerContext(const ServerContext& obj) {
@@ -154,13 +148,15 @@ void				ServerContext::SetValue(int directive, std::string value){
 				if (_check_list.root == true)
 					throw MultipleRootException();
 				_check_list.root = true;
-				_root = value; // create a root class and use the GetRoot() function in there to paste root here if valid
+				Root	root_value(trimmed_value);
+				_root = trimmed_value; // create a root class and use the GetRoot() function in there to paste root here if valid
 				break ;
 			case 4:
 				if (_check_list.index == true)
 					throw MultipleIndexException();
 				_check_list.index = true;
-				_index = _index.append(trimmed_value); // create an index class and use the GetIndex() function in there to paste index here if valid
+				Index	index_value(trimmed_value);
+				_index = index_value.GetIndex(); // create an index class and use the GetIndex() function in there to paste index here if valid
 				break ;
 			case 5:
 				if (_check_list.client_max_body_size == true)
@@ -168,12 +164,11 @@ void				ServerContext::SetValue(int directive, std::string value){
 				_check_list.client_max_body_size = true;
 				ClientMaxBodySize	cmbs_value(trimmed_value);
 				_client_max_body_size = cmbs_value.GetValue();
-				/// create an CMBS class and use the GetCMBS() function in there to paste CMBS here if valid
 				break ;
 			case 6:
 				_check_list.error_page = true;
-				// TODO: create an error_page class for parsing
-				// use getter to paste it here if valid
+				ErrorPage	error_page_value(value);
+				_error_page.push_back(error_page_value);
 				break ;
 		}
 	}
@@ -294,7 +289,7 @@ std::string					ServerContext::GetRoot() const {
     return _root;
 }
 
-std::string					ServerContext::GetIndex() const {
+std::vector<std::string>	ServerContext::GetIndex() const {
     return _index;
 }
 
@@ -306,7 +301,7 @@ bool						ServerContext::IsErrorPageSet() const {
 	return _check_list.error_page;
 }
 
-std::map<int, std::string>	ServerContext::GetErrorPage() const {
+std::vector<ErrorPage>		ServerContext::GetErrorPage() const {
     return _error_page;
 }
 

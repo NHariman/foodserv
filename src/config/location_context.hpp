@@ -35,14 +35,17 @@ class LocationContext {
 		std::string					_fastcgi_pass;
 		AllowedMethods				_allowed_methods;
 		ReturnDir					_return_dir;
-		LocationContext(){};
+
 		void						GetDirectiveValuePairs(std::string data);
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string input);
 		void						CheckListVerification();
 
 	public:
+		LocationContext();
 		LocationContext(std::string data);
+		LocationContext(LocationContext const &obj);
+		LocationContext& operator= (LocationContext const &obj);
 		~LocationContext(){};
 
 		// check if something has been set or not

@@ -16,6 +16,7 @@
 #include <map>
 #include "location_context.hpp"
 #include "server_name.hpp"
+#include "directive_validation/directive_validation.hpp"
 #include "listen.hpp"
 #include <vector>
 #include <string>
@@ -39,9 +40,9 @@ class ServerContext {
 		std::pair<in_addr_t, int>		_listen; // changed by sanne
 		std::vector<std::string>		_server_name; // changed by sanne
 		std::string						_root;
-		std::string						_index;
+		std::vector<std::string>		_index;
 		int								_client_max_body_size;
-		std::map<int, std::string>		_error_page;
+		std::vector<ErrorPage>			_error_page;
 
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string value);
@@ -64,9 +65,9 @@ class ServerContext {
 		int							GetPortNumber() const;
 		std::vector<std::string>	GetServerNameVector() const;
 		std::string					GetRoot() const;
-		std::string					GetIndex() const;
+		std::vector<std::string>	GetIndex() const;
 		int							GetClientMaxBodySize() const;
-		std::map<int, std::string>	GetErrorPage() const;
+		std::vector<ErrorPage>		GetErrorPage() const;
 		bool						IsErrorPageSet() const;
 		t_flags_server				GetFlags() const;
 
