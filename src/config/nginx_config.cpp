@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/21 12:25:39 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/21 13:12:55 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 
 // Constructor that takes a file and removes all comments and empty lines
-// and saves the string to a variable for passing to the serverblock parser.
+// and saves the string to a variable for passing to the ServerContext parser.
 // a newline per getline read is added in to avoid cases where for example:
 // a key-value pair is on two different lines to avoid accidentally connecting two values with one another.
 
@@ -39,7 +39,7 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_contexts(0) {
 	else
 		throw InvalidFileLocationException();
 	config_file_fd.close();
-	FindServerBlocks();
+	FindServerContexts();
 }
 
 NginxConfig::NginxConfig(const NginxConfig& obj) {
@@ -112,7 +112,7 @@ bool		NginxConfig::IsServerContext(std::string value, size_t *start_pos) {
 // looks for server{}s
 // when it finds one, it increases the _amount_server_block count and adds the server to the vector.
 // if no server blocks are found, an error is thrown
-void		NginxConfig::FindServerBlocks() {
+void		NginxConfig::FindServerContexts() {
 	size_t		i = 0;
 	size_t		key_start = 0;
 	size_t		key_end = 0;
@@ -123,17 +123,17 @@ void		NginxConfig::FindServerBlocks() {
 		key_end = _config_file.find_first_of(" \t\n\v\f\r", key_start);
 		if (key_start != std::string::npos && key_end != std::string::npos) {
 			i = key_start;
-			if (IsServerBlock(_config_file.substr(key_start, key_end - key_start), &i)) {
-				std::cout << "found a ServerBlock" << std::endl;
+			if (IsServerContext(_config_file.substr(key_start, key_end - key_start), &i)) {
+				std::cout << "found a ServerContext" << std::endl;
 				this->_amount_server_blocks++;
-				ServerBlock server(&i, _config_file);
+				ServerContext server(&i, _config_file);
 				this->_servers.push_back(server);
 			}
 		}
 		i++;
 	}
 	if (_amount_server_contexts == 0)
-		throw NoServerBlocksException();
+		throw NoServerContextsException();
 	return ;
 	
 }
