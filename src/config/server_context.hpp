@@ -21,26 +21,27 @@
 #include <string>
 #include <stdexcept>
 
+struct s_components
+{
+	int		location_context;
+	bool	listen;
+	bool	server_name;
+	bool	root;
+	bool	index;
+	bool	client_max_body_size;
+	bool	error_page;
+}	t_flags_server; // check list of found keywords in ServerContext
+
 class ServerContext {
 	private:
-		struct s_components
-		{
-			int		location_context;
-			bool	listen;
-			bool	server_name;
-			bool	root;
-			bool	index;
-			bool	client_max_body_size;
-			bool	error_page;
-		}	_check_list; // check list of found keywords in ServerContext
-
+		t_flags_server					_check_list;
 		std::vector<LocationContext>	_location_context;
-		std::pair<in_addr_t, int>	_listen; // changed by sanne
-		std::vector<std::string>	_server_name; // changed by sanne
-		std::string					_root;
-		std::string					_index;
-		int							_client_max_body_size;
-		std::map<int, std::string>	_error_page;
+		std::pair<in_addr_t, int>		_listen; // changed by sanne
+		std::vector<std::string>		_server_name; // changed by sanne
+		std::string						_root;
+		std::string						_index;
+		int								_client_max_body_size;
+		std::map<int, std::string>		_error_page;
 
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string value);
@@ -67,6 +68,7 @@ class ServerContext {
 		int							GetClientMaxBodySize() const;
 		std::map<int, std::string>	GetErrorPage() const;
 		bool						IsErrorPageSet() const;
+		t_flags_server				GetFlags() const;
 
 		// exception classes
 		class InvalidKeyException : public std::exception

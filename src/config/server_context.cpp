@@ -28,7 +28,6 @@
 // when two location blocks have the same uri
 // when multiple roots
 
-
 ServerContext::ServerContext(size_t *start, std::string config_file) {
 
     // _check_list copy
@@ -42,7 +41,6 @@ ServerContext::ServerContext(size_t *start, std::string config_file) {
 	FindDirectiveValuePairs(start, config_file);
 }
 
-
 ServerContext::ServerContext() {
     // _check_list copy
     _check_list.location_context = false;
@@ -52,7 +50,13 @@ ServerContext::ServerContext() {
 	_check_list.index = false;
 	_check_list.client_max_body_size = false;
 	_check_list.error_page = false;
-};
+
+	_listen.first = 80;
+	_listen.second = 0;
+	_server_name.push_back("localhost");;
+	_root = "/var/www/html";
+	_index.push_back("index.html");
+}
 
 ServerContext::ServerContext(const ServerContext& obj) {
 	_location_context = obj.GetLocationContexts();
@@ -64,13 +68,13 @@ ServerContext::ServerContext(const ServerContext& obj) {
 	_error_page = obj.GetErrorPage();
 
     // _check_list copy
-    _check_list.location_context = false;
-	_check_list.listen = false;
-	_check_list.server_name = false;
-	_check_list.root = false;
-	_check_list.index = false;
-	_check_list.client_max_body_size = false;
-	_check_list.error_page = false;
+    _check_list.location_context = obj.GetFlags().location_context;
+	_check_list.listen = obj.GetFlags().listen;
+	_check_list.server_name = obj.GetFlags().server_name;
+	_check_list.root = obj.GetFlags().root;
+	_check_list.index = obj.GetFlags().index;
+	_check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
+	_check_list.error_page = obj.GetFlags().error_page;
 }
 
 ServerContext & ServerContext::operator=(const ServerContext& obj) {
@@ -85,13 +89,13 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
 	_error_page = obj.GetErrorPage();
     
     // _check_list copy
-    _check_list.location_context = false;
-	_check_list.listen = false;
-	_check_list.server_name = false;
-	_check_list.root = false;
-	_check_list.index = false;
-	_check_list.client_max_body_size = false;
-	_check_list.error_page = false;
+    _check_list.location_context = obj.GetFlags().location_context;
+	_check_list.listen = obj.GetFlags().listen;
+	_check_list.server_name = obj.GetFlags().server_name;
+	_check_list.root = obj.GetFlags().root;
+	_check_list.index = obj.GetFlags().index;
+	_check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
+	_check_list.error_page = obj.GetFlags().error_page;
 	return (*this);
 }
 
@@ -181,7 +185,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 void			ServerContext::CheckListVerification(){
 	if (_check_list.location_context == false) {
 		//TODO: create a LocationContext constructor that creates the standard / location
-		std::cerr << "WARNING! No location blocks detected. Default have been set." << std::endl;
+		std::cerr << "WARNING! No location context detected. Default have been set." << std::endl;
 	}
 	if (_check_list.listen == false) {
 		_listen.first = 80;
@@ -267,41 +271,45 @@ void          ServerContext::FindDirectiveValuePairs(size_t *start_position, std
 
 //getters
 std::vector<LocationContext>	ServerContext::GetLocationContexts() const {
-    return this->_location_contexts;
+    return _location_context;
 }
 
 std::pair<in_addr_t, int>	ServerContext::GetListen() const {
-    return this->_listen;
+    return _listen;
 }
 
 in_addr_t					ServerContext::GetIPAddress() const {
-	return (this->_listen.first);
+	return _listen.first;
 }
 
 int							ServerContext::GetPortNumber() const {
-	return (this->_listen.second);
+	return _listen.second;
 }
 
 std::vector<std::string>	ServerContext::GetServerNameVector() const {
-    return this->_server_name;
+    return _server_name;
 }
 
 std::string					ServerContext::GetRoot() const {
-    return this->_root;
+    return _root;
 }
 
 std::string					ServerContext::GetIndex() const {
-    return this->_index;
+    return _index;
 }
 
 int							ServerContext::GetClientMaxBodySize() const {
-    return this->_client_max_body_size;
+    return _client_max_body_size;
 }
 
 bool						ServerContext::IsErrorPageSet() const {
-	return this->_check_list.error_page;
+	return _check_list.error_page;
 }
 
 std::map<int, std::string>	ServerContext::GetErrorPage() const {
-    return this->_error_page;
+    return _error_page;
+}
+
+t_flags_server				ServerContext::GetFlags() const {
+	return _check_list;
 }

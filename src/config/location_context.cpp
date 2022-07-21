@@ -26,6 +26,15 @@ LocationContext& LocationContext::operator= (const LocationContext& location_blo
 	_error_page = location_block.GetErrorPage();
     _fastcgi_pass = location_block.GetFastCGIPass();
 	_allowed_methods = location_block.GetAllowedMethods();
+
+    _check_list.uri = obj.GetFlags().uri;
+    _check_list.autoindex = obj.GetFlags().autoindex;
+    _check_list.root = obj.GetFlags().root;
+    _check_list.index = obj.GetFlags().index;
+    _check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
+	_check_list.error_page = obj.GetFlags().error_page;
+    _check_list.fastcgi_pass = obj.GetFlags().fastcgi_pass;
+	_check_list.allowed_methods = obj.GetFlags().allowed_methods;
     return (*this);
 }
 LocationContext::LocationContext(const LocationContext& location_block) {
@@ -37,6 +46,15 @@ LocationContext::LocationContext(const LocationContext& location_block) {
 	_error_page = location_block.GetErrorPage();
     _fastcgi_pass = location_block.GetFastCGIPass();
 	_allowed_methods = location_block.GetAllowedMethods();
+
+    _check_list.uri = obj.GetFlags().uri;
+    _check_list.autoindex = obj.GetFlags().autoindex;
+    _check_list.root = obj.GetFlags().root;
+    _check_list.index = obj.GetFlags().index;
+    _check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
+	_check_list.error_page = obj.GetFlags().error_page;
+    _check_list.fastcgi_pass = obj.GetFlags().fastcgi_pass;
+	_check_list.allowed_methods = obj.GetFlags().allowed_methods;
 }
 
 int								LocationContext::IsDirective(std::string directive) {
