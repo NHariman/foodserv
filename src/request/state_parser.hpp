@@ -13,6 +13,12 @@ using namespace std;
 template <typename State>
 class StateParser {
 	public:
+		// Constructor taking starting state for initialization.
+		// Child classes should call it in constructor like so:
+		//		ChildClassParser::ChildClassParser() : StateParser(c_StartEnum)
+		StateParser(State starting_state)
+			: cur_state(starting_state), skip_char(false) {}
+
 		// Template method
 		// Takes string to parse and returns bytes read.
 		size_t	ParseString(string const& input_string) {
@@ -20,14 +26,13 @@ class StateParser {
 
 			input = input_string;
 			PreParseCheck();
-			cur_state = SetStartState();
 			while (NotDone(i)) {
 				cur_state = GetNextState(i);
+				UpdateBuffer(i);
+				IncrementCounter(i);
 				CheckInvalidState();
 				if (CheckDoneState())
 					break;
-				UpdateBuffer(i);
-				IncrementCounter(i);
 			}
 			AfterParseCheck(i);
 			return i;
@@ -37,9 +42,9 @@ class StateParser {
 		State	cur_state;
 		string	buffer; // for keeping track of parsed input
 		string	input; // saving original input
+		bool	skip_char; // for skipping pushing whitespace/EOL to buffer
 
 		// Abstract methods that must be implemented by subclass.
-		virtual State	SetStartState() const = 0;
 		virtual State	GetNextState(size_t pos) = 0;
 		virtual void	CheckInvalidState() const = 0;
 		virtual bool	CheckDoneState() = 0;
