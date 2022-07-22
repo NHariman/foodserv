@@ -1,23 +1,33 @@
 #include "header_field_parser.hpp"
 
+/*
+	Transition table for header field parsing
+	ST = f_Start, NM = f_Name, VS = f_ValueStart, VL = f_Value,
+	VE = f_ValueEnd, ✓ = f_Done, x = f_Invalid
+	
+		WS		:		TCh		VCh		\r		\n		\0		Other
+	{	x,		x,		NM,		x,		VE,		ST,		✓,		x		}, // Start
+	{	x,		VS,		NM,		x,		x,		x,		x,		x		}, // Name
+	{	VS,		VL,		VL,		VL,		VL,		VL,		VL,		VL		}, // ValueStart
+	{	VL,		VL,		VL,		VL,		VE,		ST,		✓,		x		}, // Value
+	{	x,		x,		x,		x,		x,		ST,		x,		x		}  // ValueEnd
+*/
+
+// Default constructor
 HeaderFieldParser::HeaderFieldParser()
 	: StateParser(f_Start), _fields(NULL) {}
 
+// Destructor
 HeaderFieldParser::~HeaderFieldParser() {}
 
-// TODO: Remove
-// static FieldState FieldTransitions[5][8] = {
-// 	//	WS			:			TCh			VCh			\r				\n			\0			Other
-// 	{	f_Invalid,	f_Invalid,	f_Name,		f_Invalid,	f_ValueEnd,		f_Done,		f_Done,		f_Invalid	}, // Start
-// 	{	f_Invalid,	f_Value,	f_Name,		f_Invalid,	f_Invalid,		f_Invalid,	f_Invalid,	f_Invalid	}, // Name
-// 	{	f_Value,	f_Value,	f_Value,	f_Value,	f_ValueEnd,		f_Done,		f_Done,		f_Invalid	}, // Value
-// 	{	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,		f_Done,		f_Invalid,	f_Invalid	} // End
-
+// Initializes pointer to Header Fields map and 
+// calls on parent class StateParser::ParseString().
 size_t	HeaderFieldParser::Parse(map<string, string>& fields, string const& input) {
 	_fields = &fields;
 	return ParseString(input);
 }
 
+// Retrieves next state based on current state & character.
 FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 	static 	FieldState (HeaderFieldParser::*table[])(char c) = {
 			&HeaderFieldParser::StartHandler,

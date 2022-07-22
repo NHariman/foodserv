@@ -1,14 +1,19 @@
 #include "request_line_parser.hpp"
-#define DEBUG 0 // TODO: REMOVE
+
+// Default constructor
 RequestLineParser::RequestLineParser() : StateParser(l_Start), _increment(0) {}
 
+// Destructor
 RequestLineParser::~RequestLineParser() {}
 
+// Initializes pointer to RequestLine struct and 
+// calls on parent class StateParser::ParseString().
 size_t	RequestLineParser::Parse(RequestLine& request_line, string const& input) {
 	_request_line = &request_line;
 	return ParseString(input);
 }
 
+// Retrieves next state based on current state & input.
 RequestLineState	RequestLineParser::GetNextState(size_t pos) {
 	static 	RequestLineState (RequestLineParser::*table[])(size_t pos) = {
 			&RequestLineParser::StartHandler,
@@ -18,14 +23,12 @@ RequestLineState	RequestLineParser::GetNextState(size_t pos) {
 			&RequestLineParser::VersionEndHandler,
 			nullptr
 	};
-	if (DEBUG) cout << "[RL::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
 	return (this->*table[cur_state])(pos);
 }
 
 void	RequestLineParser::CheckInvalidState() const {
 	if (cur_state == l_Invalid)
-		throw BadRequestException(
-				"Invalid token in request line: \"" + buffer + "\"");
+		throw BadRequestException("Invalid token in request line: \"" + buffer + "\"");
 }
 
 bool	RequestLineParser::CheckDoneState() {
@@ -40,8 +43,6 @@ void	RequestLineParser::IncrementCounter(size_t& pos) {
 // Or if EOL is found (VersionEndHandler loops back to this function
 // for the purposes of returning accurate bytes_read count). 
 RequestLineState	RequestLineParser::StartHandler(size_t pos) {
-	if (DEBUG) cout << "[StartHandler] at: " << input[pos] << endl;
-
 	if (IsTChar(input[pos]))
 		return l_Method;
 	return l_Invalid;
@@ -51,7 +52,6 @@ RequestLineState	RequestLineParser::StartHandler(size_t pos) {
 // vector of accepted method strings. If it's not in the list, throws NotImplementedException.
 // Otherwise saves string and increments `bytes_read`.
 RequestLineState	RequestLineParser::MethodHandler(size_t pos) {
-	if (DEBUG) cout << "[MethodHandler] at: " << input[pos] << endl;;
 	static vector<string>	methods = { "GET", "POST", "DELETE" };
 
 	size_t	method_end = GetEndPos(input, ' ', pos);
@@ -70,8 +70,6 @@ RequestLineState	RequestLineParser::MethodHandler(size_t pos) {
 
 // Validates request target through URI::Parse().
 RequestLineState	RequestLineParser::TargetHandler(size_t pos) {
-	if (DEBUG) cout << "[TargetHandler] at: " << input[pos] << endl;
-
 	size_t	target_end = GetEndPos(input, ' ', pos);
 	
 	// if required space ending not found
@@ -85,8 +83,6 @@ RequestLineState	RequestLineParser::TargetHandler(size_t pos) {
 
 // Checks if HTTP version is valid (only 1.1 is accepted).
 RequestLineState	RequestLineParser::VersionHandler(size_t pos) {
-	if (DEBUG) cout << "[VersionHandler] at: " << input[pos] << endl;
-
 	size_t	version_end = GetCRLFPos(input, pos);
 	string	version = input.substr(pos, version_end);
 
@@ -105,8 +101,6 @@ RequestLineState	RequestLineParser::VersionHandler(size_t pos) {
 // Checks the number of line break tokens to increment pos
 // (CRLF and LF are accepted). Loops back to Start so line breaks are counted.
 RequestLineState	RequestLineParser::VersionEndHandler(size_t pos) {
-	if (DEBUG) cout << "[VersionEndHandler] at: " << input[pos] << endl;
-
 	_increment = ValidLineBreaks(input, pos);
 	if (_increment == 0)
 		throw BadRequestException("Request line missing line break");
@@ -116,14 +110,14 @@ RequestLineState	RequestLineParser::VersionEndHandler(size_t pos) {
 // Returns position of `to_find` within string `s` in terms of its distance from
 // `start`, so value can be used immediately with `substr()`, skipping arithmetic.
 // If no such character is found in string, returns `start`;
-size_t	RequestLineParser::GetEndPos(string const& s, char to_find, size_t start) { // TODO: remove parameters?
+size_t	RequestLineParser::GetEndPos(string const& s, char to_find, size_t start) {
 	size_t	end = s.find_first_of(to_find, start);
 	if (end == string::npos || end == start)
 		return start;
 	return end - start;
 }
 
-size_t	RequestLineParser::GetCRLFPos(string const& input, size_t pos) { // TODO: remove parameters?
+size_t	RequestLineParser::GetCRLFPos(string const& input, size_t pos) {
 	size_t	nl_pos = GetEndPos(input, '\n', pos);
 	size_t	cr_pos = GetEndPos(input, '\r', pos);
 
@@ -138,7 +132,7 @@ size_t	RequestLineParser::GetCRLFPos(string const& input, size_t pos) { // TODO:
 
 // Used by VersionDoneHandler and FieldDoneHandler to check for
 // valid line breaks (CRLF or LF as specified by RFC 7230).
-size_t	RequestLineParser::ValidLineBreaks(string input, size_t pos) { // TODO: remove parameters?
+size_t	RequestLineParser::ValidLineBreaks(string input, size_t pos) {
 	if (input[pos] == '\r' && input[pos + 1] == '\n')
 		return 2;
 	else if (input[pos] == '\n')
@@ -146,6 +140,3 @@ size_t	RequestLineParser::ValidLineBreaks(string input, size_t pos) { // TODO: r
 	else
 		return 0;
 }
-
-
-#undef DEBUG // REMOVE

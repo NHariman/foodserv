@@ -15,7 +15,7 @@ TEST(RequestLineTest, ParseGet) {
 TEST(RequestLineTest, ParseGetCRLF) {
 	RequestParser parser;
 
-	parser.Parse("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n\n");
+	parser.Parse("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\n\n");
 	EXPECT_EQ(parser.GetMethod(), "GET");
 	EXPECT_EQ(parser.GetTarget(), "/hello.txt");
 	EXPECT_EQ(parser.GetVersion(), "HTTP/1.1");

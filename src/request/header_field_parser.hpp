@@ -18,6 +18,8 @@ enum	FieldState {
 	f_Invalid
 };
 
+// Parses input string into header field names and values.
+
 class HeaderFieldParser : public StateParser<FieldState> {
 	public:
 		// Default constructor

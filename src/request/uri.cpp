@@ -1,17 +1,5 @@
 #include "uri.hpp"
 
-/*
-Tabular representation of URI parsing state transitions
-Empty cell = invalid state
-S0 is starting state & S3 is accepting state
-
-________S0___S1___S2___S3_________
-/       S1   
-pchar   S1   S1   S2
-?            S2
-\0           S3   S3
-*/
-
 // Default constructor
 URI::URI() {}
 

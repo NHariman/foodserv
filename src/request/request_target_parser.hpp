@@ -26,6 +26,8 @@ enum URIState {
 	u_Invalid
 };
 
+// Parses origin-form URI strings into path & query components of URI object.
+
 class RequestTargetParser : public StateParser<URIState> {
 	public:
 		// Default constructor
@@ -41,7 +43,6 @@ class RequestTargetParser : public StateParser<URIState> {
 		URIPart _part;
 
 		// void		ParseHost(string const& input); // TODO: review later if should be moved
-		// void		ParsePathOriginForm(string const& input);
 		void		PushBuffertoField(URIPart part);
 		URIState	StartHandler(char uri_char);
 		URIState	PathHandler(char uri_char);

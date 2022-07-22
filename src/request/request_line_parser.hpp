@@ -25,6 +25,9 @@ enum RequestLineState {
 	l_Invalid
 };
 
+// Parses request line string into method, target, and version
+// components of RequestLine struct to which it receives a reference.
+
 class RequestLineParser : public StateParser<RequestLineState> {
 	public:
 		// Default constructor

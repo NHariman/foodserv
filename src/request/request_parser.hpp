@@ -7,7 +7,6 @@
 #include "exception.hpp"
 #include "header_field_parser.hpp"
 #include "state_parser.hpp"
-#include "uri.hpp"
 #include "request_line_parser.hpp"
 #include "request_utils.hpp"
 
@@ -25,6 +24,9 @@ enum RequestState {
 	r_Done,
 	r_Invalid
 };
+
+// Parses and validates request header components, i.e. request method,
+// request target, HTTP version, header fields, message body.
 
 class RequestParser  : public StateParser<RequestState> {
 	public:

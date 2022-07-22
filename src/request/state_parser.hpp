@@ -10,6 +10,7 @@ using namespace std;
 // implemented by the subclasses.
 // `State` template parameter refers to type of states, e.g. an enum.
 // The state parsing algorithm itself is made for parsing strings byte-by-byte.
+
 template <typename State>
 class StateParser {
 	public:

@@ -5,7 +5,6 @@
 
 #include "exception.hpp"
 #include "request_target_parser.hpp"
-// #include "uri_state_enums.hpp"
 
 using namespace std;
 
