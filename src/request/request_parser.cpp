@@ -58,10 +58,10 @@ RequestParser::RequestParser(char const* buffer)
 // Destructor
 RequestParser::~RequestParser() {}
 
-void	RequestParser::Parse(char const* buffer) {
+size_t	RequestParser::Parse(char const* buffer) {
 	string	request(buffer);
 
-	ParseString(request);
+	return ParseString(request);
 }
 
 RequestState	RequestParser::GetNextState(size_t pos) {
@@ -167,7 +167,7 @@ string	RequestParser::GetVersion() {
 	return _request_line.version;
 }
 
-string	RequestParser::GetHeaderFieldValue(string field_name) {
+string	RequestParser::GetField(string field_name) {
 	// Normalizes field name to lowercase for case-insensitive searching
 	NormalizeString(tolower, field_name, 0);
 

@@ -20,11 +20,11 @@ class URI {
 		// Copy constructor
 		URI(URI const& other);
 		// String constructor
-		explicit URI(string const& uri_string);
+		explicit URI(string const& input);
 		// Assignment operator
 		URI&	operator=(URI const& other);
 		// Overloaded assignment operator taking string
-		URI&	operator=(string const& uri_string);
+		URI&	operator=(string const& input);
 		// Destructor
 		~URI();
 

@@ -11,7 +11,7 @@
 #include "request_line_parser.hpp"
 #include "request_utils.hpp"
 
-// returned by GetHeaderFieldValue when no field by the passed name is found.
+// returned by GetField when no field by the passed name is found.
 #define NO_VAL "NO SUCH HEADER FIELD"
 
 using namespace std;
@@ -35,18 +35,18 @@ class RequestParser  : public StateParser<RequestState> {
 		// Destructor
 		~RequestParser();
 
-		void	Parse(char const* buffer);
+		size_t	Parse(char const* buffer);
 		string	GetMethod();
 		string	GetTarget();
 		string	GetVersion();
-		string	GetHeaderFieldValue(string field_name);
+		string	GetField(string field_name);
 		string	GetMessageBody();
 
 	private:
-		map<string, string>	_header_fields;
-		HeaderFieldParser	_header_parser;
 		RequestLineParser	_request_line_parser;
 		struct RequestLine	_request_line;
+		map<string, string>	_header_fields;
+		HeaderFieldParser	_header_parser;
 		
 		string	_msg_body;
 		size_t	_bytes_read;

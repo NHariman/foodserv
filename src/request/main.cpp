@@ -4,7 +4,7 @@
 int	main(int ac, char **argv) {
 	if (ac < 2) {
 		try {
-			RequestParser parser("GET /hello.txt HTTP/1.1\nHost: www.example.com\n\n"); // use to test non-print chars
+			RequestParser parser("GET /hello.txt HTTP/1.1\nHost: www.example.com\n\r\n"); // use to test non-print chars
 		}
 		catch (std::exception &e) {
 			cout << e.what() << endl;

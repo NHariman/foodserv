@@ -19,16 +19,16 @@ RequestTargetParser::~RequestTargetParser() {}
 	{  QR,       PR,      QR,      QR,       QR,      DONE,    DONE  }, // Query
 */
 
-size_t	RequestTargetParser::Parse(URI& uri, string const& uri_string) {
+size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 	_uri = &uri;
 	_part = pt_Path;
 	// if (_part == pt_Host)
-	// 	ParseHost(uri_string);
-	return ParseString(uri_string);
+	// 	ParseHost(input);
+	return ParseString(input);
 }
 
-// void	RequestTargetParser::ParseHost(string const& uri_string) {
-// 	(void)uri_string;
+// void	RequestTargetParser::ParseHost(string const& input) {
+// 	(void)input;
 // }
 
 URIState	RequestTargetParser::GetNextState(size_t pos) {

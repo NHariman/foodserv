@@ -25,7 +25,7 @@ class HeaderFieldParser : public StateParser<FieldState> {
 		// Destructor
 		~HeaderFieldParser();
 
-		size_t Parse(map<string, string>& fields, string const& field_string);
+		size_t Parse(map<string, string>& fields, string const& input);
 
 	protected:
 		FieldState	GetNextState(size_t pos) override;

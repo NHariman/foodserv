@@ -34,14 +34,14 @@ class RequestTargetParser : public StateParser<URIState> {
 		~RequestTargetParser();
 
 
-		size_t	Parse(URI& uri, string const& uri_string);
+		size_t	Parse(URI& uri, string const& input);
 
 	private:
 		URI		*_uri;
 		URIPart _part;
 
-		// void		ParseHost(string const& uri_string); // TODO: review later if should be moved
-		// void		ParsePathOriginForm(string const& uri_string);
+		// void		ParseHost(string const& input); // TODO: review later if should be moved
+		// void		ParsePathOriginForm(string const& input);
 		void		PushBuffertoField(URIPart part);
 		URIState	StartHandler(char uri_char);
 		URIState	PathHandler(char uri_char);

@@ -13,9 +13,9 @@ HeaderFieldParser::~HeaderFieldParser() {}
 // 	{	f_Value,	f_Value,	f_Value,	f_Value,	f_ValueEnd,		f_Done,		f_Done,		f_Invalid	}, // Value
 // 	{	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,	f_Invalid,		f_Done,		f_Invalid,	f_Invalid	} // End
 
-size_t	HeaderFieldParser::Parse(map<string, string>& fields, string const& field_string) {
+size_t	HeaderFieldParser::Parse(map<string, string>& fields, string const& input) {
 	_fields = &fields;
-	return ParseString(field_string);
+	return ParseString(input);
 }
 
 FieldState	HeaderFieldParser::GetNextState(size_t pos) {

@@ -24,7 +24,7 @@ URI::URI(URI const& other)
 		_query(other._query) {}
 
 // String constructor
-URI::URI(string const& uri_string) : _uri_input(uri_string) {
+URI::URI(string const& input) : _uri_input(input) {
 	ParseInput();
 }
 
@@ -42,11 +42,11 @@ URI&	URI::operator=(URI const& other) {
 
 // Overloaded assignment operator taking a full URI string.
 // Alternative to constructing with string.
-URI&	URI::operator=(string const& uri_string) {
+URI&	URI::operator=(string const& input) {
 	_host.clear();
 	_path.clear();
 	_query.clear();
-	_uri_input = uri_string;
+	_uri_input = input;
 
 	ParseInput();
 	return *this;
