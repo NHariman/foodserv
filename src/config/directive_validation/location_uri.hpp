@@ -11,6 +11,7 @@
 # define LOCATION_URI_HPP
 
 #include <string>
+#include "../../utils.hpp"
 
 class LocationUri {
 	private:
@@ -22,7 +23,7 @@ class LocationUri {
 		LocationUri();
 		LocationUri(std::string input);
 		~LocationUri(){};
-		LocationUri(LocationUri &obj);
+		LocationUri(LocationUri const &obj);
 		LocationUri&   operator= (LocationUri const &obj);
 
 		std::string	GetUri() const;

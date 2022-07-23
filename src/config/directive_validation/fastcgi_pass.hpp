@@ -2,6 +2,7 @@
 # define FASTCGI_PASS_HPP
 
 #include <string>
+#include "../../utils.hpp"
 
 class FastCGIPass {
     private:

@@ -47,8 +47,9 @@ ErrorPage::ErrorPage(ErrorPage const &obj) {
 }
 
 ErrorPage&	ErrorPage::operator=(ErrorPage const & obj) {
-	if (this == &obj)
+	if (this == &obj){
 		return (*this);
+	}
 		_uri = obj.GetUri();
 	for (size_t i = 0 ; i < obj.GetCodes().size(); i++) {
 		_code.push_back(obj.GetCodes().at(i));

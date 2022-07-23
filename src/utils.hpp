@@ -1,4 +1,5 @@
-
+#ifndef UTILS_HPP
+# define UTILS_HPP
 #include <string>
 #include <vector>
 
@@ -8,3 +9,4 @@ std::vector<std::string>	ToStringVector(std::string str);
 bool	IsNumber(std::string input);
 bool	IsUri(std::string input);
 
+#endif

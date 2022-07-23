@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <iostream>
+#include <algorithm>
 #include "../../utils.hpp"
 
 class AllowedMethods {

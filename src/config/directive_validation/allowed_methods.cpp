@@ -28,8 +28,9 @@ AllowedMethods::AllowedMethods(AllowedMethods const &obj) {
 }
 
 AllowedMethods&		AllowedMethods::operator=(AllowedMethods const &obj) {
-	if (this == &obj)
+	if (this == &obj) {
 		return (*this);
+	}
 	_is_set = obj.IsSet();
 	for (size_t i = 0; i < obj.GetAllowedMethods().size() ; i++) {
 		_methods.push_back(obj.GetAllowedMethods().at(i));
@@ -38,8 +39,6 @@ AllowedMethods&		AllowedMethods::operator=(AllowedMethods const &obj) {
 }
 
 std::vector<std::string>	AllowedMethods::GetAllowedMethods() const {
-	if (_methods.empty() || _is_set == false)
-		throw EmptyMethodVectorException();
 	return _methods;
 }
 

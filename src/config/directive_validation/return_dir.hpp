@@ -5,6 +5,7 @@
 # define RETURN_DIR_HPP
 
 #include <string>
+#include "../../utils.hpp"
 
 class ReturnDir {
     private:

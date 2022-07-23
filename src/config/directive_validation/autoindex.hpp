@@ -4,6 +4,7 @@
 
 # include <iostream>
 # include <string>
+#include "../../utils.hpp"
 
 class Autoindex {
 private:

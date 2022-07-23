@@ -1,5 +1,4 @@
 #include "location_uri.hpp"
-#include "../../utils.hpp"
 
 LocationUri::LocationUri() : _is_empty(true) {};
 
@@ -17,7 +16,7 @@ LocationUri::LocationUri(std::string input) {
 	// validate uri through michelle's class.
 }
 
-LocationUri::LocationUri(LocationUri &obj) {
+LocationUri::LocationUri(LocationUri const &obj) {
 	_uri = obj.GetUri();
 	_is_directory = obj.IsDirectory();
 }

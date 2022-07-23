@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/21 13:12:55 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/24 01:27:13 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_contexts(0) {
 NginxConfig::NginxConfig(const NginxConfig& obj) {
 	_config_file = obj.GetConfigFile();
 	_servers = obj.GetServers();
-	_amount_server_blocks = obj.GetServerContextAmount();
+	_amount_server_contexts = obj.GetServerContextAmount();
 }
 
 NginxConfig & NginxConfig::operator=(const NginxConfig& obj) {
@@ -125,7 +125,7 @@ void		NginxConfig::FindServerContexts() {
 			i = key_start;
 			if (IsServerContext(_config_file.substr(key_start, key_end - key_start), &i)) {
 				std::cout << "found a ServerContext" << std::endl;
-				this->_amount_server_blocks++;
+				this->_amount_server_contexts++;
 				ServerContext server(&i, _config_file);
 				this->_servers.push_back(server);
 			}

@@ -17,12 +17,13 @@
 #include "location_context.hpp"
 #include "server_name.hpp"
 #include "directive_validation/directive_validation.hpp"
+#include "../utils.hpp"
 #include "listen.hpp"
 #include <vector>
 #include <string>
 #include <stdexcept>
 
-struct s_components
+struct t_flags_server
 {
 	int		location_context;
 	bool	listen;
@@ -31,12 +32,12 @@ struct s_components
 	bool	index;
 	bool	client_max_body_size;
 	bool	error_page;
-}	t_flags_server; // check list of found keywords in ServerContext
+}; // check list of found keywords in ServerContext
 
 class ServerContext {
 	private:
 		t_flags_server					_check_list;
-		std::vector<LocationContext>	_location_context;
+		std::vector<LocationContext>	_location_contexts;
 		std::pair<in_addr_t, int>		_listen; // changed by sanne
 		std::vector<std::string>		_server_name; // changed by sanne
 		std::string						_root;
@@ -72,7 +73,7 @@ class ServerContext {
 		t_flags_server				GetFlags() const;
 
 		// exception classes
-		class InvalidKeyException : public std::exception
+		class InvalidDirectiveException : public std::exception
 		{
 			public:
 				const char *what() const throw() {

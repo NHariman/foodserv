@@ -53,7 +53,7 @@ ServerContext::ServerContext() {
 }
 
 ServerContext::ServerContext(const ServerContext& obj) {
-	_location_context = obj.GetLocationContexts();
+	_location_contexts = obj.GetLocationContexts();
 	_listen = obj.GetListen();
 	_server_name = obj.GetServerNameVector();
 	_root = obj.GetRoot();
@@ -72,9 +72,10 @@ ServerContext::ServerContext(const ServerContext& obj) {
 }
 
 ServerContext & ServerContext::operator=(const ServerContext& obj) {
-    if (this == &obj)
+    if (this == &obj) {
         return (*this);
-	_location_context = obj.GetLocationContexts();
+	}
+	_location_contexts = obj.GetLocationContexts();
 	_listen = obj.GetListen();
 	_server_name = obj.GetServerNameVector();
 	_root = obj.GetRoot();
@@ -117,15 +118,14 @@ void				ServerContext::SetValue(int directive, std::string value){
 		_check_list.location_context = true;
 		LocationContext	location(trimmed_value);
 		for (size_t i = 0 ; i < _location_contexts.size(); ++i){
-			if (_location_contexts[i].GetUri().compare(location.GetUri()) == 0)
+			if (_location_contexts[i].GetUri().GetUri().compare(location.GetUri().GetUri()) == 0)
 			throw DuplicateLocationUriException();
 		}
 		_location_contexts.push_back(location);
 	}
 	else {
 		switch(directive) {
-			case 1:
-			{
+			case 1: {
 				if (_check_list.listen == true)
 					throw MultipleListensException();
 				_check_list.listen = true;
@@ -134,8 +134,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 				_listen.second = listen_port_ip.getPortNumber();
 				break ;
 			}
-			case 2:
-			{
+			case 2: {
 				// TODO: still check these
 				if (_check_list.server_name == true)
 					throw MultipleServerNameException();
@@ -144,32 +143,36 @@ void				ServerContext::SetValue(int directive, std::string value){
 				_server_name = server_name.GetServerNames();
 				break ;
 			}
-			case 3:
+			case 3: {
 				if (_check_list.root == true)
 					throw MultipleRootException();
 				_check_list.root = true;
 				Root	root_value(trimmed_value);
 				_root = trimmed_value; // create a root class and use the GetRoot() function in there to paste root here if valid
 				break ;
-			case 4:
+			}
+			case 4:{
 				if (_check_list.index == true)
 					throw MultipleIndexException();
 				_check_list.index = true;
 				Index	index_value(trimmed_value);
 				_index = index_value.GetIndex(); // create an index class and use the GetIndex() function in there to paste index here if valid
 				break ;
-			case 5:
+			}
+			case 5:{
 				if (_check_list.client_max_body_size == true)
 					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
 				ClientMaxBodySize	cmbs_value(trimmed_value);
 				_client_max_body_size = cmbs_value.GetValue();
 				break ;
-			case 6:
+			}
+			case 6:{
 				_check_list.error_page = true;
 				ErrorPage	error_page_value(value);
 				_error_page.push_back(error_page_value);
 				break ;
+			}
 		}
 	}
 	return ;
@@ -196,7 +199,8 @@ void			ServerContext::CheckListVerification(){
 		std::cerr << "WARNING! No server root detected. Default have been set." << std::endl;
 	}
 	if (_check_list.index == false) {
-		_index = "index.html";
+		std::string		str("index.html");
+		_index.push_back(str);
 		std::cerr << "WARNING! No index detected. Default have been set." << std::endl;
 	}
 	if (_check_list.client_max_body_size == false) {
@@ -266,7 +270,7 @@ void          ServerContext::FindDirectiveValuePairs(size_t *start_position, std
 
 //getters
 std::vector<LocationContext>	ServerContext::GetLocationContexts() const {
-    return _location_context;
+    return _location_contexts;
 }
 
 std::pair<in_addr_t, int>	ServerContext::GetListen() const {

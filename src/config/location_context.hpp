@@ -7,9 +7,9 @@
 #include <vector>
 #include <algorithm>
 #include "../utils.hpp"
-#include "directive_validation/directive_valiation.hpp"
+#include "directive_validation/directive_validation.hpp"
 
-struct s_components
+struct t_flags_location
 {
 	bool	uri;
 	bool	autoindex;
@@ -20,7 +20,7 @@ struct s_components
 	bool	fastcgi_pass;
 	bool	allowed_methods;
 	bool	return_dir;
-}	t_flags_location; // check list of found keywords in LocationContext
+}; // check list of found keywords in LocationContext
 
 // actually this is called a context (sad face)
 class LocationContext {
@@ -44,22 +44,22 @@ class LocationContext {
 	public:
 		LocationContext();
 		LocationContext(std::string data);
-		LocationContext(LocationContext const &obj);
-		LocationContext& operator= (LocationContext const &obj);
+		LocationContext(LocationContext const &location_context);
+		LocationContext& operator= (LocationContext const &location_context);
 		~LocationContext(){};
 
 		// check if something has been set or not
 		bool						IsSet(std::string key);
 		// getters
 		t_flags_location			GetFlags() const;
-		std::string					GetUri() const;
+		LocationUri					GetUri() const;
 		bool						GetAutoindex() const;
 		std::string					GetRoot() const;
 		std::vector<std::string>	GetIndex() const;
 		int							GetClientMaxBodySize() const;
 		std::string					GetFastCGIPass() const;
 		std::vector<ErrorPage>		GetErrorPage() const;
-		std::vector<std::string>	GetAllowedMethods() const;
+		AllowedMethods				GetAllowedMethods() const;
 
 		// exception classes
 		class InvalidDirectiveException : public std::exception

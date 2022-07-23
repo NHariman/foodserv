@@ -1,5 +1,4 @@
 #include "location_context.hpp"
-#include "directive_validation/directive_validation.hpp"
 
 LocationContext::LocationContext() {
 	_check_list.uri = false;
@@ -25,46 +24,46 @@ LocationContext::LocationContext(std::string data) {
     GetDirectiveValuePairs(data);
 }
 
-LocationContext& LocationContext::operator= (LocationContext const& location_block) {
-    if (this == &location_block)
+LocationContext& LocationContext::operator= (LocationContext const& location_context) {
+    if (this == &location_context)
         return (*this);
-    _uri = location_block.GetUri();
-    _autoindex = location_block.GetAutoindex();
-    _root = location_block.GetRoot();
-    _index = location_block.GetIndex();
-    _client_max_body_size = location_block.GetClientMaxBodySize();
-	_error_page = location_block.GetErrorPage();
-    _fastcgi_pass = location_block.GetFastCGIPass();
-	_allowed_methods = location_block.GetAllowedMethods();
+    _uri = location_context.GetUri();
+    _autoindex = location_context.GetAutoindex();
+    _root = location_context.GetRoot();
+    _index = location_context.GetIndex();
+    _client_max_body_size = location_context.GetClientMaxBodySize();
+	_error_page = location_context.GetErrorPage();
+    _fastcgi_pass = location_context.GetFastCGIPass();
+	_allowed_methods = location_context.GetAllowedMethods();
 
-    _check_list.uri = obj.GetFlags().uri;
-    _check_list.autoindex = obj.GetFlags().autoindex;
-    _check_list.root = obj.GetFlags().root;
-    _check_list.index = obj.GetFlags().index;
-    _check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
-	_check_list.error_page = obj.GetFlags().error_page;
-    _check_list.fastcgi_pass = obj.GetFlags().fastcgi_pass;
-	_check_list.allowed_methods = obj.GetFlags().allowed_methods;
+    _check_list.uri = location_context.GetFlags().uri;
+    _check_list.autoindex = location_context.GetFlags().autoindex;
+    _check_list.root = location_context.GetFlags().root;
+    _check_list.index = location_context.GetFlags().index;
+    _check_list.client_max_body_size = location_context.GetFlags().client_max_body_size;
+	_check_list.error_page = location_context.GetFlags().error_page;
+    _check_list.fastcgi_pass = location_context.GetFlags().fastcgi_pass;
+	_check_list.allowed_methods = location_context.GetFlags().allowed_methods;
     return (*this);
 }
-LocationContext::LocationContext(LocationContext const& location_block) {
-    _uri = location_block.GetUri();
-    _autoindex = location_block.GetAutoindex();
-    _root = location_block.GetRoot();
-    _index = location_block.GetIndex();
-    _client_max_body_size = location_block.GetClientMaxBodySize();
-	_error_page = location_block.GetErrorPage();
-    _fastcgi_pass = location_block.GetFastCGIPass();
-	_allowed_methods = location_block.GetAllowedMethods();
+LocationContext::LocationContext(LocationContext const& location_context) {
+    _uri = location_context.GetUri();
+    _autoindex = location_context.GetAutoindex();
+    _root = location_context.GetRoot();
+    _index = location_context.GetIndex();
+    _client_max_body_size = location_context.GetClientMaxBodySize();
+	_error_page = location_context.GetErrorPage();
+    _fastcgi_pass = location_context.GetFastCGIPass();
+	_allowed_methods = location_context.GetAllowedMethods();
 
-    _check_list.uri = obj.GetFlags().uri;
-    _check_list.autoindex = obj.GetFlags().autoindex;
-    _check_list.root = obj.GetFlags().root;
-    _check_list.index = obj.GetFlags().index;
-    _check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
-	_check_list.error_page = obj.GetFlags().error_page;
-    _check_list.fastcgi_pass = obj.GetFlags().fastcgi_pass;
-	_check_list.allowed_methods = obj.GetFlags().allowed_methods;
+    _check_list.uri = location_context.GetFlags().uri;
+    _check_list.autoindex = location_context.GetFlags().autoindex;
+    _check_list.root = location_context.GetFlags().root;
+    _check_list.index = location_context.GetFlags().index;
+    _check_list.client_max_body_size = location_context.GetFlags().client_max_body_size;
+	_check_list.error_page = location_context.GetFlags().error_page;
+    _check_list.fastcgi_pass = location_context.GetFlags().fastcgi_pass;
+	_check_list.allowed_methods = location_context.GetFlags().allowed_methods;
 }
 
 int								LocationContext::IsDirective(std::string directive) {
@@ -89,7 +88,8 @@ void							LocationContext::SetValue(int directive, std::string input) {
 
 	if (directive == 8) {
 		_check_list.uri = true;
-		_uri = uri_value(value);
+		LocationUri		uri_value(value);
+		_uri = uri_value;
 	}
 	else {
 		switch(directive) {
@@ -144,14 +144,15 @@ void							LocationContext::SetValue(int directive, std::string input) {
 					throw MultipleAllowedMethodsException();
 				_check_list.allowed_methods = true;
 				AllowedMethods allowed_methods_value(value);
-				_allowed_methods = allowed_methods_value.GetAllowedMethods();
+				_allowed_methods = allowed_methods_value;
 				break ;
 			}
             case 7: {
 				if (_check_list.return_dir == true)
 					throw MultipleReturnException();
-				_check_list.allowed_methods = true;
-				_allowed_methods = return_dir_value(value);
+				_check_list.return_dir = true;
+				ReturnDir		return_dir_value(value);
+				_return_dir = return_dir_value;
 				break ;
 			}
 		}
@@ -193,7 +194,7 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 			break ;
 		}
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
-		ret = IsKey(data.substr(key_start, key_end - key_start));
+		ret = IsDirective(data.substr(key_start, key_end - key_start));
 		if (ret == 7) {
 			std::cout << "uri block found" << std::endl;
             SetValue(ret, data.substr(key_start, key_end - key_start));
@@ -237,7 +238,7 @@ std::string							LocationContext::GetFastCGIPass() const {
     return _fastcgi_pass;
 }
 
-std::vector<std::string>			LocationContext::GetAllowedMethods() const {
+AllowedMethods						LocationContext::GetAllowedMethods() const {
     return _allowed_methods;
 }
 
@@ -270,4 +271,5 @@ bool						LocationContext::IsSet(std::string directive) {
 		case 7:
 			return _check_list.return_dir;
 	}
+	throw InvalidDirectiveException();
 }
