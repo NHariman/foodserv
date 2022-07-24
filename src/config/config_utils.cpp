@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "config_utils.hpp"
 #include <iostream>
 
 long		ft_atol(std::string value)
@@ -47,6 +47,23 @@ std::vector<std::string>	ToStringVector(std::string str) {
 		i = end;
 	}
 	return (vec);
+}
+
+size_t		CountArguments(std::string str) {
+	size_t	i = 0;
+	size_t	start = 0;
+	size_t	end = 0;
+	size_t	arguments = 0;
+
+	while (str[i]) {
+		start = str.find_first_not_of(" \t\n\v\f\r", i);
+		end = str.find_first_of(" \t\n\v\f\r", start);
+		if (start == end)
+			break ;
+		arguments++;
+		i = end;
+	}
+	return (arguments);
 }
 
 bool	IsNumber(std::string input) {

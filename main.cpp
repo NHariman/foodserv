@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/24 00:53:26 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/24 12:17:19 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int main(int ac, const char **av) {
 		NginxConfig		input_file(av[1]);
 
 		std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
-		std::cout << "Printing what is in server blocks: " << std::endl;
-		input_file.PrintServerContextsVectors();
+		// std::cout << "Printing what is in server blocks: " << std::endl;
+		// input_file.PrintServerContextsVectors();
 	}
 	catch(const std::exception& e) {
 		std::cerr << e.what() << '\n';

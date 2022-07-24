@@ -10,6 +10,6 @@
 #include "root.hpp"
 #include "location_uri.hpp"
 #include "return_dir.hpp"
-#include "../../utils.hpp"
+#include "../config_utils.hpp"
 
 #endif

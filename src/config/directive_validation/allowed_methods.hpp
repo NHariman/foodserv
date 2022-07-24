@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
-#include "../../utils.hpp"
+#include "../config_utils.hpp"
 
 class AllowedMethods {
     private:
@@ -37,6 +37,13 @@ class AllowedMethods {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Missing Arguments in allowed_methods block.";
+				}
+		};
+		class TooManyArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Too many Arguments in allowed_methods block.";
 				}
 		};
 		class EmptyMethodVectorException : public std::exception

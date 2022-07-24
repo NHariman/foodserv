@@ -4,7 +4,7 @@
 
 # include <iostream>
 # include <string>
-#include "../../utils.hpp"
+#include "../config_utils.hpp"
 
 class Autoindex {
 private:
@@ -27,6 +27,13 @@ public:
 			public:
 				const char *what() const throw() {
 					return "ERROR! Missing Arguments in autoindex.";
+				}
+		};
+		class TooManyArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Too many Arguments in autoindex.";
 				}
 		};
 };

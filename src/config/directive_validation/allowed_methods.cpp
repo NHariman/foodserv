@@ -1,6 +1,5 @@
 #include "allowed_methods.hpp"
-#include <iostream>
-#include <algorithm>
+
 
 AllowedMethods::AllowedMethods() : _is_set(false) {}
 
@@ -10,6 +9,9 @@ AllowedMethods::AllowedMethods(std::string str) {
 
 	if (str.compare("") == 0)
 		throw MissingArgumentsException();
+	size_t	arguments = CountArguments(str);
+	if (arguments > 3)
+		throw TooManyArgumentsException();
 	_methods = ToStringVector(str);
 	for (size_t i = 0; i < _methods.size(); i++) {
 		std::string key;

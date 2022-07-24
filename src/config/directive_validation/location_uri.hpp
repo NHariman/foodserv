@@ -11,7 +11,7 @@
 # define LOCATION_URI_HPP
 
 #include <string>
-#include "../../utils.hpp"
+#include "../config_utils.hpp"
 
 class LocationUri {
 	private:

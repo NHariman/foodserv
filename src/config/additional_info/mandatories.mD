@@ -63,7 +63,7 @@ allowed_methods GET POST DELETE ;
                }
 
                location /cgi-bin {
-                     proxy_pass http://127.0.0.1:8080;
+                     fastcgi_pass http://127.0.0.1:8080;
               }
 ```
 

@@ -9,6 +9,7 @@ server{
 
                location / {
                        autoindex on;
+                        autoindex on;
                        root /a_place;
                        index a_name;
                        allowed_methods GET;

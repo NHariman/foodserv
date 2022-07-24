@@ -13,6 +13,8 @@ server{
                        index a_name;
                        allowed_methods GET;
                        client_max_body_size 5M;
+                       error_page 404 /error404.html;
+                       error_page 404 /error404.html;
                }
               location /test {
                        autoindex on;

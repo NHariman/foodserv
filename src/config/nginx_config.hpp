@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/24 01:34:04 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/24 13:58:49 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 #include "server_context.hpp"
-#include "../utils.hpp"
+#include "config_utils.hpp"
 
 // Coplien form:
 

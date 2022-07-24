@@ -11,6 +11,7 @@ server{
                        autoindex on;
                        root /a_place;
                        index a_name;
+                       index a_name;
                        allowed_methods GET;
                        client_max_body_size 5M;
                }

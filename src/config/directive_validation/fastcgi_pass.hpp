@@ -2,7 +2,7 @@
 # define FASTCGI_PASS_HPP
 
 #include <string>
-#include "../../utils.hpp"
+#include "../config_utils.hpp"
 
 class FastCGIPass {
     private:
@@ -15,6 +15,13 @@ class FastCGIPass {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Missing Arguments in fastcgi_pass block.";
+				}
+		};
+        class TooManyArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Too many Arguments in fastcgi_pass block.";
 				}
 		};
 };
