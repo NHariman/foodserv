@@ -27,7 +27,7 @@ LocationContext::LocationContext(std::string data) {
 LocationContext& LocationContext::operator= (LocationContext const& location_context) {
     if (this == &location_context)
         return (*this);
-    _uri = location_context.GetUri();
+    _location_uri = location_context.GetLocationUri();
     _autoindex = location_context.GetAutoindex();
     _root = location_context.GetRoot();
     _index = location_context.GetIndex();
@@ -47,7 +47,7 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     return (*this);
 }
 LocationContext::LocationContext(LocationContext const& location_context) {
-    _uri = location_context.GetUri();
+    _location_uri = location_context.GetLocationUri();
     _autoindex = location_context.GetAutoindex();
     _root = location_context.GetRoot();
     _index = location_context.GetIndex();
@@ -89,7 +89,7 @@ void							LocationContext::SetValue(int directive, std::string input) {
 	if (directive == 8) {
 		_check_list.uri = true;
 		LocationUri		uri_value(value);
-		_uri = uri_value;
+		_location_uri = uri_value;
 	}
 	else {
 		switch(directive) {
@@ -210,8 +210,8 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 }
 
 // getters
-LocationUri							LocationContext::GetUri() const {
-    return _uri;
+LocationUri							LocationContext::GetLocationUri() const {
+    return _location_uri;
 }
 
 bool								LocationContext::GetAutoindex() const {

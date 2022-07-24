@@ -26,7 +26,7 @@ struct t_flags_location
 class LocationContext {
 	private:
 		t_flags_location			_check_list;
-		LocationUri					_uri;
+		LocationUri					_location_uri;
 		bool						_autoindex;
 		std::string					_root;
 		std::vector<std::string>	_index;
@@ -52,7 +52,7 @@ class LocationContext {
 		bool						IsSet(std::string key);
 		// getters
 		t_flags_location			GetFlags() const;
-		LocationUri					GetUri() const;
+		LocationUri					GetLocationUri() const;
 		bool						GetAutoindex() const;
 		std::string					GetRoot() const;
 		std::vector<std::string>	GetIndex() const;

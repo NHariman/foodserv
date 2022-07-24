@@ -118,7 +118,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 		_check_list.location_context = true;
 		LocationContext	location(trimmed_value);
 		for (size_t i = 0 ; i < _location_contexts.size(); ++i){
-			if (_location_contexts[i].GetUri().GetUri().compare(location.GetUri().GetUri()) == 0)
+			if (_location_contexts[i].GetLocationUri().GetUri().compare(location.GetLocationUri().GetUri()) == 0)
 			throw DuplicateLocationUriException();
 		}
 		_location_contexts.push_back(location);

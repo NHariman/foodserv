@@ -13,9 +13,8 @@ The block contains the server configuration files for a server block for a websi
 - listen (default: 80), tells NGINX the hostname/IP and the TCP port where it should listen for HTTP connections
     - if multiple listens to the same port occur the file will fail
 - server_name (default: localhost), allows multiple domains to be served from a single IP address. Ideally, it should be created per domain or site. based on the request header it receives, the server decides which domain to serve.
-- root (default: html/)
+- root (default: /var/www/html)
 - index (default: index.html)
-- try_files (default: $uri index.html): Checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. [...] If none of the files were found, an internal redirect to the uri specified in the last parameter is made.
 - Location Blocks
 
 ## Location Block
@@ -59,12 +58,16 @@ allowed_methods GET POST DELETE ;
                        autoindex on;
                        # First attempt to serve request as file, then
                        # as directory, then fall back to displaying a 404.
-                       try_files $uri $uri/ =404;
                }
 
                location /cgi-bin {
                      fastcgi_pass http://127.0.0.1:8080;
               }
+```
+- return, takes a return code and an url
+example:
+```
+return 301 $scheme://www.new-name.com$request_uri;
 ```
 
 # Variables to implement ($var)
