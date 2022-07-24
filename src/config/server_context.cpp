@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   server_block.cpp                                   :+:    :+:            */
+/*   server_context.cpp                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/13 17:16:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/17 17:09:10 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server_block.hpp"
+#include "server_context.hpp"
 # include <algorithm>
+# include "directive_validation/directive_validation.hpp"
 
 // error pages are hardcoded in the real nginx:
 // static char ngx_http_error_404_page[] =
@@ -27,34 +28,32 @@
 // when two location blocks have the same uri
 // when multiple roots
 
-
-ServerBlock::ServerBlock(size_t *start, std::string config_file) {
+ServerContext::ServerContext(size_t *start, std::string config_file) {
 
     // _check_list copy
-    _check_list.location_block = false;
+    _check_list.location_context = false;
 	_check_list.listen = false;
 	_check_list.server_name = false;
 	_check_list.root = false;
 	_check_list.index = false;
 	_check_list.client_max_body_size = false;
 	_check_list.error_page = false;
-	FindKeyValuePairs(start, config_file);
+	FindDirectiveValuePairs(start, config_file);
 }
 
-
-ServerBlock::ServerBlock() {
+ServerContext::ServerContext() {
     // _check_list copy
-    _check_list.location_block = false;
+    _check_list.location_context = false;
 	_check_list.listen = false;
 	_check_list.server_name = false;
 	_check_list.root = false;
 	_check_list.index = false;
 	_check_list.client_max_body_size = false;
 	_check_list.error_page = false;
-};
+}
 
-ServerBlock::ServerBlock(const ServerBlock& obj) {
-	_location_blocks = obj.GetLocationBlocks();
+ServerContext::ServerContext(const ServerContext& obj) {
+	_location_contexts = obj.GetLocationContexts();
 	_listen = obj.GetListen();
 	_server_name = obj.GetServerNameVector();
 	_root = obj.GetRoot();
@@ -63,19 +62,20 @@ ServerBlock::ServerBlock(const ServerBlock& obj) {
 	_error_page = obj.GetErrorPage();
 
     // _check_list copy
-    _check_list.location_block = false;
-	_check_list.listen = false;
-	_check_list.server_name = false;
-	_check_list.root = false;
-	_check_list.index = false;
-	_check_list.client_max_body_size = false;
-	_check_list.error_page = false;
+    _check_list.location_context = obj.GetFlags().location_context;
+	_check_list.listen = obj.GetFlags().listen;
+	_check_list.server_name = obj.GetFlags().server_name;
+	_check_list.root = obj.GetFlags().root;
+	_check_list.index = obj.GetFlags().index;
+	_check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
+	_check_list.error_page = obj.GetFlags().error_page;
 }
 
-ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
-    if (this == &obj)
+ServerContext & ServerContext::operator=(const ServerContext& obj) {
+    if (this == &obj) {
         return (*this);
-	_location_blocks = obj.GetLocationBlocks();
+	}
+	_location_contexts = obj.GetLocationContexts();
 	_listen = obj.GetListen();
 	_server_name = obj.GetServerNameVector();
 	_root = obj.GetRoot();
@@ -84,49 +84,48 @@ ServerBlock & ServerBlock::operator=(const ServerBlock& obj) {
 	_error_page = obj.GetErrorPage();
     
     // _check_list copy
-    _check_list.location_block = false;
-	_check_list.listen = false;
-	_check_list.server_name = false;
-	_check_list.root = false;
-	_check_list.index = false;
-	_check_list.client_max_body_size = false;
-	_check_list.error_page = false;
+    _check_list.location_context = obj.GetFlags().location_context;
+	_check_list.listen = obj.GetFlags().listen;
+	_check_list.server_name = obj.GetFlags().server_name;
+	_check_list.root = obj.GetFlags().root;
+	_check_list.index = obj.GetFlags().index;
+	_check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
+	_check_list.error_page = obj.GetFlags().error_page;
 	return (*this);
 }
 
-// compares found key with possible key values and either returns the number in the list
-// or throws an error because a bad key has been found
-int			ServerBlock::IsKey(std::string key){
-	const std::string	key_name[] = {"location", "listen", "server_name", "root", "index", "client_max_body_size", "error_page"};
+// compares found directive with possible directive values and either returns the number in the list
+// or throws an error because a bad directive has been found
+int			ServerContext::IsDirective(std::string directive){
+	const std::string	directives[] = {"location", "listen", "server_name", "root", "index", "client_max_body_size", "error_page"};
 	
-	std::cout << "key: " << key << std::endl;
-	int	is_key = std::find(key_name, key_name + 7, key) - key_name;
-	if (is_key < 0 || is_key > 6)
-		throw InvalidKeyException();
+	std::cout << "directive: " << directive << std::endl;
+	int	is_directive = std::find(directives, directives + 7, directive) - directives;
+	if (is_directive < 0 || is_directive > 6)
+		throw InvalidDirectiveException();
 	else
-		return (is_key);
+		return (is_directive);
 }
 
-// sets the value in the right key within the server class based off the IsKey return value
-void				ServerBlock::SetValue(int key, std::string value){
+// sets the value in the right directive within the server class based off the IsDirective return value
+void				ServerContext::SetValue(int directive, std::string value){
 	std::string		trimmed_value;
 
 	trimmed_value = TrimValue(value);
 	std::cout << "value: |" << trimmed_value << "|" << std::endl;
 
-	if (key == 0) {
-		_check_list.location_block = true;
-		LocationBlock	location(trimmed_value);
-		for (size_t i = 0 ; i < _location_blocks.size(); ++i){
-			if (_location_blocks[i].GetUri().compare(location.GetUri()) == 0)
+	if (directive == 0) {
+		_check_list.location_context = true;
+		LocationContext	location(trimmed_value);
+		for (size_t i = 0 ; i < _location_contexts.size(); ++i){
+			if (_location_contexts[i].GetLocationUri().GetUri().compare(location.GetLocationUri().GetUri()) == 0)
 			throw DuplicateLocationUriException();
 		}
-		_location_blocks.push_back(location);
+		_location_contexts.push_back(location);
 	}
 	else {
-		switch(key) {
-			case 1:
-			{
+		switch(directive) {
+			case 1: {
 				if (_check_list.listen == true)
 					throw MultipleListensException();
 				_check_list.listen = true;
@@ -135,8 +134,7 @@ void				ServerBlock::SetValue(int key, std::string value){
 				_listen.second = listen_port_ip.getPortNumber();
 				break ;
 			}
-			case 2:
-			{
+			case 2: {
 				// TODO: still check these
 				if (_check_list.server_name == true)
 					throw MultipleServerNameException();
@@ -145,30 +143,36 @@ void				ServerBlock::SetValue(int key, std::string value){
 				_server_name = server_name.GetServerNames();
 				break ;
 			}
-			case 3:
+			case 3: {
 				if (_check_list.root == true)
 					throw MultipleRootException();
 				_check_list.root = true;
-				_root = value; // create a root class and use the GetRoot() function in there to paste root here if valid
+				Root	root_value(trimmed_value);
+				_root = trimmed_value; // create a root class and use the GetRoot() function in there to paste root here if valid
 				break ;
-			case 4:
+			}
+			case 4:{
 				if (_check_list.index == true)
 					throw MultipleIndexException();
 				_check_list.index = true;
-				_index = _index.append(trimmed_value); // create an index class and use the GetIndex() function in there to paste index here if valid
+				Index	index_value(trimmed_value);
+				_index = index_value.GetIndex(); // create an index class and use the GetIndex() function in there to paste index here if valid
 				break ;
-			case 5:
+			}
+			case 5:{
 				if (_check_list.client_max_body_size == true)
 					throw MultipleClientMaxBodySizeException();
 				_check_list.client_max_body_size = true;
-				_client_max_body_size = std::atoi(value.c_str());
-				/// create an CMBS class and use the GetCMBS() function in there to paste CMBS here if valid
+				ClientMaxBodySize	cmbs_value(trimmed_value);
+				_client_max_body_size = cmbs_value.GetValue();
 				break ;
-			case 6:
+			}
+			case 6:{
 				_check_list.error_page = true;
-				// TODO: create an error_page class for parsing
-				// use getter to paste it here if valid
+				ErrorPage	error_page_value(value);
+				_error_page.push_back(error_page_value);
 				break ;
+			}
 		}
 	}
 	return ;
@@ -176,10 +180,10 @@ void				ServerBlock::SetValue(int key, std::string value){
 
 // checks if the necessary blocks have been set and otherwise prints a warning
 // if something MUST be set, we should throw an exception
-void			ServerBlock::CheckListVerification(){
-	if (_check_list.location_block == false) {
-		//TODO: create a locationBlock constructor that creates the standard / location
-		std::cerr << "WARNING! No location blocks detected. Default have been set." << std::endl;
+void			ServerContext::CheckListVerification(){
+	if (_check_list.location_context == false) {
+		//TODO: create a LocationContext constructor that creates the standard / location
+		std::cerr << "WARNING! No location context detected. Default have been set." << std::endl;
 	}
 	if (_check_list.listen == false) {
 		_listen.first = 80;
@@ -195,7 +199,8 @@ void			ServerBlock::CheckListVerification(){
 		std::cerr << "WARNING! No server root detected. Default have been set." << std::endl;
 	}
 	if (_check_list.index == false) {
-		_index = "index.html";
+		std::string		str("index.html");
+		_index.push_back(str);
 		std::cerr << "WARNING! No index detected. Default have been set." << std::endl;
 	}
 	if (_check_list.client_max_body_size == false) {
@@ -208,7 +213,7 @@ void			ServerBlock::CheckListVerification(){
 	}
 }
 
-size_t						ServerBlock::FindLocationBlockEnd(std::string config_file, size_t start) {
+size_t						ServerContext::FindLocationContextEnd(std::string config_file, size_t start) {
 	size_t i = start;
 	size_t open_bracket = 0;
 	
@@ -225,13 +230,13 @@ size_t						ServerBlock::FindLocationBlockEnd(std::string config_file, size_t st
 }
 
 // starts after the { of the server{ 
-// finds the key and compares it with the possible keys.
-// if the key is deemed valid, it checks if a location key has been found
-// if so, it grabs the location block to use by looking for the first available }
+// finds the directive and compares it with the possible directives.
+// if the directive is deemed valid, it checks if a location context has been found
+// if so, it grabs the location context to use by looking for the first available }
 // otherwise it finds the ';' and sends that substring
-// to SetValue, which sets the value in the right key.
-// this function keeps checking until the end of the ServerBlock is reached.
-void          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string config_file) {
+// to SetValue, which sets the value in the right directive.
+// this function keeps checking until the end of the ServerContext is reached.
+void          ServerContext::FindDirectiveValuePairs(size_t *start_position, std::string config_file) {
 	
     int					i = *start_position;
 	size_t				key_start = 0;
@@ -246,10 +251,10 @@ void          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string
 			break ;
 		}
 		key_end = config_file.find_first_of(" \t\n\v\f\r", key_start);
-		ret = IsKey(config_file.substr(key_start, key_end - key_start));
+		ret = IsDirective(config_file.substr(key_start, key_end - key_start));
 		if (ret == 0) {
 			std::cout << "location block found" << std::endl;
-			value_end = FindLocationBlockEnd(config_file, key_end); //config_file.find_first_of('}', key_end);
+			value_end = FindLocationContextEnd(config_file, key_end); //config_file.find_first_of('}', key_end);
 			SetValue(ret, config_file.substr(key_end, value_end - key_end + 1));
 		}
 		else {
@@ -264,42 +269,46 @@ void          ServerBlock::FindKeyValuePairs(size_t *start_position, std::string
 }
 
 //getters
-std::vector<LocationBlock>	ServerBlock::GetLocationBlocks() const {
-    return this->_location_blocks;
+std::vector<LocationContext>	ServerContext::GetLocationContexts() const {
+    return _location_contexts;
 }
 
-std::pair<in_addr_t, int>	ServerBlock::GetListen() const {
-    return this->_listen;
+std::pair<in_addr_t, int>	ServerContext::GetListen() const {
+    return _listen;
 }
 
-in_addr_t					ServerBlock::GetIPAddress() const {
-	return (this->_listen.first);
+in_addr_t					ServerContext::GetIPAddress() const {
+	return _listen.first;
 }
 
-int							ServerBlock::GetPortNumber() const {
-	return (this->_listen.second);
+int							ServerContext::GetPortNumber() const {
+	return _listen.second;
 }
 
-std::vector<std::string>	ServerBlock::GetServerNameVector() const {
-    return this->_server_name;
+std::vector<std::string>	ServerContext::GetServerNameVector() const {
+    return _server_name;
 }
 
-std::string					ServerBlock::GetRoot() const {
-    return this->_root;
+std::string					ServerContext::GetRoot() const {
+    return _root;
 }
 
-std::string					ServerBlock::GetIndex() const {
-    return this->_index;
+std::vector<std::string>	ServerContext::GetIndex() const {
+    return _index;
 }
 
-int							ServerBlock::GetClientMaxBodySize() const {
-    return this->_client_max_body_size;
+int							ServerContext::GetClientMaxBodySize() const {
+    return _client_max_body_size;
 }
 
-bool						ServerBlock::IsErrorPageSet() const {
-	return this->_check_list.error_page;
+bool						ServerContext::IsErrorPageSet() const {
+	return _check_list.error_page;
 }
 
-std::map<int, std::string>	ServerBlock::GetErrorPage() const {
-    return this->_error_page;
+std::vector<ErrorPage>		ServerContext::GetErrorPage() const {
+    return _error_page;
+}
+
+t_flags_server				ServerContext::GetFlags() const {
+	return _check_list;
 }

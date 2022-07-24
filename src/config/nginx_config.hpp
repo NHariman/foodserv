@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/13 11:28:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/07/24 13:58:49 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "server_block.hpp"
+#include "server_context.hpp"
+#include "config_utils.hpp"
 
 // Coplien form:
 
@@ -36,13 +37,13 @@
 class NginxConfig {
 	private:
 		std::string					_config_file;
-		std::vector<ServerBlock>	_servers;
-		size_t						_amount_server_blocks;
+		std::vector<ServerContext>	_servers;
+		size_t						_amount_server_contexts;
 
 		NginxConfig();
-		bool		IsServerBlock(std::string value, size_t *start_pos);
+		bool		IsServerContext(std::string value, size_t *start_pos);
 		void		CheckBrackets();
-		void		FindServerBlocks();
+		void		FindServerContexts();
 		void		LoadConfigFile(std::ifstream&	configuration_file);
 
 	public:
@@ -54,13 +55,13 @@ class NginxConfig {
 
 		// getters
 		std::string	GetConfigFile() const;
-		size_t		GetServerBlockAmount() const;
-		std::vector<ServerBlock>	GetServers() const;
+		size_t		GetServerContextAmount() const;
+		std::vector<ServerContext>	GetServers() const;
 		
 		// SANNE: adding in a function for the server block algorithm
 		// you have a vector full of server blocks _servers,
 		// first print the outcome of this vector?
-		void	PrintServerBlocksVectors();
+		void	PrintServerContextsVectors();
 
 		//exceptions
 		class GetLineFailureException : public std::exception {
@@ -77,14 +78,14 @@ class NginxConfig {
 				}
 		};
 		
-		class NoServerBlocksException : public std::exception {
+		class NoServerContextsException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! No servers detected.";
 				}
 		};
 
-		class BadServerBlockException : public std::exception {
+		class BadServerContextException : public std::exception {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Bad server keyword detected.";
