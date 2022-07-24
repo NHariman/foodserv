@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include <iostream>
 
 long		ft_atol(std::string value)
 {
@@ -60,6 +61,7 @@ bool	IsNumber(std::string input) {
 }
 
 bool	IsUri(std::string input) {
+	std::cout << input << std::endl;
 	if (input[0] == '/')
 		return true;
 	return false;

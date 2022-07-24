@@ -195,7 +195,7 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 		}
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
 		ret = IsDirective(data.substr(key_start, key_end - key_start));
-		if (ret == 7) {
+		if (ret == 8) {
 			std::cout << "uri block found" << std::endl;
             SetValue(ret, data.substr(key_start, key_end - key_start));
 			value_end = data.find_first_of('{', key_end);
