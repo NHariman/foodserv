@@ -54,3 +54,51 @@ All classes are entirely written in coplien form in order for easy copying into 
 - `std::vector<std::string>	GetAllowedMethods() const;` - Gets allowed methods in a vector of strings
 - `void		PrintMethods();` - prints methods
 - `bool		IsSet() const;` - checks if AllowedMethods has been set or not. Returns true if it has been set, returns false if it hasn't. In the event it's false it means no methods are allowed.
+
+Makefile
+```
+COMPILE = c++
+
+FLAGS = -Wall -Werror -Wextra
+
+FILES = main.cpp \
+		src/config/server_name.cpp \
+		src/config/server_context.cpp \
+		src/config/listen.cpp \
+		src/config/location_context.cpp \
+		src/config/nginx_config.cpp \
+		src/config/config_utils.cpp \
+		src/config/directive_validation/client_max_body_size.cpp \
+		src/config/directive_validation/allowed_methods.cpp \
+		src/config/directive_validation/autoindex.cpp \
+		src/config/directive_validation/error_page.cpp \
+		src/config/directive_validation/fastcgi_pass.cpp \
+		src/config/directive_validation/index.cpp \
+		src/config/directive_validation/location_uri.cpp \
+		src/config/directive_validation/return_dir.cpp \
+		src/config/directive_validation/root.cpp
+
+OFILES = $(FILES:.cpp=.o)
+
+NAME = webserv
+
+all: $(NAME)
+
+$(NAME): $(OFILES) 
+	@$(COMPILE) $(OFILES) -o $@ 
+
+%.o: %.cpp %.hpp src/config/directive_validation/directive_validation.hpp
+	@$(COMPILE) $(FLAGS) -c $< -o $@
+
+clean:
+	@$(RM) $(OFILES)
+	@rm -rf obj/
+
+fclean: clean
+	@$(RM) $(NAME) 
+
+re: fclean all
+
+test: re
+	./$(NAME)
+```

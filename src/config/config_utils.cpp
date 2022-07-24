@@ -69,7 +69,7 @@ size_t		CountArguments(std::string str) {
 bool	IsNumber(std::string input) {
 	size_t	i = 0;
 
-	while (input[i]) {
+	while (i < input.size()) {
 		if (std::isdigit(input[i]) == 0)
 			return false;
 		i++;

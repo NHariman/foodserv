@@ -16,7 +16,7 @@ ReturnDir::ReturnDir(std::string input) {
 		if (start == end)
 			break ;
 		key = input.substr(start, end - start);
-		if (IsNumber(key) && set == 0)
+		if (IsNumber(key) == false && set == 0)
 			throw InvalidReturnCodeException();
 		if (set == 0) {
 			_code = ft_atol(key);
