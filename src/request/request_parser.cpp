@@ -110,15 +110,19 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 	return r_Done;
 }
 
-string	RequestParser::GetMethod() {
+string	RequestParser::GetMethod() const {
 	return _request_line.method;
 }
 
-string	RequestParser::GetTarget() {
+string	RequestParser::GetTarget() const {
 	return _request_line.target.Get();
 }
 
-string	RequestParser::GetVersion() {
+URI const&	RequestParser::GetURI() const {
+	return _request_line.target;
+}
+
+string	RequestParser::GetVersion() const {
 	return _request_line.version;
 }
 
@@ -126,17 +130,17 @@ string	RequestParser::GetVersion() {
 // If no header field with that name is found, returns macro NO_VAL, which
 // expands to string "NO SUCH HEADER FIELD" (defined in request_parser.hpp).
 // Example use:
-//		request_parser.GetHeaderFieldValue("host")
-string	RequestParser::GetField(string field_name) {
+//		request_parser.GetField("host")
+string	RequestParser::GetField(string field_name) const {
 	// Normalizes field name to lowercase for case-insensitive searching
 	NormalizeString(tolower, field_name, 0);
-	map<string, string>::iterator	found =  _header_fields.find(field_name);
+	map<string, string>::const_iterator	found =  _header_fields.find(field_name);
 	if (found == _header_fields.end())
 		return NO_VAL;
 	return found->second;
 }
 
-string	RequestParser::GetMessageBody() {
+string	RequestParser::GetMessageBody() const {
 	return _msg_body;
 }
 #undef DEBUG // REMOVE

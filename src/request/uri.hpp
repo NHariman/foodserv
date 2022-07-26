@@ -27,13 +27,13 @@ class URI {
 		// Destructor
 		~URI();
 
-		string	Get();
-		string	GetInputURI();
-		string	GetParsedURI();
-		string	GetURIDebug();
-		string	GetHost();
-		string	GetPath();
-		string	GetQuery();
+		string	Get() const;
+		string	GetInputURI() const;
+		string	GetParsedURI() const;
+		string	GetURIDebug() const;
+		string	GetHost() const;
+		string	GetPath() const;
+		string	GetQuery() const;
 		void	SetHost(string const& host);
 		void	SetPath(string const& path);
 		void	SetQuery(string const& query);

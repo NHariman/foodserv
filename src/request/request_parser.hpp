@@ -37,12 +37,13 @@ class RequestParser  : public StateParser<RequestState> {
 		// Destructor
 		~RequestParser();
 
-		size_t	Parse(char const* buffer);
-		string	GetMethod();
-		string	GetTarget();
-		string	GetVersion();
-		string	GetField(string field_name);
-		string	GetMessageBody();
+		size_t		Parse(char const* buffer);
+		string		GetMethod() const;
+		string		GetTarget() const;
+		URI const&	GetURI() const;
+		string		GetVersion() const;
+		string		GetField(string field_name) const;
+		string		GetMessageBody() const;
 
 	private:
 		RequestLineParser	_request_line_parser;
