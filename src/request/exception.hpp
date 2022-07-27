@@ -60,6 +60,24 @@ class URITooLongException : public exception {
 		}
 };
 
+// Used for: Content-Encoding header field in request.
+// Should return 415 code.
+class UnsupportedMediaTypeException : public exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("415: Unsupported Media Type");
+		}
+};
+
+// Used for: Expect header field with any value except "100-continue".
+// Should return 417 code.
+class ExpectationFailedTypeException : public exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("417: Expectation Failed");
+		}
+};
+
 // Used for: request header fields in total or a single one exceeds
 // 8192 bytes (8kb) (following IBM & Apache).
 // Should return 431 code.
@@ -70,12 +88,12 @@ class RequestHeaderFieldsTooLargeException : public exception {
 		}
 };
 
-// Used for: method not implemented.
+// Used for: non-recognized request method or transfer coding.
 // Should return 501 code.
 class NotImplementedException : public exception {
 	public:
 		virtual const char* what() const throw() {
-			return ("501: Method Not Implemented");
+			return ("501: Not Implemented");
 		}
 };
 

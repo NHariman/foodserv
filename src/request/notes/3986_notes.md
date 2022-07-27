@@ -28,8 +28,7 @@ The following are two example URIs and their component parts:
 		/ \ /                        \
 		urn:example:animal:ferret:nose
 
-Source:
-[Section 3](https://datatracker.ietf.org/doc/html/rfc3986#section-3)
+Source: [Section 3](https://datatracker.ietf.org/doc/html/rfc3986#section-3)
 <br/><br/>
 
 
@@ -51,8 +50,7 @@ Rules:
 	segment       = *pchar
 	pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 
-Source:
-[Section 3.3](https://datatracker.ietf.org/doc/html/rfc3986#section-3.3)
+Source: [Section 3.3](https://datatracker.ietf.org/doc/html/rfc3986#section-3.3)
 <br/><br/>
 
 ### Percent-Encoding:
@@ -62,8 +60,7 @@ Source:
 
 > The uppercase hexadecimal digits 'A' through 'F' are equivalent to the lowercase digits 'a'  through 'f', respectively.  If two URIs differ only in the case of hexadecimal digits used in percent-encoded octets, they are equivalent.  For consistency, URI producers and normalizers should use uppercase hexadecimal digits for all percent- encodings.
 
-Source:
-[Section 2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)
+Source: [Section 2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)
 <br/><br/>
 
 ### Parsing URI with regex:
@@ -74,20 +71,17 @@ Source:
 
 > The numbers in the second line [...] indicate the reference points for each subexpression (i.e., each paired parenthesis).
 
-Source:
-[Appendix B](https://datatracker.ietf.org/doc/html/rfc3986#appendix-B)
+Source: [Appendix B](https://datatracker.ietf.org/doc/html/rfc3986#appendix-B)
 <br/><br/>
 
 ### :
 >  .  
 
-Source:
-[]()
+Source: []()
 <br/><br/>
 
 ### :
 >  .  
 
-Source:
-[]()
+Source: []()
 <br/><br/>
