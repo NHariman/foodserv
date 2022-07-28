@@ -98,10 +98,19 @@ void	URI::SetQuery(string const& query) {
 	_uri_parsed = ConstructParsedURI();
 }
 
-// Parses origin-form URIs only (without host).
+// Parses URIs using either RequestTargetParser or URIHostParser
+// depending on starting character of input string.
 void	URI::ParseInput() {
-	RequestTargetParser	parser;
-	parser.Parse(*this, _uri_input);
+	// if origin-form URI is detected (can only start with /)
+	if (*_uri_input.begin() == '/') {
+		RequestTargetParser	parser;
+		parser.Parse(*this, _uri_input);
+	}
+	// otherwise assume is URI host string
+	else {
+		URIHostParser	parser;
+		parser.Parse(_host, _uri_input);
+	}
 	_uri_parsed = ConstructParsedURI();
 }
 

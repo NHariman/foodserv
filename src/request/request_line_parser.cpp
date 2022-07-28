@@ -43,7 +43,7 @@ void	RequestLineParser::IncrementCounter(size_t& pos) {
 // Or if EOL is found (VersionEndHandler loops back to this function
 // for the purposes of returning accurate bytes_read count). 
 RequestLineState	RequestLineParser::StartHandler(size_t pos) {
-	if (IsTChar(input[pos]))
+	if (IsTChar((int)input[pos]))
 		return l_Method;
 	return l_Invalid;
 }

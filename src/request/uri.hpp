@@ -5,6 +5,7 @@
 
 #include "exception.hpp"
 #include "request_target_parser.hpp"
+#include "uri_host_parser.hpp"
 
 using namespace std;
 

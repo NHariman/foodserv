@@ -58,7 +58,21 @@ Source: [Query string wiki](https://en.wikipedia.org/wiki/Query_string)
 ### Host
 	Host = uri-host [ ":" port ]
 	|_ uri-host = IP-literal / IPv4address / reg-name
-		|_ IP-literal = "[" ( IPv6address / IPvFuture  ) "]"
+		|_ IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+			|_ IPv6address	=                            6( h16 ":" ) ls32
+							/                       "::" 5( h16 ":" ) ls32
+							/ [               h16 ] "::" 4( h16 ":" ) ls32
+							/ [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+							/ [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+							/ [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+							/ [ *4( h16 ":" ) h16 ] "::"              ls32
+							/ [ *5( h16 ":" ) h16 ] "::"              h16
+							/ [ *6( h16 ":" ) h16 ] "::"
+				|_ ls32	= ( h16 ":" h16 ) / IPv4address
+				|_ h16	= 1*4HEXDIG ; case-insensitive
+			|_ IPvFuture = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+		|_ IPv4address = 0-255 "." 0-255 "." 0-255 "." 0-255
+		|_ reg-name    = *( unreserved / pct-encoded / sub-delims )
 	|_ port = *DIGIT
 
 ### Transfer-Encoding

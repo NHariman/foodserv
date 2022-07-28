@@ -103,7 +103,7 @@ URIState		RequestTargetParser::PathHandler(char uri_char) {
 		case '?':
 			return u_Query;
 		case '/':
-			if (buffer.back() != '/')
+			if (!PrecededBy(buffer, '/'))
 				return u_Path;
 		default:
 			if (IsPChar(uri_char))
@@ -137,7 +137,7 @@ URIState		RequestTargetParser::QueryHandler(char uri_char) {
 // Handles transition after percent-encoding has been found (% input).
 // Checks if subsequent 2 characters are valid hexadecimal digits.
 URIState		RequestTargetParser::PercentHandler(char uri_char) {
-	if (buffer.back() == '%' && IsHexDig(uri_char))
+	if (PrecededBy(buffer, '%') && IsHexDig(uri_char))
 		return u_Percent;
 	else if (IsHexDig(buffer.back()) && IsHexDig(uri_char))
 		return u_Percent_Done;

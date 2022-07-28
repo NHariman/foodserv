@@ -22,12 +22,14 @@ add_executable(
   request_line.cpp
   request_target.cpp
   request_field.cpp
+  uri_host.cpp
   ../header_field_parser.cpp
   ../request_line_parser.cpp
   ../request_parser.cpp
   ../request_target_parser.cpp
   ../request_utils.cpp
   ../uri.cpp
+  ../uri_host_parser.cpp
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(
