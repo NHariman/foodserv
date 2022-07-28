@@ -67,3 +67,35 @@ bool	IsValidString(bool (*validity_checker)(char), string const& s) {
 void	NormalizeString(int (*convert)(int), string& s, size_t start) {
 	std::transform(s.begin() + start, s.end(), s.begin() + start, convert);
 }
+
+// Used by BadRequestException to safely print error messages.
+// Converts non-printable characters in string to percent-encoded values.
+string EncodePercent(string const& s) {
+    stringstream escaped;
+    escaped.fill('0');
+    escaped << hex;
+
+    for (string::const_iterator i = s.begin(); i != s.end(); ++i) {
+        string::value_type c = (*i);
+        // Keep printable characters
+        if (isprint(c)) {
+            escaped << c;
+            continue;
+        }
+        // Any other characters are percent-encoded
+        escaped << uppercase;
+        escaped << '%' << setw(2) << static_cast<unsigned>(c);
+        escaped << nouppercase;
+    }
+    return escaped.str();
+}
+
+// Used by RequestTargetParser and URIHostParser to decode percent-encoded values.
+string	DecodePercent(string const& s) {
+	size_t	percent_start = s.size() - 3;
+	string	new_s = s.substr(0, percent_start);
+	string	hex = s.substr(percent_start + 1, percent_start + 2);
+	char	c = std::stoi(hex, nullptr, 16);
+	new_s += c;
+	return new_s;
+} 

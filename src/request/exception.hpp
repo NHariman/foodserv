@@ -3,34 +3,11 @@
 
 #include <cctype> // isprint
 #include <exception>
-#include <iomanip> // setw
 #include <iostream>
-#include <sstream> // ostringstream
 #include <string>
+#include "request_utils.hpp"
 
 using namespace std;
-
-// Converts non-printable characters in string to percent-encoded values
-// for safe printing of error messages.
-static string EncodePercent(string const& s) {
-    stringstream escaped;
-    escaped.fill('0');
-    escaped << hex;
-
-    for (string::const_iterator i = s.begin(); i != s.end(); ++i) {
-        string::value_type c = (*i);
-        // Keep printable characters
-        if (isprint(c)) {
-            escaped << c;
-            continue;
-        }
-        // Any other characters are percent-encoded
-        escaped << uppercase;
-        escaped << '%' << setw(2) << static_cast<unsigned>(c);
-        escaped << nouppercase;
-    }
-    return escaped.str();
-}
 
 // Used for: invalid or badly formed request headers.
 // Should return 400 code.

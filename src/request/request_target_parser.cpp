@@ -29,7 +29,7 @@ size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 
 // Retrieves next state based on current state & character.
 URIState	RequestTargetParser::GetNextState(size_t pos) {
-	static 	URIState (RequestTargetParser::*table[6])(char uri_char) = {
+	static 	URIState (RequestTargetParser::*table[])(char uri_char) = {
 			&RequestTargetParser::StartHandler,
 			&RequestTargetParser::PathHandler,
 			&RequestTargetParser::QueryHandler,
@@ -144,16 +144,6 @@ URIState		RequestTargetParser::PercentHandler(char uri_char) {
 	return u_Invalid;
 }
 
-// Called after validating percent-encoded tokens and in PercentDone state.
-static void	DecodePercent(string& buffer) {
-	size_t	percent_start = buffer.size() - 3;
-	string	newbuffer = buffer.substr(0, percent_start);
-	string	hex = buffer.substr(percent_start + 1, percent_start + 2);
-	char	c = std::stoi(hex, nullptr, 16);
-	newbuffer += c;
-	buffer = newbuffer;
-} 
-
 // Handles transition after a valid %HH sequence.
 // PChar & '/' input trigger transition to either Query or Path state
 // depending on if we're at the Path or Query part of the URI.
@@ -162,7 +152,7 @@ static void	DecodePercent(string& buffer) {
 // So if we're at Path part, we return the Path state. Ditto for Query.
 URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	NormalizeString(toupper, buffer, buffer.size() - 2);
-	DecodePercent(buffer);
+	buffer = DecodePercent(buffer);
 	switch (uri_char) {
 		case '\0':
 			return u_Done;
