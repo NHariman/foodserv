@@ -60,14 +60,17 @@ TEST(RequestTargetTest, ParsePercentEncoded) {
 }
 
 TEST(RequestTargetTest, InvalidPathStart) {
+	URI uri;
+	RequestTargetParser parser1, parser2;
+
 	EXPECT_THROW({
 		URI	request_uri("//thisisabadpath");
 	}, BadRequestException);
 	EXPECT_THROW({
-		URI	request_uri("%25anotherbadpath");
+		parser1.Parse(uri, "%25anotherbadpath");
 	}, BadRequestException);
 	EXPECT_THROW({
-		URI	request_uri("yetanotherbadpath");
+		parser2.Parse(uri, "yetanotherbadpath");
 	}, BadRequestException);
 }
 
