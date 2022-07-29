@@ -1,5 +1,6 @@
-#include "server.hpp"
+#include "Server.hpp"
+#include <sys/socket.h>
 
 int     main() {
-    Server servie(AF_INET, 80, 0);
+    Server servie(80, INADDR_ANY);
 }
