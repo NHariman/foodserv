@@ -68,6 +68,7 @@ int main() {
 		std::cout << "THIS IS IN THE RESPONSE:\n " << buffer << std::endl;
 		write(new_socket, html, strlen(html));
 
+
 		/* Close the socket */
 		close(new_socket);
 	}
