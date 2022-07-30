@@ -49,6 +49,6 @@ void    Server::launch() {
     }
 }
 
-// Server::~Server {
-//     delete _socket;
-// }
+Server::~Server() {
+    delete _socket;
+}

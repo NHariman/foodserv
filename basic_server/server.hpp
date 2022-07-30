@@ -32,7 +32,7 @@ class Server {
 
 		BindingSocket*	getSocket();
 
-        // virtual ~SimpleServer();
+        ~Server();
 };
 
 #endif
