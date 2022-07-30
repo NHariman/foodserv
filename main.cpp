@@ -6,11 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2022/07/14 21:11:02 by salbregh      ########   odam.nl         */
-=======
-/*   Updated: 2022/07/24 12:17:19 by nhariman      ########   odam.nl         */
->>>>>>> origin
+/*   Updated: 2022/07/30 16:25:36 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +17,7 @@
 #include <vector>
 #include "src/config/nginx_config.hpp"
 
-int main(int ac, const char **av) {
+int	main(int ac, const char **av) {
 	(void)ac;
 	try {
 		NginxConfig		input_file(av[1]);

@@ -6,11 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2022/07/18 14:37:39 by salbregh      ########   odam.nl         */
-=======
-/*   Updated: 2022/07/24 01:27:13 by nhariman      ########   odam.nl         */
->>>>>>> origin
+/*   Updated: 2022/07/30 16:37:49 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,20 +39,7 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_contexts(0) {
 	else
 		throw InvalidFileLocationException();
 	config_file_fd.close();
-<<<<<<< HEAD
-	FindServerBlocks();
-
-	// SANNE:
-	std::cout << "\nPrinting all server blocks in config file: " << std::endl;
-	PrintServerBlocksVectors(_servers);
-
-	std::cout << "\nPrinting all compatible server blocks after comparing with request host header: " << std::endl;
-	SplitRequestHost();
-	
-	PrintServerBlocksVectors(_compatible_server_blocks);
-=======
 	FindServerContexts();
->>>>>>> origin
 }
 
 NginxConfig::NginxConfig(const NginxConfig& obj) {
@@ -154,13 +137,8 @@ void		NginxConfig::FindServerContexts() {
 }
 
 // SANNE: a function to print what is in the server blocks vector
-<<<<<<< HEAD
-void	NginxConfig::PrintServerBlocksVectors(std::vector<ServerBlock>	vec_to_print) {
-	for (std::vector<ServerBlock>::iterator it = vec_to_print.begin(); it != vec_to_print.end(); it++) {
-=======
 void	NginxConfig::PrintServerContextsVectors() {
 	for (std::vector<ServerContext>::iterator it = _servers.begin(); it != _servers.end(); it++) {
->>>>>>> origin
 		std::cout << "\nIn server block print for loop: " << std::endl;
 		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
 		std::cout << "IPAddress: " << it->GetIPAddress() << std::endl;
@@ -221,7 +199,7 @@ void	NginxConfig::SplitRequestHost() {
 
 void	NginxConfig::SelectCompatiblePorts(int request_port_number) {
 	// see if there are server blocks with compatible port numbers
-	for (std::vector<ServerBlock>::iterator it = _servers.begin(); it != _servers.end(); it++) {
+	for (std::vector<ServerContext>::iterator it = _servers.begin(); it != _servers.end(); it++) {
 		if (it->GetPortNumber() == request_port_number) {
 			std::cout << "A compatible server block is found based on port number." << std::endl;
 			_compatible_server_blocks.push_back(*it);
@@ -229,8 +207,8 @@ void	NginxConfig::SelectCompatiblePorts(int request_port_number) {
 	}
 }
 
-void	NginxConfig::SelectCompatibleServerNames(std::string request_server_name, std::vector<ServerBlock> server_vec) {
-	for (std::vector<ServerBlock>::iterator it = server_vec.begin(); it != server_vec.end(); it++) {
+void	NginxConfig::SelectCompatibleServerNames(std::string request_server_name, std::vector<ServerContext> server_vec) {
+	for (std::vector<ServerContext>::iterator it = server_vec.begin(); it != server_vec.end(); it++) {
 		std::vector<std::string> server = it->GetServerNameVector();
 		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
 			std::cout << "IN COMPATIBLE SERVERNAMES: " << std::endl;
@@ -243,17 +221,6 @@ void	NginxConfig::SelectCompatibleServerNames(std::string request_server_name, s
 		}	
 	}
 }
-
-// step1: split the string in server_name and host. request_server_name and request_port
-// step2: make a vector of possible server blocks, so where the ports match each other
-// 			note: if no port is given, default request_port = 80
-// step3: If there is just one match: BINGO this is the server block to use
-// step4: If there are multiple matches: start looking at the server_name variable
-// step5: First try to find a erver block with a server_name that matches the value request_server_name EXACTLY.
-// 			if multiple are found it will use the first one.
-// step6:
-// step7: If no match is found, Ningx selects the default server block for that IP address and port.
-//			The default for IP/port combo will eather be the first block.
 
 // getters
 std::string NginxConfig::GetConfigFile() const {

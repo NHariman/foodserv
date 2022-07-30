@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "server.hpp"
 
 Server::Server(int port, u_long interface) 
 // (int domain, int service, int protocol, int port, u_long interface, int backlog) 

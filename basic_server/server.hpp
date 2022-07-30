@@ -9,7 +9,7 @@
     IT HAS A SOCKET, so add that as a member.
 */
 
-#include "Socket.hpp"
+#include "socket.hpp"
 
 class Server {
 	protected:

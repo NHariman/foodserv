@@ -1,5 +1,0 @@
-if(EXISTS "/Users/sannealbreghs/Desktop/foodserv/google_test/sanne_testing/build/config_test[1]_tests.cmake")
-  include("/Users/sannealbreghs/Desktop/foodserv/google_test/sanne_testing/build/config_test[1]_tests.cmake")
-else()
-  add_test(config_test_NOT_BUILT config_test_NOT_BUILT)
-endif()

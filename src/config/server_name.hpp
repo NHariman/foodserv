@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 16:13:59 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/08 20:35:07 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/30 16:20:10 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class ServerName {
 		std::vector<std::string>	_server_name_vector;
 
 	private:
-		ServerName(); // default constructor should not be callable
+		ServerName();
 		ServerName(const ServerName& x);
 		ServerName&	operator=(const ServerName& rhs);
 		
