@@ -13,33 +13,38 @@ The block contains the server configuration files for a server block for a websi
 - listen (default: 80), tells NGINX the hostname/IP and the TCP port where it should listen for HTTP connections
     - if multiple listens to the same port occur the file will fail
 - server_name (default: localhost), allows multiple domains to be served from a single IP address. Ideally, it should be created per domain or site. based on the request header it receives, the server decides which domain to serve.
-- root (default: html/)
+- root (default: /var/www/html)
 - index (default: index.html)
-- try_files (default: $uri index.html): Checks the existence of files in the specified order and uses the first found file for request processing; the processing is performed in the current context. [...] If none of the files were found, an internal redirect to the uri specified in the last parameter is made.
 - Location Blocks
 
 ## Location Block
 A Location block covers requests for specific files and folders. It also allows NGINX to respond to requests for resources within the server.
 The locations are literal string matches.
 
-Multiple location blocks can be found inside a server block.
+Multiple location blocks can be found inside a server block. However, in the event of duplicate uri names, an error is thrown.
 
 ### Contains
-- uri, literal string before the {} part [(more info here)](https://www.plesk.com/blog/various/nginx-configuration-guide/)
+- uri, literal string before the {} part [(more info here)](https://www.plesk.com/blog/various/nginx-configuration-guide/), unlike nginx which accepts uri's without the leading slash, this webserv project _requires_ the loading slash before a uri definition.
+example:
+```
+location /uri {} // GOOD
+
+location uri {} // BAD
+```
+Depending on the uri style a directory or a file can be indicated
+```
+location /uri {} // an exact url
+
+location /uri/ {} // a directory, in this case, one must find an index file within that directory.
+```
 - root, indicates which folder to start looking for files in
 - index, indicates which index files to select
-- proxy_pass
-- limit_except, specifies http methods [(more info here)](http://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except)
-examples:
+- allowed_methods, a custom keyword for webserver that allows a user to specify what methods are allowed within said location block. On default, no methods are allowed and the string will be empty. Only the methods GET, POST and DELETE are implemented.
+example:
 ```
-limit_except GET {
-         allow 192.168.1.0/32;
-         deny  all;
- }
+allowed_methods GET POST DELETE ;
 ```
 - fastcgi_pass (OPTIONAL)
-- fastcgi_index (OPTIONAL)
-- fastcgi_param (OPTIONAL)
     - fastcgi tells nginx to forward requests from clients to a backend server. [(more info here)](https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx)
  examples:
  ```
@@ -53,12 +58,16 @@ limit_except GET {
                        autoindex on;
                        # First attempt to serve request as file, then
                        # as directory, then fall back to displaying a 404.
-                       try_files $uri $uri/ =404;
                }
 
                location /cgi-bin {
-                     proxy_pass http://127.0.0.1:8080;
+                     fastcgi_pass http://127.0.0.1:8080;
               }
+```
+- return, takes a return code and an url
+example:
+```
+return 301 $scheme://www.new-name.com$request_uri;
 ```
 
 # Variables to implement ($var)
@@ -82,3 +91,7 @@ this won't be ignored # but this will be
 [Understanding and implementing fastcgi proxy in nginx](https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx)
 
 [Nginx location directive](https://www.keycdn.com/support/nginx-location-directive)
+
+[NGINX Error Codes](https://www.nginx.com/resources/wiki/extending/api/http/)
+
+[All http status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
