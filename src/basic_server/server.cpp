@@ -33,7 +33,7 @@ void    Server::handler() {
 
 void    Server::responder() {
     std::cout << "goes in responder" << std::endl;
-    char    *hello = "Hello from Test Server.";
+    char    *hello = (char*)"Hello from Test Server.";
     write(_new_socket, hello, strlen(hello));
     close(_new_socket);
 }

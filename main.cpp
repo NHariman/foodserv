@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/30 16:25:36 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/01 16:35:18 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,24 @@
 #include <stdexcept>
 #include <vector>
 #include "src/config/nginx_config.hpp"
+#include "src/basic_server/server.hpp"
+#include "src/config/server_selection.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
 	try {
 		NginxConfig		input_file(av[1]);
 
+		ServerSelection	serverblock_selection(input_file.GetServers());
+		// add exceptions in the server_selection class to make it able to throw.
 		std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
-		// std::cout << "Printing what is in server blocks: " << std::endl;
-		// input_file.PrintServerContextsVectors();
 	}
 	catch(const std::exception& e) {
 		std::cerr << e.what() << '\n';
 	}
+	
+	// ServerSelection	chosen_serverblock(input_file.GetServers());
+	// Server servie(80, INADDR_ANY);
+	
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/30 16:43:38 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/01 16:35:53 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,6 @@ class NginxConfig {
 		std::vector<ServerContext>	_servers;
 		size_t						_amount_server_contexts;
 
-		// try these vars
-		std::vector<ServerContext>	_compatible_server_blocks;
-		ServerContext				_the_chosen_server_block;
-
 		NginxConfig();
 		bool		IsServerContext(std::string value, size_t *start_pos);
 		void		CheckBrackets();
@@ -62,14 +58,6 @@ class NginxConfig {
 		size_t		GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
 		
-		// SANNE: adding in a function for the server block algorithm
-		// you have a vector full of server blocks _servers,
-		// first print the outcome of this vector?
-		void	PrintServerContextsVectors();
-		void	SplitRequestHost();
-		void	SelectCompatiblePorts(int port);
-		void	SelectCompatibleServerNames(std::string, std::vector<ServerContext>);
-
 		//exceptions
 		class GetLineFailureException : public std::exception {
 			public:

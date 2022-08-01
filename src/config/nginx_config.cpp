@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/30 16:37:49 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/01 16:35:41 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,92 +134,6 @@ void		NginxConfig::FindServerContexts() {
 		throw NoServerContextsException();
 	return ;
 	
-}
-
-// SANNE: a function to print what is in the server blocks vector
-void	NginxConfig::PrintServerContextsVectors() {
-	for (std::vector<ServerContext>::iterator it = _servers.begin(); it != _servers.end(); it++) {
-		std::cout << "\nIn server block print for loop: " << std::endl;
-		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
-		std::cout << "IPAddress: " << it->GetIPAddress() << std::endl;
-		std::vector<std::string> server = it->GetServerNameVector();
-		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
-			std::cout << "In servername vector printing: " << std::endl;
-			std::cout << *it2 << std::endl;
-		}
-	}
-}
-
-// for now use example strings that represent the host header:
-// Host = uri-host [ ":" port ] ;
-// string: www.example.com
-// string: example.com:80
-// string:
-// SANNE: add the functions to select which server block to choose
-
-void	NginxConfig::SplitRequestHost() {
-	std::string	request_host = "example.com:80";
-	// std::string	request_host = "www.example.com";
-
-	// both request server_name and port_number stay empty
-	std::string	request_server_name = "";
-	int			request_port_number = -1;
-	int			found;
-
-	// if a ':' is found, this means a port number is specified in the request
-	// split the server_name and the port_number of the request.
-	found = request_host.find(':');
-	if (found != std::string::npos) {
-		request_port_number = std::stoi(request_host.substr(found + 1, request_host.length()));
-		request_server_name = request_host.substr(0, found);
-	}
-	else
-		request_server_name = request_host;
-
-	std::cout << "\nrequest_port_number: " << request_port_number << std::endl;
-	std::cout << "request_server_name: " << request_server_name << std::endl;
-
-	if (request_port_number != -1) {
-		SelectCompatiblePorts(request_port_number);
-		if (_compatible_server_blocks.size() == 1) {
-			_the_chosen_server_block = _compatible_server_blocks.at(0);
-			return ;
-		}
-	}
-	if (request_server_name.compare("") != 0) {
-		if (_compatible_server_blocks.size() == 0)
-			SelectCompatibleServerNames(request_server_name, _servers);
-		else
-			SelectCompatibleServerNames(request_server_name, _compatible_server_blocks);
-	}
-	else
-		_the_chosen_server_block = _servers.at(0);
-
-}
-
-void	NginxConfig::SelectCompatiblePorts(int request_port_number) {
-	// see if there are server blocks with compatible port numbers
-	for (std::vector<ServerContext>::iterator it = _servers.begin(); it != _servers.end(); it++) {
-		if (it->GetPortNumber() == request_port_number) {
-			std::cout << "A compatible server block is found based on port number." << std::endl;
-			_compatible_server_blocks.push_back(*it);
-		}
-	}
-}
-
-void	NginxConfig::SelectCompatibleServerNames(std::string request_server_name, std::vector<ServerContext> server_vec) {
-	for (std::vector<ServerContext>::iterator it = server_vec.begin(); it != server_vec.end(); it++) {
-		std::vector<std::string> server = it->GetServerNameVector();
-		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
-			std::cout << "IN COMPATIBLE SERVERNAMES: " << std::endl;
-			std::cout << *it2 << std::endl;
-			if (it2->compare(request_server_name) == 0)
-				std::cout << "SERVER BLOCK MATCH FOUND.";
-				_the_chosen_server_block = *it;
-				// _compatible_server_blocks.push_back(*it);
-				return ;
-		}	
-	}
 }
 
 // getters
