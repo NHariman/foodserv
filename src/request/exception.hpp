@@ -15,17 +15,20 @@ class BadRequestException : public exception {
 	public:
 		BadRequestException() {}
 
-		BadRequestException(string const& detail)
-			: _detail(EncodePercent(detail)) {}
+		BadRequestException(string detail) {
+			string encoded_detail = EncodePercent(detail);
+			_error_str = "400: Bad request";
+			if (!encoded_detail.empty()) {
+				_error_str += " | " + encoded_detail;
+			}
+		}
 
 		virtual const char* what() const throw() {
-			if (!_detail.empty())
-				return (("400: Bad request | " + _detail).c_str());
-			return ("400: Bad request");
+			return (_error_str.c_str());
 		}
 
 	private:
-		string	_detail;
+		string	_error_str;
 };
 
 // Used for: URI exceeding 8192 bytes (8kb).
