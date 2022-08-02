@@ -64,10 +64,9 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 			return f_Done;
 		case '\n':
 			return f_Start;
-		case '\r': {
+		case '\r':
 			skip_char = true;
 			return f_ValueEnd;
-		}
 		default:
 			if (IsTChar(c))
 				return f_Name;
@@ -80,11 +79,10 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
 	switch (c) {
-		case ':': {
+		case ':':
 			PushFieldName();
 			skip_char = true;
 			return f_ValueStart;
-		}
 		default:
 			if (IsTChar(c))
 				return f_Name;
@@ -108,18 +106,15 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 // returns ValueEnd state to check for valid CRLF sequence.
 FieldState	HeaderFieldParser::ValueHandler(char c) {
 	switch (c) {
-		case '\0': {
+		case '\0':
 			PushFieldValue();
 			return f_Done;
-		}
-		case '\n': {
+		case '\n':
 			PushFieldValue();
 			return f_Start;
-		}
-		case '\r': {
+		case '\r':
 			skip_char = true;
 			return f_ValueEnd;
-		}
 		default:
 			if (IsVChar(c) || IsWhitespace(c))
 				return f_Value;

@@ -105,12 +105,14 @@ URIState		RequestTargetParser::PathHandler(char uri_char) {
 		case '/':
 			if (!PrecededBy(buffer, '/'))
 				return u_Path;
+			break;
 		default:
 			if (IsPChar(uri_char))
 				return u_Path;
 			else
 				return u_Invalid;
 	}
+	return u_Invalid;
 }
 
 // Handles transition after '?' input indicating queries is found.
@@ -159,6 +161,7 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 		case '#':
 			if (_part == pt_Query)
 				return u_Done;
+			break;
 		case '%':
 			return u_Percent;
 		case '?':
@@ -171,4 +174,5 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 			else
 				return u_Invalid;
 	}
+	return u_Invalid;
 }

@@ -24,7 +24,7 @@ class BadRequestException : public exception {
 		}
 
 		virtual const char* what() const noexcept override {
-			return (_error_str.c_str());
+			return _error_str.c_str();
 		}
 
 	private:

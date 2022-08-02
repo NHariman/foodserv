@@ -2,7 +2,12 @@
 #define DEBUG 0 // TODO: remove
 // Default constructor
 URIHostParser::URIHostParser()
-	:	StateParser(h_Start), _uri_host(NULL), _groups(0), _literal(false) {}
+	:	StateParser(h_Start),
+		_uri_host(NULL),
+		_groups(0),
+		_colons(0),
+		_digits(0),
+		_literal(false) {}
 
 // Destructor
 URIHostParser::~URIHostParser() {}
@@ -11,6 +16,8 @@ URIHostParser::~URIHostParser() {}
 // input string to StateParser::ParseString().
 size_t	URIHostParser::Parse(string& uri_host, string const& input) {
 	_groups = 0;
+	_colons = 0;
+	_digits = 0;
 	_literal = false;
 	_uri_host = &uri_host;
 	return ParseString(input);
@@ -32,6 +39,7 @@ HostState	URIHostParser::GetNextState(size_t pos) {
 	};
 	if (DEBUG) cout << "GetNextState: at [" << input[pos] << "] & state: "
 		<< cur_state << " & groups: " << _groups << endl;
+	skip_char = false;
 	return (this->*table[cur_state])(pos);
 }
 
@@ -61,12 +69,13 @@ static bool	IsUnreservedSubDelim(char c) {
 	return (IsUnreserved(c) || IsSubDelim(c));
 }
 
-// if string is only digits, with 3 periods, assume it's IPv4
+// if string is only digits, with at least 1 periods, assume it's IPv4
 static bool	IsIPv4Format(string const& s) {
-	if (DEBUG) cout << "IsIPv4Format: IsValidString = " << IsValidString(isdigit, s, ".")
+	if (DEBUG) cout << "IsIPv4Format: IsValidString = " << IsValidString(isdigit, s, ".:")
 		<< " & period count = " << std::count(s.begin(), s.end(), '.') << endl;
-	return (IsValidString(isdigit, s, ".")
-			&& std::count(s.begin(), s.end(), '.') == 3);
+
+	return (IsValidString(isdigit, s, ".:-") // allows '.' for IPv4 delim & ':' for port
+			&& std::count(s.begin(), s.end(), '.') > 1);
 }
 
 // Handles transition into IP-literal, reg-name, or IPv4 parsing,
@@ -76,10 +85,9 @@ HostState	URIHostParser::StartHandler(size_t pos) {
 	switch (input[pos]) {
 		case '\0':
 			return SkipEOL(skip_char);
-		case '[': {
+		case '[':
 			_literal = true;
 			return h_Literal;
-		}
 		case '%':
 			return h_RegNamePct;
 		default:
@@ -120,37 +128,65 @@ static bool	ValidLastBitsIPv4(string const& input, size_t pos) {
 	return false;
 }
 
+// Used by IPv6Handler when a ':' is found. Increments colon & group count,
+// and resets digit count.
+static HostState	HandleIPv6Colon(size_t& colons, size_t& digits, size_t& groups) {
+	if (colons > 1) // only max 2 sequential colons allowed
+		return h_Invalid;
+	colons += 1;
+	digits = 0;
+	groups += 1;
+	return h_IPv6;
+}
+
+// Used by IPv6Handler to handle digit input transition.
+// Resets colon_count and increments digit count.
+static HostState	HandleIPv6Digit(size_t& colons, size_t& digits) {
+	// cannot exceed 4 hexadecimal digits in a group
+	if (digits > 3)
+		return h_Invalid;
+	colons = 0;
+	digits += 1;
+	return h_IPv6;
+}
+
+// Used by IPv6Handler to transform uppercase hex-alpha to lowercase.
+static void	NormalizeIPv6HexDig(string& buffer, char c, bool& skip_char) {
+	if (c >= 'A' && c <= 'Z') {
+		buffer += tolower(c);
+		skip_char = true;
+	}
+}
+
 // Handles IPv6 address parsing.
 // IPv6 addresses are composed of 8 groups of 1-4 hexadecimal digits,
 // separated by ':'. Double colons denote a sequential group of 0s 
 // that have been elided (e.g. 0:0:0:0:0:0:0:1 may be reduced to just ::1).
 HostState	URIHostParser::IPv6Handler(size_t pos) {
 	if (DEBUG) cout << "IPv6Handler: at [" << input[pos] << "]\n";
-	static size_t	colon_count = 0;
+
 	switch (input[pos]) {
 		case ']':
 			if (_groups >= 1)
 				return h_LiteralEnd;
-		case ':': {
-			if (colon_count > 1) // only max 2 sequential colons allowed
-				return h_Invalid;
-			colon_count += 1;
-			_groups += 1;
-			return h_IPv6;
-		}
+			break;
+		case ':':
+			return HandleIPv6Colon(_colons, _digits, _groups);
 		default:
 			// when 2 least-significant last bits are in IPv4 format
 			if (ValidLastBitsIPv4(input, pos)) {
 				_groups = 0;
+				_digits = 0;
 				return h_IPv4;
 			}
 			else if (IsHexDig(input[pos])) {
-				colon_count = 0;
-				return h_IPv6;
+				NormalizeIPv6HexDig(buffer, input[pos], skip_char);
+				return HandleIPv6Digit(_colons, _digits);
 			}
 			else
 				return h_Invalid;
 	}
+	return h_Invalid;
 }
 
 // Handles IPvFuture address parsing, signalled by starting 'v' token.
@@ -163,9 +199,11 @@ HostState	URIHostParser::IPvFHandler(size_t pos) {
 		case ']':
 			if (_groups >= 4)
 				return h_LiteralEnd;
+			break;
 		case '.':
 			if (IsHexDig(buffer.back()))
 				return h_IPvF;
+			break;
 		default:
 			if (PrecededBy(buffer, 'v') && IsHexDig(input[pos]))
 				return h_IPvF;
@@ -174,9 +212,11 @@ HostState	URIHostParser::IPvFHandler(size_t pos) {
 			else
 				return h_Invalid;			
 	}
+	return h_Invalid;
 }
 
-// Used by IPv4Handler to validate dec-octet group.
+// Used by IPv4Handler to validate dec-octet group,
+// which has to be within range of 0 to 255.
 static bool	ValidDecOctetGroup(string const& buffer) {
 	size_t	begin = buffer.find_last_of('.');
 	int		octet;
@@ -198,42 +238,52 @@ static bool	ValidDecOctetGroup(string const& buffer) {
 	return true;
 }
 
+// Used by IPv4Handler to handle digit input transition.
+// Increments digit count (or resets it with new group).
+static HostState	HandleIPv4Digits(size_t& digits, size_t& groups,
+										string const& buffer) {
+	// if more than 3 digit group
+	if (digits > 3)
+		return h_Invalid;
+	// if start of new group of digits
+	if (PrecededBy(buffer, '.') || groups == 0) {
+		digits = 1;
+		groups += 1;
+	}
+	else
+		digits += 1;
+	return h_IPv4;
+}
+
 // Handles IPv4 address parsing.
 // IPv4 addresses are composed of 4 groups of 1-3 digits, delimited by '.'.
 HostState	URIHostParser::IPv4Handler(size_t pos) {
 	if (DEBUG) cout << "IPv4Handler: at [" << input[pos] << "]\n";
-	static size_t digit_counter = 0;
 
 	switch (input[pos]) {
 		case '\0':
-			if (_groups == 4)
+			if (_groups == 4 && ValidDecOctetGroup(buffer))
 				return SkipEOL(skip_char);
+			break;
 		case ':':
 			if (_groups == 4)
 				return h_Port;
+			break;
 		case ']':
-			if (_literal && _groups == 12) // if ending IP-literal
+			if (_literal && _groups == 4)
 				return h_LiteralEnd;
+			break;
 		case '.':
 			if (isdigit(buffer.back()) && ValidDecOctetGroup(buffer))
 				return h_IPv4;
+			break;
 		default:
-			if (isdigit(input[pos])) {
-				// if more than 3 digit group
-				if (digit_counter > 3)
-					return h_Invalid;
-				// if start of new group of digits
-				if (PrecededBy(buffer, '.') || _groups == 0) {
-					digit_counter = 1;
-					_groups += 1;
-				}
-				else
-					digit_counter += 1;
-				return h_IPv4;
-			}
+			if (isdigit(input[pos]))
+				return HandleIPv4Digits(_digits, _groups, buffer);
 			else
 				return h_Invalid;
 	}
+	return h_Invalid;
 }
 
 // Handles transition from IP-literal once ending ']' token is found.

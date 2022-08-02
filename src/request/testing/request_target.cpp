@@ -96,6 +96,9 @@ TEST(RequestTargetTest, InvalidPercent) {
 	EXPECT_THROW({
 		URI	request_uri("/path/to?q=1%*1");
 	}, BadRequestException);
+	EXPECT_THROW({
+		URI	request_uri("/where/are%7e/we#?q=now");
+	}, BadRequestException);
 }
 
 TEST(RequestTargetTest, InvalidQuery) {

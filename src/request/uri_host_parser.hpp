@@ -34,7 +34,9 @@ class URIHostParser : public StateParser<HostState> {
 
 	private:
 		string	*_uri_host;
-		size_t	_groups; // for counting groups of IPv4/6 sequences
+		size_t	_groups; // for counting groups of IPv4 sequences
+		size_t	_colons; // for keeping track of colons for IPv6
+		size_t	_digits; // for keeping track of number of digits per group
 		bool	_literal;
 
 		HostState	StartHandler(size_t pos);
