@@ -14,10 +14,12 @@ RequestParser::RequestParser(char const* buffer)
 // Destructor
 RequestParser::~RequestParser() {}
 
-// Casts input buffer into string and passes it to StateParser::ParseString().
+// Casts input buffer into string, resets internal counters,
+// and passes string to StateParser::ParseString().
 size_t	RequestParser::Parse(char const* buffer) {
 	string	request(buffer);
 
+	_bytes_read = 0;
 	return ParseString(request);
 }
 

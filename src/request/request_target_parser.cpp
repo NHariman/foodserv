@@ -19,8 +19,8 @@ RequestTargetParser::RequestTargetParser()
 // Destructor
 RequestTargetParser::~RequestTargetParser() {}
 
-// Initializes pointer to URI object and 
-// calls on parent class StateParser::ParseString().
+// Initializes pointer to URI object, resets internal counters, and
+// passed input string to parent class StateParser::ParseString().
 size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 	_uri = &uri;
 	_part = pt_Path;
