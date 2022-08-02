@@ -3,34 +3,11 @@
 
 #include <cctype> // isprint
 #include <exception>
-#include <iomanip> // setw
 #include <iostream>
-#include <sstream> // ostringstream
 #include <string>
+#include "request_utils.hpp"
 
 using namespace std;
-
-// Converts non-printable characters in string to percent-encoded values
-// for safe printing of error messages.
-static string EncodePercent(string const& s) {
-    stringstream escaped;
-    escaped.fill('0');
-    escaped << hex;
-
-    for (string::const_iterator i = s.begin(); i != s.end(); ++i) {
-        string::value_type c = (*i);
-        // Keep printable characters
-        if (isprint(c)) {
-            escaped << c;
-            continue;
-        }
-        // Any other characters are percent-encoded
-        escaped << uppercase;
-        escaped << '%' << setw(2) << static_cast<unsigned>(c);
-        escaped << nouppercase;
-    }
-    return escaped.str();
-}
 
 // Used for: invalid or badly formed request headers.
 // Should return 400 code.
@@ -38,25 +15,46 @@ class BadRequestException : public exception {
 	public:
 		BadRequestException() {}
 
-		BadRequestException(string const& detail)
-			: _detail(EncodePercent(detail)) {}
+		BadRequestException(string detail) {
+			string encoded_detail = EncodePercent(detail);
+			_error_str = "400: Bad request";
+			if (!encoded_detail.empty()) {
+				_error_str += " | " + encoded_detail;
+			}
+		}
 
-		virtual const char* what() const throw() {
-			if (!_detail.empty())
-				return (("400: Bad request | " + _detail).c_str());
-			return ("400: Bad request");
+		virtual const char* what() const noexcept override {
+			return _error_str.c_str();
 		}
 
 	private:
-		string	_detail;
+		string	_error_str;
 };
 
 // Used for: URI exceeding 8192 bytes (8kb).
 // Should return 414 code.
 class URITooLongException : public exception {
 	public:
-		virtual const char* what() const throw() {
+		virtual const char* what() const noexcept override {
 			return ("414: URI Too Long");
+		}
+};
+
+// Used for: Content-Encoding header field in request.
+// Should return 415 code.
+class UnsupportedMediaTypeException : public exception {
+	public:
+		virtual const char* what() const noexcept override {
+			return ("415: Unsupported Media Type");
+		}
+};
+
+// Used for: Expect header field with any value except "100-continue".
+// Should return 417 code.
+class ExpectationFailedTypeException : public exception {
+	public:
+		virtual const char* what() const noexcept override {
+			return ("417: Expectation Failed");
 		}
 };
 
@@ -65,17 +63,17 @@ class URITooLongException : public exception {
 // Should return 431 code.
 class RequestHeaderFieldsTooLargeException : public exception {
 	public:
-		virtual const char* what() const throw() {
+		virtual const char* what() const noexcept override {
 			return ("431: Request Header Fields Too Large");
 		}
 };
 
-// Used for: method not implemented.
+// Used for: non-recognized request method or transfer coding.
 // Should return 501 code.
 class NotImplementedException : public exception {
 	public:
-		virtual const char* what() const throw() {
-			return ("501: Method Not Implemented");
+		virtual const char* what() const noexcept override {
+			return ("501: Not Implemented");
 		}
 };
 
@@ -83,7 +81,7 @@ class NotImplementedException : public exception {
 // Should return 505 code.
 class HTTPVersionNotSupportedException : public exception {
 	public:
-		virtual const char* what() const throw() {
+		virtual const char* what() const noexcept override {
 			return ("505: HTTP Version Not Supported");
 		}
 };

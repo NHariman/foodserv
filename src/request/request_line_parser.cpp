@@ -6,9 +6,10 @@ RequestLineParser::RequestLineParser() : StateParser(l_Start), _increment(0) {}
 // Destructor
 RequestLineParser::~RequestLineParser() {}
 
-// Initializes pointer to RequestLine struct and 
-// calls on parent class StateParser::ParseString().
+// Initializes pointer to RequestLine struct, resets internal counters,
+// and passes input string to parent class StateParser::ParseString().
 size_t	RequestLineParser::Parse(RequestLine& request_line, string const& input) {
+	_increment = 0;
 	_request_line = &request_line;
 	return ParseString(input);
 }
@@ -43,7 +44,7 @@ void	RequestLineParser::IncrementCounter(size_t& pos) {
 // Or if EOL is found (VersionEndHandler loops back to this function
 // for the purposes of returning accurate bytes_read count). 
 RequestLineState	RequestLineParser::StartHandler(size_t pos) {
-	if (IsTChar(input[pos]))
+	if (IsTChar((int)input[pos]))
 		return l_Method;
 	return l_Invalid;
 }

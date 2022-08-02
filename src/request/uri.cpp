@@ -44,19 +44,19 @@ URI&	URI::operator=(string const& input) {
 URI::~URI() {}
 
 // Simplified method for retrieving parsed URI string meant for external classes/users.
-string	URI::Get() {
+string	URI::Get() const {
 	return _uri_parsed;
 }
 
-string	URI::GetInputURI() {
+string	URI::GetInputURI() const {
 	return _uri_input;
 }
 
-string	URI::GetParsedURI() {
+string	URI::GetParsedURI() const {
 	return _uri_parsed;
 }
 
-string	URI::GetURIDebug() {
+string	URI::GetURIDebug() const {
 	string	uri;
 
 	if (!_host.empty())
@@ -68,17 +68,17 @@ string	URI::GetURIDebug() {
 	return uri;
 }
 
-string	URI::GetHost() {
+string	URI::GetHost() const {
 	return _host;
 }
 
 
-string	URI::GetPath() {
+string	URI::GetPath() const {
 	return _path;
 }
 
 
-string	URI::GetQuery() {
+string	URI::GetQuery() const {
 	return _query;
 }
 
@@ -98,10 +98,19 @@ void	URI::SetQuery(string const& query) {
 	_uri_parsed = ConstructParsedURI();
 }
 
-// Parses origin-form URIs only (without host).
+// Parses URIs using either RequestTargetParser or URIHostParser
+// depending on starting character of input string.
 void	URI::ParseInput() {
-	RequestTargetParser	parser;
-	parser.Parse(*this, _uri_input);
+	// if origin-form URI is detected (can only start with /)
+	if (*_uri_input.begin() == '/') {
+		RequestTargetParser	parser;
+		parser.Parse(*this, _uri_input);
+	}
+	// otherwise assume is URI host string
+	else {
+		URIHostParser	parser;
+		parser.Parse(_host, _uri_input);
+	}
 	_uri_parsed = ConstructParsedURI();
 }
 
