@@ -1,5 +1,5 @@
 #include "uri_host_parser.hpp"
-#define DEBUG 0 // TODO: remove
+
 // Default constructor
 URIHostParser::URIHostParser()
 	:	StateParser(h_Start),
@@ -37,8 +37,7 @@ HostState	URIHostParser::GetNextState(size_t pos) {
 			&URIHostParser::PortHandler,
 			nullptr
 	};
-	if (DEBUG) cout << "GetNextState: at [" << input[pos] << "] & state: "
-		<< cur_state << " & groups: " << _groups << endl;
+
 	skip_char = false;
 	return (this->*table[cur_state])(pos);
 }
@@ -71,9 +70,6 @@ static bool	IsUnreservedSubDelim(char c) {
 
 // if string is only digits, with at least 1 periods, assume it's IPv4
 static bool	IsIPv4Format(string const& s) {
-	if (DEBUG) cout << "IsIPv4Format: IsValidString = " << IsValidString(isdigit, s, ".:")
-		<< " & period count = " << std::count(s.begin(), s.end(), '.') << endl;
-
 	return (IsValidString(isdigit, s, ".:-") // allows '.' for IPv4 delim & ':' for port
 			&& std::count(s.begin(), s.end(), '.') > 1);
 }
@@ -81,7 +77,6 @@ static bool	IsIPv4Format(string const& s) {
 // Handles transition into IP-literal, reg-name, or IPv4 parsing,
 // depending on token.
 HostState	URIHostParser::StartHandler(size_t pos) {
-	if (DEBUG) cout << "StartHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
 		case '\0':
 			return SkipEOL(skip_char);
@@ -104,7 +99,6 @@ HostState	URIHostParser::StartHandler(size_t pos) {
 
 // Handles IP-literals, signalled by starting '[' token.
 HostState	URIHostParser::LiteralHandler(size_t pos) {
-	if (DEBUG) cout << "LiteralHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
 		case 'v':
 			return h_IPvF;
@@ -163,7 +157,6 @@ static void	NormalizeIPv6HexDig(string& buffer, char c, bool& skip_char) {
 // separated by ':'. Double colons denote a sequential group of 0s 
 // that have been elided (e.g. 0:0:0:0:0:0:0:1 may be reduced to just ::1).
 HostState	URIHostParser::IPv6Handler(size_t pos) {
-	if (DEBUG) cout << "IPv6Handler: at [" << input[pos] << "]\n";
 
 	switch (input[pos]) {
 		case ']':
@@ -193,7 +186,6 @@ HostState	URIHostParser::IPv6Handler(size_t pos) {
 // IPvFuture requires sequence of:
 // 		"v" - at least 1 HEXDIG - "." - at least 1 Unreserved/SubDelim/":"
 HostState	URIHostParser::IPvFHandler(size_t pos) {
-	if (DEBUG) cout << "IPvFHandler: at [" << input[pos] << "]\n";
 	_groups += 1;
 	switch (input[pos]) {
 		case ']':
@@ -258,7 +250,6 @@ static HostState	HandleIPv4Digits(size_t& digits, size_t& groups,
 // Handles IPv4 address parsing.
 // IPv4 addresses are composed of 4 groups of 1-3 digits, delimited by '.'.
 HostState	URIHostParser::IPv4Handler(size_t pos) {
-	if (DEBUG) cout << "IPv4Handler: at [" << input[pos] << "]\n";
 
 	switch (input[pos]) {
 		case '\0':
@@ -288,7 +279,6 @@ HostState	URIHostParser::IPv4Handler(size_t pos) {
 
 // Handles transition from IP-literal once ending ']' token is found.
 HostState	URIHostParser::LiteralEndHandler(size_t pos) {
-	if (DEBUG) cout << "LiteralEndHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
 		case '\0':
 			return SkipEOL(skip_char);
@@ -301,7 +291,6 @@ HostState	URIHostParser::LiteralEndHandler(size_t pos) {
 
 // Handles reg-name parsing.
 HostState	URIHostParser::RegNameHandler(size_t pos) {
-	if (DEBUG) cout << "RegNameHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
 		case '\0':
 			return SkipEOL(skip_char);
@@ -320,7 +309,6 @@ HostState	URIHostParser::RegNameHandler(size_t pos) {
 // Handles transition after percent-encoding has been found (% input).
 // Checks if subsequent 2 characters are valid hexadecimal digits.
 HostState	URIHostParser::RegNamePctHandler(size_t pos) {
-	if (DEBUG) cout << "RegNamePctHandler: at [" << input[pos] << "]\n";
 	if (PrecededBy(buffer, '%') && IsHexDig(input[pos]))
 		return h_RegNamePct;
 	else if (IsHexDig(buffer.back()) && IsHexDig(input[pos]))
@@ -347,7 +335,6 @@ HostState	URIHostParser::RegNamePctDoneHandler(size_t pos) {
 
 // Checks for digits in port after ':' has been previously found.
 HostState	URIHostParser::PortHandler(size_t pos) {
-	if (DEBUG) cout << "PortHandler: at [" << input[pos] << "]\n";
 	if (input[pos] == '\0')
 		return SkipEOL(skip_char);
 	else if (isdigit(input[pos]))
@@ -355,4 +342,3 @@ HostState	URIHostParser::PortHandler(size_t pos) {
 	else
 		return h_Invalid; 
 }
-#undef DEBUG // TODO: remove
