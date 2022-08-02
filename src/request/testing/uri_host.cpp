@@ -13,6 +13,9 @@ TEST(URIHostTest, ParseHostRegName) {
 
 	parser.Parse(parsed_host, "www.example.com:80");
 	EXPECT_EQ(parsed_host, "www.example.com:80");
+	
+	parser.Parse(parsed_host, "www.ex%C3%BCmple.com");
+	EXPECT_EQ(parsed_host, "www.exümple.com");
 }
 
 TEST(URIHostTest, ParseHostIPv4) {
@@ -33,9 +36,9 @@ TEST(URIHostTest, ParseHostIPv6) {
 	uri = "[2001:db8:85a3:8d3:1319:8a2e:127.0.0.1]";
 	EXPECT_EQ(uri.GetHost(), "[2001:db8:85a3:8d3:1319:8a2e:127.0.0.1]");
 
-	uri = "::1";
-	EXPECT_EQ(uri.GetHost(), "::1");
+	uri = "[::1]";
+	EXPECT_EQ(uri.GetHost(), "[::1]");
 
-	uri = "::";
-	EXPECT_EQ(uri.GetHost(), "::");
+	uri = "[::]";
+	EXPECT_EQ(uri.GetHost(), "[::]");
 }

@@ -54,9 +54,11 @@ bool	IsWhitespace(int c) {
 
 // Checks if string `s` is valid according to rules of `validity_checker`
 // function that's passed as argument.
-bool	IsValidString(int (*validity_checker)(int), string const& s) {
+// Optional argument `allow` allows for certain characters in string.
+bool	IsValidString(int (*validity_checker)(int), string const& s,
+							string const& allow) {
 	for (size_t i = 0; i < s.size(); i++) {
-		if (validity_checker(s[i]) == false)
+		if (validity_checker(s[i]) == false && allow.find(s[i]) == string::npos)
 			return false;
 	}
 	return true;

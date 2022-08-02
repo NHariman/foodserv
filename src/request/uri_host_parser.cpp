@@ -1,5 +1,5 @@
 #include "uri_host_parser.hpp"
-
+#define DEBUG 0 // TODO: remove
 // Default constructor
 URIHostParser::URIHostParser()
 	:	StateParser(h_Start), _uri_host(NULL), _groups(0), _literal(false) {}
@@ -7,7 +7,11 @@ URIHostParser::URIHostParser()
 // Destructor
 URIHostParser::~URIHostParser() {}
 
+// Resets internal counters (in case of repeat calls) and passes
+// input string to StateParser::ParseString().
 size_t	URIHostParser::Parse(string& uri_host, string const& input) {
+	_groups = 0;
+	_literal = false;
 	_uri_host = &uri_host;
 	return ParseString(input);
 }
@@ -26,8 +30,9 @@ HostState	URIHostParser::GetNextState(size_t pos) {
 			&URIHostParser::PortHandler,
 			nullptr
 	};
-
-	return (this->*table[cur_state])(input[pos]);
+	if (DEBUG) cout << "GetNextState: at [" << input[pos] << "] & state: "
+		<< cur_state << " & groups: " << _groups << endl;
+	return (this->*table[cur_state])(pos);
 }
 
 void	URIHostParser::CheckInvalidState() const {
@@ -40,11 +45,16 @@ bool	URIHostParser::CheckDoneState() {
 }
 
 // Checks if there's illegal characters after terminating char.
-void	URIHostParser::AfterParseCheck(size_t& pos) {
+void	URIHostParser::AfterParseCheck(size_t& pos) { 
 	if (cur_state == h_Done && pos < input.size() - 1)
 		throw BadRequestException("Extra characters after terminating token in URI host");
 	else
 		*_uri_host = buffer;
+}
+
+static HostState	SkipEOL(bool& skip_char) {
+	skip_char = true;
+	return h_Done;
 }
 
 static bool	IsUnreservedSubDelim(char c) {
@@ -53,16 +63,19 @@ static bool	IsUnreservedSubDelim(char c) {
 
 // if string is only digits, with 3 periods, assume it's IPv4
 static bool	IsIPv4Format(string const& s) {
-	return (IsValidString(isdigit, s)
-			&& std::count(s.begin(), s.end(), '.' == 3));
+	if (DEBUG) cout << "IsIPv4Format: IsValidString = " << IsValidString(isdigit, s, ".")
+		<< " & period count = " << std::count(s.begin(), s.end(), '.') << endl;
+	return (IsValidString(isdigit, s, ".")
+			&& std::count(s.begin(), s.end(), '.') == 3);
 }
 
 // Handles transition into IP-literal, reg-name, or IPv4 parsing,
 // depending on token.
 HostState	URIHostParser::StartHandler(size_t pos) {
+	if (DEBUG) cout << "StartHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
 		case '\0':
-			return h_Done;
+			return SkipEOL(skip_char);
 		case '[': {
 			_literal = true;
 			return h_Literal;
@@ -83,6 +96,7 @@ HostState	URIHostParser::StartHandler(size_t pos) {
 
 // Handles IP-literals, signalled by starting '[' token.
 HostState	URIHostParser::LiteralHandler(size_t pos) {
+	if (DEBUG) cout << "LiteralHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
 		case 'v':
 			return h_IPvF;
@@ -111,21 +125,25 @@ static bool	ValidLastBitsIPv4(string const& input, size_t pos) {
 // separated by ':'. Double colons denote a sequential group of 0s 
 // that have been elided (e.g. 0:0:0:0:0:0:0:1 may be reduced to just ::1).
 HostState	URIHostParser::IPv6Handler(size_t pos) {
+	if (DEBUG) cout << "IPv6Handler: at [" << input[pos] << "]\n";
 	static size_t	colon_count = 0;
 	switch (input[pos]) {
 		case ']':
-			if (_groups > 1)
+			if (_groups >= 1)
 				return h_LiteralEnd;
 		case ':': {
 			if (colon_count > 1) // only max 2 sequential colons allowed
 				return h_Invalid;
 			colon_count += 1;
 			_groups += 1;
+			return h_IPv6;
 		}
 		default:
 			// when 2 least-significant last bits are in IPv4 format
-			if (ValidLastBitsIPv4(input, pos))
+			if (ValidLastBitsIPv4(input, pos)) {
+				_groups = 0;
 				return h_IPv4;
+			}
 			else if (IsHexDig(input[pos])) {
 				colon_count = 0;
 				return h_IPv6;
@@ -139,6 +157,7 @@ HostState	URIHostParser::IPv6Handler(size_t pos) {
 // IPvFuture requires sequence of:
 // 		"v" - at least 1 HEXDIG - "." - at least 1 Unreserved/SubDelim/":"
 HostState	URIHostParser::IPvFHandler(size_t pos) {
+	if (DEBUG) cout << "IPvFHandler: at [" << input[pos] << "]\n";
 	_groups += 1;
 	switch (input[pos]) {
 		case ']':
@@ -164,10 +183,12 @@ static bool	ValidDecOctetGroup(string const& buffer) {
 
 	// if 1st group
 	if (begin == string::npos) {
-		if (buffer.find(":") != string::npos) // if part of IPv6 address
-			octet = std::stoi(buffer.substr(buffer.find(":") + 1));
+		if (buffer.find(":") != string::npos) { // if part of IPv6 address
+			size_t	start_of_ipv4 = buffer.find_last_of(":") + 1;
+			octet = std::stoi(buffer.substr(start_of_ipv4));
+		}
 		else
-			octet = std::stoi(buffer);			
+			octet = std::stoi(buffer);
 	}
 	// if latter group
 	else
@@ -180,12 +201,13 @@ static bool	ValidDecOctetGroup(string const& buffer) {
 // Handles IPv4 address parsing.
 // IPv4 addresses are composed of 4 groups of 1-3 digits, delimited by '.'.
 HostState	URIHostParser::IPv4Handler(size_t pos) {
+	if (DEBUG) cout << "IPv4Handler: at [" << input[pos] << "]\n";
 	static size_t digit_counter = 0;
 
 	switch (input[pos]) {
 		case '\0':
 			if (_groups == 4)
-				return h_Done;
+				return SkipEOL(skip_char);
 		case ':':
 			if (_groups == 4)
 				return h_Port;
@@ -201,7 +223,7 @@ HostState	URIHostParser::IPv4Handler(size_t pos) {
 				if (digit_counter > 3)
 					return h_Invalid;
 				// if start of new group of digits
-				if (PrecededBy(buffer, '.') || buffer.size() == 0) {
+				if (PrecededBy(buffer, '.') || _groups == 0) {
 					digit_counter = 1;
 					_groups += 1;
 				}
@@ -216,9 +238,10 @@ HostState	URIHostParser::IPv4Handler(size_t pos) {
 
 // Handles transition from IP-literal once ending ']' token is found.
 HostState	URIHostParser::LiteralEndHandler(size_t pos) {
+	if (DEBUG) cout << "LiteralEndHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
 		case '\0':
-			return h_Done;
+			return SkipEOL(skip_char);
 		case ':':
 			return h_Port;
 		default:
@@ -228,7 +251,10 @@ HostState	URIHostParser::LiteralEndHandler(size_t pos) {
 
 // Handles reg-name parsing.
 HostState	URIHostParser::RegNameHandler(size_t pos) {
+	if (DEBUG) cout << "RegNameHandler: at [" << input[pos] << "]\n";
 	switch (input[pos]) {
+		case '\0':
+			return SkipEOL(skip_char);
 		case ':':
 			return h_Port;
 		case '%':
@@ -244,6 +270,7 @@ HostState	URIHostParser::RegNameHandler(size_t pos) {
 // Handles transition after percent-encoding has been found (% input).
 // Checks if subsequent 2 characters are valid hexadecimal digits.
 HostState	URIHostParser::RegNamePctHandler(size_t pos) {
+	if (DEBUG) cout << "RegNamePctHandler: at [" << input[pos] << "]\n";
 	if (PrecededBy(buffer, '%') && IsHexDig(input[pos]))
 		return h_RegNamePct;
 	else if (IsHexDig(buffer.back()) && IsHexDig(input[pos]))
@@ -257,7 +284,7 @@ HostState	URIHostParser::RegNamePctDoneHandler(size_t pos) {
 	buffer = DecodePercent(buffer);
 	switch (input[pos]) {
 		case '\0':
-			return h_Done;
+			return SkipEOL(skip_char);
 		case '%':
 			return h_RegNamePct;
 		default:
@@ -270,10 +297,12 @@ HostState	URIHostParser::RegNamePctDoneHandler(size_t pos) {
 
 // Checks for digits in port after ':' has been previously found.
 HostState	URIHostParser::PortHandler(size_t pos) {
+	if (DEBUG) cout << "PortHandler: at [" << input[pos] << "]\n";
 	if (input[pos] == '\0')
-		return h_Done;
+		return SkipEOL(skip_char);
 	else if (isdigit(input[pos]))
 		return h_Port;
 	else
 		return h_Invalid; 
 }
+#undef DEBUG // TODO: remove
