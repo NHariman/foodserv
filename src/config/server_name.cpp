@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/08 17:01:08 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/08 17:02:35 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/07/30 16:20:04 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,10 @@ ServerName::ServerName(std::string server_name): _server_name(server_name) {
 }
 
 void ServerName::SplitServerNames(std::string str) {
-	// std::cout << "goes in with: " << str <<std::endl;
 	std::string	tmp = "";
 
-	// std::cout << "str.size: " << str.size() << std::endl;
 	
 	for (size_t i = 0; i < str.size(); i++) {
-		// std::cout << "I : " << i << ':' << str[i] << std::endl;
 		if (!isspace(str[i])) {
 			tmp.push_back(str[i]);
 			if (i == str.size() - 1) {
@@ -34,7 +31,6 @@ void ServerName::SplitServerNames(std::string str) {
 			}
 		}
 		else if (tmp.size() != 0) {
-			// std::cout << "value of tmp: " << tmp << std::endl;
 			_server_name_vector.push_back(tmp);
 			tmp.erase();
 		}

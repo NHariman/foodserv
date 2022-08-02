@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/24 01:27:13 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/01 16:35:41 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ void	NginxConfig::CheckBrackets() {
 	int closed_brackets = 0;
 	int	i = 0;
 
-	// while (_config_file[i] != std::string::npos) {
 	while (_config_file[i]) {
 		if (_config_file[i] == '{')
 			open_brackets++;
@@ -117,7 +116,6 @@ void		NginxConfig::FindServerContexts() {
 	size_t		key_start = 0;
 	size_t		key_end = 0;
 
-	// while (_config_file[i] != std::string::npos) {
 	while (_config_file[i]) {
 		key_start = _config_file.find_first_not_of(" \t\n\v\f\r", i);
 		key_end = _config_file.find_first_of(" \t\n\v\f\r", key_start);
@@ -137,23 +135,6 @@ void		NginxConfig::FindServerContexts() {
 	return ;
 	
 }
-
-// SANNE: a function to print what is in the server blocks vector
-void	NginxConfig::PrintServerContextsVectors() {
-	for (std::vector<ServerContext>::iterator it = _servers.begin(); it != _servers.end(); it++) {
-		std::cout << "\nIn server block print for loop: " << std::endl;
-		std::cout << "PortNumber: " << it->GetIPAddress() << std::endl;
-		std::cout << "IPAddress: " << it->GetPortNumber() << std::endl;
-		// DANGLING POINTER ERROR: 
-		for (std::vector<std::string>::iterator it2 = it->GetServerNameVector().begin(); it2 != it->GetServerNameVector().end(); it2++) {
-			std::cout << "In servername vector printing: " << std::endl;
-			std::cout << *it2 << std::endl;
-		}
-	}
-}
-
-// SANNE: add the functions to select which server block to choose
-
 
 // getters
 std::string NginxConfig::GetConfigFile() const {

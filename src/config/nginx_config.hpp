@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/24 13:58:49 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/01 16:35:53 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,6 @@ class NginxConfig {
 		size_t		GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
 		
-		// SANNE: adding in a function for the server block algorithm
-		// you have a vector full of server blocks _servers,
-		// first print the outcome of this vector?
-		void	PrintServerContextsVectors();
-
 		//exceptions
 		class GetLineFailureException : public std::exception {
 			public:
