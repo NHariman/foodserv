@@ -5,9 +5,10 @@ Server::Server(int port, u_long interface)
 {
     // in here set socket member variable to have the value of an
     // actual socket.
-    _socket = new BindingSocket(AF_INET, SOCK_STREAM, 0, port, interface); // Dont forget to delete NEW
+    std::cout << "IN HERE";
+    _socket = new BindingSocket(AF_UNSPEC, SOCK_STREAM, 0, port, interface); // Dont forget to delete NEW
 
-    launch();
+    // launch();
 }
 
 BindingSocket* Server::getSocket() {

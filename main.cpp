@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/01 16:35:18 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/03 22:22:18 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	main(int ac, const char **av) {
 	}
 	
 	// ServerSelection	chosen_serverblock(input_file.GetServers());
-	// Server servie(80, INADDR_ANY);
+	Server servie(80, INADDR_ANY);
 	
 	return (0);
 }

@@ -17,6 +17,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <iostream>
+#include <netdb.h>
+#include <unistd.h>
 
 #define BACKLOG 3
 
@@ -24,9 +26,12 @@
 class BindingSocket {
 	private:
 		struct	sockaddr_in	_address;
+		struct	addrinfo hints;
+		struct	addrinfo *servinfo;
+		struct	addrinfo *p;
 		int		_socket_fd;
 		int		_connection;
-		int		_listening;
+		// int		_listening;
 
 	private:
 		BindingSocket();
