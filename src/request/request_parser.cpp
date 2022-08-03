@@ -20,6 +20,8 @@ size_t	RequestParser::Parse(char const* buffer) {
 	string	request(buffer);
 
 	_bytes_read = 0;
+	_msg_body.clear();
+	_header_fields.clear();
 	return ParseString(request);
 }
 

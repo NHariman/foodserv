@@ -23,6 +23,8 @@ enum HostState {
 	h_Invalid
 };
 
+// Parses host URI string into uri_host string which it receives as a reference.
+
 class URIHostParser : public StateParser<HostState> {
 	public:
 		// Default constructor

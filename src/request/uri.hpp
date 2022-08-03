@@ -9,7 +9,9 @@
 
 using namespace std;
 
-// Constructs a URI object composed of: scheme, host, path, query.
+// Constructs a URI object composed of: host, path, query.
+// Host and path portion must be parsed in 2 separate calls,
+// as ParseInput only parses either as path or as host (because complete URIs are not )
 // Parses during construction using RequestTargetParser, which throws
 // BadRequestException if an invalid URI is passed.
 
@@ -38,6 +40,10 @@ class URI {
 		void	SetHost(string const& host);
 		void	SetPath(string const& path);
 		void	SetQuery(string const& query);
+
+		// friend class forward declaration allows RequestTargetParser to
+		// access private & protected members of URI.
+		friend class RequestTargetParser;
 
 	private:
 		string	_uri_input;
