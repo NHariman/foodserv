@@ -223,12 +223,23 @@ Source: [3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
 <br/><br/>
 
 ### Content-Length
->  If a message is received without Transfer-Encoding and with either multiple Content-Length header fields having differing field-values or a single Content-Length header field having an invalid value, then the message framing is invalid and the recipient MUST treat it as an unrecoverable error.  If this is a request message, the server MUST respond with a 400 (Bad Request) status code and then close the connection.
+> a Content-Length header field is normally sent in a POST request even when the value is 0 (indicating an empty payload body).  A user agent SHOULD NOT send a Content-Length header field when the request message does not contain a payload body and the method semantics do not anticipate such a body.
+
+Source: [3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2)  
+Method payload semantics: [RFC 7231 4.3](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3)
+
+> [for] multiple Content-Length header fields with field-values consisting of the same decimal value, or a single Content-Length header field with a field value containing a list of identical decimal values (e.g., "Content-Length: 42, 42") [...] the recipient MUST either reject the message as invalid or replace the duplicated field-values with a single valid Content-Length field containing that decimal value prior to determining the message body length or forwarding the message.
+
+Source: [3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2)
+
+>  If a message is received without Transfer-Encoding and with either multiple Content-Length header fields having differing field-values or a single Content-Length header field having an invalid value, then the message framing is invalid and the recipient MUST treat it as an unrecoverable error.  If this is a request message, the server MUST respond with a 400 (Bad Request) status code and then close the connection.  
 
 Source: [3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
-<br/><br/>
 
-### Content-Length:
+> If a valid Content-Length header field is present without Transfer-Encoding, its decimal value defines the expected message body length in octets.  If the sender closes the connection or the recipient times out before the indicated number of octets are received, the recipient MUST consider the message to be incomplete and close the connection.
+
+Source: [3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
+
 > A server MAY reject a request that contains a message body but not a Content-Length by responding with 411 (Length Required).
 
 Source: [3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
