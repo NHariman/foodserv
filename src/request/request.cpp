@@ -7,7 +7,7 @@ Request::Request() : bytes_read(0) {}
 Request::Request(char const* buffer) : bytes_read(0) {
 	RequestParser	parser;
 
-	parser.Parse(*this, buffer);
+	bytes_read = parser.Parse(*this, buffer);
 }
 
 // Destructor
