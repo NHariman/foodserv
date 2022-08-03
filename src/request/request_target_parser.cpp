@@ -75,10 +75,10 @@ void	RequestTargetParser::AfterParseCheck(size_t& pos) {
 void	RequestTargetParser::PushBuffertoField(URIPart part) {
 	if (part == pt_Path) {
 		size_t query_start = buffer.find_first_of("?");
-		_uri->SetPath(buffer.substr(0, query_start));
+		_uri->_path = buffer.substr(0, query_start);
 	}
 	else {
-		_uri->SetQuery(buffer);
+		_uri->_query = buffer;
 	}
 	buffer.clear();
 }
