@@ -14,6 +14,7 @@
 using namespace std;
 
 class Request;
+class HeaderFieldValidator;
 
 enum RequestState {
 	r_RequestLine = 0,
@@ -40,7 +41,7 @@ class RequestParser  : public StateParser<RequestState> {
 	private:
 		RequestLineParser		_request_line_parser;
 		HeaderFieldParser		_header_parser;
-		// HeaderFieldValidator	_header_validator;
+		HeaderFieldValidator	*_header_validator;
 		
 		Request*	_request;
 		size_t		_bytes_read;

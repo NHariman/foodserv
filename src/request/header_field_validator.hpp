@@ -5,8 +5,15 @@
 #include <string>
 #include "exception.hpp"
 #include "request.hpp"
+#include "request_utils.hpp"
 
 using namespace std;
+
+#ifndef PAYLOAD_LIMIT
+#define PAYLOAD_LIMIT 1048576
+#endif
+
+class Request;
 
 enum HeaderStatus {
 	hv_Bad = -1,
@@ -22,12 +29,13 @@ class HeaderFieldValidator {
 		// Destructor
 		~HeaderFieldValidator();
 
-		HeaderStatus	Process(Request const& request);
-		bool 			ValidHost(string host);
-		bool 			ValidTransferEncoding(string host);
-		bool 			ValidContentEncoding(string host);
-		bool 			ValidContentLength(string host);
-		bool 			ValidExpect(string host);
+		HeaderStatus	Process(Request& request);
+
+		bool	ValidHost(string host);
+		bool	ValidExpect(string host);
+		bool	ValidContentEncoding(string host);
+		bool	ValidContentLength(ssize_t& content_length_count, string host);
+		bool	ValidTransferEncoding(ssize_t content_length_count, string host);
 	
 	private:
 		HeaderStatus	_status;
