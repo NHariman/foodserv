@@ -24,6 +24,8 @@ enum HostState {
 };
 
 // Parses host URI string into uri_host string which it receives as a reference.
+// Does not accept comma-delimited list of multiple hosts - split string first
+// before passing to parser.
 
 class URIHostParser : public StateParser<HostState> {
 	public:

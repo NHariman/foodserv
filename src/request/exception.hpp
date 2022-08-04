@@ -31,6 +31,16 @@ class BadRequestException : public exception {
 		string	_error_str;
 };
 
+// Used for: payload size exceeding 1,048,576 bytes (1mb).
+// Should return 414 code.
+// Server may close connection to prevent client from continuing request.
+class PayloadTooLargeException : public exception {
+	public:
+		virtual const char* what() const noexcept override {
+			return ("413: Payload Too Large");
+		}
+};
+
 // Used for: URI exceeding 8192 bytes (8kb).
 // Should return 414 code.
 class URITooLongException : public exception {

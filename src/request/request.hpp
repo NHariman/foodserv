@@ -21,6 +21,7 @@ class Request {
 		~Request();
 
 		size_t	bytes_read; // bytes read of request input
+		ssize_t	content_length; // bytes of payload body
 
 		string		GetMethod() const;
 		string		GetTarget() const;
