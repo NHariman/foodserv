@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/01 16:35:41 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/04 18:05:11 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,6 @@ void		NginxConfig::FindServerContexts() {
 		if (key_start != std::string::npos && key_end != std::string::npos) {
 			i = key_start;
 			if (IsServerContext(_config_file.substr(key_start, key_end - key_start), &i)) {
-				std::cout << "found a ServerContext" << std::endl;
 				this->_amount_server_contexts++;
 				ServerContext server(&i, _config_file);
 				this->_servers.push_back(server);
