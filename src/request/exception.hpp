@@ -4,6 +4,7 @@
 #include <cctype> // isprint
 #include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include "request_utils.hpp"
 
@@ -23,7 +24,7 @@ class BadRequestException : public exception {
 			}
 		}
 
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return _error_str.c_str();
 		}
 
@@ -36,7 +37,7 @@ class BadRequestException : public exception {
 // Server may close connection to prevent client from continuing request.
 class PayloadTooLargeException : public exception {
 	public:
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return ("413: Payload Too Large");
 		}
 };
@@ -45,7 +46,7 @@ class PayloadTooLargeException : public exception {
 // Should return 414 code.
 class URITooLongException : public exception {
 	public:
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return ("414: URI Too Long");
 		}
 };
@@ -54,7 +55,7 @@ class URITooLongException : public exception {
 // Should return 415 code.
 class UnsupportedMediaTypeException : public exception {
 	public:
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return ("415: Unsupported Media Type");
 		}
 };
@@ -63,7 +64,7 @@ class UnsupportedMediaTypeException : public exception {
 // Should return 417 code.
 class ExpectationFailedTypeException : public exception {
 	public:
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return ("417: Expectation Failed");
 		}
 };
@@ -73,7 +74,7 @@ class ExpectationFailedTypeException : public exception {
 // Should return 431 code.
 class RequestHeaderFieldsTooLargeException : public exception {
 	public:
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return ("431: Request Header Fields Too Large");
 		}
 };
@@ -82,7 +83,7 @@ class RequestHeaderFieldsTooLargeException : public exception {
 // Should return 501 code.
 class NotImplementedException : public exception {
 	public:
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return ("501: Not Implemented");
 		}
 };
@@ -91,7 +92,7 @@ class NotImplementedException : public exception {
 // Should return 505 code.
 class HTTPVersionNotSupportedException : public exception {
 	public:
-		virtual const char* what() const noexcept override {
+		virtual const char* what() const throw() {
 			return ("505: HTTP Version Not Supported");
 		}
 };
