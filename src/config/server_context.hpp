@@ -42,7 +42,7 @@ class ServerContext {
 		std::vector<std::string>		_server_name; // changed by sanne
 		std::string						_root;
 		std::vector<std::string>		_index;
-		int								_client_max_body_size;
+		size_t							_client_max_body_size;
 		std::vector<ErrorPage>			_error_page;
 
 		int							IsDirective(std::string directive);
@@ -59,6 +59,8 @@ class ServerContext {
 		ServerContext & operator= (const ServerContext &server_context);
 		~ServerContext(){};
 		
+		// check if set
+		bool						IsSet(std::string key);
 		//getters
 		std::vector<LocationContext>	GetLocationContexts() const;
 		std::pair<in_addr_t, int>	GetListen() const;
@@ -67,7 +69,7 @@ class ServerContext {
 		std::vector<std::string>	GetServerNameVector() const;
 		std::string					GetRoot() const;
 		std::vector<std::string>	GetIndex() const;
-		int							GetClientMaxBodySize() const;
+		size_t						GetClientMaxBodySize() const;
 		std::vector<ErrorPage>		GetErrorPage() const;
 		bool						IsErrorPageSet() const;
 		t_flags_server				GetFlags() const;
@@ -120,6 +122,13 @@ class ServerContext {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Multiple index keys detected in Server block.";
+				}
+		};
+		class InvalidDirectiveSetCheckException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Trying to check if a nonexistent directive has been set in Location block.";
 				}
 		};
 };

@@ -12,7 +12,6 @@ LocationContext::LocationContext() {
 }
 
 LocationContext::LocationContext(std::string data) {
-    std::cerr << "In LocationContext now" << std::endl;
     _check_list.uri = false;
     _check_list.autoindex = false;
     _check_list.root = false;
@@ -68,8 +67,7 @@ LocationContext::LocationContext(LocationContext const& location_context) {
 
 int								LocationContext::IsDirective(std::string directive) {
 	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
-	
-	std::cout << "directive: " << directive << std::endl;
+
     if (_check_list.uri == false) {
 		return 8;
 	}
@@ -84,7 +82,6 @@ void							LocationContext::SetValue(int directive, std::string input) {
 	std::string		value;
 
 	value = TrimValue(input);
-	std::cout << "value: |" << value << "|" << std::endl;
 
 	if (directive == 8) {
 		_check_list.uri = true;
@@ -196,7 +193,6 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
 		ret = IsDirective(data.substr(key_start, key_end - key_start));
 		if (ret == 8) {
-			std::cout << "uri block found" << std::endl;
             SetValue(ret, data.substr(key_start, key_end - key_start));
 			value_end = data.find_first_of('{', key_end);
 		}
@@ -226,7 +222,7 @@ std::vector<std::string>			LocationContext::GetIndex() const {
     return _index;
 }
 
-int									LocationContext::GetClientMaxBodySize() const {
+size_t								LocationContext::GetClientMaxBodySize() const {
     return _client_max_body_size;
 }
 

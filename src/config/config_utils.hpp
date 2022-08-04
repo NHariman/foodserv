@@ -3,11 +3,19 @@
 #include <string>
 #include <vector>
 
-long	ft_atol(std::string value);
+size_t	ft_atosize_t(std::string value);
 std::string	TrimValue(std::string value);
 std::vector<std::string>	ToStringVector(std::string str);
 bool	IsNumber(std::string input);
 bool	IsUri(std::string input);
 size_t	CountArguments(std::string input);
+
+class NegativeNumberException : public std::exception
+{
+	public:
+		const char *what() const throw() {
+			return "ERROR! Negative number detected.";
+		}
+};
 
 #endif

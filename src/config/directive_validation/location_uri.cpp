@@ -2,7 +2,7 @@
 
 LocationUri::LocationUri() : _is_empty(true) {};
 
-LocationUri::LocationUri(std::string input) {
+LocationUri::LocationUri(std::string input) : _uri(input) {
 	if (input.compare("") == 0)
 		throw MissingArgumentsException();
 	if (IsUri(input) == false)
@@ -11,9 +11,7 @@ LocationUri::LocationUri(std::string input) {
 		_is_directory = true;
 	else
 		_is_directory = false;
-	_uri = input;
 	_is_empty = false;
-	// validate uri through michelle's class.
 }
 
 LocationUri::LocationUri(LocationUri const &obj) {
@@ -21,7 +19,7 @@ LocationUri::LocationUri(LocationUri const &obj) {
 	_is_directory = obj.IsDirectory();
 }
 
-LocationUri&    LocationUri::operator=(LocationUri const &obj) {
+LocationUri&	LocationUri::operator=(LocationUri const &obj) {
 	if (this == &obj)
 		return (*this);
 	_uri = obj.GetUri();
@@ -29,14 +27,18 @@ LocationUri&    LocationUri::operator=(LocationUri const &obj) {
 	return (*this);
 }
 
-std::string     LocationUri::GetUri() const {
+std::string				LocationUri::GetUri() const {
+	return _uri.GetParsedURI();
+}
+
+URI				LocationUri::GetURIClass() const {
 	return _uri;
 }
 
-bool            LocationUri::IsDirectory() const {
+bool			LocationUri::IsDirectory() const {
 	return _is_directory;
 }
 
-bool            LocationUri::IsEmpty() const {
+bool			LocationUri::IsEmpty() const {
 	return _is_empty;
 }

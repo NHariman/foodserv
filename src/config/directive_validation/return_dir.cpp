@@ -19,7 +19,7 @@ ReturnDir::ReturnDir(std::string input) {
 		if (IsNumber(key) == false && set == 0)
 			throw InvalidReturnCodeException();
 		if (set == 0) {
-			_code = ft_atol(key);
+			_code = ft_atosize_t(key);
 			set++;
 		}
 		else if (set > 2)

@@ -30,7 +30,7 @@ class LocationContext {
 		bool						_autoindex;
 		std::string					_root;
 		std::vector<std::string>	_index;
-		int							_client_max_body_size;
+		size_t						_client_max_body_size;
 		std::vector<ErrorPage>		_error_page;
 		std::string					_fastcgi_pass;
 		AllowedMethods				_allowed_methods;
@@ -56,7 +56,7 @@ class LocationContext {
 		bool						GetAutoindex() const;
 		std::string					GetRoot() const;
 		std::vector<std::string>	GetIndex() const;
-		int							GetClientMaxBodySize() const;
+		size_t						GetClientMaxBodySize() const;
 		std::string					GetFastCGIPass() const;
 		std::vector<ErrorPage>		GetErrorPage() const;
 		AllowedMethods				GetAllowedMethods() const;

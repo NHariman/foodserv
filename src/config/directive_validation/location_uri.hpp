@@ -12,11 +12,12 @@
 
 #include <string>
 #include "../config_utils.hpp"
+#include "../../request/uri.hpp"
 
 class LocationUri {
 	private:
 		bool		_is_empty;
-		std::string _uri;
+		URI			 _uri;
 		bool		_is_directory;
 
 	public:
@@ -27,6 +28,7 @@ class LocationUri {
 		LocationUri&   operator= (LocationUri const &obj);
 
 		std::string	GetUri() const;
+		URI			GetURIClass() const;
 		bool		IsDirectory() const;
 		bool        IsEmpty() const;
 		class BadUriException : public std::exception

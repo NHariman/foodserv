@@ -99,7 +99,6 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
 int			ServerContext::IsDirective(std::string directive){
 	const std::string	directives[] = {"location", "listen", "server_name", "root", "index", "client_max_body_size", "error_page"};
 	
-	std::cout << "directive: " << directive << std::endl;
 	int	is_directive = std::find(directives, directives + 7, directive) - directives;
 	if (is_directive < 0 || is_directive > 6)
 		throw InvalidDirectiveException();
@@ -112,7 +111,6 @@ void				ServerContext::SetValue(int directive, std::string value){
 	std::string		trimmed_value;
 
 	trimmed_value = TrimValue(value);
-	std::cout << "value: |" << trimmed_value << "|" << std::endl;
 
 	if (directive == 0) {
 		_check_list.location_context = true;
@@ -253,7 +251,6 @@ void          ServerContext::FindDirectiveValuePairs(size_t *start_position, std
 		key_end = config_file.find_first_of(" \t\n\v\f\r", key_start);
 		ret = IsDirective(config_file.substr(key_start, key_end - key_start));
 		if (ret == 0) {
-			std::cout << "location block found" << std::endl;
 			value_end = FindLocationContextEnd(config_file, key_end); //config_file.find_first_of('}', key_end);
 			SetValue(ret, config_file.substr(key_end, value_end - key_end + 1));
 		}
@@ -266,6 +263,32 @@ void          ServerContext::FindDirectiveValuePairs(size_t *start_position, std
 	}
 	*start_position = i;
 	CheckListVerification();
+}
+
+// check if is set
+bool						ServerContext::IsSet(std::string directive) {
+	const std::string	directives[] = {"location_context", "listen", "server_name", "root", "index", "client_max_body_size", "error_page"};
+
+	int	is_directive = std::find(directives, directives + 7, directive) - directives;
+	if (is_directive < 0 || is_directive > 6)
+		throw InvalidDirectiveSetCheckException();
+	switch (is_directive) {
+		case 0:
+			return _check_list.location_context;
+		case 1:
+			return _check_list.listen;
+		case 2:
+			return _check_list.server_name;
+		case 3:
+			return _check_list.root;
+		case 4:
+			return _check_list.index;
+		case 5:
+			return _check_list.client_max_body_size;
+		case 6:
+			return _check_list.error_page;
+	}
+	throw InvalidDirectiveException();
 }
 
 //getters
@@ -297,7 +320,7 @@ std::vector<std::string>	ServerContext::GetIndex() const {
     return _index;
 }
 
-int							ServerContext::GetClientMaxBodySize() const {
+size_t						ServerContext::GetClientMaxBodySize() const {
     return _client_max_body_size;
 }
 
