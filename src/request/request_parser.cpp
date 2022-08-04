@@ -4,7 +4,11 @@
 
 // Default constructor
 RequestParser::RequestParser()
-	: StateParser(r_RequestLine), _request(NULL), _bytes_read(0) {}
+	: StateParser(r_RequestLine), _request(NULL), _bytes_read(0) {
+	HeaderFieldValidator header_validator;
+
+	_header_validator = &header_validator;
+}
 
 // Destructor
 RequestParser::~RequestParser() {}
@@ -104,8 +108,17 @@ RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
-	// Check parsed headers if message is expected
-	return r_Done;
+	int ret_code = _header_validator->Process(*_request);
+	switch (ret_code) {
+		case hv_OK:
+			return r_Done;
+		case hv_MessageExpected:
+			return r_MsgBody;
+		case hv_MessageChunked:
+			return r_Chunked;
+		default:
+			return r_Invalid;
+	}
 }
 
 #undef DEBUG // REMOVE

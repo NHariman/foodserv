@@ -1,13 +1,13 @@
 #include "request.hpp"
 
 // Default constructor
-Request::Request() : bytes_read(0) {}
+Request::Request() : bytes_read(0), content_length(-1) {}
 
 // C-string constructor
-Request::Request(char const* buffer) : bytes_read(0) {
+Request::Request(char const* buffer) : bytes_read(0), content_length(-1) {
 	RequestParser	parser;
 
-	parser.Parse(*this, buffer);
+	bytes_read = parser.Parse(*this, buffer);
 }
 
 // Destructor

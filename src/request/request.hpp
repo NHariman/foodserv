@@ -17,14 +17,11 @@ class Request {
 		Request();
 		// C-string constructor
 		explicit Request(char const* buffer);
-
 		// Destructor
 		~Request();
 
-		string	msg_body;
-		size_t	bytes_read;
-		struct RequestLine	request_line;
-		map<string, string>	header_fields;
+		size_t	bytes_read; // bytes read of request input
+		ssize_t	content_length; // bytes of payload body
 
 		string		GetMethod() const;
 		string		GetTarget() const;
@@ -32,6 +29,15 @@ class Request {
 		string		GetVersion() const;
 		string		GetField(string field_name) const;
 		string		GetMessageBody() const;
+	
+		// friend class forward declaration allows RequestParser to
+		// access private & protected members of Request.
+		friend class RequestParser;
+	
+	private:
+		struct RequestLine	request_line;
+		map<string, string>	header_fields;
+		string				msg_body;
 };
 
 #endif /* REQUEST_HPP */
