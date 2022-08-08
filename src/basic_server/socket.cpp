@@ -26,6 +26,7 @@ BindingSocket::BindingSocket(int domain, int service, int protocol, int port, u_
 
 	// looping through results and bind to the first possible one
 	for (p = servinfo; p != NULL; p = p->ai_next) {
+        memset(&p, 0, sizeof(p));
 		if ((_socket_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
 			perror("socket");
 			continue;
@@ -45,6 +46,7 @@ BindingSocket::BindingSocket(int domain, int service, int protocol, int port, u_
         freeaddrinfo(servinfo);
     }
 
+    // CONTINUE HERE
 
     // testConnection(_socket_fd);
 
@@ -73,8 +75,8 @@ int BindingSocket::connectToNetwork(int sock, struct sockaddr_in address) {
 }
 
 struct sockaddr_in BindingSocket::getAddress() {
-    // return _address;
-    return ();
+    return _address;
+    // return (struct sockaddr_in*)&p->ai_addr;
 }
 
 int     BindingSocket::getSocketID() {
