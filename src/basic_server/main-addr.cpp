@@ -1,4 +1,4 @@
-#include "getaddrinfo.Hpp"
+#include "getaddrinfo.hpp"
 
 int	main() {
 	// Socket	ipv4("127.0.0.1", "80");

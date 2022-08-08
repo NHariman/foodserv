@@ -30,6 +30,8 @@ class Socket {
 		const char*	_portnumber;
 		// check if this works for accept address
 		struct addrinfo*	_record;
+		fd_set		_master_set;
+		fd_set		_working_set;
 
 		Socket();
 
@@ -66,9 +68,9 @@ class Socket {
 				if (_socket_fd == -1)
 					continue ; // go to the next iteration
 
-				// if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) < 0) {
-				// 	perror("fcntl");
-				// }
+				if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) < 0) {
+					perror("fcntl");
+				}
 
 				if (setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
 					perror("setsockopt");
@@ -81,6 +83,7 @@ class Socket {
 
 			if (_record == NULL) {
 				std::cout << "Failed to create and bind a socket." << std::endl;
+				close (_socket_fd);
 				exit (EXIT_FAILURE);
 			}
 
@@ -95,49 +98,60 @@ class Socket {
 			std::cout << "max connections for listen: " << SOMAXCONN << std::endl;
 			if (listen(_socket_fd, SOMAXCONN) == -1) {
 				perror("listen");
+				close (_socket_fd);
 				exit (EXIT_FAILURE);
 			}
 
-			// now accept incoming connections
-			while (1) {
+			// initializing fd_set
+			FD_ZERO(&_master_set);
+			// why this
+			int max_sd = _socket_fd;
+			FD_SET(_socket_fd, &_master_set);
 
+
+			// now accept incoming connections
+			// or for incoming data on any of the connected sockets
+			while (1) {
+				
+				memcpy(&_working_set, &_master_set, sizeof(_master_set));
+				select(max_sd + 1, &_working_set, NULL, NULL, NULL);
+				
 				std::cout << "\n+++++++ Waiting for new connection ++++++++\n" << std::endl;
 
-				int addrlen = sizeof(_record);
-				int accept_fd;
+				// int addrlen = sizeof(_record);
+				// int accept_fd;
 				
-				if ((accept_fd = accept(_socket_fd, (struct sockaddr*)&_record, (socklen_t*)&addrlen)) < 0) {
-					perror("accept");
-					exit (EXIT_FAILURE);
-				}
-
+				// if ((accept_fd = accept(_socket_fd, (struct sockaddr*)&_record, (socklen_t*)&addrlen)) < 0) {
+				// 	perror("accept");
+				// 	exit (EXIT_FAILURE);
+				// }
 
 				// if (fcntl(accept_fd, F_SETFL, O_NONBLOCK) < 0) {
 				// 	perror("fcntl");
 				// 	exit (EXIT_FAILURE);
 				// }
 
-				char buf[30000];
-				// memset(buffer, 0, sizeof(buffer));
+				// char buf[30000];
+				// // memset(buffer, 0, sizeof(buffer));
 
-				int bytes_send = send(accept_fd, html, sizeof(html), 0);
-				std::cout << html << std::endl;
+				// int bytes_send = send(accept_fd, html, sizeof(html), 0);
+				// // std::cout << html << std::endl;
 
-				// this has to be a whole function on its own
-				if (bytes_send != sizeof(html)) {
-					std::cout << "Not the whole message has been send over" << std::endl;
-					if (bytes_send == -1) {
-						perror("send");
-						exit (EXIT_FAILURE);
-					}
-				}
+				// // this has to be a whole function on its own
+				// if (bytes_send != sizeof(html)) {
+				// 	std::cout << "Not the whole message has been send over" << std::endl;
+				// 	if (bytes_send == -1) {
+				// 		perror("send");
+				// 		exit (EXIT_FAILURE);
+				// 	}
+				// }
 
-				write(accept_fd, html, strlen(html));
+				// write(accept_fd, html, strlen(html));
 
 
-				recv(accept_fd, buf, sizeof(buf), 0);
-				std::cout << "THIS IS IN THE REQUEST:\n" << buf << std::endl;
-				close(accept_fd);
+				// recv(accept_fd, buf, sizeof(buf), 0);
+				// std::cout << "THIS IS IN THE REQUEST:\n" << buf << std::endl;
+				// close(accept_fd);
 			}
 			
 
