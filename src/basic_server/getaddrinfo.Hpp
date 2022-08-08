@@ -90,6 +90,8 @@ class Socket {
 		}
 
 		void	ListenAndAccept() {
+			struct sockaddr_storage _accept_addrxw;
+
 			std::cout << "max connections for listen: " << SOMAXCONN << std::endl;
 			if (listen(_socket_fd, SOMAXCONN) == -1) {
 				perror("listen");
@@ -109,14 +111,32 @@ class Socket {
 					exit (EXIT_FAILURE);
 				}
 
-				// fcntl(accept_fd, F_SETFL, O_NONBLOCK);
 
-				char buffer[30000];
-				memset(buffer, 0, sizeof(buffer));
-				long valread = read(accept_fd , buffer, 30000);
-				std::cout << "THIS IS IN THE RESPONSE:\n " << buffer << std::endl;
+				// if (fcntl(accept_fd, F_SETFL, O_NONBLOCK) < 0) {
+				// 	perror("fcntl");
+				// 	exit (EXIT_FAILURE);
+				// }
+
+				char buf[30000];
+				// memset(buffer, 0, sizeof(buffer));
+
+				int bytes_send = send(accept_fd, html, sizeof(html), 0);
+				std::cout << html << std::endl;
+
+				// this has to be a whole function on its own
+				if (bytes_send != sizeof(html)) {
+					std::cout << "Not the whole message has been send over" << std::endl;
+					if (bytes_send == -1) {
+						perror("send");
+						exit (EXIT_FAILURE);
+					}
+				}
+
 				write(accept_fd, html, strlen(html));
 
+
+				recv(accept_fd, buf, sizeof(buf), 0);
+				std::cout << "THIS IS IN THE REQUEST:\n" << buf << std::endl;
 				close(accept_fd);
 			}
 			
