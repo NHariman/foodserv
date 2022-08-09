@@ -23,5 +23,6 @@ bool	PrecededBy(string const& read_buf, char c);
 void	NormalizeString(int (*convert)(int), string& s, size_t start);
 string	EncodePercent(string const& s);
 string	DecodePercent(string const& s);
+size_t	MBToBytes(size_t size_mb);
 
 #endif /* REQUEST_UTILS */

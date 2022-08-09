@@ -5,6 +5,7 @@
 #include <string>
 #include "request_parser.hpp"
 #include "request_line_parser.hpp"
+#include "../config/nginx_config.hpp"
 
 using namespace std;
 
@@ -16,12 +17,12 @@ class Request {
 		// Default constructor
 		Request();
 		// C-string constructor
-		explicit Request(char const* buffer);
+		explicit Request(NginxConfig* config, char const* buffer);
 		// Destructor
 		~Request();
 
 		size_t	bytes_read; // bytes read of request input
-		ssize_t	content_length; // bytes of payload body
+		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
 
 		string		GetMethod() const;
 		string		GetTarget() const;

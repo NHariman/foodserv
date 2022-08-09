@@ -33,6 +33,8 @@ class RequestParser  : public StateParser<RequestState> {
 	public:
 		// Default constructor
 		RequestParser();
+		// Config constructor
+		RequestParser(NginxConfig *config);
 		// Destructor
 		~RequestParser();
 
@@ -42,8 +44,9 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestLineParser		_request_line_parser;
 		HeaderFieldParser		_header_parser;
 		HeaderFieldValidator	*_header_validator;
+		NginxConfig				*_config;
 		
-		Request*	_request;
+		Request		*_request;
 		size_t		_bytes_read;
 
 		RequestState	RequestLineHandler(size_t pos);

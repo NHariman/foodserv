@@ -93,29 +93,6 @@ Source: [Section 4.1.3](https://datatracker.ietf.org/doc/html/rfc7230#section-4.
 <br/><br/>
 
 
-## Header Fields
-
-### Multiply-defined header fields:
->  A sender MUST NOT generate multiple header fields with the same field name in a message unless either the entire field value for that header field is defined as a comma-separated list [i.e., #(values)] or the header field is a well-known exception (as noted below).  
-
-> In practice, the "Set-Cookie" header field ([RFC6265]) often appears multiple times in a response message and does not use  list syntax, violating the above requirements on multiple header fields with the same name.  Since it cannot be combined into a single field-value, recipients ought to handle "Set-Cookie" as a special case while processing header fields.
-
-Source: [Section 3.2.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.2)
-<br/><br/>
-
-### Content-Length not reached:
-> If the final response to the last request on a connection has been completely received and there remains additional data to read, a user agent MAY discard the remaining data or attempt to determine if that data belongs as part of the prior response body, which might be the case if the prior message's Content-Length value is incorrect.  A client MUST NOT process, cache, or forward such extra data as a separate response, since such behavior would be vulnerable to cache poisoning.
-
-Source: [Section 3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
-<br/><br/>
-
-### Content-Length:
-> A sender MUST NOT send a Content-Length header field in any message that contains a Transfer-Encoding header field.
-
-Source: [Section 3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2)
-<br/><br/>
-
-
 ## Formatting
 
 ### Request-line formatting:
@@ -180,6 +157,29 @@ Source: [Section 3.1.1](https://datatracker.ietf.org/doc/html/rfc7230#section-3.
 >  A server that receives a request header field, or set of fields, larger than it wishes to process MUST respond with an appropriate 4xx (Client Error) status code.  Ignoring such header fields would increase the server's vulnerability to request smuggling attacks.  
 
 Source: [Section 3.2.5](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.5)
+<br/><br/>
+
+
+## Header Fields
+
+### Multiply-defined header fields:
+>  A sender MUST NOT generate multiple header fields with the same field name in a message unless either the entire field value for that header field is defined as a comma-separated list [i.e., #(values)] or the header field is a well-known exception (as noted below).  
+
+> In practice, the "Set-Cookie" header field ([RFC6265]) often appears multiple times in a response message and does not use  list syntax, violating the above requirements on multiple header fields with the same name.  Since it cannot be combined into a single field-value, recipients ought to handle "Set-Cookie" as a special case while processing header fields.
+
+Source: [Section 3.2.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.2)
+<br/><br/>
+
+### Content-Length not reached:
+> If the final response to the last request on a connection has been completely received and there remains additional data to read, a user agent MAY discard the remaining data or attempt to determine if that data belongs as part of the prior response body, which might be the case if the prior message's Content-Length value is incorrect.  A client MUST NOT process, cache, or forward such extra data as a separate response, since such behavior would be vulnerable to cache poisoning.
+
+Source: [Section 3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
+<br/><br/>
+
+### Content-Length:
+> A sender MUST NOT send a Content-Length header field in any message that contains a Transfer-Encoding header field.
+
+Source: [Section 3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2)
 <br/><br/>
 
 

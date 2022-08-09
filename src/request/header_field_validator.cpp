@@ -4,21 +4,22 @@ HeaderFieldValidator::HeaderFieldValidator() : _status(hv_OK) {}
 
 HeaderFieldValidator::~HeaderFieldValidator() {}
 
-HeaderStatus	HeaderFieldValidator::Process(Request& request) {
+HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request) {
 	_status = hv_OK;
+
 	if (ValidHost(request.GetField("host"))
 			&& ValidExpect(request.GetField("expect"))
 			&& ValidContentEncoding(request.GetField("content-encoding"))
 			&& ValidTransferEncoding(request.content_length,
 										request.GetField("transfer-encoding"))
-			&& ValidContentLength(request.content_length,
-									request.GetField("content-length")))
+			&& ValidContentLength(config, request)
+			&& ValidMethod(config, request))
 		return _status;
 	return hv_Bad;
 }
 
 // Only exactly 1 Host definition is accepted.
-bool HeaderFieldValidator::ValidHost(string host) {
+bool	HeaderFieldValidator::ValidHost(string host) {
 	if (host == NO_VAL)
 		throw BadRequestException("Host header mandatory");
 	try {
@@ -35,7 +36,7 @@ bool HeaderFieldValidator::ValidHost(string host) {
 }
 
 // Only accepts "100-continue" for Expect header.
-bool HeaderFieldValidator::ValidExpect(string expect) {
+bool	HeaderFieldValidator::ValidExpect(string expect) {
 	if (expect != NO_VAL && expect != "100-continue")
 		throw ExpectationFailedTypeException();
 	else
@@ -43,7 +44,7 @@ bool HeaderFieldValidator::ValidExpect(string expect) {
 }
 
 // Does not accept any definition of Content-Encoding header.
-bool HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
+bool	HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
 	if (content_encoding != NO_VAL)
 		throw UnsupportedMediaTypeException();
 	else
@@ -51,7 +52,7 @@ bool HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
 }
 
 // If Transfer-Encoding is define, only "chunked" value is accepted.
-bool HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
+bool	HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
 													string transfer_encoding) {
 	if (transfer_encoding != NO_VAL) {
 		// if Content-Length was also defined
@@ -68,35 +69,56 @@ bool HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
 }
 
 // Used by ValidContentLength to check for valid values.
-static bool	ValidContentLengthValue(ssize_t& content_length_count,
-												string content_length) {
+static void	CheckContentLengthValue(NginxConfig* config,
+									Request& request) {
+	string	content_length = request.GetField("content-length");
+	string	host = request.GetField("host");
+	string	target = request.GetTarget();
+
 	// non-digit value
 	if (!IsValidString(isdigit, content_length))
-		return false;
+		throw BadRequestException("Invalid Content-Length value");
 
 	// if invalid value
-	content_length_count = std::stoll(content_length);
-	if (content_length_count < 0 || content_length_count > PAYLOAD_LIMIT)
-		return false;
+	request.content_length = std::stoll(content_length);
+	size_t	limit = MBToBytes(config->GetMaxBodySize(host, target));
+	
+	if (request.content_length < 0 || request.content_length > limit)
+		throw BadRequestException("Invalid Content-Length value");
+}
 
-	return true;
+// Checks if multiple values defined for Content-Length.
+static void	CheckForMultipleValues(string content_length) {
+	if (content_length.find(',') != string::npos)
+		throw BadRequestException(
+			"Cannot have multiple Content-Length values");
+}
+
+// Checks if Transfer-Encoding & Content-Length are both defined.
+static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
+	if (status == hv_MessageChunked)
+		throw BadRequestException(
+			"Cannot have both Content-Length and Transfer-Encoding headers");
 }
 
 // Only exactly 1 Content-Length definition is accepted.
-bool HeaderFieldValidator::ValidContentLength(ssize_t& content_length_count,
-												string content_length) {
+bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
+													Request& request) {
+	string	content_length = request.GetField("content-length");
+
 	if (content_length != NO_VAL) {
-		// if Transfer-Encoding was also defined
-		if (_status == hv_MessageChunked)
-			throw BadRequestException(
-				"Cannot have both Content-Length and Transfer-Encoding headers");
-		// if multiple values
-		else if (content_length.find(',') != string::npos)
-			throw BadRequestException(
-				"Cannot have multiple Content-Length values");
-		else if (!ValidContentLengthValue(content_length_count, content_length))
-			throw BadRequestException("Invalid Content-Length value");
+		CheckIfTransferEncodingDefined(_status);
+		CheckForMultipleValues(content_length);
+		CheckContentLengthValue(config, request);			
 		_status = hv_MessageExpected;
 	}
 	return true;
+}
+
+bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
+	string	host = request.GetField("host");
+	string	target = request.GetTarget();
+	string	method = request.GetMethod();
+
+	return config->IsAllowedMethod(host, target, method);
 }

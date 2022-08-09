@@ -1,11 +1,12 @@
 #include "request.hpp"
 
-// Default constructor
+// Default constructor // TODO: Review use/removal
 Request::Request() : bytes_read(0), content_length(-1) {}
 
 // C-string constructor
-Request::Request(char const* buffer) : bytes_read(0), content_length(-1) {
-	RequestParser	parser;
+Request::Request(NginxConfig* config, char const* buffer)
+		: bytes_read(0), content_length(-1) {
+	RequestParser	parser(config);
 
 	bytes_read = parser.Parse(*this, buffer);
 }

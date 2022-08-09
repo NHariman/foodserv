@@ -2,9 +2,20 @@
 
 #define DEBUG 0 // TODO: REMOVE
 
-// Default constructor
+// Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
 	: StateParser(r_RequestLine), _request(NULL), _bytes_read(0) {
+	HeaderFieldValidator header_validator;
+
+	_header_validator = &header_validator;
+}
+
+// Config constructor
+RequestParser::RequestParser(NginxConfig *config)
+		:	StateParser(r_RequestLine),
+			_request(NULL),
+			_bytes_read(0),
+			_config(config) {
 	HeaderFieldValidator header_validator;
 
 	_header_validator = &header_validator;
@@ -108,7 +119,7 @@ RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
-	int ret_code = _header_validator->Process(*_request);
+	int ret_code = _header_validator->Process(_config, *_request);
 	switch (ret_code) {
 		case hv_OK:
 			return r_Done;

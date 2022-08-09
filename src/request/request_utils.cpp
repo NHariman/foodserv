@@ -107,3 +107,7 @@ string	DecodePercent(string const& s) {
 	new_s += c;
 	return new_s;
 } 
+
+size_t	MBToBytes(size_t size_mb) {
+	return size_mb * 1048576;
+}
