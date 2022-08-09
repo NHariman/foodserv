@@ -10,6 +10,7 @@
 using namespace std;
 
 class Request;
+class NginxConfig;
 
 enum HeaderStatus {
 	hv_Bad = -1,

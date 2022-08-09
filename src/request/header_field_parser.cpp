@@ -60,10 +60,10 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 	skip_char = false;
 	buffer.clear();
 	switch (c) {
-		case '\0':
+		case '\0': case '\n':
 			return f_Done;
-		case '\n':
-			return f_Start;
+		// case '\n':
+		// 	return f_Start;
 		case '\r':
 			skip_char = true;
 			return f_ValueEnd;

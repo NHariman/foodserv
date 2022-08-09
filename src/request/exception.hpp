@@ -32,8 +32,17 @@ class BadRequestException : public exception {
 		string	_error_str;
 };
 
+// Used for: request containing message body but no Content-Length header.
+// Should return 411 code.
+class LengthRequiredException : public exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("411: Length Required");
+		}
+};
+
 // Used for: payload size exceeding 1,048,576 bytes (1mb).
-// Should return 414 code.
+// Should return 413 code.
 // Server may close connection to prevent client from continuing request.
 class PayloadTooLargeException : public exception {
 	public:

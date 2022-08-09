@@ -67,31 +67,6 @@ Source: [Section 3](https://www.rfc-editor.org/rfc/rfc7230#section-3)
 Source: [Section 3.2.4](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.4)
 <br/><br/>
 
-### Chunked message decoding:
->  A process for decoding the chunked transfer coding can be represented in pseudo-code as:
-
-	length := 0
-	read chunk-size, chunk-ext (if any), and CRLF
-	while (chunk-size > 0) {
-	  read chunk-data and CRLF
-	  append chunk-data to decoded-body
-	  length := length + chunk-size
-	  read chunk-size, chunk-ext (if any), and CRLF
-	}
-	read trailer field
-	while (trailer field is not empty) {
-	  if (trailer field is allowed to be sent in a trailer) {
-		  append trailer field to existing header fields
-	  }
-	  read trailer-field
-	}
-	Content-Length := length
-	Remove "chunked" from Transfer-Encoding
-	Remove Trailer from existing header fields.  
-
-Source: [Section 4.1.3](https://datatracker.ietf.org/doc/html/rfc7230#section-4.1.3)
-<br/><br/>
-
 
 ## Formatting
 
@@ -170,16 +145,55 @@ Source: [Section 3.2.5](https://datatracker.ietf.org/doc/html/rfc7230#section-3.
 Source: [Section 3.2.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.2)
 <br/><br/>
 
+### Content-Length:
+> A sender MUST NOT send a Content-Length header field in any message that contains a Transfer-Encoding header field.
+
+> For messages that do not include a payload body, the Content-Length indicates the size of the selected representation (Section 3 of [RFC7231]).
+
+Source: [Section 3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2)
+<br/><br/>
+
 ### Content-Length not reached:
 > If the final response to the last request on a connection has been completely received and there remains additional data to read, a user agent MAY discard the remaining data or attempt to determine if that data belongs as part of the prior response body, which might be the case if the prior message's Content-Length value is incorrect.  A client MUST NOT process, cache, or forward such extra data as a separate response, since such behavior would be vulnerable to cache poisoning.
 
 Source: [Section 3.3.3](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.3)
 <br/><br/>
 
-### Content-Length:
-> A sender MUST NOT send a Content-Length header field in any message that contains a Transfer-Encoding header field.
+## Chunked message
 
-Source: [Section 3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.3.2)
+### Chunked message decoding:
+>  A process for decoding the chunked transfer coding can be represented in pseudo-code as:
+
+	length := 0
+	read chunk-size, chunk-ext (if any), and CRLF
+	while (chunk-size > 0) {
+	  read chunk-data and CRLF
+	  append chunk-data to decoded-body
+	  length := length + chunk-size
+	  read chunk-size, chunk-ext (if any), and CRLF
+	}
+	read trailer field
+	while (trailer field is not empty) {
+	  if (trailer field is allowed to be sent in a trailer) {
+		  append trailer field to existing header fields
+	  }
+	  read trailer-field
+	}
+	Content-Length := length
+	Remove "chunked" from Transfer-Encoding
+	Remove Trailer from existing header fields.  
+
+Source: [Section 4.1.3](https://datatracker.ietf.org/doc/html/rfc7230#section-4.1.3)
+<br/><br/>
+
+### Chunked trailers:
+>  The trailer fields are identical to header fields, except they are sent in a chunked trailer instead of the message's header section.  
+
+> A sender MUST NOT generate a trailer that contains a field  necessary for message framing, routing, request modifiers,  authentication, response control data , or determining how to process the payload.  
+
+> When a chunked message containing a non-empty trailer is received the recipient MAY process the fields (aside from those forbidden above) as if they were appended to the message's header section.  A recipient MUST ignore (or consider as an error) any fields that are forbidden to be sent in a trailer, since processing them as if they were present in the header section might bypass external security filters.
+
+Source: [Section 4.1.2](https://datatracker.ietf.org/doc/html/rfc7230#section-4.1.2)
 <br/><br/>
 
 
@@ -272,10 +286,21 @@ Source: [Section 3.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-3.
 Source: [Section 4.1.2](https://datatracker.ietf.org/doc/html/rfc7230#section-4.1.2)
 <br/><br/>
 
-### :
->  .  
 
-Source: []()
+# Connection Management
+
+### Persistence:
+> HTTP/1.1 defaults to the use of "persistent connections", allowing multiple requests and responses to be carried over a single connection.  The "close" connection option is used to signal that a connection will not persist after the current request/response.  
+
+> In order to remain persistent, all messages on a connection need to have a self-defined message length (i.e., one not defined by closure of the connection), as described in Section 3.3.  A server MUST read the entire request message body or close the connection after sending its response, since otherwise the remaining data on a persistent connection would be misinterpreted as the next request.  
+
+Source: [Section 6.3](https://datatracker.ietf.org/doc/html/rfc7230#section-6.3)
+<br/><br/>
+
+### Pipelining:
+> A client that supports persistent connections MAY "pipeline" its requests (i.e., send multiple requests without waiting for each response).  A server MAY process a sequence of pipelined requests in parallel if they all have safe methods (**GET is only one our server accepts** - Section 4.2.1 of [RFC7231]), but it MUST send the corresponding responses in the same order that the requests were received.  
+
+Source: [Section 6.3.2](https://datatracker.ietf.org/doc/html/rfc7230#section-6.3.2)
 <br/><br/>
 
 ### :

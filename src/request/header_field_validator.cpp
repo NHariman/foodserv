@@ -59,7 +59,7 @@ bool	HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
 		if (content_length_count != -1)
 			throw BadRequestException(
 				"Cannot have both Content-Length and Transfer-Encoding headers");
-		if (transfer_encoding == "chunked")
+		if (transfer_encoding == "chunked") // TODO: check if method allows for chunked?
 			_status = hv_MessageChunked;
 		// if anything other than "chunked" encoding
 		else
@@ -67,6 +67,22 @@ bool	HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
 	}
 	return true;
 }
+
+// Used by ValidContentLength to check if Content-Length
+// (and therefore presence of payload body) matches method semantics.
+// Of server-allowed methods, only POST is accepted here
+// (and is actually expected, even if 0 for empty payload body).
+static void	CheckMethodSemantics(string method) {
+	if (method != "POST")
+		throw BadRequestException(
+			"Method semantics does not support payload body");
+}
+
+static size_t GetMaxBodySize(string host, string target) {
+	(void)host, (void)target;
+
+	return 1;
+} // TODO: remove once config method implemented
 
 // Used by ValidContentLength to check for valid values.
 static void	CheckContentLengthValue(NginxConfig* config,
@@ -81,9 +97,11 @@ static void	CheckContentLengthValue(NginxConfig* config,
 
 	// if invalid value
 	request.content_length = std::stoll(content_length);
-	size_t	limit = MBToBytes(config->GetMaxBodySize(host, target));
+	// size_t	limit = MBToBytes(config->GetMaxBodySize(host, target));
+	(void)config;
+	size_t	limit = MBToBytes(GetMaxBodySize(host, target));
 	
-	if (request.content_length < 0 || request.content_length > limit)
+	if (request.content_length < 0 || (size_t)request.content_length > limit)
 		throw BadRequestException("Invalid Content-Length value");
 }
 
@@ -101,7 +119,8 @@ static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
 			"Cannot have both Content-Length and Transfer-Encoding headers");
 }
 
-// Only exactly 1 Content-Length definition is accepted.
+// Only exactly 1 Content-Length definition is accepted
+// and only for POST requests.
 bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 													Request& request) {
 	string	content_length = request.GetField("content-length");
@@ -109,16 +128,24 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 	if (content_length != NO_VAL) {
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
-		CheckContentLengthValue(config, request);			
+		CheckContentLengthValue(config, request);	
+		CheckMethodSemantics(request.GetMethod());
 		_status = hv_MessageExpected;
 	}
 	return true;
 }
+
+static bool IsAllowedMethod(string host, string target, string method) {
+	(void)host, (void)target, (void)method;
+	return true;
+} // TODO: remove once config method implemented
 
 bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
 	string	host = request.GetField("host");
 	string	target = request.GetTarget();
 	string	method = request.GetMethod();
 
-	return config->IsAllowedMethod(host, target, method);
+	// return config->IsAllowedMethod(host, target, method);
+	(void)config;
+	return IsAllowedMethod(host, target, method);
 }

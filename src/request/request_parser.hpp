@@ -15,6 +15,7 @@ using namespace std;
 
 class Request;
 class HeaderFieldValidator;
+class NginxConfig;
 
 enum RequestState {
 	r_RequestLine = 0,
@@ -52,6 +53,8 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestState	RequestLineHandler(size_t pos);
 		RequestState	HeaderFieldHandler(size_t pos);
 		RequestState	HeaderDoneHandler(size_t pos);
+		RequestState	MessageBodyHandler(size_t pos);
+		RequestState	ChunkedHandler(size_t pos);
 
 	protected:
 		RequestState	GetNextState(size_t pos) override;

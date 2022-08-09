@@ -1,6 +1,6 @@
 #include "request_parser.hpp"
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
@@ -13,9 +13,9 @@ RequestParser::RequestParser()
 // Config constructor
 RequestParser::RequestParser(NginxConfig *config)
 		:	StateParser(r_RequestLine),
+			_config(config),
 			_request(NULL),
-			_bytes_read(0),
-			_config(config) {
+			_bytes_read(0) {
 	HeaderFieldValidator header_validator;
 
 	_header_validator = &header_validator;
@@ -40,7 +40,8 @@ RequestState	RequestParser::GetNextState(size_t pos) {
 			&RequestParser::RequestLineHandler,
 			&RequestParser::HeaderFieldHandler,
 			&RequestParser::HeaderDoneHandler,
-			// &RequestParser::MessageBodyHandler,
+			&RequestParser::MessageBodyHandler,
+			&RequestParser::ChunkedHandler,
 			nullptr
 	};
 
@@ -66,6 +67,9 @@ void	RequestParser::PreParseCheck() {
 }
 
 void	RequestParser::AfterParseCheck(size_t& pos) {
+	if (pos < input.size() - 1) // TODO: test
+		throw LengthRequiredException();
+
 	if (DEBUG) {
 		cout << "Parsed method: " << _request->GetMethod() << endl; // DEBUG
 		cout << "Target input: " << _request->GetURI().GetInputURI() << endl; // DEBUG
@@ -75,6 +79,7 @@ void	RequestParser::AfterParseCheck(size_t& pos) {
 		for (map<string,string>::iterator it = _request->header_fields.begin();
 			it != _request->header_fields.end(); it++)
 				cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
+		cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
 	}
 	(void)pos;
 }
@@ -130,6 +135,23 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 		default:
 			return r_Invalid;
 	}
+}
+
+// Called when Content-Length indicates message is expected.
+RequestState	RequestParser::MessageBodyHandler(size_t pos) {
+	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
+	
+	if (_request->content_length != 0) {
+		_request->msg_body = input.substr(pos, _request->content_length);
+		_bytes_read += _request->msg_body.size();
+	}
+	return r_Done;
+}
+
+RequestState	RequestParser::ChunkedHandler(size_t pos) {
+	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos] << "]\n";
+
+	return r_Done;
 }
 
 #undef DEBUG // REMOVE

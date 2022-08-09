@@ -22,18 +22,19 @@ Source:
 [Section 3.1.2.2](https://datatracker.ietf.org/doc/html/rfc7231#section-3.1.2.2)
 <br/><br/>
 
-### :
->  .  
+# Method response codes
+### DELETE:
+> If a DELETE method is successfully applied, the origin server SHOULD send a 202 (Accepted) status code if the action will likely succeed but has not yet been enacted, a 204 (No Content) status code if the action has been enacted and no further information is to be supplied, or a 200 (OK) status code if the action has been enacted and the response message includes a representation describing the status. 
 
 Source:
-[]()
+[Section 4.3.5](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.5)
 <br/><br/>
 
-### :
->  .  
+### POST:
+> If one or more resources has been created on the origin server as a result of successfully processing a POST request, the origin server SHOULD send a 201 (Created) response containing a Location header field that provides an identifier for the primary resource created (Section 7.1.2) and a representation that describes the status of the request while referring to the new resource(s).   
 
 Source:
-[]()
+[Section 4.3.3](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.3)
 <br/><br/>
 
 ### :
