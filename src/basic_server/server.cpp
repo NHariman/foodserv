@@ -12,7 +12,8 @@
 
 Server::Server(const char *hostname, const char *port) : _hostname(hostname), _portnumber(port) {
 	CreateListeningSocket();
-	ListeningForConnections();
+	// ListeningForConnections();
+	KQ();
 }
 
 void	Server::CreateListeningSocket() {
@@ -37,6 +38,10 @@ void	Server::CreateListeningSocket() {
 			perror("setsockopt");
 			exit (EXIT_FAILURE);
 		}
+		// if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1) {
+		// 	perror("fcntl");
+		// 	exit (EXIT_FAILURE);
+		// }
 		if (bind(_socket_fd, _addrinfo->ai_addr, _addrinfo->ai_addrlen) != -1)
 			break ;  // break out of loop when socket is succesfully binded
 		// if the for loops gets to this point, the socket is not able to bind and we go to the next iteration
@@ -60,10 +65,96 @@ void	Server::CreateListeningSocket() {
 	}
 }
 
+void	Server::KQ() {
+	// create an empty KQ
+	int	kq = kqueue();
+
+	// create an events set for reads on sockets
+	struct kevent evSet;
+	// read in more on EV_SET
+	EV_SET(&evSet, _socket_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+	kevent(kq, &evSet, 1, NULL, 0, NULL);
+	
+	// loop function where we handle incomming connections and send/receive messages
+	eventLoop(kq, _socket_fd);
+	std::cout << "SUCCES";
+	exit (EXIT_SUCCESS);
+}
+
+/*
+Every time we receive a new connection, we accept the connection, accept() does the tcp 3-way handshake
+and creates a socket for further communication with that client, and returns the fd of that socket.
+We need to store the fd of all connected client so we can communicate with them
+*/
+
+/* CONNECTION POOLING */
+
+// function that gets the finds the corresponding client_data struct by iterating over the array
+int		Server::GetConnection(int fd) {
+	for (int i = 0; i < SOMAXCONN; i++) {
+		if (_clients[i].fd == fd)
+			return i;
+		return -1;
+	}
+}
+
+int		Server::AddConnection(int fd) {
+	if (fd < 1)
+		return -1;
+	// gets the position of the first empty fd
+	int i = GetConnection(0);
+	_clients[i].fd = fd;
+	return 0;
+}
+
+int		Server::DeleteConnection(int fd) {
+	if (fd < 1)
+		return -1;
+	int i = GetConnection(fd);
+	if (i == -1)
+		return -1;
+	_clients[i].fd = 0;
+	close(fd);
+	return 0;
+}
+
+
+// an infinite loop where incomings events are received and processed
+void	Server::eventLoop(int kq, int sock) {
+	struct kevent evList[SOMAXCONN];
+	struct kevent evSet;
+	int num_events = kevent(kq, NULL, 0, evList, SOMAXCONN, NULL);
+	int addrlen = sizeof(_addrinfo);
+
+	while (true) {
+		std::cout << "\n+++++++ Waiting for new connection ++++++++\n" << std::endl;
+		for (int i = 0; i < num_events; i++) {
+			// receive incoming connections
+			if (evList[i].ident == _socket_fd) {
+				int fd = accept(evList[i].ident, (struct sockaddr*)&_addrinfo, (socklen_t*)&addrlen);
+				if (AddConnection(fd) == 0) {
+					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+					kevent(kq, &evSet, 1, NULL, 0, NULL);
+					send(fd, html, sizeof(html), 0);
+				}
+				else if (evList[i].flags & EV_EOF) {
+					std::cout << "No more connection";
+					close(fd);
+				}
+				else if (evList[i].filter == EVFILT_READ) {
+					char buf[200];
+					int bytes_read = recv(evList[i].ident, buf, sizeof(buf) - 1, 0);
+					buf[bytes_read] = 0;
+					std::cout << "client #" << i << GetConnection(evList[i].ident) << std::endl;
+				}
+			}
+		}
+	}
+}
+
+
 void	Server::ListeningForConnections() {
 	while (true) {
-	
-		
 		std::cout << "\n+++++++ Waiting for new connection ++++++++\n" << std::endl;
 
 		int addrlen = sizeof(_addrinfo);
@@ -98,4 +189,26 @@ void	Server::ListeningForConnections() {
 		std::cout << "THIS IS IN THE REQUEST:\n" << buf << std::endl;
 		close(accept_fd);
 	}
+}
+
+void	Server::PrintIpInfo(struct addrinfo *record) {
+
+	void	*addr;
+	char	*ipversion;
+	char	ipstr[INET6_ADDRSTRLEN];
+
+	// check IP version
+	if (record->ai_family == AF_INET) {
+		struct sockaddr_in	*ipv4 = (struct sockaddr_in*)record->ai_addr;
+		addr = &(ipv4->sin_addr);
+		ipversion = (char *)"IPv4";
+	}
+	else {
+		struct sockaddr_in6	*ipv6 = (struct sockaddr_in6*)record->ai_addr;
+		addr = &(ipv6->sin6_addr);
+		ipversion = (char *)"IPv6";
+	}
+
+	inet_ntop(record->ai_family, addr, ipstr, sizeof(ipstr));
+	std::cout << ipversion << " : " << ipstr << std::endl;
 }

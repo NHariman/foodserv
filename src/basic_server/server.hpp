@@ -20,6 +20,12 @@
 #include <arpa/inet.h>
 #include <sys/poll.h>
 #include <sys/ioctl.h>
+#include <fcntl.h>
+#include <sys/event.h>
+
+struct client_data {
+	int fd;
+};
 
 static const char html[] = "HTTP/1.1 200 OK\r\n"
 							"Connection: close\r\n"
@@ -42,6 +48,7 @@ class Server {
 		const char*	_hostname;
 		const char*	_portnumber;
 		struct addrinfo* _addrinfo;
+		client_data		_clients[SOMAXCONN];
 
 		Server();
 
@@ -54,27 +61,17 @@ class Server {
 
 		void	ListeningForConnections();
 
-		void	PrintIpInfo(struct addrinfo *record) {
+		void	KQ();
 
-			void	*addr;
-			char	*ipversion;
-			char	ipstr[INET6_ADDRSTRLEN];
+		int		GetConnection(int);
 
-			// check IP version
-			if (record->ai_family == AF_INET) {
-				struct sockaddr_in	*ipv4 = (struct sockaddr_in*)record->ai_addr;
-				addr = &(ipv4->sin_addr);
-				ipversion = (char *)"IPv4";
-			}
-			else {
-				struct sockaddr_in6	*ipv6 = (struct sockaddr_in6*)record->ai_addr;
-				addr = &(ipv6->sin6_addr);
-				ipversion = (char *)"IPv6";
-			}
+		int		AddConnection(int);
 
-			inet_ntop(record->ai_family, addr, ipstr, sizeof(ipstr));
-			std::cout << ipversion << " : " << ipstr << std::endl;
-		}
+		int		DeleteConnection(int);
+
+		void	eventLoop(int, int);
+
+		void	PrintIpInfo(struct addrinfo *record);
 
 };
 
