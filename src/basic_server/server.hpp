@@ -1,38 +1,81 @@
+/*
+ __      _____| |__  ___  ___ _ ____   __ 
+ \ \ /\ / / _ \ '_ \/ __|/ _ \ '__\ \ / /   
+  \ V  V /  __/ |_) \__ \  __/ |   \ V /  
+   \_/\_/ \___|_.__/|___/\___|_|    \_/   
+   
+   The Server class is the ..
+*/
+
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <string.h>
 #include <stdio.h>
+#include <iostream>
 #include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/poll.h>
+#include <sys/ioctl.h>
 
-/*
-    is a server a socket, or does a server have a socket. 
-    IT HAS A SOCKET, so add that as a member.
-*/
+static const char html[] = "HTTP/1.1 200 OK\r\n"
+							"Connection: close\r\n"
+							"Content-type: text/html\r\n"
+							"\r\n"
+							"<html>\r\n"
+							"<head>\r\n"
+							"<title>WEBSERV!</title>\r\n"
+							"</head>\r\n"
+							"<body>\r\n"
+							"<h1>Web serv lets goooooo!</h1>\r\n"
+							"</body>\r\n"
+							"</html>\r\n\r\n";
 
-#include "socket.hpp"
 
 class Server {
-	protected:
-        BindingSocket *_socket; // defines a space in mem to hold a socket. 
 
-        char    buffer[3000];
-		int		_new_socket;
-    private:
-        // child class must create there own
-        void accepter();
-        void handler();
-        virtual void responder();
+	private:
+		int			_socket_fd;
+		const char*	_hostname;
+		const char*	_portnumber;
+		struct addrinfo* _addrinfo;
 
-    public:
-        Server(int port, u_long interface);
-        // SimpleServer(int domain, int service, int protocol, int port, u_long interface, int backlog);
-        // ~SimpleServer();
+		Server();
 
-		virtual	void	launch(); // while loop in child class calling other virtual functions
+	public:
 
-		BindingSocket*	getSocket();
 
-        ~Server();
+		Server(const char *hostname, const char* port);
+
+		void	CreateListeningSocket();
+
+		void	ListeningForConnections();
+
+		void	PrintIpInfo(struct addrinfo *record) {
+
+			void	*addr;
+			char	*ipversion;
+			char	ipstr[INET6_ADDRSTRLEN];
+
+			// check IP version
+			if (record->ai_family == AF_INET) {
+				struct sockaddr_in	*ipv4 = (struct sockaddr_in*)record->ai_addr;
+				addr = &(ipv4->sin_addr);
+				ipversion = (char *)"IPv4";
+			}
+			else {
+				struct sockaddr_in6	*ipv6 = (struct sockaddr_in6*)record->ai_addr;
+				addr = &(ipv6->sin6_addr);
+				ipversion = (char *)"IPv6";
+			}
+
+			inet_ntop(record->ai_family, addr, ipstr, sizeof(ipstr));
+			std::cout << ipversion << " : " << ipstr << std::endl;
+		}
+
 };
 
 #endif
