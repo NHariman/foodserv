@@ -1,7 +1,7 @@
 #include "client_max_body_size.hpp"
 #include <climits>
 
-
+ClientMaxBodySize::ClientMaxBodySize() : _value(1) {};
 
 ClientMaxBodySize::ClientMaxBodySize(std::string value) {
     size_t i = 0;

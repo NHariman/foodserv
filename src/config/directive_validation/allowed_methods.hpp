@@ -10,8 +10,9 @@
 
 class AllowedMethods {
     private:
-		bool						_is_set;
-        std::vector<std::string>    _methods;
+		bool						_get;
+		bool						_post;
+		bool						_delete;
 
 		void	ValidateMethods();
 
@@ -22,9 +23,9 @@ class AllowedMethods {
 		AllowedMethods(AllowedMethods const &obj);
 		AllowedMethods&	operator=(AllowedMethods const &obj);
 
-		std::vector<std::string>	GetAllowedMethods() const;
-		void		PrintMethods();
-		bool		IsSet() const;
+		bool	GetGET() const;
+		bool	GetPOST() const;
+		bool	GetDELETE() const;
 		class BadMethodException : public std::exception
 		{
 			public:

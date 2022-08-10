@@ -50,11 +50,13 @@ class ServerContext {
 		void						CheckListVerification();
 		void						FindDirectiveValuePairs(size_t *start_position, std::string config_file);
 		size_t						FindLocationContextEnd(std::string config_file, size_t start);
+		void						InitChecklist();
+		void						CopyChecklist(t_flags_server obj_checklist);
+		ServerContext();
 		
 		
 	public:
 		ServerContext(size_t *start, std::string config_file); // uses a pointer so it can skip through the server bits on its own when it returns
-		ServerContext();
 		ServerContext(const ServerContext &server_context);
 		ServerContext & operator= (const ServerContext &server_context);
 		~ServerContext(){};

@@ -29,69 +29,62 @@
 // when multiple roots
 
 ServerContext::ServerContext(size_t *start, std::string config_file) {
-
-    // _check_list copy
-    _check_list.location_context = false;
-	_check_list.listen = false;
-	_check_list.server_name = false;
-	_check_list.root = false;
-	_check_list.index = false;
-	_check_list.client_max_body_size = false;
-	_check_list.error_page = false;
+	InitChecklist();
 	FindDirectiveValuePairs(start, config_file);
 }
 
 ServerContext::ServerContext() {
     // _check_list copy
-    _check_list.location_context = false;
-	_check_list.listen = false;
-	_check_list.server_name = false;
-	_check_list.root = false;
-	_check_list.index = false;
-	_check_list.client_max_body_size = false;
-	_check_list.error_page = false;
+	InitChecklist();
 }
 
-ServerContext::ServerContext(const ServerContext& obj) {
-	_location_contexts = obj.GetLocationContexts();
-	_listen = obj.GetListen();
-	_server_name = obj.GetServerNameVector();
-	_root = obj.GetRoot();
-	_index = obj.GetIndex();
-	_client_max_body_size = obj.GetClientMaxBodySize();
-	_error_page = obj.GetErrorPage();
-
+ServerContext::ServerContext(const ServerContext& obj) :
+	_location_contexts(obj._location_contexts),
+	_listen(obj._listen),
+	_server_name(obj._server_name),
+	_root(obj._root),
+	_index(obj._index),
+	_client_max_body_size(obj._client_max_body_size),
+	_error_page(obj._error_page) {
     // _check_list copy
-    _check_list.location_context = obj.GetFlags().location_context;
-	_check_list.listen = obj.GetFlags().listen;
-	_check_list.server_name = obj.GetFlags().server_name;
-	_check_list.root = obj.GetFlags().root;
-	_check_list.index = obj.GetFlags().index;
-	_check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
-	_check_list.error_page = obj.GetFlags().error_page;
+	CopyChecklist(obj._check_list);
 }
 
 ServerContext & ServerContext::operator=(const ServerContext& obj) {
     if (this == &obj) {
         return (*this);
 	}
-	_location_contexts = obj.GetLocationContexts();
-	_listen = obj.GetListen();
-	_server_name = obj.GetServerNameVector();
-	_root = obj.GetRoot();
-	_index = obj.GetIndex();
-	_client_max_body_size = obj.GetClientMaxBodySize();
-	_error_page = obj.GetErrorPage();
+	_location_contexts = obj._location_contexts;
+	_listen = obj._listen;
+	_server_name = obj._server_name;
+	_root = obj._root;
+	_index = obj._index;
+	_client_max_body_size = obj._client_max_body_size;
+	_error_page = obj._error_page;
     
     // _check_list copy
-    _check_list.location_context = obj.GetFlags().location_context;
-	_check_list.listen = obj.GetFlags().listen;
-	_check_list.server_name = obj.GetFlags().server_name;
-	_check_list.root = obj.GetFlags().root;
-	_check_list.index = obj.GetFlags().index;
-	_check_list.client_max_body_size = obj.GetFlags().client_max_body_size;
-	_check_list.error_page = obj.GetFlags().error_page;
+	CopyChecklist(obj._check_list);
 	return (*this);
+}
+
+void		ServerContext::CopyChecklist(t_flags_server obj_checklist) {
+	_check_list.location_context = obj_checklist.location_context;
+	_check_list.listen = obj_checklist.listen;
+	_check_list.server_name = obj_checklist.server_name;
+	_check_list.root = obj_checklist.root;
+	_check_list.index = obj_checklist.index;
+	_check_list.client_max_body_size = obj_checklist.client_max_body_size;
+	_check_list.error_page = obj_checklist.error_page;
+}
+
+void		ServerContext::InitChecklist() {
+    _check_list.location_context = false;
+	_check_list.listen = false;
+	_check_list.server_name = false;
+	_check_list.root = false;
+	_check_list.index = false;
+	_check_list.client_max_body_size = false;
+	_check_list.error_page = false;
 }
 
 // compares found directive with possible directive values and either returns the number in the list
@@ -197,12 +190,11 @@ void			ServerContext::CheckListVerification(){
 		std::cerr << "WARNING! No server root detected. Default have been set." << std::endl;
 	}
 	if (_check_list.index == false) {
-		std::string		str("index.html");
-		_index.push_back(str);
-		std::cerr << "WARNING! No index detected. Default have been set." << std::endl;
-	}
+		Index	input_value("index.php index.html index.htm index.nginx-debian.html");
+		_index = input_value.GetIndex();
+		std::cerr << "WARNING! No server index detected. Default (index.php index.html index.htm index.nginx-debian.html) have been set." << std::endl;}
 	if (_check_list.client_max_body_size == false) {
-		_client_max_body_size = 0;
+		_client_max_body_size = 1;
 		std::cerr << "WARNING! No client_max_body_size detected. Default have been set." << std::endl;
 	}
 	if (_check_list.error_page == false) {

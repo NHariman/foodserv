@@ -36,13 +36,15 @@ class LocationContext {
 		AllowedMethods				_allowed_methods;
 		ReturnDir					_return_dir;
 
+		void						InitChecklist();
+		void						CopyChecklist(t_flags_location obj_checklist);
 		void						GetDirectiveValuePairs(std::string data);
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string input);
 		void						CheckListVerification();
+		LocationContext();
 
 	public:
-		LocationContext();
 		LocationContext(std::string data);
 		LocationContext(LocationContext const &location_context);
 		LocationContext& operator= (LocationContext const &location_context);
@@ -64,80 +66,147 @@ class LocationContext {
 		// exception classes
 		class InvalidDirectiveException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				InvalidDirectiveException(std::string uri) {
+					_err_string = "ERROR! Invalid directive detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Invalid directive detected in LocationContext.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleAutoindexException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleAutoindexException(std::string uri) {
+					_err_string = "ERROR! Multiple autoindex directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple autoindex directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleRootException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleRootException(std::string uri) {
+					_err_string = "ERROR! Multiple root directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple root directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleIndexException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleIndexException(std::string uri) {
+					_err_string = "ERROR! Multiple index directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple index directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleErrorPageException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleErrorPageException(std::string uri) {
+					_err_string = "ERROR! Multiple error_page directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple error_page directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleFastCGIPassException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleFastCGIPassException(std::string uri) {
+					_err_string = "ERROR! Multiple fastcgi_pass directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple fastcgi_pass directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleAllowedMethodsException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleAllowedMethodsException(std::string uri) {
+					_err_string = "ERROR! Multiple allowed_methods directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple allowed_methods directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleClientMaxBodySizeException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleClientMaxBodySizeException(std::string uri) {
+					_err_string = "ERROR! Multiple client_max_body_size directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple Client_max_body_size directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class BadURIException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				BadURIException(std::string uri) {
+					_err_string = "ERROR! Bad URI detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Invalid URI detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleReturnException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleReturnException(std::string uri) {
+					_err_string = "ERROR! Multiple return directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! multiple return directive detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class InvalidDirectiveSetCheckException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
-				const char *what() const throw() {
-					return "ERROR! Trying to check if a nonexistent directive has been set in Location block.";
+				InvalidDirectiveSetCheckException(std::string uri) {
+					_err_string = "Invalid directive detected in Location Context:" + uri + ".";
 				}
+				const char *what() const throw() {
+					return (_err_string.c_str());
+				}
+		};
+		class DirectiveNotSetException : public std::exception
+		{
+			public:
+				DirectiveNotSetException(std::string directive) {
+					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set.";
+				};
+				const char *what() const throw() {
+					return _err_string.c_str();
+				}
+			private:
+				std::string		_err_string;
 		};
 };
 

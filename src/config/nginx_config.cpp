@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/04 18:05:11 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/10 21:12:00 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,16 @@
 // a newline per getline read is added in to avoid cases where for example:
 // a key-value pair is on two different lines to avoid accidentally connecting two values with one another.
 
-NginxConfig::NginxConfig() : _amount_server_contexts(0) {};
+NginxConfig::NginxConfig() : _amount_server_contexts(0) {
+	std::ifstream	config_file_fd;
+	config_file_fd.open("config_files/default.conf");
+	if (config_file_fd.is_open()) 
+		LoadConfigFile(config_file_fd);
+	else
+		throw InvalidFileLocationException();
+	config_file_fd.close();
+	FindServerContexts();
+};
 
 // uses av[1] in the main and attempts to open the file.
 // throws error if fails
@@ -31,7 +40,7 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_contexts(0) {
 
 	if (!location) {
 		location = "config_files/default.conf";
-		std::cerr << ">> WARNING! No config file given, config/default.conf used." << std::endl;
+		std::cerr << ">> WARNING! No config file given, config_files/default.conf used." << std::endl;
 	}
 	config_file_fd.open(location);
 	if (config_file_fd.is_open()) 
@@ -40,21 +49,6 @@ NginxConfig::NginxConfig(const char *location) : _amount_server_contexts(0) {
 		throw InvalidFileLocationException();
 	config_file_fd.close();
 	FindServerContexts();
-}
-
-NginxConfig::NginxConfig(const NginxConfig& obj) {
-	_config_file = obj.GetConfigFile();
-	_servers = obj.GetServers();
-	_amount_server_contexts = obj.GetServerContextAmount();
-}
-
-NginxConfig & NginxConfig::operator=(const NginxConfig& obj) {
-	if (this == &obj)
-		return (*this);
-	_config_file = obj.GetConfigFile();
-	_servers = obj.GetServers();
-	_amount_server_contexts = obj.GetServerContextAmount();
-	return (*this);
 }
 
 // checks if there are no open brackets

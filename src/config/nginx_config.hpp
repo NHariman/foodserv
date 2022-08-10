@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/01 16:35:53 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/10 21:38:23 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,12 @@
 //       A & operator = (const A &a);
 // };
 
-// TODO:
-// create basic error checking, open brackets etc.
-
 class NginxConfig {
 	private:
 		std::string					_config_file;
 		std::vector<ServerContext>	_servers;
 		size_t						_amount_server_contexts;
 
-		NginxConfig();
 		bool		IsServerContext(std::string value, size_t *start_pos);
 		void		CheckBrackets();
 		void		FindServerContexts();
@@ -48,9 +44,8 @@ class NginxConfig {
 
 	public:
 		// coplien form
+		NginxConfig();
 		NginxConfig(const char*	location);
-		NginxConfig(const NginxConfig& obj);
-		~NginxConfig();
 		NginxConfig & operator=(const NginxConfig& obj);
 
 		// getters
@@ -83,7 +78,7 @@ class NginxConfig {
 		class BadServerContextException : public std::exception {
 			public:
 				const char *what() const throw() {
-					return "ERROR! Bad server keyword detected.";
+					return "ERROR! Context found is not a server.";
 				}
 		};
 		

@@ -14,10 +14,9 @@ if client_max_body_size is smaller than the file size trying to be uploaded it g
 class ClientMaxBodySize {
     private:
         size_t     _value;
-
-        ClientMaxBodySize(){};
     
     public:
+        ClientMaxBodySize();
         ClientMaxBodySize(std::string value);
         size_t     GetValue() const;
 
