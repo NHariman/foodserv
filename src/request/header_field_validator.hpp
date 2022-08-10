@@ -31,7 +31,7 @@ class HeaderFieldValidator {
 		bool	ValidHost(string host);
 		bool	ValidExpect(string host);
 		bool	ValidContentEncoding(string host);
-		bool	ValidTransferEncoding(ssize_t content_length_count, string host);
+		bool	ValidTransferEncoding(Request& request);
 		bool	ValidContentLength(NginxConfig* config, Request& request);
 		bool	ValidMethod(NginxConfig* config, Request& request);
 	

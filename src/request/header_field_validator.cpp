@@ -10,8 +10,7 @@ HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request
 	if (ValidHost(request.GetField("host"))
 			&& ValidExpect(request.GetField("expect"))
 			&& ValidContentEncoding(request.GetField("content-encoding"))
-			&& ValidTransferEncoding(request.content_length,
-										request.GetField("transfer-encoding"))
+			&& ValidTransferEncoding(request)
 			&& ValidContentLength(config, request)
 			&& ValidMethod(config, request))
 		return _status;
@@ -51,31 +50,34 @@ bool	HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
 		return true;
 }
 
+// Used by ValidContentLength & ValidTransferEncoding to check if 
+// Content-Length & Transfer-Encoding (and therefore presence of payload body)
+// is allowed for specified method.
+// Of server-allowed methods, only POST is accepted here
+// (and is actually expected, even if 0 for empty payload body).
+static void	CheckAllowedMethod(string method) {
+	if (method != "POST")
+		throw BadRequestException("Payload body not allowed for method");
+}
+
 // If Transfer-Encoding is define, only "chunked" value is accepted.
-bool	HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
-													string transfer_encoding) {
+bool	HeaderFieldValidator::ValidTransferEncoding(Request& request) {
+	string	transfer_encoding = request.GetField("transfer-encoding");
+
 	if (transfer_encoding != NO_VAL) {
 		// if Content-Length was also defined
-		if (content_length_count != -1)
+		if (request.content_length != -1)
 			throw BadRequestException(
 				"Cannot have both Content-Length and Transfer-Encoding headers");
-		if (transfer_encoding == "chunked") // TODO: check if method allows for chunked?
+		if (transfer_encoding == "chunked") {
+			CheckAllowedMethod(request.GetMethod());
 			_status = hv_MessageChunked;
+		}
 		// if anything other than "chunked" encoding
 		else
 			throw NotImplementedException();
 	}
 	return true;
-}
-
-// Used by ValidContentLength to check if Content-Length
-// (and therefore presence of payload body) matches method semantics.
-// Of server-allowed methods, only POST is accepted here
-// (and is actually expected, even if 0 for empty payload body).
-static void	CheckMethodSemantics(string method) {
-	if (method != "POST")
-		throw BadRequestException(
-			"Method semantics does not support payload body");
 }
 
 static size_t GetMaxBodySize(string host, string target) {
@@ -129,7 +131,7 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
 		CheckContentLengthValue(config, request);	
-		CheckMethodSemantics(request.GetMethod());
+		CheckAllowedMethod(request.GetMethod());
 		_status = hv_MessageExpected;
 	}
 	return true;

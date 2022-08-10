@@ -17,11 +17,12 @@ enum	ChunkState {
 };
 
 class ChunkedParser : public StateParser<ChunkState> {
+	static const string	illegal_fields[25];
+
 	public:
 		
 
 	private:
-		static const string	_illegal_fields[25];
 };
 
 #endif /* CHUNKED_PARSER_HPP */
