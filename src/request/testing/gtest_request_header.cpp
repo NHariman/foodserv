@@ -7,28 +7,37 @@
 
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
 static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
+static string DEL_RL_Host = "DELETE /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
 static string POST_RL_Host = "POST /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
 
 static NginxConfig config(NULL);
 
-TEST(RequestHeaderTest, ValidHeaders) {
-	string req_str = GET_RL_Host + "Expect: 100-continue\n\n";
-	Request request1(&config, req_str.c_str());
+// Helper function used by ValidHeaders test to construct and call
+// HeaderFieldValidator on passed request string. Returns result of
+// HeaderFieldValidator::Process().
+static int	ConstructAndProcess(string request_str) {
+	Request request(&config, request_str.c_str());
 	HeaderFieldValidator header_validator;
+
+	return header_validator.Process(&config, request);
+}
+
+TEST(RequestHeaderTest, ValidHeaders) {
 	int status = -1;
-	status = header_validator.Process(&config, request1);
+	status = ConstructAndProcess(GET_RL_Host + "Expect: 100-continue\n\n");
 	EXPECT_EQ(status, hv_OK);
 
-	req_str = POST_RL_Host + "Transfer-Encoding: chunked\n\n0";
-	Request request2(&config, req_str.c_str());
-	status = header_validator.Process(&config, request2);
+	status = ConstructAndProcess(GET_RL_Host + "Content-Length: 0\n\n");
+	EXPECT_EQ(status, hv_OK);
+
+	status = ConstructAndProcess(DEL_RL_Host + "Content-Length: 0\n\n");
+	EXPECT_EQ(status, hv_OK);
+
+	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0");
 	EXPECT_EQ(status, hv_MessageChunked);
 
-	req_str = POST_RL_Host + "Content-Length: 5\n\nHello";
-	Request request3(&config, req_str.c_str());
-	status = header_validator.Process(&config, request3);
+	status = ConstructAndProcess(POST_RL_Host + "Content-Length: 5\n\nHello");
 	EXPECT_EQ(status, hv_MessageExpected);
-	EXPECT_EQ(request3.content_length, 5);
 }
 
 TEST(RequestHeaderTest, InvalidHost) {
@@ -151,7 +160,7 @@ TEST(RequestHeaderTest, InvalidContentLength) {
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
-	}, BadRequestException);
+	}, PayloadTooLargeException);
 	// invalid value
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 42a\n\n";
