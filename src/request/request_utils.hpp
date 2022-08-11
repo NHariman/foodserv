@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 #include <sstream> // stringstream
-#include "exception.hpp"
 
 using namespace std;
 
@@ -25,5 +24,7 @@ void	NormalizeString(int (*convert)(int), string& s, size_t start);
 string	EncodePercent(string const& s);
 string	DecodePercent(string const& s);
 size_t	MBToBytes(size_t size_mb);
+
+#include "exception.hpp"
 
 #endif /* REQUEST_UTILS */
