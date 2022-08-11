@@ -7,12 +7,12 @@ NginxConfig*    ConfigSetup(int ac, const char **av) {
 	    	throw TooManyArgumentsException();
 	    }
 	    else if (ac == 2){
-	    	NginxConfig		location;
-	    	config_file = &location;
+	    	//NginxConfig		location;
+	    	config_file =  new NginxConfig();
 	    }
 	    else {
-	    	NginxConfig		location(av[1]);
-	    	config_file = &location;
+	    	//NginxConfig		location(av[1]);
+	    	config_file =  new NginxConfig(av[1]);
 	    }
         return (config_file);
     }

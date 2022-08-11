@@ -34,13 +34,6 @@ class ClientMaxBodySize {
                     return "ERROR! Invalid client_max_body_size, size too large in location block.";
                 }
         };
-        class NegativeClientMaxBodySizeException : public std::exception
-        {
-            public:
-                const char *what() const throw() {
-                    return "ERROR! Invalid client_max_body_size, negative value in location block.";
-                }
-        };
 		class MissingArgumentsException : public std::exception
 		{
 			public:

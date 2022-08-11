@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/11 15:55:59 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/12 00:07:31 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,27 +142,35 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 
-size_t							NginxConfig::GetMaxBodySize(std::string host, std::string target) {
-	std::vector<ServerContext>::iterator server_ptr;
-	std::vector<std::string>::iterator	names_ptr;
-	std::vector<LocationContext>::iterator loc_ptr;
 
-	for (server_ptr = _servers.begin() ; server_ptr < _servers.end(); server_ptr++) {
-		for(names_ptr = server_ptr->GetServerNameVector().begin() ; names_ptr < server_ptr->GetServerNameVector().end() ; names_ptr++) {
-			if (host.compare(*names_ptr) == 0) {
-				for (loc_ptr = server_ptr->GetLocationContexts().begin() ; loc_ptr < server_ptr->GetLocationContexts().end() ; loc_ptr++) {
-					if (target.compare(loc_ptr->GetLocationUri().GetUri()) == 0) {
-						if (loc_ptr->IsSet("client_max_body_size") == true) {
-							return loc_ptr->GetClientMaxBodySize();
-						}
-						else {
-							return server_ptr->GetClientMaxBodySize();
-						}
+
+host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::string target) {
+
+	host_target_pair	 host_target_pair;
+
+	for (size_t server = 0 ; server < _servers.size(); server++) {
+		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
+			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
+				host_target_pair.server = &_servers.at(server);
+				for (size_t loc = 0 ; loc < _servers.at(server).GetLocationContexts().size() ; loc++) {
+					if (target.compare(_servers.at(server).GetLocationContexts().at(loc).GetLocationUri().GetUri()) == 0) {
+						host_target_pair.location = &_servers.at(server).GetLocationContexts().at(loc);
+						return (host_target_pair);
 					}
 				}
 			}
 		}
 	}
-	throw CannotFindMaxBodySizeException(host, target);
-	return (-1);
+	host_target_pair.server = NULL;
+	host_target_pair.location = NULL;
+	throw HostTargetPairDoesNotExistException(host, target);
+	return (host_target_pair);
+}
+
+size_t							NginxConfig::GetMaxBodySize(std::string host, std::string target) {
+
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location->IsSet("client_max_body_size"))
+		return host_target_pair.location->GetClientMaxBodySize();
+	return host_target_pair.server->GetClientMaxBodySize();
 }

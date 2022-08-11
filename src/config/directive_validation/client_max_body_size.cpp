@@ -23,8 +23,6 @@ ClientMaxBodySize::ClientMaxBodySize(std::string value) {
         i++;
     }
     tmp_value = ft_atosize_t(value.substr(0, i));
-    if (tmp_value < 0)
-        throw NegativeClientMaxBodySizeException();
     if (tmp_value > 2147483647)
         throw TooLargeClientMaxBodySizeException();
     _value = tmp_value;

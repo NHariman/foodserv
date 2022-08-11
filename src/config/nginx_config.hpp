@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/11 15:55:04 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/12 00:04:39 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <utility>
 #include "server_context.hpp"
 #include "config_utils.hpp"
 
@@ -31,6 +32,11 @@
 //       A & operator = (const A &a);
 // };
 
+struct host_target_pair : public std::pair<ServerContext*, LocationContext*> {
+	ServerContext *server;
+	LocationContext *location;
+};
+
 class NginxConfig {
 	private:
 		std::string					_config_file;
@@ -41,6 +47,8 @@ class NginxConfig {
 		void		CheckBrackets();
 		void		FindServerContexts();
 		void		LoadConfigFile(std::ifstream&	configuration_file);
+
+		host_target_pair					GetHostTargetServer(std::string host, std::string target);
 
 	public:
 		// coplien form
@@ -97,6 +105,17 @@ class NginxConfig {
 				std::string _err_msg;
 			public:
 				CannotFindMaxBodySizeException(std::string host, std::string target) {
+					_err_msg = "Cannot find host + target pair: " + host + "/" + target + " client_max_body_size not found.";
+				}
+				const char *what() const throw() {
+					return _err_msg.c_str();
+				}
+		};
+		class HostTargetPairDoesNotExistException : public std::exception {
+			private:
+				std::string _err_msg;
+			public:
+				HostTargetPairDoesNotExistException(std::string host, std::string target) {
 					_err_msg = "Cannot find host + target pair: " + host + "/" + target + " client_max_body_size not found.";
 				}
 				const char *what() const throw() {

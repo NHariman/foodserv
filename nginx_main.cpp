@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.cpp                                           :+:    :+:            */
+/*   nginx_main.cpp                                     :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/10 18:20:08 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/12 00:02:59 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,7 @@ int	main(int ac, const char **av) {
 	input_file = ConfigSetup(ac, av);
 	if (!input_file)
 		return (1);
+	std::cout << "location uri for / " << input_file->GetMaxBodySize("localhost", "/") << std::endl;
+	delete input_file;
 	return (0);
 }
