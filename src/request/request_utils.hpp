@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <sstream> // stringstream
+#include "exception.hpp"
 
 using namespace std;
 

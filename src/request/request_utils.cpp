@@ -103,6 +103,11 @@ string	DecodePercent(string const& s) {
 	size_t	percent_start = s.size() - 3;
 	string	new_s = s.substr(0, percent_start);
 	string	hex = s.substr(percent_start + 1, percent_start + 2);
+
+	// Check for encoded CR and LF that might be used in response splitting.
+	if (hex == "0D" || hex == "0A")
+		throw BadRequestException("Bad octets found in encoded data");
+	
 	char	c = std::stoi(hex, nullptr, 16);
 	new_s += c;
 	return new_s;
