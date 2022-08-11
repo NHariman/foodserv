@@ -22,7 +22,7 @@ static int	ConstructAndProcess(string request_str) {
 	return header_validator.Process(&config, request);
 }
 
-TEST(RequestHeaderTest, ValidHeaders) {
+TEST(RequestHeaderValidatorTest, ValidHeaders) {
 	int status = -1;
 	status = ConstructAndProcess(GET_RL_Host + "Expect: 100-continue\n\n");
 	EXPECT_EQ(status, hv_OK);
@@ -40,7 +40,7 @@ TEST(RequestHeaderTest, ValidHeaders) {
 	EXPECT_EQ(status, hv_MessageExpected);
 }
 
-TEST(RequestHeaderTest, InvalidHost) {
+TEST(RequestHeaderValidatorTest, InvalidHost) {
 	// multiple Hosts
 	EXPECT_THROW({
 		string req_str = GET_RL + "Host: www.example.com, www.example.net\n\n";
@@ -74,7 +74,7 @@ TEST(RequestHeaderTest, InvalidHost) {
 	}, BadRequestException);
 }
 
-TEST(RequestHeaderTest, InvalidExpect) {
+TEST(RequestHeaderValidatorTest, InvalidExpect) {
 	EXPECT_THROW({
 		string req_str = GET_RL_Host + "Expect: 101-continue\n\n";
 		Request request(&config, req_str.c_str());
@@ -84,7 +84,7 @@ TEST(RequestHeaderTest, InvalidExpect) {
 	}, ExpectationFailedTypeException);
 }
 
-TEST(RequestHeaderTest, InvalidContentEncoding) {
+TEST(RequestHeaderValidatorTest, InvalidContentEncoding) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Encoding: gzip\n\n";
 		Request request(&config, req_str.c_str());
@@ -101,7 +101,7 @@ TEST(RequestHeaderTest, InvalidContentEncoding) {
 	}, UnsupportedMediaTypeException);
 }
 
-TEST(RequestHeaderTest, InvalidTransferEncoding) {
+TEST(RequestHeaderValidatorTest, InvalidTransferEncoding) {
 	// not-implemented transfer encoding format
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: compress\n\n";
@@ -136,7 +136,7 @@ TEST(RequestHeaderTest, InvalidTransferEncoding) {
 	}, BadRequestException);
 }
 
-TEST(RequestHeaderTest, InvalidContentLength) {
+TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	// C-L definition for not-allowed method
 	EXPECT_THROW({
 		string req_str = GET_RL_Host + "Content-Length: 42\n\n";

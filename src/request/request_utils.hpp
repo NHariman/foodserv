@@ -3,6 +3,7 @@
 
 #include <cctype> // isalpha, isdigit, toupper
 #include <iomanip> // setw
+#include <ios> // std::hex
 #include <iostream>
 #include <string>
 #include <sstream> // stringstream
@@ -24,6 +25,7 @@ void	NormalizeString(int (*convert)(int), string& s, size_t start);
 string	EncodePercent(string const& s);
 string	DecodePercent(string const& s);
 size_t	MBToBytes(size_t size_mb);
+size_t	HextoDec(string hex_string);
 
 #include "exception.hpp"
 

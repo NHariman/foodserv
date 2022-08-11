@@ -116,3 +116,10 @@ string	DecodePercent(string const& s) {
 size_t	MBToBytes(size_t size_mb) {
 	return size_mb * 1048576;
 }
+
+size_t	HextoDec(string hex_string) {
+	size_t n;
+
+	std::istringstream(hex_string) >> std::hex >> n;
+	return n;
+}

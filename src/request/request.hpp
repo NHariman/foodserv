@@ -34,6 +34,7 @@ class Request {
 		// friend class forward declaration allows RequestParser to
 		// access private & protected members of Request.
 		friend class RequestParser;
+		friend class ChunkedParser;
 	
 	private:
 		struct RequestLine	request_line;

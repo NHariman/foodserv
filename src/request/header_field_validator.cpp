@@ -53,10 +53,10 @@ bool	HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
 // Used by ValidContentLength & ValidTransferEncoding to check if 
 // Content-Length & Transfer-Encoding (and therefore presence of payload body)
 // is allowed for specified method.
-// Of server-allowed methods, only POST is accepted here
-// (and is actually expected, even if 0 for empty payload body).
-static void	CheckAllowedMethod(string method) {
-	if (method != "POST")
+// GET & DELETE may only have Content-Length of 0 and only POST may have
+// other values (including 0 for empty payloads).
+static void	CheckAllowedMethod(string method, size_t content_length = 1) {
+	if (method != "POST" && content_length != 0)
 		throw BadRequestException("Payload body not allowed for method");
 }
 
@@ -103,8 +103,10 @@ static void	CheckContentLengthValue(NginxConfig* config,
 	(void)config;
 	size_t	limit = MBToBytes(GetMaxBodySize(host, target));
 	
-	if (request.content_length < 0 || (size_t)request.content_length > limit)
+	if (request.content_length < 0)
 		throw BadRequestException("Invalid Content-Length value");
+	else if ((size_t)request.content_length > limit)
+		throw PayloadTooLargeException();
 }
 
 // Checks if multiple values defined for Content-Length.
@@ -131,8 +133,11 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
 		CheckContentLengthValue(config, request);	
-		CheckAllowedMethod(request.GetMethod());
-		_status = hv_MessageExpected;
+		CheckAllowedMethod(request.GetMethod(), request.content_length);
+		if (request.content_length == 0)
+			_status = hv_OK;
+		else
+			_status = hv_MessageExpected;
 	}
 	return true;
 }

@@ -1,6 +1,6 @@
 #include "request_parser.hpp"
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
@@ -67,7 +67,9 @@ void	RequestParser::PreParseCheck() {
 }
 
 void	RequestParser::AfterParseCheck(size_t& pos) {
-	if (pos < input.size() - 1) // TODO: test
+	// If there are more characters after ending token, assume body
+	// is present but not indicated by Content-Length header.
+	if (pos < input.size() - 1) // TODO: check if Content-Length has not been indicated? (truncated message)
 		throw LengthRequiredException();
 
 	if (DEBUG) {
@@ -141,10 +143,8 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 RequestState	RequestParser::MessageBodyHandler(size_t pos) {
 	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
-	if (_request->content_length != 0) {
-		_request->msg_body = input.substr(pos, _request->content_length);
-		_bytes_read += _request->msg_body.size();
-	}
+	_request->msg_body = input.substr(pos, _request->content_length);
+	_bytes_read += _request->msg_body.size();
 	return r_Done;
 }
 

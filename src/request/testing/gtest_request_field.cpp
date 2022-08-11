@@ -5,12 +5,12 @@
 
 static NginxConfig config(NULL);
 
-TEST(RequestHeaderTest, ParseSingleField) {
+TEST(RequestFieldParserTest, ParseSingleField) {
 	Request request(&config, "GET /hello.txt HTTP/1.1\r\nHost: www.example.com\n\n");
 	EXPECT_EQ(request.GetField("host"), "www.example.com");
 }
 
-TEST(RequestHeaderTest, ParseMultiField) {
+TEST(RequestFieldParserTest, ParseMultiField) {
 	Request request1(&config, "GET /hello.txt HTTP/1.1\nUser-Agent: curl/7.16.3\r\nHost: www.example.com\n\n");
 	EXPECT_EQ(request1.GetField("host"), "www.example.com");
 	EXPECT_EQ(request1.GetField("user-agent"), "curl/7.16.3");
@@ -20,14 +20,14 @@ TEST(RequestHeaderTest, ParseMultiField) {
 	EXPECT_EQ(request2.GetField("user-agent"), "curl/7.16.3 libcurl");
 }
 
-TEST(RequestHeaderTest, ParseMultiValueField) {
+TEST(RequestFieldParserTest, ParseMultiValueField) {
 	Request request(&config, "GET /hello.txt HTTP/1.1\nUser-Agent: curl/7.16.3 libcurl/7.16.3\nHost: www.example.com\r\nAccept-Language: en, mi\n\n");
 	EXPECT_EQ(request.GetField("host"), "www.example.com");
 	EXPECT_EQ(request.GetField("user-agent"), "curl/7.16.3 libcurl/7.16.3");
 	EXPECT_EQ(request.GetField("Accept-Language"), "en, mi");
 }
 
-TEST(RequestHeaderTest, ParseCRLF) {
+TEST(RequestFieldParserTest, ParseCRLF) {
 	Request request1(&config, "GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n\n");
 	EXPECT_EQ(request1.GetField("host"), "www.example.com");
 
@@ -38,7 +38,7 @@ TEST(RequestHeaderTest, ParseCRLF) {
 	EXPECT_EQ(request3.GetField("host"), "www.example.com");
 }
 
-TEST(RequestHeaderTest, ParseFieldwithOWS) {
+TEST(RequestFieldParserTest, ParseFieldwithOWS) {
 	Request request1(&config, "GET /hello.txt HTTP/1.1\r\nHost:  www.example.com\n\n");
 	EXPECT_EQ(request1.GetField("host"), "www.example.com");
 
@@ -46,7 +46,7 @@ TEST(RequestHeaderTest, ParseFieldwithOWS) {
 	EXPECT_EQ(request2.GetField("host"), "www.example.com");
 }
 
-TEST(RequestHeaderTest, InvalidFields) {
+TEST(RequestFieldParserTest, InvalidFields) {
 	EXPECT_THROW({
 		Request request(&config, "GET /hello.txt HTTP/1.1\nHost: www.example.c\vom\n\n");
 	}, BadRequestException);
