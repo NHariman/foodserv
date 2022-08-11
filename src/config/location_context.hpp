@@ -42,9 +42,9 @@ class LocationContext {
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string input);
 		void						CheckListVerification();
-		LocationContext();
 
 	public:
+		LocationContext();
 		LocationContext(std::string data);
 		LocationContext(LocationContext const &location_context);
 		LocationContext& operator= (LocationContext const &location_context);

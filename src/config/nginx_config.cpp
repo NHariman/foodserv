@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/10 21:12:00 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/11 15:55:59 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void		NginxConfig::FindServerContexts() {
 			i = key_start;
 			if (IsServerContext(_config_file.substr(key_start, key_end - key_start), &i)) {
 				this->_amount_server_contexts++;
-				ServerContext server(&i, _config_file);
+				ServerContext server(&i, _config_file, _amount_server_contexts);
 				this->_servers.push_back(server);
 			}
 		}
@@ -142,4 +142,27 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 
-NginxConfig::~NginxConfig() {}
+size_t							NginxConfig::GetMaxBodySize(std::string host, std::string target) {
+	std::vector<ServerContext>::iterator server_ptr;
+	std::vector<std::string>::iterator	names_ptr;
+	std::vector<LocationContext>::iterator loc_ptr;
+
+	for (server_ptr = _servers.begin() ; server_ptr < _servers.end(); server_ptr++) {
+		for(names_ptr = server_ptr->GetServerNameVector().begin() ; names_ptr < server_ptr->GetServerNameVector().end() ; names_ptr++) {
+			if (host.compare(*names_ptr) == 0) {
+				for (loc_ptr = server_ptr->GetLocationContexts().begin() ; loc_ptr < server_ptr->GetLocationContexts().end() ; loc_ptr++) {
+					if (target.compare(loc_ptr->GetLocationUri().GetUri()) == 0) {
+						if (loc_ptr->IsSet("client_max_body_size") == true) {
+							return loc_ptr->GetClientMaxBodySize();
+						}
+						else {
+							return server_ptr->GetClientMaxBodySize();
+						}
+					}
+				}
+			}
+		}
+	}
+	throw CannotFindMaxBodySizeException(host, target);
+	return (-1);
+}

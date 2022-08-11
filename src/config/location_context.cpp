@@ -1,7 +1,8 @@
 #include "location_context.hpp"
 
-LocationContext::LocationContext() {
+LocationContext::LocationContext() : _location_uri() {
 	InitChecklist();
+	_check_list.uri = true;
 }
 
 LocationContext::LocationContext(std::string data) {

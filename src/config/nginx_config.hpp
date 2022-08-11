@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/10 21:38:23 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/11 15:55:04 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,14 @@ class NginxConfig {
 		NginxConfig();
 		NginxConfig(const char*	location);
 		NginxConfig & operator=(const NginxConfig& obj);
+		~NginxConfig(){};
 
 		// getters
 		std::string	GetConfigFile() const;
 		size_t		GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
+
+		size_t		GetMaxBodySize(std::string host, std::string target);
 		
 		//exceptions
 		class GetLineFailureException : public std::exception {
@@ -86,6 +89,18 @@ class NginxConfig {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Cannot open specified file.";
+				}
+		};
+
+		class CannotFindMaxBodySizeException : public std::exception {
+			private:
+				std::string _err_msg;
+			public:
+				CannotFindMaxBodySizeException(std::string host, std::string target) {
+					_err_msg = "Cannot find host + target pair: " + host + "/" + target + " client_max_body_size not found.";
+				}
+				const char *what() const throw() {
+					return _err_msg.c_str();
 				}
 		};
 };

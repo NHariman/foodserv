@@ -36,6 +36,7 @@ struct t_flags_server
 
 class ServerContext {
 	private:
+		size_t							_server_nb;
 		t_flags_server					_check_list;
 		std::vector<LocationContext>	_location_contexts;
 		std::pair<in_addr_t, int>		_listen; // changed by sanne
@@ -52,11 +53,11 @@ class ServerContext {
 		size_t						FindLocationContextEnd(std::string config_file, size_t start);
 		void						InitChecklist();
 		void						CopyChecklist(t_flags_server obj_checklist);
-		ServerContext();
 		
 		
 	public:
-		ServerContext(size_t *start, std::string config_file); // uses a pointer so it can skip through the server bits on its own when it returns
+		ServerContext();
+		ServerContext(size_t *start, std::string config_file, size_t server_nb); // uses a pointer so it can skip through the server bits on its own when it returns
 		ServerContext(const ServerContext &server_context);
 		ServerContext & operator= (const ServerContext &server_context);
 		~ServerContext(){};
@@ -73,65 +74,112 @@ class ServerContext {
 		std::vector<std::string>	GetIndex() const;
 		size_t						GetClientMaxBodySize() const;
 		std::vector<ErrorPage>		GetErrorPage() const;
-		bool						IsErrorPageSet() const;
+		bool						HasErrorPage() const;
 		t_flags_server				GetFlags() const;
 
 		// exception classes
 		class InvalidDirectiveException : public std::exception
 		{
 			public:
+				InvalidDirectiveException(std::string directive, size_t server) {
+					_err_string = "ERROR! Multiple invalid directive (" + directive + ") in server context no." + std::to_string(server) + " .";
+				};
 				const char *what() const throw() {
-					return "ERROR! Invalid Key detected in Server block.";
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class MultipleListensException : public std::exception
 		{
 			public:
+				MultipleListensException(size_t server) {
+					_err_string = "ERROR! Multiple listen directives found in server context no. " + std::to_string(server) + " .";
+				};
 				const char *what() const throw() {
-					return "ERROR! Multiple listen keys detected in Server block.";
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class MultipleRootException : public std::exception
 		{
 			public:
+				MultipleRootException(size_t server) {
+					_err_string = "ERROR! Multiple root directives found in server context: " + std::to_string(server) + " .";
+				};
 				const char *what() const throw() {
-					return "ERROR! Multiple root keys detected in Server block.";
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class MultipleClientMaxBodySizeException : public std::exception
 		{
 			public:
+				MultipleClientMaxBodySizeException(size_t server) {
+					_err_string = "ERROR! Multiple client_max_body_size directives found in server context: " + std::to_string(server) + " .";
+				};
 				const char *what() const throw() {
-					return "ERROR! Multiple client_max_body_size keys detected in Server block.";
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class DuplicateLocationUriException : public std::exception
 		{
 			public:
+				DuplicateLocationUriException(size_t server, std::string uri) {
+					_err_string = "ERROR! Multiple location uri directives (" + uri + ") found in server context no." + std::to_string(server) + " .";
+				};
 				const char *what() const throw() {
-					return "ERROR! Duplicate location URI detected in Server block.";
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class MultipleServerNameException : public std::exception
 		{
 			public:
+				MultipleServerNameException(size_t server) {
+					_err_string = "ERROR! Multiple server_names directives found in server context: " + std::to_string(server) + " .";
+				};
 				const char *what() const throw() {
-					return "ERROR! Multiple server_name keys detected in Server block.";
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class MultipleIndexException : public std::exception
 		{
 			public:
+				MultipleIndexException(size_t server) {
+					_err_string = "ERROR! Multiple index directives found in server context: " + std::to_string(server) + " .";
+				};
 				const char *what() const throw() {
-					return "ERROR! Multiple index keys detected in Server block.";
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class InvalidDirectiveSetCheckException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Trying to check if a nonexistent directive has been set in Location block.";
+					return "ERROR! Trying to check if a nonexistent directive has been set in server context.";
 				}
+		};
+		class DirectiveNotSetException : public std::exception
+		{
+			public:
+				DirectiveNotSetException(std::string directive, size_t server) {
+					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set in server no." + std::to_string(server) + ".";
+				};
+				const char *what() const throw() {
+					return _err_string.c_str();
+				}
+			private:
+				std::string		_err_string;
 		};
 };
 
