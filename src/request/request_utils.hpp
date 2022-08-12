@@ -1,6 +1,7 @@
 #ifndef REQUEST_UTILS_HPP
 #define REQUEST_UTILS_HPP
 
+#include <algorithm> // transform
 #include <cctype> // isalpha, isdigit, toupper
 #include <iomanip> // setw
 #include <ios> // std::hex
@@ -17,6 +18,7 @@ bool	IsPChar(int c);
 bool	IsTChar(int c);
 bool	IsVChar(int c);
 bool	IsSpace(int c);
+bool	IsOctet(int c);
 bool	IsWhitespace(int c);
 bool	IsValidString(int (*validity_checker)(int), string const& s,
 						string const& allow  = std::string());

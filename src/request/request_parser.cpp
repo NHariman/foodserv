@@ -151,6 +151,9 @@ RequestState	RequestParser::MessageBodyHandler(size_t pos) {
 RequestState	RequestParser::ChunkedHandler(size_t pos) {
 	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos] << "]\n";
 
+	ChunkedParser parser;
+
+	_bytes_read += parser.Parse(*_request, input.substr(pos));
 	return r_Done;
 }
 

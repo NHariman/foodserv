@@ -9,13 +9,14 @@
 
 using namespace std;
 
+class Request;
+
 enum	ChunkState {
 	c_Start = 0,
 	c_Size,
 	c_Data,
 	c_Last,
 	c_Trailer,
-	c_LineEnding,
 	c_Done,
 	c_Invalid
 };
@@ -38,17 +39,18 @@ class ChunkedParser : public StateParser<ChunkState> {
 
 	private:
 		Request*	_request;
-		size_t		_size;
+		size_t		_chunk_size;
 		ChunkState	_save_state;
+		bool		_chunk_ext;
 
 		ChunkState	StartHandler(char c);
 		ChunkState	SizeHandler(char c);
 		ChunkState	DataHandler(char c);
 		ChunkState	LastHandler(char c);
 		ChunkState	TrailerHandler(char c);
-		ChunkState	LineEndingHandler(char c);
+		ChunkState	HandleCRLF(char c, ChunkState return_state, bool skip = true);
 		void		ParseTrailerHeader(map<string, string>& fields);
-		void		SaveParsedValue(ChunkState cur_state);
+		void		SaveParsedValue();
 };
 
 #endif /* CHUNKED_PARSER_HPP */

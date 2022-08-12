@@ -4,6 +4,7 @@
 #include <string>
 
 #include "exception.hpp"
+#include "chunked_parser.hpp"
 #include "header_field_parser.hpp"
 #include "header_field_validator.hpp"
 #include "state_parser.hpp"

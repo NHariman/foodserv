@@ -1,5 +1,7 @@
 #include "chunked_parser.hpp"
 
+#define DEBUG 0 // TODO: REMOVE
+
 // List of header fields not allowed in chunk trailer as outlined in
 // RFC 7230 Section 4.1.2.
 const vector<string>	ChunkedParser::illegal_fields = {
@@ -31,7 +33,7 @@ const vector<string>	ChunkedParser::illegal_fields = {
 
 // Default constructor
 ChunkedParser::ChunkedParser()
-	: StateParser(c_Start), _request(NULL), _size(0) {}
+	: StateParser(c_Start), _request(NULL), _chunk_size(0), _chunk_ext(false) {}
 
 // Destructor
 ChunkedParser::~ChunkedParser() {}
@@ -40,7 +42,7 @@ ChunkedParser::~ChunkedParser() {}
 // calls on parent class StateParser::ParseString().
 size_t	ChunkedParser::Parse(Request& request, string const& input) {
 	_request = &request;
-
+	cout << "ChunkedParser input: " << input << endl; // DEBUG
 	return ParseString(input);
 }
 
@@ -52,10 +54,9 @@ ChunkState	ChunkedParser::GetNextState(size_t pos) {
 			&ChunkedParser::DataHandler,
 			&ChunkedParser::LastHandler,
 			&ChunkedParser::TrailerHandler,
-			&ChunkedParser::LineEndingHandler,
 			nullptr
 	};
-
+	// if (DEBUG) cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
 	skip_char = false;
 	return (this->*table[cur_state])(input[pos]);
 }
@@ -70,88 +71,103 @@ bool	ChunkedParser::CheckDoneState() {
 }
 
 ChunkState	ChunkedParser::StartHandler(char c) {
-	if (IsHexDig(c))
-		return c_Data;
-	else
-		return c_Invalid;
-}
+	if (DEBUG) cout << "[StartHandler] at: [" << c << "]\n";
 
-static ChunkState	HandleCRLF(bool& skip_char, ChunkState& save_state,
-								ChunkState last_state) {
-	skip_char = true;
-	save_state = last_state;
-	return c_LineEnding;
+	if (c == '0') {
+		skip_char = true;
+		return c_Last;
+	}
+	else if (IsHexDig(c))
+		return c_Size;
+	else
+		return c_Invalid;	
 }
 
 ChunkState	ChunkedParser::SizeHandler(char c) {
+	if (DEBUG) cout << "[SizeHandler] at: [" << c << "]\n";
+
 	switch (c) {
 		case '\r':
-			return HandleCRLF(skip_char, _save_state, c_Size);
+			return HandleCRLF(c, c_Size);
 		case '\n':
-			SaveParsedValue(c_Size);
-			return c_Data;
+			_chunk_ext = false;
+			return HandleCRLF(c, c_Data);
 		case ';':
 			skip_char = true;
+			_chunk_ext = true;
 			return c_Size;
-		case '0':
-			skip_char = true;
-			return c_Last;
+		// case '0':
+		// 	skip_char = true;
+		// 	return c_Last;
 		default:
-			return c_Invalid;
+			if (_chunk_ext == true)
+				return c_Size;
+			else
+				return c_Invalid;
 	}
 }
 
 ChunkState	ChunkedParser::DataHandler(char c) {
+	if (DEBUG) cout << "[DataHandler] at: [" << c << "] | chunk size: " << _chunk_size << "\n";
+
+	if (_chunk_size > 0)
+		_chunk_size -= 1;
 	switch (c) {
 		case '\r':
-
+			return HandleCRLF(c, c_Data, (_chunk_size == 0));
 		case '\n':
-			if (_size == 0)
-				return c_Size;
-			else {
-				SaveParsedValue(c_Data);
-				return c_Data;
-			}
-		// decrement _size when processing data
+			if (_chunk_size == 0)
+				return HandleCRLF(c, c_Start);
+			else
+				return HandleCRLF(c, c_Data, false);
+		// decrement _chunk_size when processing data
 		default:
-			return c_Invalid;
+			if (IsOctet(c))
+				return c_Data;
+			else
+				return c_Invalid;
 	}
 }
 
 ChunkState	ChunkedParser::LastHandler(char c) {
+	if (DEBUG) cout << "[LastHandler] at: [" << c << "]\n";
+
 	switch (c) {
 		case '\r':
-			return HandleCRLF(skip_char, _save_state, c_Trailer);
+			return HandleCRLF(c, c_Last);
 		case '\n':
-			return c_Trailer;
+			return HandleCRLF(c, c_Trailer);
 		default:
 			return c_Invalid;
 	}
 }
 
 ChunkState	ChunkedParser::TrailerHandler(char c) {
+	if (DEBUG) cout << "[TrailerHandler] at: [" << c << "]\n";
+
 	switch (c) {
-		case '\r':
-			return HandleCRLF(skip_char, _save_state, c_Trailer);
-		case '\n':
-			if (!buffer.empty())
-				SaveParsedValue(c_Trailer);
+		case '\0':
 			return c_Done;
+		case '\r':
+			return HandleCRLF(c, c_Trailer);
+		case '\n':
+			return HandleCRLF(c, c_Trailer);
 		default:
-			return c_Invalid;
+			return c_Trailer;
 	}
 }
 
-ChunkState	ChunkedParser::LineEndingHandler(char c) {
-	if (c =='\n') {
-		if (!buffer.empty())
-			SaveParsedValue(_save_state);
-		return _save_state;
-	}
-	else {
-		buffer += '\r'; // pushes skipped \r character for error printing
+ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
+	static bool cr = false;
+
+	if (cr == true && c == '\r')
 		return c_Invalid;
-	}
+
+	skip_char = skip;
+	if (!buffer.empty())
+		SaveParsedValue();
+	cr = (c == '\r');
+	return next_state;
 }
 
 // Checks if trailer field is forbidden (according to RFC 7230 Section 4.1.2)
@@ -169,10 +185,10 @@ void	ChunkedParser::ParseTrailerHeader(map<string, string>& fields) {
 
 }
 
-void	ChunkedParser::SaveParsedValue(ChunkState cur_state) {
+void	ChunkedParser::SaveParsedValue() {
 	switch (cur_state) {
 		case c_Size:
-			_size = HextoDec(buffer);
+			_chunk_size = HextoDec(buffer);
 			break;
 		case c_Data:
 			_request->msg_body += buffer;
@@ -185,3 +201,5 @@ void	ChunkedParser::SaveParsedValue(ChunkState cur_state) {
 	}
 	buffer.clear();
 }
+
+#undef DEBUG // REMOVE

@@ -47,6 +47,10 @@ bool	IsSpace(int c) {
 	return c == ' ';
 }
 
+bool	IsOctet(int c) {
+	return (c >= 0x00 && c <= 0xFF);
+}
+
 // Checks if character is whitespace as defined by RFC 7230 (space or horizontal tab).
 bool	IsWhitespace(int c) {
 	return (c == ' ' || c == '\t');

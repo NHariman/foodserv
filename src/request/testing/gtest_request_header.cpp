@@ -8,7 +8,7 @@
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
 static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
 static string DEL_RL_Host = "DELETE /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
-static string POST_RL_Host = "POST /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
+static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: www.example.com\r\n";
 
 static NginxConfig config(NULL);
 
@@ -33,7 +33,7 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 	status = ConstructAndProcess(DEL_RL_Host + "Content-Length: 0\n\n");
 	EXPECT_EQ(status, hv_OK);
 
-	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0");
+	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0\r\n\n");
 	EXPECT_EQ(status, hv_MessageChunked);
 
 	status = ConstructAndProcess(POST_RL_Host + "Content-Length: 5\n\nHello");
