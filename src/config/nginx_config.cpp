@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/12 00:07:31 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/12 15:38:40 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 NginxConfig::NginxConfig() : _amount_server_contexts(0) {
 	std::ifstream	config_file_fd;
+	std::cout << "default constructor" << std::endl;
 	config_file_fd.open("config_files/default.conf");
 	if (config_file_fd.is_open()) 
 		LoadConfigFile(config_file_fd);
@@ -37,7 +38,7 @@ NginxConfig::NginxConfig() : _amount_server_contexts(0) {
 // and closes the file again.
 NginxConfig::NginxConfig(const char *location) : _amount_server_contexts(0) {
 	std::ifstream	config_file_fd;
-
+	
 	if (!location) {
 		location = "config_files/default.conf";
 		std::cerr << ">> WARNING! No config file given, config_files/default.conf used." << std::endl;
@@ -174,3 +175,12 @@ size_t							NginxConfig::GetMaxBodySize(std::string host, std::string target) {
 		return host_target_pair.location->GetClientMaxBodySize();
 	return host_target_pair.server->GetClientMaxBodySize();
 }
+
+// bool							NginxConfig::AllowMethod(std::string host, std::string target, std::string method) {
+// 	host_target_pair	host_target_pair = GetHostTargetServer(host, target);
+
+// 	switch (IsValidHTTPMethod(method)) {
+// 		case 0:
+
+// 	}
+// }

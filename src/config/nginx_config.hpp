@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/12 00:04:39 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/12 15:38:55 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <vector>
 #include <utility>
 #include "server_context.hpp"
+#include "location_context.hpp"
+// #include "directive_validation/directive_validation.hpp"
 #include "config_utils.hpp"
 
 // Coplien form:
@@ -63,6 +65,7 @@ class NginxConfig {
 		std::vector<ServerContext>	GetServers() const;
 
 		size_t		GetMaxBodySize(std::string host, std::string target);
+		// bool		AllowMethod(std::string host, std::string target, std::string method);
 		
 		//exceptions
 		class GetLineFailureException : public std::exception {

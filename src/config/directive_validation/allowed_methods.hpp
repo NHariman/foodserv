@@ -56,4 +56,6 @@ class AllowedMethods {
 		};
 };
 
+int		IsValidHTTPMethod(std::string method);
+
 #endif

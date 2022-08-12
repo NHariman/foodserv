@@ -1,6 +1,8 @@
 #include "location_context.hpp"
 
-LocationContext::LocationContext() : _location_uri() {
+LocationContext::LocationContext() : 
+_location_uri(),
+_allowed_methods(AllowedMethods()) {
 	InitChecklist();
 	_check_list.uri = true;
 }
@@ -152,23 +154,19 @@ void							LocationContext::SetValue(int directive, std::string input) {
 
 void							LocationContext::CheckListVerification(){
     if (_check_list.autoindex == false) {
-		_autoindex = false;
 		std::cerr << "WARNING! No autoindex in LocationContext detected. Default in Server context will be used." << std::endl;
 	}
     if (_check_list.root == false) {
-		_root = "/var/www/html";
 		std::cerr << "WARNING! No location root detected. Default in Server context will be used." << std::endl;
 	}
 	if (_check_list.index == false) {
-		Index	input_value("index.php index.html index.htm index.nginx-debian.html");
-		_index = input_value.GetIndex();
 		std::cerr << "WARNING! No location index detected. Default in Server context will be used." << std::endl;
 	}
 	if (_check_list.client_max_body_size == false) {
-		_client_max_body_size = 0;
 		std::cerr << "WARNING! No client_max_body_size in LocationContext detected. Default in Server context will be used." << std::endl;
 	}
 	if (_check_list.allowed_methods == false)
+		_allowed_methods = AllowedMethods();
 		std::cerr << "WARNING! No allowed_methods in LocationContext detected. Default (No methods allowed) have been set." << std::endl;
 }
 

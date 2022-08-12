@@ -92,10 +92,10 @@ void		ServerContext::InitChecklist() {
 // compares found directive with possible directive values and either returns the number in the list
 // or throws an error because a bad directive has been found
 int			ServerContext::IsDirective(std::string directive){
-	const std::string	directives[] = {"location", "listen", "server_name", "root", "index", "client_max_body_size", "error_page"};
+	const std::string	directives[] = {"location", "listen", "server_name", "root", "index", "client_max_body_size", "error_page", "autoindex", "return"};
 	
-	int	is_directive = std::find(directives, directives + 7, directive) - directives;
-	if (is_directive < 0 || is_directive > 6)
+	int	is_directive = std::find(directives, directives + 9, directive) - directives;
+	if (is_directive < 0 || is_directive > 8)
 		throw InvalidDirectiveException(directive, _server_nb);
 	else
 		return (is_directive);
@@ -166,6 +166,22 @@ void				ServerContext::SetValue(int directive, std::string value){
 				_error_page.push_back(error_page_value);
 				break ;
 			}
+			case 7: {
+				if (_check_list.autoindex == true)
+					throw MultipleAutoindexException(_server_nb);
+				_check_list.autoindex = true;
+				Autoindex	autoindex_value(value);
+				_autoindex = autoindex_value.GetStatus();
+				break ;
+			}
+            case 8: {
+				if (_check_list.return_dir == true)
+					throw MultipleReturnException(_server_nb);
+				_check_list.return_dir = true;
+				ReturnDir		return_dir_value(value);
+				_return_dir = return_dir_value;
+				break ;
+			}
 		}
 	}
 	return ;
@@ -202,6 +218,10 @@ void			ServerContext::CheckListVerification(){
 	}
 	if (_check_list.error_page == false) {
 		// hardcoded error pages are used instead?
+		std::cerr << "WARNING! No error_page detected in server context no." + std::to_string(_server_nb) + " Default have been set." << std::endl;
+	}
+	if (_check_list.autoindex == false) {
+		_autoindex = false;
 		std::cerr << "WARNING! No error_page detected in server context no." + std::to_string(_server_nb) + " Default have been set." << std::endl;
 	}
 }

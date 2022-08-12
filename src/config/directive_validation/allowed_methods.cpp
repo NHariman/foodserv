@@ -1,12 +1,17 @@
 #include "allowed_methods.hpp"
 
+int		IsValidHTTPMethod(std::string method) {
+	const std::string	methods[] = {"GET", "POST", "DELETE"};
+	int is_method = std::find(methods, methods + 3, method) - methods;
+	if (is_method < 0 || is_method > 2)
+		throw AllowedMethods::BadMethodException();
+	return (is_method);
+}
+
 
 AllowedMethods::AllowedMethods() : _get(false), _post(false), _delete(false) {}
 
 AllowedMethods::AllowedMethods(std::string str) : _get(false), _post(false), _delete(false) {
-	const std::string	key_name[] = {"GET", "POST", "DELETE"};
-	int	is_key = 0;
-
 	if (str.compare("") == 0)
 		throw MissingArgumentsException();
 	size_t	arguments = CountArguments(str);
@@ -14,11 +19,7 @@ AllowedMethods::AllowedMethods(std::string str) : _get(false), _post(false), _de
 		throw TooManyArgumentsException();
 	std::vector<std::string>methods = ToStringVector(str);
 	for (size_t i = 0; i < methods.size(); i++) {
-		std::string key;
-		is_key = std::find(key_name, key_name + 3, methods.at(i)) - key_name;
-		if (is_key < 0 || is_key > 2)
-			throw BadMethodException();
-		switch (is_key) {
+		switch (IsValidHTTPMethod(methods.at(i))) {
 			case 0:
 				_get = true;
 				break ;

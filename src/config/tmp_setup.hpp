@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "config_exeptions.hpp"
 
-const char*    GetConfigLocation(int ac, const char **av);
+// NginxConfig*    ConfigSetup(int ac, const char **av);
+void    ConfigSetup(int ac, const char **av, NginxConfig** config);
 
 #endif

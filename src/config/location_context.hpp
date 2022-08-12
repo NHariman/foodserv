@@ -11,32 +11,29 @@
 
 struct t_flags_location
 {
-	bool	uri;
-	bool	autoindex;
-	bool	root;
-	bool	index;
-	bool	client_max_body_size;
-	bool	error_page;
 	bool	fastcgi_pass;
 	bool	allowed_methods;
-	bool	return_dir;
 }; // check list of found keywords in LocationContext
 
 // actually this is called a context (sad face)
 class LocationContext {
 	private:
+		bool						bool_fastcgi_pass;
+		bool						bool_allowed_methods;
 		t_flags_location			_check_list;
 		LocationUri					_location_uri;
+		/// list of directives that can be set in both server and location
 		bool						_autoindex;
 		std::string					_root;
 		std::vector<std::string>	_index;
 		size_t						_client_max_body_size;
 		std::vector<ErrorPage>		_error_page;
+		////
 		std::string					_fastcgi_pass;
 		AllowedMethods				_allowed_methods;
+		/// this one too.
 		ReturnDir					_return_dir;
 
-		void						InitChecklist();
 		void						CopyChecklist(t_flags_location obj_checklist);
 		void						GetDirectiveValuePairs(std::string data);
 		int							IsDirective(std::string directive);
