@@ -58,48 +58,11 @@ class ServerContext : public ConfigValues {
 		int							GetPortNumber() const;
 		std::vector<std::string>	GetServerNameVector() const;
 
-		// exception classes
-		class InvalidDirectiveException : public std::exception
-		{
-			public:
-				InvalidDirectiveException(std::string directive, size_t server) {
-					_err_string = "ERROR! Multiple invalid directive (" + directive + ") in server context no." + std::to_string(server) + " .";
-				};
-				virtual const char *what() const throw() {
-					return _err_string.c_str();
-				}
-			private:
-				std::string		_err_string;
-		};
 		class MultipleListensException : public std::exception
 		{
 			public:
 				MultipleListensException(size_t server) {
 					_err_string = "ERROR! Multiple listen directives found in server context no. " + std::to_string(server) + " .";
-				};
-				virtual const char *what() const throw() {
-					return _err_string.c_str();
-				}
-			private:
-				std::string		_err_string;
-		};
-		class MultipleRootException : public std::exception
-		{
-			public:
-				MultipleRootException(size_t server) {
-					_err_string = "ERROR! Multiple root directives found in server context: " + std::to_string(server) + " .";
-				};
-				virtual const char *what() const throw() {
-					return _err_string.c_str();
-				}
-			private:
-				std::string		_err_string;
-		};
-		class MultipleClientMaxBodySizeException : public std::exception
-		{
-			public:
-				MultipleClientMaxBodySizeException(size_t server) {
-					_err_string = "ERROR! Multiple client_max_body_size directives found in server context: " + std::to_string(server) + " .";
 				};
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
@@ -131,37 +94,7 @@ class ServerContext : public ConfigValues {
 			private:
 				std::string		_err_string;
 		};
-		class MultipleIndexException : public std::exception
-		{
-			public:
-				MultipleIndexException(size_t server) {
-					_err_string = "ERROR! Multiple index directives found in server context: " + std::to_string(server) + " .";
-				};
-				virtual const char *what() const throw() {
-					return _err_string.c_str();
-				}
-			private:
-				std::string		_err_string;
-		};
-		class InvalidDirectiveSetCheckException : public std::exception
-		{
-			public:
-				virtual const char *what() const throw() {
-					return "ERROR! Trying to check if a nonexistent directive has been set in server context.";
-				}
-		};
-		class DirectiveNotSetException : public std::exception
-		{
-			public:
-				DirectiveNotSetException(std::string directive, size_t server) {
-					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set in server no." + std::to_string(server) + ".";
-				};
-				virtual const char *what() const throw() {
-					return _err_string.c_str();
-				}
-			private:
-				std::string		_err_string;
-		};
+		
 		class MultipleAutoindexException : public std::exception
 		{
 			private:

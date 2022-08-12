@@ -9,18 +9,13 @@
 #include "config_utils.hpp"
 #include "directive_validation/directive_validation.hpp"
 
-struct t_flags_location
-{
-	bool	fastcgi_pass;
-	bool	allowed_methods;
-}; // check list of found keywords in LocationContext
 
 // actually this is called a context (sad face)
 class LocationContext {
 	private:
 		bool						bool_fastcgi_pass;
 		bool						bool_allowed_methods;
-		t_flags_location			_check_list;
+		
 		LocationUri					_location_uri;
 		/// list of directives that can be set in both server and location
 		bool						_autoindex;
@@ -34,7 +29,6 @@ class LocationContext {
 		/// this one too.
 		ReturnDir					_return_dir;
 
-		void						CopyChecklist(t_flags_location obj_checklist);
 		void						GetDirectiveValuePairs(std::string data);
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string input);
@@ -50,7 +44,6 @@ class LocationContext {
 		// check if something has been set or not
 		bool						IsSet(std::string key);
 		// getters
-		t_flags_location			GetFlags() const;
 		LocationUri					GetLocationUri() const;
 		bool						GetAutoindex() const;
 		std::string					GetRoot() const;
