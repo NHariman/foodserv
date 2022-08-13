@@ -4,7 +4,6 @@ LocationContext::LocationContext() :
 _location_uri(),
 _allowed_methods(AllowedMethods()) {
 	InitChecklist();
-	_check_list.uri = true;
 }
 
 LocationContext::LocationContext(std::string data) {
@@ -24,47 +23,30 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     _fastcgi_pass = location_context._fastcgi_pass;
 	_allowed_methods = location_context._allowed_methods;
 
-	CopyChecklist(location_context._check_list);
     return (*this);
 }
-LocationContext::LocationContext(LocationContext const& location_context) :
+LocationContext::LocationContext(LocationContext const& location_context) : ConfigValues(location_context),
 _location_uri(location_context._location_uri),
-_autoindex(location_context._autoindex),
-_root(location_context._root),
-_index(location_context._index),
-_client_max_body_size(location_context._client_max_body_size),
-_error_page(location_context._error_page),
 _fastcgi_pass(location_context._fastcgi_pass),
-_allowed_methods(location_context._allowed_methods) {
-	CopyChecklist(location_context._check_list);
-}
+_allowed_methods(location_context._allowed_methods),
+bool_fastcgi_pass(location_context.bool_fastcgi_pass),
+bool_allowed_methods(location_context.bool_allowed_methods),
+{}
 
 void	LocationContext::InitChecklist() {
-	_check_list.uri = false;
-    _check_list.autoindex = false;
-    _check_list.root = false;
-    _check_list.index = false;
-    _check_list.client_max_body_size = false;
-	_check_list.error_page = false;
-    _check_list.fastcgi_pass = false;
-	_check_list.allowed_methods = false;
-}
-
-void	LocationContext::CopyChecklist(t_flags_location obj_checklist) {
-    _check_list.uri = 					obj_checklist.uri;
-    _check_list.autoindex =				obj_checklist.autoindex;
-    _check_list.root =					obj_checklist.root;
-    _check_list.index =					obj_checklist.index;
-    _check_list.client_max_body_size = 	obj_checklist.client_max_body_size;
-	_check_list.error_page = 			obj_checklist.error_page;
-    _check_list.fastcgi_pass = 			obj_checklist.fastcgi_pass;
-	_check_list.allowed_methods = 		obj_checklist.allowed_methods;
+    bool_autoindex = false;
+    bool_root = false;
+    bool_index = false;
+    bool_client_max_body_size = false;
+	bool_error_page = false;
+    bool_fastcgi_pass = false;
+	bool_allowed_methods = false;
 }
 
 int								LocationContext::IsDirective(std::string directive) {
 	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
 
-    if (_check_list.uri == false) {
+    if (bool_uri == false) {
 		return 8;
 	}
 	int	is_directive = std::find(directives, directives + 8, directive) - directives;
@@ -80,70 +62,70 @@ void							LocationContext::SetValue(int directive, std::string input) {
 	value = TrimValue(input);
 
 	if (directive == 8) {
-		_check_list.uri = true;
+		bool_uri = true;
 		LocationUri		uri_value(value);
 		_location_uri = uri_value;
 	}
 	else {
 		switch(directive) {
 			case 0: {
-				if (_check_list.autoindex == true)
+				if (bool_autoindex == true)
 					throw MultipleAutoindexException(_location_uri.GetURIClass().GetInputURI());
-				_check_list.autoindex = true;
+				bool_autoindex = true;
 				Autoindex	autoindex_value(value);
 				_autoindex = autoindex_value.GetStatus();
 				break ;
 			}
 			case 1: {
-				if (_check_list.root == true)
+				if (bool_root == true)
 					throw MultipleRootException(_location_uri.GetURIClass().GetInputURI());
-				_check_list.root = true;
+				bool_root = true;
 				Root root_value(value);
 				_root = value;
 				break ;
 			}
 			case 2: {
-				if (_check_list.index == true)
+				if (bool_index == true)
 					throw MultipleIndexException(_location_uri.GetURIClass().GetInputURI());
-				_check_list.index = true;
+				bool_index = true;
 				Index	index_value(value);
 				_index = index_value.GetIndex();
 				break ;
 			}
 			case 3: {
-				if (_check_list.client_max_body_size == true)
+				if (bool_client_max_body_size == true)
 					throw MultipleClientMaxBodySizeException(_location_uri.GetURIClass().GetInputURI());
-				_check_list.client_max_body_size = true;
+				bool_client_max_body_size = true;
 				ClientMaxBodySize	cmbs_value(value);
 				_client_max_body_size = cmbs_value.GetValue();
 				break ;
 			}
             case 4: {
-				_check_list.error_page = true;
+				bool_error_page = true;
 				ErrorPage	error_page_value(value);
 				_error_page.push_back(error_page_value);
 				break ;
 			}
             case 5: {
-				if (_check_list.fastcgi_pass == true)
+				if (bool_fastcgi_pass == true)
 					throw MultipleFastCGIPassException(_location_uri.GetURIClass().GetInputURI());
-				_check_list.fastcgi_pass = true;
+				bool_fastcgi_pass = true;
 				FastCGIPass fastcgi_pass_value(value);
 				_fastcgi_pass = value;
 				break ;
 			}
             case 6: {
-				if (_check_list.allowed_methods == true)
+				if (bool_allowed_methods == true)
 					throw MultipleAllowedMethodsException(_location_uri.GetURIClass().GetInputURI());
-				_check_list.allowed_methods = true;
+				bool_allowed_methods = true;
 				AllowedMethods allowed_methods_value(value);
 				_allowed_methods = allowed_methods_value;
 				break ;
 			}
             case 7: {
-				if (_check_list.return_dir == true)
+				if (bool_return_dir == true)
 					throw MultipleReturnException(_location_uri.GetURIClass().GetInputURI());
-				_check_list.return_dir = true;
+				bool_return_dir = true;
 				ReturnDir		return_dir_value(value);
 				_return_dir = return_dir_value;
 				break ;
@@ -153,19 +135,19 @@ void							LocationContext::SetValue(int directive, std::string input) {
 }
 
 void							LocationContext::CheckListVerification(){
-    if (_check_list.autoindex == false) {
+    if (bool_autoindex == false) {
 		std::cerr << "WARNING! No autoindex in LocationContext detected. Default in Server context will be used." << std::endl;
 	}
-    if (_check_list.root == false) {
+    if (bool_root == false) {
 		std::cerr << "WARNING! No location root detected. Default in Server context will be used." << std::endl;
 	}
-	if (_check_list.index == false) {
+	if (bool_index == false) {
 		std::cerr << "WARNING! No location index detected. Default in Server context will be used." << std::endl;
 	}
-	if (_check_list.client_max_body_size == false) {
+	if (bool_client_max_body_size == false) {
 		std::cerr << "WARNING! No client_max_body_size in LocationContext detected. Default in Server context will be used." << std::endl;
 	}
-	if (_check_list.allowed_methods == false)
+	if (bool_allowed_methods == false)
 		_allowed_methods = AllowedMethods();
 		std::cerr << "WARNING! No allowed_methods in LocationContext detected. Default (No methods allowed) have been set." << std::endl;
 }
@@ -199,59 +181,55 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 
 // getters
 LocationUri							LocationContext::GetLocationUri() const {
-	if (_check_list.uri == false)
+	if (bool_uri == false)
 		throw DirectiveNotSetException("location uri");
     return _location_uri;
 }
 
 bool								LocationContext::GetAutoindex() const {
-	if (_check_list.autoindex == false)
+	if (bool_autoindex == false)
 		throw DirectiveNotSetException("autoindex");
     return _autoindex;
 }
 
 std::string							LocationContext::GetRoot() const {
-	if (_check_list.root == false)
+	if (bool_root == false)
 		throw DirectiveNotSetException("root");
     return _root;
 }
 
 std::vector<std::string>			LocationContext::GetIndex() const {
-	if (_check_list.index == false)
+	if (bool_index == false)
 		throw DirectiveNotSetException("index");
     return _index;
 }
 
 size_t								LocationContext::GetClientMaxBodySize() const {
-	if (_check_list.client_max_body_size == false)
+	if (bool_client_max_body_size == false)
 		throw DirectiveNotSetException("client_max_body_size");
     return _client_max_body_size;
 }
 
 std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
-	if (_check_list.error_page == false)
+	if (bool_error_page == false)
 		throw DirectiveNotSetException("error_page");
     return _error_page;
 }
 
 std::string							LocationContext::GetFastCGIPass() const {
-	if (_check_list.fastcgi_pass == false)
+	if (bool_fastcgi_pass == false)
 		throw DirectiveNotSetException("fastcgi_pass");
     return _fastcgi_pass;
 }
 
 AllowedMethods						LocationContext::GetAllowedMethods() const {
-	if (_check_list.allowed_methods == false)
+	if (bool_allowed_methods == false)
 		throw DirectiveNotSetException("allowed_methods");
     return _allowed_methods;
 }
 
 std::string LocationUri::GetInputURI() const {
 	return _uri.GetInputURI();
-}
-
-t_flags_location					LocationContext::GetFlags() const {
-	return _check_list;
 }
 
 // use to check if a directive has been set
@@ -263,21 +241,21 @@ bool						LocationContext::IsSet(std::string directive) {
 		throw InvalidDirectiveSetCheckException(_location_uri.GetURIClass().GetInputURI());
 	switch (is_directive) {
 		case 0:
-			return _check_list.autoindex;
+			return bool_autoindex;
 		case 1:
-			return _check_list.root;
+			return bool_root;
 		case 2:
-			return _check_list.index;
+			return bool_index;
 		case 3:
-			return _check_list.client_max_body_size;
+			return bool_client_max_body_size;
 		case 4:
-			return _check_list.error_page;
+			return bool_error_page;
 		case 5:
-			return _check_list.fastcgi_pass;
+			return bool_fastcgi_pass;
 		case 6:
-			return _check_list.allowed_methods;
+			return bool_allowed_methods;
 		case 7:
-			return _check_list.return_dir;
+			return bool_return_dir;
 	}
 	throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI());
 }

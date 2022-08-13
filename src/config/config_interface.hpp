@@ -3,6 +3,7 @@
 
 #include "server_context.hpp"
 #include "location_context.hpp"
+#include "directive_validation/directive_validation.hpp"
 
 class ConfigValues {
     protected:
@@ -20,24 +21,61 @@ class ConfigValues {
 		bool							_autoindex;
 		ReturnDir						_return_dir;
     
+	protected:
        virtual void						InitChecklist() = 0;
        virtual int                      IsDirective(std::string directive) = 0;
-       virtual void                     GetDirectiveValuePairs(std::string data) = 0;
+       virtual void                     GetDirectiveValuePairs(std::string data){ static_cast<void>(data); throw MethodNotSetException("GetDirectiveValuePairs()");}
        virtual void                     SetValue(int directive, std::string value) = 0;
        virtual void                     CheckListVerification() = 0;
+	   ConfigValues();
+	   ConfigValues(const ConfigValues& obj);
+	   ConfigValues&	operator=(const ConfigValues& obj);
+	   virtual ~ConfigValues(){};
 
     public:
        //getters
-       std::string					GetRoot() const;
-       std::vector<std::string>	    GetIndex() const;
-       size_t						GetClientMaxBodySize() const;
-       std::vector<ErrorPage>		GetErrorPage() const;
-       bool						    GetAutoindex() const;
-       ReturnDir                    GetReturn() const;
+       virtual std::string					GetRoot() const;
+       virtual std::vector<std::string>	    GetIndex() const;
+       virtual size_t						GetClientMaxBodySize() const;
+       virtual std::vector<ErrorPage>		GetErrorPage() const;
+       virtual bool						    GetAutoindex() const;
+       virtual ReturnDir                    GetReturn() const;
 
-       bool						    HasErrorPage() const;
-       bool                         IsSet(std::string directive);
+       virtual bool							HasErrorPage() const;
 
+	   // checks if a directive has been set
+       virtual bool							IsSet(std::string directive) = 0;
+
+		// method not set exception
+		class MethodNotSetException : public std::exception
+		{
+			private:
+				std::string		_err_string;
+			public:
+				MethodNotSetException(std::string method) {
+					_err_string = method + " was not declared in derived class from which the method was called.";
+				}
+				const char *what() const throw() {
+					return (_err_string.c_str());
+				}
+		};
+
+		// invalid directive exceptions
+		class InvalidDirectiveSetCheckException : public std::exception
+		{
+			private:
+				std::string		_err_string;
+			public:
+				InvalidDirectiveSetCheckException(size_t server) {
+					_err_string = "Invalid directive detected in Server Context no." + std::to_string(server) + " .";
+				}
+				InvalidDirectiveSetCheckException(std::string uri) {
+					_err_string = "Invalid directive detected in Location Context:" + uri + ".";
+				}
+				const char *what() const throw() {
+					return (_err_string.c_str());
+				}
+		};
        class InvalidDirectiveException : public std::exception
 		{
 			public:
@@ -53,6 +91,23 @@ class ConfigValues {
 			private:
 				std::string		_err_string;
 		};
+		class DirectiveNotSetException : public std::exception
+		{
+			public:
+                DirectiveNotSetException(std::string directive) {
+					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set.";
+				};
+				DirectiveNotSetException(std::string directive, size_t server) {
+					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set in server no." + std::to_string(server) + ".";
+				};
+				virtual const char *what() const throw() {
+					return _err_string.c_str();
+				}
+			private:
+				std::string		_err_string;
+		};
+
+		// Multiple directives exceptions
         class MultipleRootException : public std::exception
 		{
 			public:
@@ -103,8 +158,8 @@ class ConfigValues {
 			private:
 				std::string		_err_string;
 			public:
-                MultipleErrorPageException(std::string uri) {
-					_err_string = "ERROR! Multiple error_page directives detected in Server Context:" + uri + ".";
+                MultipleErrorPageException(size_t server) {
+					_err_string = "ERROR! Multiple error_page directives detected in Server Context: " + std::to_string(server) + " .";
 				}
 				MultipleErrorPageException(std::string uri) {
 					_err_string = "ERROR! Multiple error_page directives detected in Location Context:" + uri + ".";
@@ -142,22 +197,6 @@ class ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
-		};
-
-		class DirectiveNotSetException : public std::exception
-		{
-			public:
-                DirectiveNotSetException(std::string directive) {
-					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set.";
-				};
-				DirectiveNotSetException(std::string directive, size_t server) {
-					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set in server no." + std::to_string(server) + ".";
-				};
-				virtual const char *what() const throw() {
-					return _err_string.c_str();
-				}
-			private:
-				std::string		_err_string;
 		};
 };
 

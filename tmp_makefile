@@ -15,7 +15,8 @@ REQUEST =	src/request/request_utils.cpp \
 			src/request/uri_host_parser.cpp \
 			src/request/uri.cpp 
 
-CONFIG = src/config/setup.cpp \
+CONFIG = src/config/config_interface.cpp
+		src/config/setup.cpp \
 		src/config/server_name.cpp \
 		src/config/server_context.cpp \
 		src/config/listen.cpp \
@@ -41,7 +42,7 @@ all: $(NAME)
 $(NAME): $(OFILES) 
 	@$(COMPILE) $(OFILES) -o $@ 
 
-%.o: %.cpp %.hpp src/config/directive_validation/directive_validation.hpp
+%.o: %.cpp
 	$(COMPILE) $(FLAGS) -c $< -o $@
 
 clean:

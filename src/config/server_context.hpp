@@ -24,12 +24,6 @@
 #include <string>
 #include <stdexcept>
 
-struct t_flags_server
-{
-
-
-}; // check list of found keywords in ServerContext
-
 class ServerContext : public ConfigValues {
 	private:
 		size_t	amount_location_context;
@@ -37,11 +31,18 @@ class ServerContext : public ConfigValues {
 		bool	bool_server_name;
 
 		size_t							_server_nb;
-		t_flags_server					_check_list;
 		std::vector<LocationContext>	_location_contexts;
 		std::pair<in_addr_t, int>		_listen; // changed by sanne
 		std::vector<std::string>		_server_name; // changed by sanne
-				
+
+		size_t					FindLocationContextEnd(std::string config_file, size_t start);
+		//overridden base class functions
+		void					GetDirectiveValuePairs(size_t *start_position, std::string config_file); // in this case i do not use override as i want to use it differently.
+		void					CheckListVerification() override;
+		void					SetValue(int directive, std::string value) override;
+		int						IsDirective(std::string directive) override;
+		void					InitChecklist() override;
+
 	public:
 		ServerContext();
 		ServerContext(size_t *start, std::string config_file, size_t server_nb); // uses a pointer so it can skip through the server bits on its own when it returns
@@ -50,13 +51,14 @@ class ServerContext : public ConfigValues {
 		~ServerContext(){};
 		
 		// check if set
-		bool						IsSet(std::string key);
+		bool						IsSet(std::string key) override;
 		//getters
 		std::vector<LocationContext>	GetLocationContexts() const;
 		std::pair<in_addr_t, int>	GetListen() const;
 		in_addr_t					GetIPAddress() const;
 		int							GetPortNumber() const;
 		std::vector<std::string>	GetServerNameVector() const;
+		std::vector<ErrorPage>		GetErrorPage() const override;
 
 		class MultipleListensException : public std::exception
 		{
@@ -93,31 +95,6 @@ class ServerContext : public ConfigValues {
 				}
 			private:
 				std::string		_err_string;
-		};
-		
-		class MultipleAutoindexException : public std::exception
-		{
-			private:
-				std::string		_err_string;
-			public:
-				MultipleAutoindexException(size_t server) {
-					_err_string = "ERROR! Multiple autoindex directives detected in server context: " + std::to_string(server) + " .";
-				}
-				const char *what() const throw() {
-					return (_err_string.c_str());
-				}
-		};
-				class MultipleReturnException : public std::exception
-		{
-			private:
-				std::string		_err_string;
-			public:
-				MultipleReturnException(size_t server) {
-					_err_string = "ERROR! Multiple return directives detected in server context: " + std::to_string(server) + " .";
-				}
-				const char *what() const throw() {
-					return (_err_string.c_str());
-				}
 		};
 };
 
