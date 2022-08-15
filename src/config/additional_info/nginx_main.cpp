@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/12 15:41:00 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/15 17:51:07 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,26 @@
 int	main(int ac, const char **av) {
 	try {
 		NginxConfig input_file(GetConfigLocation(ac, av));
-		std:: cout << "try to get CMBS: " << std::endl;
-		std:: cout << "CMBS in location WITH one set" << \
+		std::cout << "try to get CMBS: " << std::endl;
+		std::cout << "CMBS in location WITH one set\n" << \
 		input_file.GetServers().at(0).GetLocationContexts().at(0).GetClientMaxBodySize() << std::endl;
-		std::cout << "CMBS in location WITHOUT one set" << \
-		input_file.GetServers().at(0).GetLocationContexts().at(1).GetClientMaxBodySize() << std::endl;
-
+		try {
+			std::cout << "CMBS in location WITHOUT one set " << \
+			input_file.GetServers().at(0).GetLocationContexts().at(1).GetClientMaxBodySize() << std::endl;
+		}
+		catch (const std::exception& e) {
+			std::cerr << e.what() << "\n";
+		}
+		std::cout << "now from NginxConfig" << std::endl;
+		std::cout << "CMBS in location WITH one set VIA nginxconf " << \
+		input_file.GetMaxBodySize("localhost", "/") << std::endl;
+		std::cout << "CMBS in location WITHOUT one set VIA nginxconf " << \
+		input_file.GetMaxBodySize("localhost", "/test") << std::endl;
+		std::cout << "Get GET" << std::endl;
+		std::cout << std::boolalpha << input_file.AllowMethod("localhost", "/", "GET") << std::endl;
+		std::cout << "testing fastcgi_pass\n";
+		std::cout << input_file.GetFastCGIPass("localhost", "/cgi-bin") << std::endl;
+		std::cout << input_file.GetReturn("localhost", "/").GetUrl() << std::endl;
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << '\n';

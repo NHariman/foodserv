@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/12 15:38:55 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/15 18:05:39 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <utility>
 #include "server_context.hpp"
 #include "location_context.hpp"
-// #include "directive_validation/directive_validation.hpp"
+#include "directive_validation/directive_validation.hpp"
 #include "config_utils.hpp"
 
 // Coplien form:
@@ -34,9 +34,9 @@
 //       A & operator = (const A &a);
 // };
 
-struct host_target_pair : public std::pair<ServerContext*, LocationContext*> {
-	ServerContext *server;
-	LocationContext *location;
+struct host_target_pair : public std::pair<ServerContext, LocationContext> {
+	ServerContext server;
+	LocationContext location;
 };
 
 class NginxConfig {
@@ -50,7 +50,7 @@ class NginxConfig {
 		void		FindServerContexts();
 		void		LoadConfigFile(std::ifstream&	configuration_file);
 
-		host_target_pair					GetHostTargetServer(std::string host, std::string target);
+		host_target_pair					GetHostTargetServer(std::string host, std::string target) const;
 
 	public:
 		// coplien form
@@ -64,8 +64,17 @@ class NginxConfig {
 		size_t		GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
 
-		size_t		GetMaxBodySize(std::string host, std::string target);
-		// bool		AllowMethod(std::string host, std::string target, std::string method);
+		// getters that use host/target pairs to retrieve a very specific value
+		bool						IsSetInTarget(std::string host, std::string target, std::string directive) const;
+		std::string 				GetRoot(std::string host, std::string target) const;
+		std::vector<std::string>	GetIndex(std::string host, std::string target) const;
+		size_t						GetMaxBodySize(std::string host, std::string target) const;
+		std::vector<ErrorPage>		GetErrorPage(std::string host, std::string target) const;
+		bool						GetAutoindex(std::string host, std::string target) const;
+		ReturnDir					GetReturn(std::string host, std::string target) const;
+		std::string					GetFastCGIPass(std::string host, std::string target) const;
+		bool						AllowMethod(std::string host, std::string target, std::string method) const;
+
 		
 		//exceptions
 		class GetLineFailureException : public std::exception {

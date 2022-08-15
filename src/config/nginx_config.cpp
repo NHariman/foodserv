@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/12 15:38:40 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/15 18:08:48 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,44 +143,97 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 
-
-
-host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::string target) {
+host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::string target) const {
 
 	host_target_pair	 host_target_pair;
 
 	for (size_t server = 0 ; server < _servers.size(); server++) {
 		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
 			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
-				host_target_pair.server = &_servers.at(server);
+				host_target_pair.server = _servers.at(server);
 				for (size_t loc = 0 ; loc < _servers.at(server).GetLocationContexts().size() ; loc++) {
 					if (target.compare(_servers.at(server).GetLocationContexts().at(loc).GetLocationUri().GetUri()) == 0) {
-						host_target_pair.location = &_servers.at(server).GetLocationContexts().at(loc);
+						host_target_pair.location = _servers.at(server).GetLocationContexts().at(loc);
 						return (host_target_pair);
 					}
 				}
 			}
 		}
 	}
-	host_target_pair.server = NULL;
-	host_target_pair.location = NULL;
+
 	throw HostTargetPairDoesNotExistException(host, target);
 	return (host_target_pair);
 }
 
-size_t							NginxConfig::GetMaxBodySize(std::string host, std::string target) {
-
+bool								NginxConfig::IsSetInTarget(std::string host, std::string target, std::string directive) const {
 	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
-	if (host_target_pair.location->IsSet("client_max_body_size"))
-		return host_target_pair.location->GetClientMaxBodySize();
-	return host_target_pair.server->GetClientMaxBodySize();
+	return host_target_pair.location.IsSet(directive);
 }
 
-// bool							NginxConfig::AllowMethod(std::string host, std::string target, std::string method) {
-// 	host_target_pair	host_target_pair = GetHostTargetServer(host, target);
+std::string							NginxConfig::GetRoot(std::string host, std::string target) const {
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("root"))
+		return host_target_pair.location.GetRoot();
+	return host_target_pair.server.GetRoot();
+}
 
-// 	switch (IsValidHTTPMethod(method)) {
-// 		case 0:
+std::vector<std::string>			NginxConfig::GetIndex(std::string host, std::string target) const {
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("index"))
+		return host_target_pair.location.GetIndex();
+	return host_target_pair.server.GetIndex();
+}
 
-// 	}
-// }
+size_t								NginxConfig::GetMaxBodySize(std::string host, std::string target) const {
+
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("client_max_body_size"))
+		return host_target_pair.location.GetClientMaxBodySize();
+	return host_target_pair.server.GetClientMaxBodySize();
+}
+
+std::vector<ErrorPage>				NginxConfig::GetErrorPage(std::string host, std::string target) const {
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("error_page"))
+		return host_target_pair.location.GetErrorPage();
+	else if (host_target_pair.server.IsSet("error_page"))
+		return host_target_pair.server.GetErrorPage();
+	throw ConfigValues::DirectiveNotSetException("error_page", host, target);
+}
+
+bool								NginxConfig::GetAutoindex(std::string host, std::string target) const {
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("autoindex"))
+		return host_target_pair.location.GetAutoindex();
+	return host_target_pair.server.GetAutoindex();
+}
+
+ReturnDir							NginxConfig::GetReturn(std::string host, std::string target) const {
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("return"))
+		return host_target_pair.location.GetReturn();
+	else if (host_target_pair.server.IsSet("return"))
+		return host_target_pair.server.GetReturn();
+	throw ConfigValues::DirectiveNotSetException("return", host, target);
+}
+
+bool							NginxConfig::AllowMethod(std::string host, std::string target, std::string method) const {
+	host_target_pair	host_target_pair = GetHostTargetServer(host, target);
+
+	switch (IsValidHTTPMethod(method)) {
+		case GET:
+			return host_target_pair.location.GetAllowedMethods().GetGET();
+		case POST:
+			return host_target_pair.location.GetAllowedMethods().GetPOST();
+		case DELETE:
+			return host_target_pair.location.GetAllowedMethods().GetDELETE();
+	}
+	return false;
+}
+
+std::string					NginxConfig::GetFastCGIPass(std::string host, std::string target) const {
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("fastcgi_pass"))
+		return host_target_pair.location.GetFastCGIPass();
+	throw ConfigValues::DirectiveNotSetException("fastcgi_pass", host, target);
+}

@@ -8,6 +8,10 @@
 #include <algorithm>
 #include "../config_utils.hpp"
 
+# define GET 0
+# define POST 1
+# define DELETE 2
+
 class AllowedMethods {
     private:
 		bool						_get;

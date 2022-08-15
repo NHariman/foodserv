@@ -12,8 +12,17 @@ LocationContext::LocationContext(std::string data) {
 }
 
 LocationContext& LocationContext::operator= (LocationContext const& location_context) {
-    if (this == &location_context)
+    if (this == &location_context) {
         return (*this);
+	}
+	bool_uri = location_context.bool_uri;
+    bool_autoindex = location_context.bool_autoindex;
+    bool_root = location_context.bool_root;
+    bool_index = location_context.bool_index;
+    bool_client_max_body_size = location_context.bool_client_max_body_size;
+	bool_error_page = location_context.bool_error_page;
+    bool_fastcgi_pass = location_context.bool_fastcgi_pass;
+	bool_allowed_methods = location_context.bool_allowed_methods;
     _location_uri = location_context._location_uri;
     _autoindex = location_context._autoindex;
     _root = location_context._root;
@@ -25,15 +34,17 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
 
     return (*this);
 }
+
 LocationContext::LocationContext(LocationContext const& location_context) : ConfigValues(location_context),
-_location_uri(location_context._location_uri),
-_fastcgi_pass(location_context._fastcgi_pass),
-_allowed_methods(location_context._allowed_methods),
 bool_fastcgi_pass(location_context.bool_fastcgi_pass),
 bool_allowed_methods(location_context.bool_allowed_methods),
+_location_uri(location_context._location_uri),
+_fastcgi_pass(location_context._fastcgi_pass),
+_allowed_methods(location_context._allowed_methods)
 {}
 
 void	LocationContext::InitChecklist() {
+	bool_uri = false;
     bool_autoindex = false;
     bool_root = false;
     bool_index = false;
@@ -51,7 +62,7 @@ int								LocationContext::IsDirective(std::string directive) {
 	}
 	int	is_directive = std::find(directives, directives + 8, directive) - directives;
 	if (is_directive < 0 || is_directive > 7)
-		throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI());
+		throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI(), directive);
 	else
 		return (is_directive);
 }
@@ -136,20 +147,21 @@ void							LocationContext::SetValue(int directive, std::string input) {
 
 void							LocationContext::CheckListVerification(){
     if (bool_autoindex == false) {
-		std::cerr << "WARNING! No autoindex in LocationContext detected. Default in Server context will be used." << std::endl;
+		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have an autoindex set. Default in Server context will be used." << std::endl;
 	}
     if (bool_root == false) {
-		std::cerr << "WARNING! No location root detected. Default in Server context will be used." << std::endl;
+		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a root set. Default in Server context will be used." << std::endl;
 	}
 	if (bool_index == false) {
-		std::cerr << "WARNING! No location index detected. Default in Server context will be used." << std::endl;
+		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a index set. Default in Server context will be used." << std::endl;
 	}
 	if (bool_client_max_body_size == false) {
-		std::cerr << "WARNING! No client_max_body_size in LocationContext detected. Default in Server context will be used." << std::endl;
+		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a client_max_body_size set. Default in Server context will be used." << std::endl;
 	}
-	if (bool_allowed_methods == false)
+	if (bool_allowed_methods == false) {
 		_allowed_methods = AllowedMethods();
-		std::cerr << "WARNING! No allowed_methods in LocationContext detected. Default (No methods allowed) have been set." << std::endl;
+		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a allowed_methods set. Default (No methods allowed) have been set." << std::endl;
+	}
 }
 
 void							LocationContext::GetDirectiveValuePairs(std::string data) {
@@ -181,50 +193,48 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 
 // getters
 LocationUri							LocationContext::GetLocationUri() const {
-	if (bool_uri == false)
-		throw DirectiveNotSetException("location uri");
-    return _location_uri;
+	return _location_uri;
 }
 
 bool								LocationContext::GetAutoindex() const {
 	if (bool_autoindex == false)
-		throw DirectiveNotSetException("autoindex");
+		throw DirectiveNotSetException("autoindex", _location_uri.GetURIClass().GetInputURI());
     return _autoindex;
 }
 
 std::string							LocationContext::GetRoot() const {
 	if (bool_root == false)
-		throw DirectiveNotSetException("root");
+		throw DirectiveNotSetException("root", _location_uri.GetURIClass().GetInputURI());
     return _root;
 }
 
 std::vector<std::string>			LocationContext::GetIndex() const {
 	if (bool_index == false)
-		throw DirectiveNotSetException("index");
+		throw DirectiveNotSetException("index", _location_uri.GetURIClass().GetInputURI());
     return _index;
 }
 
 size_t								LocationContext::GetClientMaxBodySize() const {
 	if (bool_client_max_body_size == false)
-		throw DirectiveNotSetException("client_max_body_size");
+		throw DirectiveNotSetException("client_max_body_size", _location_uri.GetURIClass().GetInputURI());
     return _client_max_body_size;
 }
 
 std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
 	if (bool_error_page == false)
-		throw DirectiveNotSetException("error_page");
+		throw DirectiveNotSetException("error_page", _location_uri.GetURIClass().GetInputURI());
     return _error_page;
 }
 
 std::string							LocationContext::GetFastCGIPass() const {
 	if (bool_fastcgi_pass == false)
-		throw DirectiveNotSetException("fastcgi_pass");
+		throw DirectiveNotSetException("fastcgi_pass", _location_uri.GetURIClass().GetInputURI());
     return _fastcgi_pass;
 }
 
 AllowedMethods						LocationContext::GetAllowedMethods() const {
 	if (bool_allowed_methods == false)
-		throw DirectiveNotSetException("allowed_methods");
+		throw DirectiveNotSetException("allowed_methods", _location_uri.GetURIClass().GetInputURI());
     return _allowed_methods;
 }
 

@@ -39,6 +39,9 @@ ServerContext::ServerContext() {
 
 ServerContext::ServerContext(const ServerContext& obj) : 	
 	ConfigValues(obj), 
+	amount_location_context(obj.amount_location_context),
+	bool_listen(obj.bool_listen),
+	bool_server_name(obj.bool_server_name),
 	_server_nb(obj._server_nb),
 	_location_contexts(obj._location_contexts),	
 	_listen(obj._listen),
@@ -48,6 +51,15 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
     if (this == &obj) {
         return (*this);
 	}
+    amount_location_context = obj.amount_location_context;
+	bool_listen = obj.bool_listen;
+	bool_server_name = obj.bool_server_name;
+	bool_root = obj.bool_return_dir;
+	bool_index = obj.bool_index;
+	bool_client_max_body_size = obj.bool_client_max_body_size;
+	bool_error_page = obj.bool_error_page;
+	bool_autoindex = obj.bool_autoindex;
+	bool_return_dir = obj.bool_return_dir;
 	_location_contexts = obj._location_contexts;
 	_listen = obj._listen;
 	_server_name = obj._server_name;
@@ -145,7 +157,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 			}
 			case 6:{
 				bool_error_page = true;
-				ErrorPage	error_page_value(value);
+				ErrorPage	error_page_value(trimmed_value);
 				_error_page.push_back(error_page_value);
 				break ;
 			}
@@ -153,7 +165,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 				if (bool_autoindex == true)
 					throw MultipleAutoindexException(_server_nb);
 				bool_autoindex = true;
-				Autoindex	autoindex_value(value);
+				Autoindex	autoindex_value(trimmed_value);
 				_autoindex = autoindex_value.GetStatus();
 				break ;
 			}
@@ -161,7 +173,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 				if (bool_return_dir == true)
 					throw MultipleReturnException(_server_nb);
 				bool_return_dir = true;
-				ReturnDir		return_dir_value(value);
+				ReturnDir		return_dir_value(trimmed_value);
 				_return_dir = return_dir_value;
 				break ;
 			}
@@ -264,11 +276,11 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 
 // check if is set
 bool						ServerContext::IsSet(std::string directive) {
-	const std::string	directives[] = {"location_context", "listen", "server_name", "root", "index", "client_max_body_size", "error_page"};
+	const std::string	directives[] = {"location_context", "listen", "server_name", "root", "index", "client_max_body_size", "error_page", "autoindex", "return"};
 
-	int	is_directive = std::find(directives, directives + 7, directive) - directives;
-	if (is_directive < 0 || is_directive > 6)
-		throw InvalidDirectiveSetCheckException(_server_nb);
+	int	is_directive = std::find(directives, directives + 9, directive) - directives;
+	if (is_directive < 0 || is_directive > 8)
+		throw InvalidDirectiveSetCheckException(_server_nb, directive);
 	switch (is_directive) {
 		case 0:
 			return amount_location_context;
@@ -284,6 +296,10 @@ bool						ServerContext::IsSet(std::string directive) {
 			return bool_client_max_body_size;
 		case 6:
 			return bool_error_page;
+		case 7:
+			return bool_autoindex;
+		case 8:
+			return bool_return_dir;
 	}
 	throw InvalidDirectiveException(directive, _server_nb);
 }
@@ -308,7 +324,6 @@ int							ServerContext::GetPortNumber() const {
 std::vector<std::string>	ServerContext::GetServerNameVector() const {
     return _server_name;
 }
-
 
 std::vector<ErrorPage>		ServerContext::GetErrorPage() const {
 	if (bool_error_page == false)

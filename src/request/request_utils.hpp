@@ -5,7 +5,6 @@
 #include <iomanip> // setw
 #include <iostream>
 #include <string>
-#include <algorithm>
 #include <sstream> // stringstream
 
 using namespace std;

@@ -1,8 +1,6 @@
 #ifndef CONFIG_INTERFACE_HPP
 # define CONFIG_INTERFACE_HPP
 
-#include "server_context.hpp"
-#include "location_context.hpp"
 #include "directive_validation/directive_validation.hpp"
 
 class ConfigValues {
@@ -66,8 +64,8 @@ class ConfigValues {
 			private:
 				std::string		_err_string;
 			public:
-				InvalidDirectiveSetCheckException(size_t server) {
-					_err_string = "Invalid directive detected in Server Context no." + std::to_string(server) + " .";
+				InvalidDirectiveSetCheckException(size_t server, std::string directive) {
+					_err_string = "Invalid directive detected in Server Context no." + std::to_string(server) + ": " + directive;
 				}
 				InvalidDirectiveSetCheckException(std::string uri) {
 					_err_string = "Invalid directive detected in Location Context:" + uri + ".";
@@ -82,8 +80,11 @@ class ConfigValues {
 				InvalidDirectiveException(std::string directive, size_t server) {
 					_err_string = "ERROR! Multiple invalid directive (" + directive + ") in Server Context no." + std::to_string(server) + " .";
 				}
-                InvalidDirectiveException(std::string uri) {
-					_err_string = "ERROR! Invalid directive detected in Location Context:" + uri + ".";
+				InvalidDirectiveException(std::string uri) {
+					_err_string = "ERROR! Invalid directive detected in Location Context: " + uri + ".";
+				}
+                InvalidDirectiveException(std::string uri, std::string directive) {
+					_err_string = "ERROR! Invalid directive detected in Location Context: " + uri + "\nDirective: " + directive;
 				}
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
@@ -94,11 +95,17 @@ class ConfigValues {
 		class DirectiveNotSetException : public std::exception
 		{
 			public:
-                DirectiveNotSetException(std::string directive) {
-					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set.";
+				DirectiveNotSetException(std::string directive) {
+					_err_string = "Directive: " + directive + " not set anywhere.";
+				};
+				DirectiveNotSetException(std::string directive, std::string host, std::string target) {
+					_err_string = "Directive: " + directive + " not set in: " + host + target;
+				};
+                DirectiveNotSetException(std::string directive, std::string location) {
+					_err_string = "ERROR! Get attempt failed, directive: " + directive + " was not set. In Location block: " + location;
 				};
 				DirectiveNotSetException(std::string directive, size_t server) {
-					_err_string = "WARNING! Get attempt failed, directive: " + directive + " was not set in server no." + std::to_string(server) + ".";
+					_err_string = "ERROR! Get attempt failed, directive: " + directive + " was not set in server no." + std::to_string(server) + ".";
 				};
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
