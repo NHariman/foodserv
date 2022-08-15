@@ -7,136 +7,80 @@
 #include <vector>
 #include <algorithm>
 #include "config_utils.hpp"
+#include "config_interface.hpp"
 #include "directive_validation/directive_validation.hpp"
 
-struct t_flags_location
-{
-	bool	uri;
-	bool	autoindex;
-	bool	root;
-	bool	index;
-	bool	client_max_body_size;
-	bool	error_page;
-	bool	fastcgi_pass;
-	bool	allowed_methods;
-	bool	return_dir;
-}; // check list of found keywords in LocationContext
 
 // actually this is called a context (sad face)
-class LocationContext {
+class LocationContext : public ConfigValues {
 	private:
-		t_flags_location			_check_list;
+		bool						bool_uri;
+		bool						bool_fastcgi_pass;
+		bool						bool_allowed_methods;	
 		LocationUri					_location_uri;
-		bool						_autoindex;
-		std::string					_root;
-		std::vector<std::string>	_index;
-		size_t						_client_max_body_size;
-		std::vector<ErrorPage>		_error_page;
 		std::string					_fastcgi_pass;
 		AllowedMethods				_allowed_methods;
-		ReturnDir					_return_dir;
 
-		void						GetDirectiveValuePairs(std::string data);
-		int							IsDirective(std::string directive);
-		void						SetValue(int directive, std::string input);
-		void						CheckListVerification();
+		void						GetDirectiveValuePairs(std::string data) override;
+		int							IsDirective(std::string directive) override;
+		void						SetValue(int directive, std::string input) override;
+		void						CheckListVerification() override;
+		virtual void				InitChecklist() override;
 
 	public:
 		LocationContext();
 		LocationContext(std::string data);
 		LocationContext(LocationContext const &location_context);
 		LocationContext& operator= (LocationContext const &location_context);
-		~LocationContext(){};
+		virtual ~LocationContext(){};
 
-		// check if something has been set or not
-		bool						IsSet(std::string key);
+		// location context specific getters
+		bool						IsSet(std::string directive) override;
 		// getters
-		t_flags_location			GetFlags() const;
 		LocationUri					GetLocationUri() const;
-		bool						GetAutoindex() const;
-		std::string					GetRoot() const;
-		std::vector<std::string>	GetIndex() const;
-		size_t						GetClientMaxBodySize() const;
 		std::string					GetFastCGIPass() const;
-		std::vector<ErrorPage>		GetErrorPage() const;
 		AllowedMethods				GetAllowedMethods() const;
-
-		// exception classes
-		class InvalidDirectiveException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Invalid directive detected in LocationContext.";
-				}
-		};
-		class MultipleAutoindexException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple autoindex directives detected in Location block.";
-				}
-		};
-		class MultipleRootException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple root directives detected in Location block.";
-				}
-		};
-		class MultipleIndexException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple index directives detected in Location block.";
-				}
-		};
-		class MultipleErrorPageException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple error_page directives detected in Location block.";
-				}
-		};
+		// overridden getters
+		bool						GetAutoindex() const override;
+		std::string					GetRoot() const override;
+		std::vector<std::string>	GetIndex() const override;
+		size_t						GetClientMaxBodySize() const override;
+		std::vector<ErrorPage>		GetErrorPage() const override;
+		
 		class MultipleFastCGIPassException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
+				MultipleFastCGIPassException(std::string uri) {
+					_err_string = "ERROR! Multiple fastcgi_pass directives detected in Location Context:" + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Multiple fastcgi_pass directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MultipleAllowedMethodsException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple allowed_methods directives detected in Location block.";
+				MultipleAllowedMethodsException(std::string uri) {
+					_err_string = "ERROR! Multiple allowed_methods directives detected in Location Context:" + uri + ".";
 				}
-		};
-		class MultipleClientMaxBodySizeException : public std::exception
-		{
-			public:
 				const char *what() const throw() {
-					return "ERROR! Multiple Client_max_body_size directives detected in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class BadURIException : public std::exception
 		{
+			private:
+				std::string		_err_string;
 			public:
-				const char *what() const throw() {
-					return "ERROR! Invalid URI detected in Location block.";
+				BadURIException(std::string uri) {
+					_err_string = "ERROR! Bad URI detected in Location Context:" + uri + ".";
 				}
-		};
-		class MultipleReturnException : public std::exception
-		{
-			public:
 				const char *what() const throw() {
-					return "ERROR! multiple return directive detected in Location block.";
-				}
-		};
-		class InvalidDirectiveSetCheckException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Trying to check if a nonexistent directive has been set in Location block.";
+					return (_err_string.c_str());
 				}
 		};
 };

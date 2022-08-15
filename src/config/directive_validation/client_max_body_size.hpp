@@ -14,10 +14,9 @@ if client_max_body_size is smaller than the file size trying to be uploaded it g
 class ClientMaxBodySize {
     private:
         size_t     _value;
-
-        ClientMaxBodySize(){};
     
     public:
+        ClientMaxBodySize();
         ClientMaxBodySize(std::string value);
         size_t     GetValue() const;
 
@@ -33,13 +32,6 @@ class ClientMaxBodySize {
             public:
                 const char *what() const throw() {
                     return "ERROR! Invalid client_max_body_size, size too large in location block.";
-                }
-        };
-        class NegativeClientMaxBodySizeException : public std::exception
-        {
-            public:
-                const char *what() const throw() {
-                    return "ERROR! Invalid client_max_body_size, negative value in location block.";
                 }
         };
 		class MissingArgumentsException : public std::exception
