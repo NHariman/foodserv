@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/15 18:05:39 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/15 20:29:28 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class NginxConfig {
 		void		FindServerContexts();
 		void		LoadConfigFile(std::ifstream&	configuration_file);
 
-		host_target_pair					GetHostTargetServer(std::string host, std::string target) const;
+		
 
 	public:
 		// coplien form
@@ -65,6 +65,7 @@ class NginxConfig {
 		std::vector<ServerContext>	GetServers() const;
 
 		// getters that use host/target pairs to retrieve a very specific value
+		bool						IsSetInHost(std::string host, std::string directive) const;
 		bool						IsSetInTarget(std::string host, std::string target, std::string directive) const;
 		std::string 				GetRoot(std::string host, std::string target) const;
 		std::vector<std::string>	GetIndex(std::string host, std::string target) const;
@@ -74,6 +75,9 @@ class NginxConfig {
 		ReturnDir					GetReturn(std::string host, std::string target) const;
 		std::string					GetFastCGIPass(std::string host, std::string target) const;
 		bool						AllowMethod(std::string host, std::string target, std::string method) const;
+
+		ServerContext				GetHostServer(std::string host) const;
+		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
 
 		
 		//exceptions
@@ -109,6 +113,17 @@ class NginxConfig {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Cannot open specified file.";
+				}
+		};
+		class HostDoesNotExistException : public std::exception {
+			private:
+				std::string _err_msg;
+			public:
+				HostDoesNotExistException(std::string host) {
+					_err_msg = "ERROR! requested host: " + host + " was not found.";
+				}
+				const char *what() const throw() {
+					return _err_msg.c_str();
 				}
 		};
 

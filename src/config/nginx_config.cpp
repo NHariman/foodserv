@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/15 18:08:48 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/15 20:29:51 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,14 +160,30 @@ host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::strin
 			}
 		}
 	}
-
 	throw HostTargetPairDoesNotExistException(host, target);
 	return (host_target_pair);
+}
+
+ServerContext			NginxConfig::GetHostServer(std::string host) const {
+
+	for (size_t server = 0 ; server < _servers.size(); server++) {
+		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
+			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
+				return _servers.at(server);
+			}
+		}
+	}
+	throw HostDoesNotExistException(host);
 }
 
 bool								NginxConfig::IsSetInTarget(std::string host, std::string target, std::string directive) const {
 	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
 	return host_target_pair.location.IsSet(directive);
+}
+
+bool								NginxConfig::IsSetInHost(std::string host, std::string directive) const {
+	ServerContext	 host_serv(GetHostServer(host));
+	return host_serv.IsSet(directive);
 }
 
 std::string							NginxConfig::GetRoot(std::string host, std::string target) const {
