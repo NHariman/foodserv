@@ -1,35 +1,34 @@
 #include "chunked_parser.hpp"
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 // List of header fields not allowed in chunk trailer as outlined in
 // RFC 7230 Section 4.1.2.
 const vector<string>	ChunkedParser::illegal_fields = {
-	"Age",
 	"Authorization",
 	"Cache-Control",
 	"Content-Encoding",
 	"Content-Length",
 	"Content-Range",
 	"Content-Type",
-	"Date",
+	"Cookie",
 	"Expect",
-	"Expires",
 	"Host",
-	"Host",
-	"Location",
+	"If-Match",
+	"If-None-Match",
+	"If-Modified-Since",
+	"If-Unmodified-Since",
+	"If-Range",
 	"Max-Forwards",
 	"Pragma",
 	"Proxy-Authenticate",
 	"Proxy-Authorization",
 	"Range",
-	"Retry-After",
+	"Set-Cookie",
 	"TE",
 	"Trailer",
-	"Vary",
-	"Warning",
-	"WWW-Authenticate",
-	"Transfer-Encoding" };
+	"Transfer-Encoding"
+	"WWW-Authenticate" };
 
 // Default constructor
 ChunkedParser::ChunkedParser()
@@ -42,7 +41,7 @@ ChunkedParser::~ChunkedParser() {}
 // calls on parent class StateParser::ParseString().
 size_t	ChunkedParser::Parse(Request& request, string const& input) {
 	_request = &request;
-	cout << "ChunkedParser input: " << input << endl; // DEBUG
+	// cout << "\nSTART -- ChunkedParser input: " << input << endl; // DEBUG
 	return ParseString(input);
 }
 
@@ -57,7 +56,10 @@ ChunkState	ChunkedParser::GetNextState(size_t pos) {
 			nullptr
 	};
 	// if (DEBUG) cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
+	// cout << "GNS: chunk_ext: " << _chunk_ext << ", size: " << _chunk_size
+	// 	<< ", buffer: " << buffer << endl;
 	skip_char = false;
+
 	return (this->*table[cur_state])(input[pos]);
 }
 
@@ -70,6 +72,13 @@ bool	ChunkedParser::CheckDoneState() {
 	return (cur_state == c_Done);
 }
 
+void	ChunkedParser::AfterParseCheck(size_t& pos) {
+	if (cur_state == c_Done && _chunk_size != 0)
+		throw BadRequestException("Missing chunk in message");
+}
+
+// Handles transition on start of parsing and of new lines when
+// chunk data has been fully read.
 ChunkState	ChunkedParser::StartHandler(char c) {
 	if (DEBUG) cout << "[StartHandler] at: [" << c << "]\n";
 
@@ -80,9 +89,10 @@ ChunkState	ChunkedParser::StartHandler(char c) {
 	else if (IsHexDig(c))
 		return c_Size;
 	else
-		return c_Invalid;	
+		return c_Invalid;
 }
 
+// Handles parsing of chunk size, ignoring chunk-extensions.
 ChunkState	ChunkedParser::SizeHandler(char c) {
 	if (DEBUG) cout << "[SizeHandler] at: [" << c << "]\n";
 
@@ -96,17 +106,18 @@ ChunkState	ChunkedParser::SizeHandler(char c) {
 			skip_char = true;
 			_chunk_ext = true;
 			return c_Size;
-		// case '0':
-		// 	skip_char = true;
-		// 	return c_Last;
 		default:
-			if (_chunk_ext == true)
+			if (_chunk_ext == true) {
+				skip_char = true;
 				return c_Size;
+			}
 			else
 				return c_Invalid;
 	}
 }
 
+// Handles parsing of chunk data, reading octets as data until
+// previously-indicated chunk size has been met.
 ChunkState	ChunkedParser::DataHandler(char c) {
 	if (DEBUG) cout << "[DataHandler] at: [" << c << "] | chunk size: " << _chunk_size << "\n";
 
@@ -120,7 +131,6 @@ ChunkState	ChunkedParser::DataHandler(char c) {
 				return HandleCRLF(c, c_Start);
 			else
 				return HandleCRLF(c, c_Data, false);
-		// decrement _chunk_size when processing data
 		default:
 			if (IsOctet(c))
 				return c_Data;
@@ -129,6 +139,8 @@ ChunkState	ChunkedParser::DataHandler(char c) {
 	}
 }
 
+// Handles last-chunk parsing, which is '0' followed by CRLF.
+// Like SizeHandler, ignores chunk extensions.
 ChunkState	ChunkedParser::LastHandler(char c) {
 	if (DEBUG) cout << "[LastHandler] at: [" << c << "]\n";
 
@@ -136,12 +148,23 @@ ChunkState	ChunkedParser::LastHandler(char c) {
 		case '\r':
 			return HandleCRLF(c, c_Last);
 		case '\n':
+			_chunk_ext = false;
 			return HandleCRLF(c, c_Trailer);
+		case ';':
+			skip_char = true;
+			_chunk_ext = true;
+			return c_Last;
 		default:
-			return c_Invalid;
+			if (_chunk_ext == true) {
+				skip_char = true;
+				return c_Last;
+			}
+			else
+				return c_Invalid;
 	}
 }
 
+// Handles trailer header fields.
 ChunkState	ChunkedParser::TrailerHandler(char c) {
 	if (DEBUG) cout << "[TrailerHandler] at: [" << c << "]\n";
 
@@ -157,11 +180,17 @@ ChunkState	ChunkedParser::TrailerHandler(char c) {
 	}
 }
 
+// Helper function for parsing line endings.
+// Accepts both CRLF and just LF as line endings.
+// If buffer is not empty, pushes buffer to appropriate field.
 ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
 	static bool cr = false;
 
-	if (cr == true && c == '\r')
+	// Checks for any sequence other than CRLF.
+	if (cr == true && c == '\r') {
+		cr = false; // reset for subsequent parsing
 		return c_Invalid;
+	}
 
 	skip_char = skip;
 	if (!buffer.empty())
@@ -185,6 +214,9 @@ void	ChunkedParser::ParseTrailerHeader(map<string, string>& fields) {
 
 }
 
+// Pushes buffer value into appropriate field
+// (chunk size, msg_body, header fields), depending on current state,
+// and clears buffer.
 void	ChunkedParser::SaveParsedValue() {
 	switch (cur_state) {
 		case c_Size:

@@ -36,11 +36,12 @@ class ChunkedParser : public StateParser<ChunkState> {
 		ChunkState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
 		bool		CheckDoneState() override;
+		void		AfterParseCheck(size_t& pos) override;
 
 	private:
 		Request*	_request;
 		size_t		_chunk_size;
-		ChunkState	_save_state;
+		// ChunkState	_save_state;
 		bool		_chunk_ext;
 
 		ChunkState	StartHandler(char c);

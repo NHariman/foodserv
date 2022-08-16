@@ -44,16 +44,55 @@ TEST(RequestMessageTest, ValidMessageChunked) {
 TEST(RequestMessageTest, ValidMessageChunkedTrailers) {
 	string req = POST_Req + CHUNKED +
 		"7\nChunks.\r\n0\r\nPrefer: return=representation\r\n\r\n";
-	Request request(&config, req.c_str());
-	EXPECT_EQ(request.GetMessageBody(), "Chunks.");
-	EXPECT_EQ(request.GetField("Prefer"), "return=representation");
+	Request request1(&config, req.c_str());
+	EXPECT_EQ(request1.GetMessageBody(), "Chunks.");
+	EXPECT_EQ(request1.GetField("Prefer"), "return=representation");
+
+	req = POST_Req + CHUNKED +
+		"7\nChunks.\r\n0\r\nPrefer: return=representation\r\nAccept: text/html\n\r\n";
+	Request request2(&config, req.c_str());
+	EXPECT_EQ(request2.GetMessageBody(), "Chunks.");
+	EXPECT_EQ(request2.GetField("Prefer"), "return=representation");
+	EXPECT_EQ(request2.GetField("Accept"), "text/html");
+}
+
+TEST(RequestMessageTest, ValidMessageChunkedExt) {
+	string message;
+
+	message = ConstructAndGetMessage(CHUNKED +
+		"4;ext1=true;ext2\r\nBye!\r\n0\r\n\r\n");
+	EXPECT_EQ(message, "Bye!");
+
+	message = ConstructAndGetMessage(CHUNKED +
+		"4\r\nBye!\r\n0;ext1=true;ext2\r\n\r\n");
+	EXPECT_EQ(message, "Bye!");
 }
 
 TEST(RequestMessageTest, InvalidMessageChunked) {
-	string req_str;
+	// string req_str;
 
+	// invalid line ending
 	EXPECT_THROW({
-		req_str = POST_Req + CHUNKED + "0\r\r\n";
+		string req_str = POST_Req + CHUNKED + "0\r\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
+	// missing last chunk
+	EXPECT_THROW({
+		string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
+	// missing last CRLF
+	EXPECT_THROW({
+		string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
+	EXPECT_THROW({
+		string req_str = POST_Req + CHUNKED + "0\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
+	// missing chunk
+	EXPECT_THROW({
+		string req_str = POST_Req + CHUNKED + "4\r\n\r\n";
 		Request request(&config, req_str.c_str());
 	}, BadRequestException);
 }
@@ -62,7 +101,11 @@ TEST(RequestMessageTest, InvalidChunkedTrailers) {
 	string req_str;
 
 	EXPECT_THROW({
-		req_str = POST_Req + CHUNKED + "0\r\nDate: today\r\n\r\n";
+		req_str = POST_Req + CHUNKED + "0\r\nHost: example.com\r\n\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
+	EXPECT_THROW({
+		req_str = POST_Req + CHUNKED + "0\r\nExpect: 100-continue\r\n\r\n";
 		Request request(&config, req_str.c_str());
 	}, BadRequestException);
 }
