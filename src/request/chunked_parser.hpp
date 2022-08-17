@@ -17,6 +17,7 @@ enum	ChunkState {
 	c_Data,
 	c_Last,
 	c_Trailer,
+	c_End,
 	c_Done,
 	c_Invalid
 };
@@ -43,12 +44,15 @@ class ChunkedParser : public StateParser<ChunkState> {
 		size_t		_chunk_size;
 		// ChunkState	_save_state;
 		bool		_chunk_ext;
+		bool		_chunk_trailer;
+		bool		_cr;
 
 		ChunkState	StartHandler(char c);
 		ChunkState	SizeHandler(char c);
 		ChunkState	DataHandler(char c);
 		ChunkState	LastHandler(char c);
 		ChunkState	TrailerHandler(char c);
+		ChunkState	EndHandler(char c);
 		ChunkState	HandleCRLF(char c, ChunkState return_state, bool skip = true);
 		void		ParseTrailerHeader(map<string, string>& fields);
 		void		SaveParsedValue();

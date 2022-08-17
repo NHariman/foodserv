@@ -32,7 +32,8 @@ const vector<string>	ChunkedParser::illegal_fields = {
 
 // Default constructor
 ChunkedParser::ChunkedParser()
-	: StateParser(c_Start), _request(NULL), _chunk_size(0), _chunk_ext(false) {}
+	:	StateParser(c_Start), _request(NULL), _chunk_size(0),
+		_chunk_ext(false), _chunk_trailer(false), _cr(false) {}
 
 // Destructor
 ChunkedParser::~ChunkedParser() {}
@@ -41,7 +42,7 @@ ChunkedParser::~ChunkedParser() {}
 // calls on parent class StateParser::ParseString().
 size_t	ChunkedParser::Parse(Request& request, string const& input) {
 	_request = &request;
-	// cout << "\nSTART -- ChunkedParser input: " << input << endl; // DEBUG
+	cout << "\nSTART -- ChunkedParser input: " << input << endl; // DEBUG
 	return ParseString(input);
 }
 
@@ -53,6 +54,7 @@ ChunkState	ChunkedParser::GetNextState(size_t pos) {
 			&ChunkedParser::DataHandler,
 			&ChunkedParser::LastHandler,
 			&ChunkedParser::TrailerHandler,
+			&ChunkedParser::EndHandler,
 			nullptr
 	};
 	// if (DEBUG) cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
@@ -73,6 +75,7 @@ bool	ChunkedParser::CheckDoneState() {
 }
 
 void	ChunkedParser::AfterParseCheck(size_t& pos) {
+	(void)pos;
 	if (cur_state == c_Done && _chunk_size != 0)
 		throw BadRequestException("Missing chunk in message");
 }
@@ -169,14 +172,30 @@ ChunkState	ChunkedParser::TrailerHandler(char c) {
 	if (DEBUG) cout << "[TrailerHandler] at: [" << c << "]\n";
 
 	switch (c) {
-		case '\0':
-			return c_Done;
 		case '\r':
 			return HandleCRLF(c, c_Trailer);
 		case '\n':
-			return HandleCRLF(c, c_Trailer);
+			if (_chunk_trailer == true) {
+				_chunk_trailer = false;
+				return HandleCRLF(c, c_Trailer);
+			}
+			else
+				return c_End;
+		case '\0':
+			return c_Invalid;
 		default:
+			_chunk_trailer = true;
 			return c_Trailer;
+	}
+}
+
+// Handles empty line that must end chunked transfer coding.
+ChunkState	ChunkedParser::EndHandler(char c) {
+	switch (c) {
+		case '\0':
+			return c_Done;
+		default:
+			return c_Invalid;
 	}
 }
 
@@ -184,18 +203,14 @@ ChunkState	ChunkedParser::TrailerHandler(char c) {
 // Accepts both CRLF and just LF as line endings.
 // If buffer is not empty, pushes buffer to appropriate field.
 ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
-	static bool cr = false;
-
 	// Checks for any sequence other than CRLF.
-	if (cr == true && c == '\r') {
-		cr = false; // reset for subsequent parsing
+	if (_cr == true && c == '\r')
 		return c_Invalid;
-	}
 
 	skip_char = skip;
 	if (!buffer.empty())
 		SaveParsedValue();
-	cr = (c == '\r');
+	_cr = (c == '\r');
 	return next_state;
 }
 
