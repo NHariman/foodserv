@@ -64,6 +64,10 @@ int	ListeningSocket::getAddrLen() {
 	return _addrlen;
 }
 
+const char* ListeningSocket::getHTML() {
+	return html;
+}
+
 void	ListeningSocket::PrintIpInfo(struct addrinfo *record) {
 
 	void	*addr;

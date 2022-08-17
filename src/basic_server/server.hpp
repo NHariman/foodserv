@@ -72,6 +72,8 @@ class Server {
 
 		void	PrintIpInfo(struct addrinfo *record);
 
+		const char* getHTML();
+
 };
 
 #endif

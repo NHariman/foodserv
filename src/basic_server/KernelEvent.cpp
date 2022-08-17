@@ -59,6 +59,9 @@ KernelEvent::KernelEvent() : _ListenSocketClass("::", "12345") {
                 // THIS IS THE HTTP REQUEST OF THE NEWLY ACCEPTED CLIENT
                 // NOW WE NEED TO PROCESS THIS REQUEST. 
                 // THIS IS THE PART WHERE I HAVE TO ADD IN MICHELLES CODE
+
+                // function: receive request
+
                 char HTTPREQUEST[1000];
                 memset(HTTPREQUEST, 0, sizeof(HTTPREQUEST));
                 recv(fd_to_accept, HTTPREQUEST, sizeof(HTTPREQUEST), 0);
@@ -76,13 +79,38 @@ KernelEvent::KernelEvent() : _ListenSocketClass("::", "12345") {
                 else {
                     EV_SET(&eventToSet, fd_to_accept, EVFILT_READ, EV_ADD, 0, 0, NULL);
                     kevent(_kq, &eventToSet, 1, NULL, 0, NULL);
-
+                    // ADD IN: send the correct html to the client
+                    // this is where we send a message to the client
+                    // this should be depended on what the clients requests, but for now we will
+                    // send a basic HTML message
+                    send(fd_to_accept, html, sizeof(html), 0);
                 }
+
+            }
+            // check is the connection is disconnected
+            else if (eventList[i].flags & EV_EOF) {
+                std::cout << "Client disconnected: " << eventList[i].ident << std::endl;
+                EV_SET(&eventToSet, eventList[i].ident, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+                kevent(_kq, &eventToSet, 1, NULL, 0, NULL);
+                deleteLostConnections(eventList[i].ident);
             }
 
-            if (eventList[i].filter == EVFILT_READ && i == 1)
-                std::cout << "READY TO READ SOMETHING ON FILDES (hopefully _listening_socket?): " << eventList[i].ident << std::endl;
-                // break ;
+            //  if (eventList[i].filter == EVFILT_READ && i == 1)
+            //     std::cout << "READY TO READ SOMETHING ON FILDES (hopefully _listening_socket?): " << eventList[i].ident << std::endl;
+            //     // break ;
+
+            else if (eventList[i].filter == EVFILT_READ) {
+                // never happens yet
+                // guessing this is when you have a link within a website
+                std::cout << "in the evfilt_read" << std::endl;
+                char buf[1000];
+                int bytes_read = recv(eventList[i].ident, buf, sizeof(buf) - 1, 0);
+                buf[bytes_read] = 0;
+                printf("client #%d: %s", findClientFd(eventList[i].ident), buf);
+                // fflush(stdout);
+            }
+
+
         }
         // break ;
     }
