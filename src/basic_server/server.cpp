@@ -38,10 +38,7 @@ void	Server::CreateListeningSocket() {
 			perror("setsockopt");
 			exit (EXIT_FAILURE);
 		}
-		// if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1) {
-		// 	perror("fcntl");
-		// 	exit (EXIT_FAILURE);
-		// }
+
 		if (bind(_socket_fd, _addrinfo->ai_addr, _addrinfo->ai_addrlen) != -1)
 			break ;  // break out of loop when socket is succesfully binded
 		// if the for loops gets to this point, the socket is not able to bind and we go to the next iteration
@@ -133,7 +130,7 @@ void	Server::eventLoop(int kq, int sock) {
 			if (evList[i].ident == _socket_fd) {
 				int fd = accept(evList[i].ident, (struct sockaddr*)&_addrinfo, (socklen_t*)&addrlen);
 				if (AddConnection(fd) == 0) {
-					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 					send(fd, html, sizeof(html), 0);
 				}

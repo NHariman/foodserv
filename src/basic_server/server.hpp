@@ -18,7 +18,6 @@
 #include <iostream>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <sys/poll.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <sys/event.h>
@@ -44,11 +43,11 @@ static const char html[] = "HTTP/1.1 200 OK\r\n"
 class Server {
 
 	private:
-		int			_socket_fd;
-		const char*	_hostname;
-		const char*	_portnumber;
-		struct addrinfo* _addrinfo;
-		client_data		_clients[SOMAXCONN];
+		int					_socket_fd;
+		const char*			_hostname;
+		const char*			_portnumber;
+		struct addrinfo*	_addrinfo;
+		client_data			_clients[SOMAXCONN];
 
 		Server();
 
