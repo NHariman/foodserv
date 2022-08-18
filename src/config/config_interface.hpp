@@ -23,6 +23,7 @@ class ConfigValues {
        virtual void						InitChecklist() = 0;
        virtual int                      IsDirective(std::string directive) = 0;
        virtual void                     GetDirectiveValuePairs(std::string data){ static_cast<void>(data); throw MethodNotSetException("GetDirectiveValuePairs()");}
+	   virtual void                     GetDirectiveValuePairs(size_t *start_position, std::string config_file){ static_cast<void>(start_position); static_cast<void>(config_file); throw MethodNotSetException("GetDirectiveValuePairs(size_t*, std::string)");}
        virtual void                     SetValue(int directive, std::string value) = 0;
        virtual void                     CheckListVerification() = 0;
 	   ConfigValues();
