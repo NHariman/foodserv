@@ -12,12 +12,14 @@ using namespace std;
 // returned by GetField when no field by the passed name is found.
 #define NO_VAL "NO SUCH HEADER FIELD"
 
+class RequestParser;
+
 class Request {
 	public:
 		// Default constructor
 		Request();
-		// C-string constructor
-		explicit Request(NginxConfig* config, char const* buffer);
+		// Config file constructor
+		explicit Request(NginxConfig* config);
 		// Destructor
 		~Request();
 
@@ -25,6 +27,7 @@ class Request {
 		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
 		size_t	max_body_size;
 
+		size_t		Parse(char const* buffer);
 		string		GetMethod() const;
 		string		GetTarget() const;
 		URI const&	GetURI() const;
@@ -38,9 +41,11 @@ class Request {
 		friend class ChunkedParser;
 	
 	private:
-		struct RequestLine	request_line;
-		map<string, string>	header_fields;
-		string				msg_body;
+		struct RequestLine	_request_line;
+		map<string, string>	_header_fields;
+		string				_msg_body;
+		RequestParser		*_parser;
+		// RequestParser		_parser;
 };
 
 #endif /* REQUEST_HPP */
