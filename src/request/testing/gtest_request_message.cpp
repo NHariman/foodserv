@@ -88,11 +88,6 @@ TEST(RequestMessageTest, InvalidMessageChunked) {
 		string req_str = POST_Req + CHUNKED + "0\r\n";
 		Request request(&config, req_str.c_str());
 	}, BadRequestException);
-	// missing chunk
-	EXPECT_THROW({
-		string req_str = POST_Req + CHUNKED + "4\r\n\r\n";
-		Request request(&config, req_str.c_str());
-	}, BadRequestException);
 }
 
 TEST(RequestMessageTest, InvalidChunkedTrailers) {
