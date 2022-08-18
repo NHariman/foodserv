@@ -1,54 +1,60 @@
 #include "allowed_methods.hpp"
 
+int		IsValidHTTPMethod(std::string method) {
+	const std::string	methods[] = {"GET", "POST", "DELETE"};
+	int is_method = std::find(methods, methods + 3, method) - methods;
+	if (is_method < 0 || is_method > 2)
+		throw AllowedMethods::BadMethodException();
+	return (is_method);
+}
 
-AllowedMethods::AllowedMethods() : _is_set(false) {}
 
-AllowedMethods::AllowedMethods(std::string str) {
-	const std::string	key_name[] = {"GET", "POST", "DELETE"};
-	int	is_key = 0;
+AllowedMethods::AllowedMethods() : _get(false), _post(false), _delete(false) {}
 
+AllowedMethods::AllowedMethods(std::string str) : _get(false), _post(false), _delete(false) {
 	if (str.compare("") == 0)
 		throw MissingArgumentsException();
 	size_t	arguments = CountArguments(str);
 	if (arguments > 3)
 		throw TooManyArgumentsException();
-	_methods = ToStringVector(str);
-	for (size_t i = 0; i < _methods.size(); i++) {
-		std::string key;
-		is_key = std::find(key_name, key_name + 3, _methods.at(i)) - key_name;
-		if (is_key < 0 || is_key > 2)
-			throw BadMethodException();
+	std::vector<std::string>methods = ToStringVector(str);
+	for (size_t i = 0; i < methods.size(); i++) {
+		switch (IsValidHTTPMethod(methods.at(i))) {
+			case 0:
+				_get = true;
+				break ;
+			case 1:
+				_post = true;
+				break ;
+			case 2:
+				_delete = true;
+				break ;
+		}
 	}
-	_is_set = true;
 }
 
-AllowedMethods::AllowedMethods(AllowedMethods const &obj) {
-	_is_set = obj.IsSet();
-	for (size_t i = 0; i < obj.GetAllowedMethods().size() ; i++) {
-		_methods.push_back(obj.GetAllowedMethods().at(i));
-	}
-}
+AllowedMethods::AllowedMethods(AllowedMethods const &obj) : 
+_get(obj._get), 
+_post(obj._post), 
+_delete(obj._delete) {}
 
 AllowedMethods&		AllowedMethods::operator=(AllowedMethods const &obj) {
 	if (this == &obj) {
 		return (*this);
 	}
-	_is_set = obj.IsSet();
-	for (size_t i = 0; i < obj.GetAllowedMethods().size() ; i++) {
-		_methods.push_back(obj.GetAllowedMethods().at(i));
-	}
+	_get = obj._get;
+	_post = obj._post;
+	_delete = obj._delete;
 	return (*this);
 }
 
-std::vector<std::string>	AllowedMethods::GetAllowedMethods() const {
-	return _methods;
+bool	AllowedMethods::GetGET() const {
+	return _get;
 }
 
-void		AllowedMethods::PrintMethods() {
-	for (size_t i = 0; i < _methods.size(); i++)
-		std::cout << _methods.at(i) << std::endl;
+bool	AllowedMethods::GetPOST() const {
+	return _post;
 }
-
-bool		AllowedMethods::IsSet() const {
-	return _is_set;
+bool	AllowedMethods::GetDELETE() const {
+	return _delete;
 }

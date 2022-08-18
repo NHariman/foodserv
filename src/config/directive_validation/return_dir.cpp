@@ -32,16 +32,14 @@ ReturnDir::ReturnDir(std::string input) {
 	}
 }
 
-ReturnDir::ReturnDir(ReturnDir const &obj) {
-	_code = obj.GetCode();
-	_url = obj.GetUrl();
-}
+ReturnDir::ReturnDir(ReturnDir const &obj) :
+_code(obj._code), _url(obj._url) {}
 
 ReturnDir&		ReturnDir::operator= (ReturnDir const &obj) {
 	if (this == &obj)
 		return (*this);
-	_code = obj.GetCode();
-	_url = obj.GetUrl();
+	_code = obj._code;
+	_url = obj._url;
 	return (*this);
 }
 
