@@ -37,7 +37,7 @@ class ServerContext : public ConfigValues {
 
 		size_t					FindLocationContextEnd(std::string config_file, size_t start);
 		//overridden base class functions
-		void					GetDirectiveValuePairs(size_t *start_position, std::string config_file); // in this case i do not use override as i want to use it differently.
+		void					GetDirectiveValuePairs(size_t *start_position, std::string config_file) override; // in this case i do not use override as i want to use it differently.
 		void					CheckListVerification() override;
 		void					SetValue(int directive, std::string value) override;
 		int						IsDirective(std::string directive) override;
