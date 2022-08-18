@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/15 20:29:51 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/18 16:27:57 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ ReturnDir							NginxConfig::GetReturn(std::string host, std::string target) con
 	throw ConfigValues::DirectiveNotSetException("return", host, target);
 }
 
-bool							NginxConfig::AllowMethod(std::string host, std::string target, std::string method) const {
+bool							NginxConfig::IsAllowedMethod(std::string host, std::string target, std::string method) const {
 	host_target_pair	host_target_pair = GetHostTargetServer(host, target);
 
 	switch (IsValidHTTPMethod(method)) {

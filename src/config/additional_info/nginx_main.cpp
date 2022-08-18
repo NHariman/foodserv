@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/15 17:51:07 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/18 16:27:57 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	main(int ac, const char **av) {
 		std::cout << "CMBS in location WITHOUT one set VIA nginxconf " << \
 		input_file.GetMaxBodySize("localhost", "/test") << std::endl;
 		std::cout << "Get GET" << std::endl;
-		std::cout << std::boolalpha << input_file.AllowMethod("localhost", "/", "GET") << std::endl;
+		std::cout << std::boolalpha << input_file.IsAllowedMethod("localhost", "/", "GET") << std::endl;
 		std::cout << "testing fastcgi_pass\n";
 		std::cout << input_file.GetFastCGIPass("localhost", "/cgi-bin") << std::endl;
 		std::cout << input_file.GetReturn("localhost", "/").GetUrl() << std::endl;
