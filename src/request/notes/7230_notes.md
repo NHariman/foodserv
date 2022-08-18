@@ -221,9 +221,17 @@ Source: [Section 3.2.4](https://datatracker.ietf.org/doc/html/rfc7230#section-3.
 <br/><br/>
 
 ### Missing or multiple Host header field:
->  A server MUST respond with a 400 (Bad Request) status code to any HTTP/1.1 request message that lacks a Host header field and to any request message that contains more than one Host header field or a Host header field with an invalid field-value..  
+> A server MUST respond with a 400 (Bad Request) status code to any HTTP/1.1 request message that lacks a Host header field and to any request message that contains more than one Host header field or a Host header field with an invalid field-value..  
 
 Source: [Section 5.4](https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.2)
+<br/><br/>
+
+### Incomplete messages:
+> A server that receives an incomplete request message, usually due to a canceled request or a triggered timeout exception, MAY send an error response prior to closing the connection.  
+
+> A message body that uses the chunked transfer coding is incomplete if the zero-sized chunk that terminates the encoding has not been received.  A message that uses a valid Content-Length is incomplete if the size of the message body received (in octets) is less than the value given by Content-Length.  A response that has neither chunked transfer coding nor Content-Length is terminated by closure of the connection and, thus, is considered complete regardless of the number of message body octets received, provided that the header section was received intact.
+
+Source: [Section 3.4](https://datatracker.ietf.org/doc/html/rfc7230#section-3.4)
 <br/><br/>
 
 ### Transfer-Encoding:
