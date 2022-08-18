@@ -124,6 +124,7 @@ ChunkState	ChunkedParser::SizeHandler(char c) {
 ChunkState	ChunkedParser::DataHandler(char c) {
 	if (DEBUG) cout << "[DataHandler] at: [" << c << "] | chunk size: " << _chunk_size << "\n";
 
+	if (_request->msg_body.size() + _chunk_size > )
 	if (_chunk_size > 0)
 		_chunk_size -= 1;
 	switch (c) {

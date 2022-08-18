@@ -80,12 +80,6 @@ bool	HeaderFieldValidator::ValidTransferEncoding(Request& request) {
 	return true;
 }
 
-static size_t GetMaxBodySize(string host, string target) {
-	(void)host, (void)target;
-
-	return 1;
-} // TODO: remove once config method implemented
-
 // Used by ValidContentLength to check for valid values.
 static void	CheckContentLengthValue(NginxConfig* config,
 									Request& request) {
@@ -99,13 +93,11 @@ static void	CheckContentLengthValue(NginxConfig* config,
 
 	// if invalid value
 	request.content_length = std::stoll(content_length);
-	// size_t	limit = MBToBytes(config->GetMaxBodySize(host, target));
-	(void)config;
-	size_t	limit = MBToBytes(GetMaxBodySize(host, target));
+	request.max_body_size = MBToBytes(config->GetMaxBodySize(host, target));
 	
 	if (request.content_length < 0)
 		throw BadRequestException("Invalid Content-Length value");
-	else if ((size_t)request.content_length > limit)
+	else if ((size_t)request.content_length > request.max_body_size)
 		throw PayloadTooLargeException();
 }
 

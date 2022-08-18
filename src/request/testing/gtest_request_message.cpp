@@ -69,21 +69,21 @@ TEST(RequestMessageTest, ValidMessageChunkedExt) {
 }
 
 TEST(RequestMessageTest, InvalidMessageChunked) {
-	// // invalid line ending
-	// EXPECT_THROW({
-	// 	string req_str = POST_Req + CHUNKED + "0\r\r\n";
-	// 	Request request(&config, req_str.c_str());
-	// }, BadRequestException);
-	// // missing last chunk
-	// EXPECT_THROW({
-	// 	string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n\r\n";
-	// 	Request request(&config, req_str.c_str());
-	// }, BadRequestException);
-	// // missing last CRLF
-	// EXPECT_THROW({
-	// 	string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n0\r\n";
-	// 	Request request(&config, req_str.c_str());
-	// }, BadRequestException);
+	// invalid line ending
+	EXPECT_THROW({
+		string req_str = POST_Req + CHUNKED + "0\r\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
+	// missing last chunk
+	EXPECT_THROW({
+		string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
+	// missing last CRLF
+	EXPECT_THROW({
+		string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n0\r\n";
+		Request request(&config, req_str.c_str());
+	}, BadRequestException);
 	EXPECT_THROW({
 		string req_str = POST_Req + CHUNKED + "0\r\n";
 		Request request(&config, req_str.c_str());

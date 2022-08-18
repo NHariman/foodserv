@@ -23,6 +23,7 @@ class Request {
 
 		size_t	bytes_read; // bytes read of request input
 		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
+		size_t	max_body_size;
 
 		string		GetMethod() const;
 		string		GetTarget() const;
