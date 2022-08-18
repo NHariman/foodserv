@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/15 20:29:28 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/18 16:27:57 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class NginxConfig {
 		bool						GetAutoindex(std::string host, std::string target) const;
 		ReturnDir					GetReturn(std::string host, std::string target) const;
 		std::string					GetFastCGIPass(std::string host, std::string target) const;
-		bool						AllowMethod(std::string host, std::string target, std::string method) const;
+		bool						IsAllowedMethod(std::string host, std::string target, std::string method) const;
 
 		ServerContext				GetHostServer(std::string host) const;
 		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
