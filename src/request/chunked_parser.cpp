@@ -1,4 +1,6 @@
 #include "chunked_parser.hpp"
+#include "header_field_parser.hpp"
+#include "request.hpp"
 
 #define DEBUG 1 // TODO: REMOVE
 
@@ -124,7 +126,7 @@ ChunkState	ChunkedParser::SizeHandler(char c) {
 ChunkState	ChunkedParser::DataHandler(char c) {
 	if (DEBUG) cout << "[DataHandler] at: [" << c << "] | chunk size: " << _chunk_size << "\n";
 
-	if (_request->msg_body.size() + _chunk_size > _request->max_body_size)
+	if (_request->_msg_body.size() + _chunk_size > _request->max_body_size)
 		throw PayloadTooLargeException();
 	if (_chunk_size > 0)
 		_chunk_size -= 1;
@@ -240,10 +242,10 @@ void	ChunkedParser::SaveParsedValue() {
 			_chunk_size = HextoDec(buffer);
 			break;
 		case c_Data:
-			_request->msg_body += buffer;
+			_request->_msg_body += buffer;
 			break;
 		case c_Trailer:
-			ParseTrailerHeader(_request->header_fields);
+			ParseTrailerHeader(_request->_header_fields);
 			break;
 		default:
 			return ;

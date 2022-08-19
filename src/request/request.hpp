@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 #include "request_parser.hpp"
-#include "request_line_parser.hpp"
 #include "../config/nginx_config.hpp"
 
 using namespace std;
@@ -12,7 +11,9 @@ using namespace std;
 // returned by GetField when no field by the passed name is found.
 #define NO_VAL "NO SUCH HEADER FIELD"
 
-class RequestParser;
+struct RequestLine;
+class NginxConfig;
+class URI;
 
 class Request {
 	public:
@@ -44,8 +45,8 @@ class Request {
 		struct RequestLine	_request_line;
 		map<string, string>	_header_fields;
 		string				_msg_body;
-		RequestParser		*_parser;
-		// RequestParser		_parser;
+		// RequestParser		*_parser;
+		RequestParser		_parser;
 };
 
 #endif /* REQUEST_HPP */

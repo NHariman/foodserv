@@ -56,8 +56,8 @@ class StateParser {
 		// Concrete methods that can be overridden if custom looping behaviour
 		// is needed.
 		virtual void	InitParser(string const& input_string) {
-			cur_state = start_state;
-			buffer.clear();
+			// cur_state = start_state;
+			// buffer.clear();
 			input = input_string;
 			skip_char = false;
 		}

@@ -1,4 +1,5 @@
 #include "request.hpp"
+#include "request_line_parser.hpp"
 
 // Default constructor // TODO: Review use/removal
 Request::Request()
@@ -8,17 +9,17 @@ Request::Request()
 		// _parser(NULL) {}
 
 // Config file constructor
-Request::Request(NginxConfig* config)
-	: bytes_read(0), content_length(-1), max_body_size(1048576) {
-	// RequestParser	parser(config);
-	// _parser = &parser;
-	_parser = new RequestParser(config);
-}
 // Request::Request(NginxConfig* config)
-// 	: bytes_read(0), content_length(-1), max_body_size(1048576), _parser(config) {
+// 	: bytes_read(0), content_length(-1), max_body_size(1048576) {
 // 	// RequestParser	parser(config);
 // 	// _parser = &parser;
+// 	_parser = new RequestParser(config);
 // }
+Request::Request(NginxConfig* config)
+	: bytes_read(0), content_length(-1), max_body_size(1048576), _parser(config) {
+	// RequestParser	parser(config);
+	// _parser = &parser;
+}
 
 // Destructor
 Request::~Request() {}
@@ -26,8 +27,8 @@ Request::~Request() {}
 size_t	Request::Parse(char const* buffer) {
 	// RequestParser	parser(_config);
 
-	// bytes_read = _parser.Parse(*this, buffer);
-	bytes_read += _parser->Parse(*this, buffer);
+	bytes_read = _parser.Parse(*this, buffer);
+	// bytes_read += _parser->Parse(*this, buffer);
 	return bytes_read;
 }
 

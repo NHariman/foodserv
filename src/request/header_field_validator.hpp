@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 #include "exception.hpp"
-#include "request.hpp"
 #include "request_utils.hpp"
 
 using namespace std;
@@ -14,7 +13,7 @@ class NginxConfig;
 
 enum HeaderStatus {
 	hv_Bad = -1,
-	hv_OK = 0,
+	hv_Done = 0,
 	hv_MessageExpected,
 	hv_MessageChunked
 };

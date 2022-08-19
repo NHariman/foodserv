@@ -1,6 +1,9 @@
 #include "request_parser.hpp"
+#include "chunked_parser.hpp"
+#include "header_field_validator.hpp"
+#include "request.hpp"
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
@@ -31,6 +34,7 @@ size_t	RequestParser::Parse(Request& request, char const* buffer) {
 
 	_request = &request;
 	_bytes_read = 0;
+
 	return ParseString(request_string);
 }
 
@@ -63,14 +67,16 @@ void	RequestParser::IncrementCounter(size_t& pos) {
 }
 
 void	RequestParser::PreParseCheck() {
-
+	cout << "RequestParser | preparse " << endl;
 }
 
 void	RequestParser::AfterParseCheck(size_t& pos) {
 	// If there are more characters after ending token, assume body
 	// is present but not indicated by Content-Length header.
-	if (pos < input.size() - 1) // TODO: check if Content-Length has not been indicated? (truncated message)
-		throw LengthRequiredException();
+	if (cur_state == r_Done && pos < input.size() - 1) { // TODO: check if Content-Length has not been indicated? (truncated message)
+		if (_request->GetField("Content-Length") == NO_VAL)
+			throw LengthRequiredException();
+	}
 
 	if (DEBUG) {
 		cout << "Parsed method: " << _request->GetMethod() << endl; // DEBUG
@@ -78,8 +84,8 @@ void	RequestParser::AfterParseCheck(size_t& pos) {
 		cout << "Parsed target: " << _request->GetURI().GetURIDebug() << endl; // DEBUG
 		cout << "Parsed version: " << _request->GetVersion() << endl;  // DEBUG
 		cout << "Parsed headers:\n";
-		for (map<string,string>::iterator it = _request->header_fields.begin();
-			it != _request->header_fields.end(); it++)
+		for (map<string,string>::iterator it = _request->_header_fields.begin();
+			it != _request->_header_fields.end(); it++)
 				cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
 		cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
 	}
@@ -95,7 +101,7 @@ RequestState	RequestParser::RequestLineHandler(size_t pos) {
 		throw BadRequestException("Request line missing CRLF line break");
 
 	string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
-	_bytes_read += _request_line_parser.Parse(_request->request_line, request_line);
+	_bytes_read += _request_line_parser.Parse(_request->_request_line, request_line);
 	return r_HeaderField;
 }
 
@@ -118,7 +124,7 @@ RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 
 	size_t	field_end = FindFieldEnd(input, pos);
 	string	header_field = input.substr(pos, field_end);
-	_bytes_read += _header_parser.Parse(_request->header_fields, header_field);
+	_bytes_read += _header_parser.Parse(_request->_header_fields, header_field);
 	return r_HeaderDone;
 }
 
@@ -128,7 +134,7 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 
 	int ret_code = _header_validator->Process(_config, *_request);
 	switch (ret_code) {
-		case hv_OK:
+		case hv_Done:
 			return r_Done;
 		case hv_MessageExpected:
 			return r_MsgBody;
@@ -143,8 +149,8 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 RequestState	RequestParser::MessageBodyHandler(size_t pos) {
 	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
-	_request->msg_body = input.substr(pos, _request->content_length);
-	_bytes_read += _request->msg_body.size();
+	_request->_msg_body = input.substr(pos, _request->content_length);
+	_bytes_read += _request->_msg_body.size();
 	return r_Done;
 }
 

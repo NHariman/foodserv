@@ -2,9 +2,8 @@
 #define CHUNKED_PARSER_HPP
 
 #include <string>
-#include "header_field_parser.hpp"
+#include <map>
 #include "state_parser.hpp"
-#include "request.hpp"
 #include "request_utils.hpp"
 
 using namespace std;
@@ -42,7 +41,6 @@ class ChunkedParser : public StateParser<ChunkState> {
 	private:
 		Request*	_request;
 		size_t		_chunk_size;
-		// ChunkState	_save_state;
 		bool		_chunk_ext;
 		bool		_chunk_trailer;
 		bool		_cr;

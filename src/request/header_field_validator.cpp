@@ -1,11 +1,12 @@
 #include "header_field_validator.hpp"
+#include "request.hpp"
 
-HeaderFieldValidator::HeaderFieldValidator() : _status(hv_OK) {}
+HeaderFieldValidator::HeaderFieldValidator() : _status(hv_Done) {}
 
 HeaderFieldValidator::~HeaderFieldValidator() {}
 
 HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request) {
-	_status = hv_OK;
+	_status = hv_Done;
 
 	if (ValidHost(request.GetField("host"))
 			&& ValidExpect(request.GetField("expect"))
@@ -91,10 +92,10 @@ static void	CheckContentLengthValue(NginxConfig* config,
 	if (!IsValidString(isdigit, content_length))
 		throw BadRequestException("Invalid Content-Length value");
 
-	// if invalid value
 	request.content_length = std::stoll(content_length);
 	request.max_body_size = MBToBytes(config->GetMaxBodySize(host, target));
 	
+	// if invalid value
 	if (request.content_length < 0)
 		throw BadRequestException("Invalid Content-Length value");
 	else if ((size_t)request.content_length > request.max_body_size)
@@ -117,6 +118,7 @@ static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
 
 // Only exactly 1 Content-Length definition is accepted
 // and only for POST requests.
+// Sets `content_length` and `max_body_size` attributes within Request.
 bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 													Request& request) {
 	string	content_length = request.GetField("content-length");
@@ -127,24 +129,17 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 		CheckContentLengthValue(config, request);	
 		CheckAllowedMethod(request.GetMethod(), request.content_length);
 		if (request.content_length == 0)
-			_status = hv_OK;
+			_status = hv_Done;
 		else
 			_status = hv_MessageExpected;
 	}
 	return true;
 }
 
-static bool IsAllowedMethod(string host, string target, string method) {
-	(void)host, (void)target, (void)method;
-	return true;
-} // TODO: remove once config method implemented
-
 bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
 	string	host = request.GetField("host");
 	string	target = request.GetTarget();
 	string	method = request.GetMethod();
 
-	// return config->IsAllowedMethod(host, target, method);
-	(void)config;
-	return IsAllowedMethod(host, target, method);
+	return config->IsAllowedMethod(host, target, method);
 }
