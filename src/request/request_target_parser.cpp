@@ -14,7 +14,7 @@
 
 // Default constructor
 RequestTargetParser::RequestTargetParser()
-	: StateParser(u_Start), _uri(NULL), _part(pt_Invalid) {}
+	: StateParser(u_Start, u_Done), _uri(NULL), _part(pt_Invalid) {}
 
 // Destructor
 RequestTargetParser::~RequestTargetParser() {}

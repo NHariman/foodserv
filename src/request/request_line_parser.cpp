@@ -1,7 +1,8 @@
 #include "request_line_parser.hpp"
 
 // Default constructor
-RequestLineParser::RequestLineParser() : StateParser(l_Start), _increment(0) {}
+RequestLineParser::RequestLineParser()
+	: StateParser(l_Start, l_Done), _increment(0) {}
 
 // Destructor
 RequestLineParser::~RequestLineParser() {}

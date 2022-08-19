@@ -7,7 +7,7 @@
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
-	: StateParser(r_RequestLine), _request(NULL), _bytes_read(0) {
+	: StateParser(r_RequestLine, r_Done), _request(NULL), _bytes_read(0) {
 	HeaderFieldValidator header_validator;
 
 	_header_validator = &header_validator;
@@ -15,7 +15,7 @@ RequestParser::RequestParser()
 
 // Config constructor
 RequestParser::RequestParser(NginxConfig *config)
-		:	StateParser(r_RequestLine),
+		:	StateParser(r_RequestLine, r_Done),
 			_config(config),
 			_request(NULL),
 			_bytes_read(0) {
@@ -29,13 +29,11 @@ RequestParser::~RequestParser() {}
 
 // Casts input buffer into string, resets internal counters,
 // and passes string to StateParser::ParseString().
-size_t	RequestParser::Parse(Request& request, char const* buffer) {
-	string	request_string(buffer);
-
+size_t	RequestParser::Parse(Request& request, string buffer) {
 	_request = &request;
 	_bytes_read = 0;
 
-	return ParseString(request_string);
+	return ParseString(buffer);
 }
 
 // Retrieves next state based on current state & input.
@@ -122,10 +120,17 @@ static size_t	FindFieldEnd(string const& input, size_t pos) {
 RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
-	size_t	field_end = FindFieldEnd(input, pos);
-	string	header_field = input.substr(pos, field_end);
+	size_t	field_end = FindFieldEnd(input, pos); // TODO: remove?
+	(void)field_end;
+	// cout << "field end: " << field_end << " pos: " << pos << endl;
+	// string	header_field = input.substr(pos, field_end - pos);
+	string header_field = input.substr(pos);
+	// cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
 	_bytes_read += _header_parser.Parse(_request->_header_fields, header_field);
-	return r_HeaderDone;
+	if (_header_parser.IsDone() == true)
+		return r_HeaderDone;
+	else
+		return r_HeaderField;
 }
 
 // Validates parsed header fields and checks if message is expected.
@@ -133,6 +138,7 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	int ret_code = _header_validator->Process(_config, *_request);
+	cout << "Validator returned: " << ret_code << endl;
 	switch (ret_code) {
 		case hv_Done:
 			return r_Done;

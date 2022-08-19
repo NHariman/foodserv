@@ -5,30 +5,30 @@
 Request::Request()
 	:	bytes_read(0),
 		content_length(-1),
-		max_body_size(1048576){} //,
+		max_body_size(1048576),
+		is_complete(false) {} //,
 		// _parser(NULL) {}
 
 // Config file constructor
-// Request::Request(NginxConfig* config)
-// 	: bytes_read(0), content_length(-1), max_body_size(1048576) {
-// 	// RequestParser	parser(config);
-// 	// _parser = &parser;
-// 	_parser = new RequestParser(config);
-// }
 Request::Request(NginxConfig* config)
-	: bytes_read(0), content_length(-1), max_body_size(1048576), _parser(config) {
-	// RequestParser	parser(config);
-	// _parser = &parser;
-}
+	:	bytes_read(0), content_length(-1), max_body_size(1048576),
+		is_complete(false), _parser(config) {}
 
 // Destructor
 Request::~Request() {}
 
 size_t	Request::Parse(char const* buffer) {
-	// RequestParser	parser(_config);
+	string buf(buffer);
 
-	bytes_read = _parser.Parse(*this, buffer);
-	// bytes_read += _parser->Parse(*this, buffer);
+	if (buf.find("\n\r\n") == string::npos && buf.find("\n\n") == string::npos)
+		_buf += buf;
+	else{
+		_buf += buf;
+		// cout << "CRLFCRLF found, sending input: [" << _buf << "]\n";
+		bytes_read += _parser.Parse(*this, _buf);
+		if (_parser.cur_state == r_Done)
+			is_complete = true;
+	}
 	return bytes_read;
 }
 

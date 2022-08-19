@@ -2,7 +2,7 @@
 
 // Default constructor
 URIHostParser::URIHostParser()
-	:	StateParser(h_Start),
+	:	StateParser(h_Start, h_Done),
 		_uri_host(NULL),
 		_groups(0),
 		_colons(0),

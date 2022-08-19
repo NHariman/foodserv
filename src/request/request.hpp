@@ -27,6 +27,7 @@ class Request {
 		size_t	bytes_read; // bytes read of request input
 		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
 		size_t	max_body_size;
+		bool	is_complete;
 
 		size_t		Parse(char const* buffer);
 		string		GetMethod() const;
@@ -37,16 +38,17 @@ class Request {
 		string		GetMessageBody() const;
 	
 		// friend class forward declaration allows RequestParser to
-		// access private & protected members of Request.
-		friend class RequestParser;
-		friend class ChunkedParser;
+		// access private `_request_line`, `_header_fields`, `_msg_body`
+		// attributes of Request.
+		friend class	RequestParser;
+		friend class	ChunkedParser;
 	
 	private:
 		struct RequestLine	_request_line;
 		map<string, string>	_header_fields;
 		string				_msg_body;
-		// RequestParser		*_parser;
 		RequestParser		_parser;
+		string				_buf;
 };
 
 #endif /* REQUEST_HPP */

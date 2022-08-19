@@ -15,7 +15,7 @@
 
 // Default constructor
 HeaderFieldParser::HeaderFieldParser()
-	: StateParser(f_Start), _fields(NULL) {}
+	: StateParser(f_Start, f_Done), _fields(NULL) {}
 
 // Destructor
 HeaderFieldParser::~HeaderFieldParser() {}
@@ -79,6 +79,8 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
 	switch (c) {
+		case '\0':
+			return f_Name;
 		case ':':
 			PushFieldName();
 			skip_char = true;

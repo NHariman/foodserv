@@ -19,7 +19,8 @@ enable_testing()
 set(EXEC request_test) # test executable name
 
 file(GLOB SRCS CONFIGURE_DEPENDS
-    "*.cpp"
+    # "*.cpp"
+    "gtest_request_field.cpp"
     "../*.cpp"
     "../../config/*.cpp"
     "../../config/directive_validation/*.cpp"

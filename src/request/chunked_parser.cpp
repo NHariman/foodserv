@@ -34,7 +34,7 @@ const vector<string>	ChunkedParser::illegal_fields = {
 
 // Default constructor
 ChunkedParser::ChunkedParser()
-	:	StateParser(c_Start), _request(NULL), _chunk_size(0),
+	:	StateParser(c_Start, c_Done), _request(NULL), _chunk_size(0),
 		_chunk_ext(false), _chunk_trailer(false), _cr(false) {}
 
 // Destructor

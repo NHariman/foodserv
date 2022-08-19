@@ -36,7 +36,12 @@ class RequestParser  : public StateParser<RequestState> {
 		// Destructor
 		~RequestParser();
 
-		size_t		Parse(Request& request, char const* buffer);
+		size_t		Parse(Request& request, string buffer);
+		bool		CheckDoneState() override;
+
+		// friend class forward declaration allows Request to
+		// access protected `cur_state` attribute.
+		friend class	Request;
 
 	private:
 		RequestLineParser		_request_line_parser;
@@ -56,7 +61,6 @@ class RequestParser  : public StateParser<RequestState> {
 	protected:
 		RequestState	GetNextState(size_t pos) override;
 		void			CheckInvalidState() const override;
-		bool			CheckDoneState() override;
 		void			IncrementCounter(size_t& pos) override;
 		void			PreParseCheck() override;
 		void			AfterParseCheck(size_t& pos) override;

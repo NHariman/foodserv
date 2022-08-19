@@ -17,8 +17,9 @@ class StateParser {
 		// Constructor taking starting state for initialization.
 		// Child classes should call it in constructor like so:
 		//		ChildClassParser::ChildClassParser() : StateParser(c_StartEnum)
-		StateParser(State starting_state)
+		StateParser(State starting_state, State ending_state)
 			:	start_state(starting_state),
+				end_state(ending_state),
 				cur_state(starting_state),
 				skip_char(false) {}
 
@@ -41,8 +42,12 @@ class StateParser {
 			return i;
 		}
 
+		// For external classes to check if parsing has been completed.
+		bool	IsDone() { return CheckDoneState(); }
+
 	protected:
 		State	start_state;
+		State	end_state;
 		State	cur_state;
 		string	buffer; // for keeping track of parsed input
 		string	input; // saving original input
@@ -66,7 +71,7 @@ class StateParser {
 				buffer += input[pos];
 		}
 		virtual bool			NotDone(size_t pos) const {
-			return (pos <= input.size());
+			return (pos <= input.size());// && cur_state != end_state);
 		}
 		virtual void			IncrementCounter(size_t& pos) {
 			pos += 1;
