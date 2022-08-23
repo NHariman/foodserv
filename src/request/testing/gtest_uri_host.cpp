@@ -8,11 +8,11 @@ TEST(URIHostTest, ParseHostRegName) {
 	URIHostParser	parser;
 	string			parsed_host;
 
-	parser.Parse(parsed_host, "www.example.com");
-	EXPECT_EQ(parsed_host, "www.example.com");
+	parser.Parse(parsed_host, "localhost");
+	EXPECT_EQ(parsed_host, "localhost");
 
-	parser.Parse(parsed_host, "www.example.com:80"); // with port
-	EXPECT_EQ(parsed_host, "www.example.com:80");
+	parser.Parse(parsed_host, "localhost:80"); // with port
+	EXPECT_EQ(parsed_host, "localhost:80");
 	
 	parser.Parse(parsed_host, "www.ex%C3%BCmple.com"); // with percent-encoding
 	EXPECT_EQ(parsed_host, "www.exümple.com");

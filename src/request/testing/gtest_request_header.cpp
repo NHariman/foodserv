@@ -6,9 +6,9 @@
 #include "../request.hpp"
 
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
-static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
-static string DEL_RL_Host = "DELETE /hello.txt HTTP/1.1\r\nHost: www.example.com\r\n";
-static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: www.example.com\r\n";
+static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
+static string DEL_RL_Host = "DELETE /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
+static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 
 static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");
 
@@ -44,7 +44,7 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 TEST(RequestHeaderValidatorTest, InvalidHost) {
 	// multiple Hosts
 	EXPECT_THROW({
-		string req_str = GET_RL + "Host: www.example.com, www.example.net\n\n";
+		string req_str = GET_RL + "Host: localhost, www.example.net\n\n";
 		Request request(&config);
 	request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;

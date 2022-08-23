@@ -3,7 +3,7 @@
 #include "header_field_validator.hpp"
 #include "request.hpp"
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
@@ -100,7 +100,10 @@ RequestState	RequestParser::RequestLineHandler(size_t pos) {
 
 	string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
 	_bytes_read += _request_line_parser.Parse(_request->_request_line, request_line);
-	return r_HeaderField;
+	// if (_header_parser.IsDone() == true)
+		return r_HeaderField;
+	// else
+	// 	return r_RequestLine;
 }
 
 // Checks if header is ended with correct CRLF or LF sequence.
@@ -138,7 +141,6 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	int ret_code = _header_validator->Process(_config, *_request);
-	cout << "Validator returned: " << ret_code << endl;
 	switch (ret_code) {
 		case hv_Done:
 			return r_Done;

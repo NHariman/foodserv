@@ -1,5 +1,5 @@
 #include "header_field_parser.hpp"
-
+#define DEBUG 0 // TODO: REMOVE
 /*
 	Transition table for header field parsing
 	ST = f_Start, NM = f_Name, VS = f_ValueStart, VL = f_Value,
@@ -57,6 +57,7 @@ void	HeaderFieldParser::PreParseCheck() {
 
 // Header field may only start with TChar.
 FieldState	HeaderFieldParser::StartHandler(char c) {
+	if (DEBUG) cout << "[FP StartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	buffer.clear();
 	switch (c) {
@@ -78,6 +79,7 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // Header field name may only be TChar with no whitespace before the ':'
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
+	if (DEBUG) cout << "[FP NameHandler] at: [" << c << "]\n";
 	switch (c) {
 		case '\0':
 			return f_Name;
@@ -95,6 +97,7 @@ FieldState	HeaderFieldParser::NameHandler(char c) {
 
 // Skips whitespace following colon but before value starts.
 FieldState	HeaderFieldParser::ValueStartHandler(char c) {
+	if (DEBUG) cout << "[FP ValueStartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	if (IsWhitespace(c)) {
 		skip_char = true;
@@ -107,6 +110,7 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 // Accepts VChar or whitespace for field value. If \r found,
 // returns ValueEnd state to check for valid CRLF sequence.
 FieldState	HeaderFieldParser::ValueHandler(char c) {
+	if (DEBUG) cout << "[FP ValueHandler] at: [" << c << "]\n";
 	switch (c) {
 		case '\0':
 			PushFieldValue();
@@ -127,6 +131,7 @@ FieldState	HeaderFieldParser::ValueHandler(char c) {
 
 // Checks if \r is followed by \n for valid CRLF line ending.
 FieldState	HeaderFieldParser::ValueEndHandler(char c) {
+	if (DEBUG) cout << "[FP ValueEndHandler] at: [" << c << "]\n";
 	if (c =='\n') {
 		if (!buffer.empty())
 			PushFieldValue();
@@ -168,3 +173,4 @@ void	HeaderFieldParser::PushFieldValue() {
 	AddOrAppendValue(_fields, _cur_field, string(start, end + 1));
 	buffer.clear();
 }
+#undef DEBUG // REMOVE

@@ -25,7 +25,10 @@ RequestLineState	RequestLineParser::GetNextState(size_t pos) {
 			&RequestLineParser::VersionEndHandler,
 			nullptr
 	};
-	return (this->*table[cur_state])(pos);
+	RequestLineState	next_state = (this->*table[cur_state])(pos);
+	if (next_state == l_Done)
+		IncrementCounter(pos);
+	return next_state;
 }
 
 void	RequestLineParser::CheckInvalidState() const {
@@ -45,6 +48,8 @@ void	RequestLineParser::IncrementCounter(size_t& pos) {
 // Or if EOL is found (VersionEndHandler loops back to this function
 // for the purposes of returning accurate bytes_read count). 
 RequestLineState	RequestLineParser::StartHandler(size_t pos) {
+	if (input[pos] == '\0' && pos != 0)
+		return l_Done;
 	if (IsTChar((int)input[pos]))
 		return l_Method;
 	return l_Invalid;
@@ -103,10 +108,11 @@ RequestLineState	RequestLineParser::VersionHandler(size_t pos) {
 // Checks the number of line break tokens to increment pos
 // (CRLF and LF are accepted). Loops back to Start so line breaks are counted.
 RequestLineState	RequestLineParser::VersionEndHandler(size_t pos) {
-	_increment = ValidLineBreaks(input, pos);
-	if (_increment == 0)
+	if (input.substr(pos) == "\r\n" || input.substr(pos) == "\n")
+		_increment = (input.find("\n") + 1) - pos;
+	else
 		throw BadRequestException("Request line missing line break");
-	return l_Done;
+	return l_Start;
 }
 
 // Returns position of `to_find` within string `s` in terms of its distance from
@@ -130,15 +136,4 @@ size_t	RequestLineParser::GetCRLFPos(string const& input, size_t pos) {
 	if (cr_pos != pos && (nl_pos - cr_pos == 1))
 		return cr_pos;
 	return nl_pos;
-}
-
-// Used by VersionDoneHandler and FieldDoneHandler to check for
-// valid line breaks (CRLF or LF as specified by RFC 7230).
-size_t	RequestLineParser::ValidLineBreaks(string input, size_t pos) {
-	if (input[pos] == '\r' && input[pos + 1] == '\n')
-		return 2;
-	else if (input[pos] == '\n')
-		return 1;
-	else
-		return 0;
 }

@@ -4,7 +4,7 @@
 #include "../exception.hpp"
 #include "../request.hpp"
 
-static string POST_Req = "POST /hello HTTP/1.1\r\nHost: www.example.com\r\n";
+static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
 static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");

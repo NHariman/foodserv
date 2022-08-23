@@ -39,9 +39,9 @@ class RequestLineParser : public StateParser<RequestLineState> {
 
 	protected:
 		RequestLineState	GetNextState(size_t pos) override;
-		void	CheckInvalidState() const override;
-		bool	CheckDoneState() override;
-		void	IncrementCounter(size_t& pos) override;
+		void				CheckInvalidState() const override;
+		bool				CheckDoneState() override;
+		void				IncrementCounter(size_t& pos) override;
 
 	private:
 		RequestLine*	_request_line;
@@ -52,9 +52,9 @@ class RequestLineParser : public StateParser<RequestLineState> {
 		RequestLineState	TargetHandler(size_t pos);
 		RequestLineState	VersionHandler(size_t pos);
 		RequestLineState	VersionEndHandler(size_t pos);
+		
 		size_t	GetEndPos(string const& s, char to_find, size_t start);
 		size_t	GetCRLFPos(string const& input, size_t pos);
-		size_t	ValidLineBreaks(string input, size_t pos);
 };
 
 #endif /* REQUEST_LINE_PARSER_HPP */

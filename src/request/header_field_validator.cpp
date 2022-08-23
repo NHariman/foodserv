@@ -17,10 +17,8 @@ HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request
 			&& ValidContentEncoding(request.GetField("content-encoding"))
 			&& ValidTransferEncoding(request)
 			&& ValidContentLength(config, request)
-			&& ValidMethod(config, request)){
-		cout << "returning good status\n";
-		return _status;	}
-	cout << "returning bad status\n";
+			&& ValidMethod(config, request))
+		return _status;
 	return hv_Bad;
 }
 
@@ -157,7 +155,7 @@ bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
 	string	target = request.GetTarget();
 	string	method = request.GetMethod();
 
-	cout << "host: [" << host << "]\n";
+	// cout << "host: [" << host << "]\n";
 	return config->IsAllowedMethod(host, target, method);
 }
 

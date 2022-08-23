@@ -33,10 +33,10 @@ class StateParser {
 			while (NotDone(i)) {
 				cur_state = GetNextState(i);
 				UpdateBuffer(i);
-				IncrementCounter(i);
 				CheckInvalidState();
 				if (CheckDoneState())
 					break;
+				IncrementCounter(i);
 			}
 			AfterParseCheck(i);
 			return i;
@@ -71,7 +71,9 @@ class StateParser {
 				buffer += input[pos];
 		}
 		virtual bool			NotDone(size_t pos) const {
-			return (pos <= input.size());// && cur_state != end_state);
+			// cout << "Not done? " << boolalpha << (pos <= input.size() && cur_state != end_state);
+			// cout << "| at: [" << (int)input[pos] << "]\n";
+			return (pos <= input.size() && cur_state != end_state);
 		}
 		virtual void			IncrementCounter(size_t& pos) {
 			pos += 1;

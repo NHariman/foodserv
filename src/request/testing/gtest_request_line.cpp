@@ -7,7 +7,7 @@ static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files
 
 TEST(RequestLineTest, ParseGet) {
 	Request request(&config);
-	request.Parse("GET /hello.txt HTTP/1.1\nHost: www.example.com\r\n\n");
+	request.Parse("GET /hello.txt HTTP/1.1\nHost: localhost\r\n\n");
 	EXPECT_EQ(request.GetMethod(), "GET");
 	EXPECT_EQ(request.GetTarget(), "/hello.txt");
 	EXPECT_EQ(request.GetVersion(), "HTTP/1.1");
@@ -15,7 +15,7 @@ TEST(RequestLineTest, ParseGet) {
 
 TEST(RequestLineTest, ParseGetCRLF) {
 	Request request(&config);
-	request.Parse("GET /hello.txt HTTP/1.1\r\nHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt HTTP/1.1\r\nHost: localhost\n\n");
 	EXPECT_EQ(request.GetMethod(), "GET");
 	EXPECT_EQ(request.GetTarget(), "/hello.txt");
 	EXPECT_EQ(request.GetVersion(), "HTTP/1.1");
@@ -24,44 +24,44 @@ TEST(RequestLineTest, ParseGetCRLF) {
 TEST(RequestLineTest, InvalidSpaces) {
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET  /hello.txt HTTP/1.1\nHost: www.example.com\n\n");
+	request.Parse("GET  /hello.txt HTTP/1.1\nHost: localhost\n\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET /hello.txt  HTTP/1.1\nHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt  HTTP/1.1\nHost: localhost\n\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET /hello.txt HTTP/1.1 \nHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt HTTP/1.1 \nHost: localhost\n\n");
 	}, BadRequestException);
 }
 
 TEST(RequestLineTest, InvalidDelimiter) {
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET /hello.txt\tHTTP/1.1\nHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt\tHTTP/1.1\nHost: localhost\n\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET /hello.txt HTTP/1.1\n\rHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt HTTP/1.1\n\rHost: localhost\n\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET /hello.txt HTTP/1.1\t\nHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt HTTP/1.1\t\nHost: localhost\n\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET /hello.txt HTTP/1.1\r\tHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt HTTP/1.1\r\tHost: localhost\n\n");
 	}, BadRequestException);
 }
 
 TEST(RequestLineTest, InvalidMethodHTTPVer) {
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("CONNECT /hello.txt HTTP/1.1\nHost: www.example.com\n\n");
+	request.Parse("CONNECT /hello.txt HTTP/1.1\nHost: localhost\n\n");
 	}, NotImplementedException);
 	EXPECT_THROW({
 		Request request(&config);
-	request.Parse("GET /hello.txt HTTP/1.0\nHost: www.example.com\n\n");
+	request.Parse("GET /hello.txt HTTP/1.0\nHost: localhost\n\n");
 	}, HTTPVersionNotSupportedException);
 }
