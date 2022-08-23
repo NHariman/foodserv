@@ -13,12 +13,20 @@
 class KernelEvent {
 
 	private:
-		int		_kq; // list of events we are interested in
-		int		_listening_socket;
+		int				_kq; // list of events we are interested in
+		int				_listening_socket;
+		struct kevent	_event_to_monitor; // event set for READ's on the listening socket
+		struct kevent	_event_to_trigger;
+		struct kevent	_event_list[SOMAXCONN];
 
-		// ListeningSocket	test("::", "12345");
+		const int		_addrlen = _ListenSocketClass.getAddrLen();
+		struct addrinfo*	_addrinfo = _ListenSocketClass.getAddrInfo();
 		ListeningSocket		_ListenSocketClass;
+		// ListeningSocket	test("::", "12345");
+		
 
+		// an array of client socket fd's
+		// set them to 0 to start with
 		struct client_fds {
 			int	fd;
 		} _clients[SOMAXCONN];
@@ -27,51 +35,49 @@ class KernelEvent {
 	public:
 		KernelEvent();
 		
+		// initialize kqueue
+		// kqueue holds all the events we are interested in
+		// step 1: creating an empty kqueue
+		void	initKqueue();
 
-		// working with the connectoins
-		// use an array of client socket fd's
-		// and set them all to 0 to start with
+		// STEP 2: creatomg the event set for reads on the socket
 
-		// given an FD find the correspoding client data
-		int	findClientFd(int fd) {
-			for (int i = 0; i < SOMAXCONN; i++) {
-				if (_clients[i].fd == fd)
-					return 1;
-			}
-			// if no matching ID is found return -1
-			return -1;
+		// kevent is identified by a <ident, filter> pair where ident
+		// can be a fildes and filter is the kernel filter used to process
+		// the respective event: EVFILT_READ, which are triggered when data
+		// exists for reading.
+
+		// EVENT_SET = EVENTS WE WANT TO MONITOR
+	    // use EV_SET to fill the kevent structure
+		// set the ident to the _listening_socket
+		// changelist.ident = _listening_socket;
+		// and the flag to EV_ADD as you want to add it to the kqueue
+		// changelist.flag = EV_ADD;
+		// set filter on EVFILT_READ as you only want to add when read is possible
+		// changelist.filter = EVFILT_READ;
+		void	createEventSetMonitor() {
+			EV_SET(&_event_to_monitor, _listening_socket, EVFILT_READ, EV_ADD | EV_ENABLE | EV_CLEAR, 0, SOMAXCONN, NULL);
+			if (kevent(_kq, &_event_to_monitor, 1, NULL, 0, NULL) == -1) {
+				perror("kevent");
+				exit (EXIT_FAILURE);
+			} 
 		}
+
+		void	keventLoop() {
+			while (true) {
+
+			}
+		}
+
+		int		findClientFd(int fd);
 
 		// for a new connection (request) add in the fd in the _clients array
 		// the place to store is is the first fd == 0
-		int	addClientFd(int fd) {
-			// return -1 on an invalid fd
-			if (fd < 1)
-				return -1;
-			int	i;
-			// looks for the position of the first empty spot
-			i = findClientFd(0);
-			if (i == -1)
-				return -1;
-			_clients[i].fd = fd;
-			return 0;
-		}
+		int	addClientFd(int fd);
 
 		// when a connection is lost, we dont want that client_fd to stay
 		// in the array of _clients fd's
-		int	deleteLostConnections(int fd) {
-			if (fd < 1)
-				return -1;
-			int i;
-			// find position in the array where to delete
-			i = findClientFd(fd);
-			if (i == -1)
-				return -1;
-			_clients[i].fd = 0;
-			if (close(fd) == -1)
-				return -1;
-			return 0;
-		}
+		int	deleteLostConnections(int fd);
 };
 
 #endif
