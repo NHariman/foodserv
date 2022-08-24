@@ -73,7 +73,7 @@ class StateParser {
 				buffer += input[pos];
 		}
 		virtual bool			NotDone(size_t pos) const {
-			// cout << "Not done? " << boolalpha << (pos <= input.size() && cur_state != end_state);
+			// cout << "Not done? " << boolalpha << (pos < input.size()) << endl;// && cur_state != end_state);
 			// cout << "| at: [" << (int)input[pos] << "]\n";
 			return (pos <= input.size() && cur_state != end_state);
 		}

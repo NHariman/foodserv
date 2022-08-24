@@ -24,9 +24,9 @@ size_t	Request::Parse(char const* buffer) {
 		_buf += buf;
 	else{
 		_buf += buf;
-		// cout << "CRLFCRLF found, sending input: [" << _buf << "]\n";
 		try {
 			bytes_read += _parser.Parse(*this, _buf);
+			_buf.clear();
 		}
 		catch (std::exception &e) {
 			throw;

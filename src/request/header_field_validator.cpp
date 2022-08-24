@@ -160,6 +160,8 @@ bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
 	string	method = request.GetMethod();
 
 	// cout << "host: [" << host << "]\n";
+	// cout << "status: " << _status << endl;
+	// cout << "config->IsAllowedMethod: " << config->IsAllowedMethod(host, target, method) << endl;
 	return config->IsAllowedMethod(host, target, method);
 }
 

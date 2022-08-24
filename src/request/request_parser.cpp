@@ -3,7 +3,7 @@
 #include "header_field_validator.hpp"
 #include "request.hpp"
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
@@ -135,6 +135,7 @@ RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	int ret_code = _header_validator->Process(_config, *_request);
+	// cout << "Validator return: " << ret_code << endl;
 	switch (ret_code) {
 		case hv_Done:
 			return r_Done;
@@ -159,14 +160,16 @@ RequestState	RequestParser::MessageBodyHandler() {
 RequestState	RequestParser::ChunkedHandler() {
 	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos] << "]\n";
 
-	// if (input[pos]) {
+	if (input[pos]) {
 		ChunkedParser parser;
 
 		pos += parser.Parse(*_request, input.substr(pos));
 		return r_Done;
-	// }
-	// else
-	// 	return r_Chunked;
+	}
+	else {
+		pos += 1;
+		return r_Chunked;
+	}
 }
 
 #undef DEBUG // REMOVE
