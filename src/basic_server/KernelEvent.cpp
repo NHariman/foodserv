@@ -1,148 +1,110 @@
 #include "KernelEvent.hpp"
 
-KernelEvent::KernelEvent(int sock, struct addrinfo* addrinfo, int addrlen)
-    : _listening_socket(sock), _addrinfo(addrinfo), _addrlen(addrlen) { // _ListenSocketClass("::", "8080") {
-    // replace this to somewhere else.
-    // _listening_socket = _ListenSocketClass.getListeningSocket();
-    // _addrlen = _ListenSocketClass.getAddrLen();
-    // _addrinfo = _ListenSocketClass.getAddrInfo();
-   
-    // initializing kqueue 
-    initKqueue();
-    // installing reading socket event set
-    createEventSetMonitor();
-    
-    // changes to events to triggers and event_list
-    // struct kevent _event_to_trigger;
-    // struct kevent eventList[SOMAXCONN];
 
-    // keventLoop();
-
-    // // in this event loop kevent will be called to receive incoming events and process them
-    // while (1) {
-    //     // std::cout << "in start of while" << std::endl;
-    //     int num_events = kevent(_kq, NULL, 0, eventList, SOMAXCONN, NULL);
-    //     std::cout << "Number of events: " << num_events << std::endl;
-        
-    //     if (num_events < 0) {
-    //         perror("kevent");
-    //         exit (EXIT_FAILURE);
-    //     }
-
-
-    //     // std::cout << "Number of events happening: " << num_events << std::endl;
-    //     // eventList is the structure that holds all events currently kept track of .filter shows which event this is
-
-    //     for (int i = 0; i < num_events; i++) {
-    //         // if (evList[i].flags & EV_EOF) {}
-    //         // check if the connection is equal to the listening socket
-    //         // if this is the case we know a client is sending a request to us.
-    //         if (eventList[i].ident == _listening_socket) {
-    //             int fd_to_accept = accept(eventList[i].ident, (struct sockaddr*)&_addrinfo, (socklen_t*)&_addrlen);
-    //             std::cout << "value of fd_to_accept: " << fd_to_accept << std::endl;
-                
-    //             // THIS IS THE HTTP REQUEST OF THE NEWLY ACCEPTED CLIENT
-    //             // NOW WE NEED TO PROCESS THIS REQUEST. 
-    //             // THIS IS THE PART WHERE I HAVE TO ADD IN MICHELLES CODE
-
-    //             // function: receive request
-    //             std::cout << "amount of data ready to read in the event  -> backlog: " << eventList[i].data << std::endl;
-                
-    //             char HTTPREQUEST[1000];
-    //             memset(HTTPREQUEST, 0, sizeof(HTTPREQUEST));
-    //             std::cout << "Amount read by recv: " << recv(fd_to_accept, HTTPREQUEST, sizeof(HTTPREQUEST), 0) << std::endl;
-    //             std::cout << HTTPREQUEST << std::endl;
-    //             // HOW DO WE PRINT THE REQUEST A CLIENT IS SENDING?
-
-    //             // we now have a connection that we have accepted
-    //             // the fd should be added in our list of events: eventlist
-    //             if (addClientFd(fd_to_accept) < 0) {
-    //                 std::cout << "Connection " << fd_to_accept << " can not be added." << std::endl;
-    //                 close(fd_to_accept);
-    //                 // close(_listening_socket);
-    //                 // exit( EXIT_FAILURE) ;
-    //             }
-    //             else {
-    //                 EV_SET(&eventToSet, fd_to_accept, EVFILT_READ, EV_ADD | EV_ENABLE | EV_CLEAR, 0, SOMAXCONN, NULL);
-    //                 kevent(_kq, &eventToSet, 1, NULL, 0, NULL);
-    //                 // ADD IN: send the correct html to the client
-    //                 // this is where we send a message to the client
-    //                 // this should be depended on what the clients requests, but for now we will
-    //                 // send a basic HTML message
-    //                 send(fd_to_accept, html, sizeof(html), 0);
-    //             }
-
-    //         }
-    //         // check is the connection is disconnected
-    //         else if (eventList[i].flags & EV_EOF) {
-    //             std::cout << "Client disconnected: " << eventList[i].ident << std::endl;
-    //             EV_SET(&eventToSet, eventList[i].ident, EVFILT_READ, EV_DELETE | EV_DISABLE, 0, 0, NULL);
-    //             kevent(_kq, &eventToSet, 1, NULL, 0, NULL);
-    //             deleteLostConnections(eventList[i].ident);
-    //         }
-
-    //         //  if (eventList[i].filter == EVFILT_READ && i == 1)
-    //         //     std::cout << "READY TO READ SOMETHING ON FILDES (hopefully _listening_socket?): " << eventList[i].ident << std::endl;
-    //         //     // break ;
-
-    //         else if (eventList[i].filter == EVFILT_READ) {
-    //             // never happens yet
-    //             // guessing this is when you have a link within a website
-    //             std::cout << "in the evfilt_read" << std::endl;
-    //             char buf[1000];
-    //             int bytes_read = recv(eventList[i].ident, buf, sizeof(buf) - 1, 0);
-    //             buf[bytes_read] = 0;
-    //             printf("client #%d: %s", findClientFd(eventList[i].ident), buf);
-    //             // fflush(stdout);
-    //         }
-
-
-    //     }
-    // }
+KernelEvent::KernelEvent(int sock) : _listening_socket(sock) {
+    int kq = kqueue();
+    struct kevent evSet;
+    EV_SET(&evSet, _listening_socket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+    kevent(kq, &evSet, 1, NULL, 0, NULL);
+    run_event_loop(kq, _listening_socket);
 }
 
-void    KernelEvent::initKqueue() {
-    _kq = kqueue();
-    if (_kq == -1) {
-        perror("kqueue");
-        exit (EXIT_FAILURE);
+void	KernelEvent::run_event_loop(int kq, int _listening_socket) {
+    struct kevent evSet;
+    struct kevent evList[MAX_EVENTS];
+    struct sockaddr_storage addr;
+    socklen_t socklen = sizeof(addr);
+
+    while (1) {
+        int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
+        for (int i = 0; i < num_events; i++) {
+            // receive new connection
+            if (evList[i].ident == _listening_socket) {
+                int fd = accept(evList[i].ident, (struct sockaddr *) &addr, &socklen);
+                if (addNewClientFd(fd) == 0) {
+                    EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+                    kevent(kq, &evSet, 1, NULL, 0, NULL);
+                    serveHTML(fd);
+                } else {
+                    printf("connection refused.\n");
+                    close(fd);
+                }
+            } // client disconnected
+            else if (evList[i].flags & EV_EOF) {
+                int fd = evList[i].ident;
+                printf("client #%d disconnected.\n", getClientPos(fd));
+                EV_SET(&evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+                kevent(kq, &evSet, 1, NULL, 0, NULL);
+                deleteClientFd(fd);
+            } // read message from client
+            else if (evList[i].filter == EVFILT_READ) {
+                recv_msg(evList[i].ident);
+                // EV_SET()
+            }
+        }
+    }	
+}
+
+
+void KernelEvent::serveHTML(int s) {
+    const char *file_path = "../../HTML/index.html";
+
+    char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
+                    "Connection: close\r\n"
+                    "Content-type: text/html\r\n"
+                    "\r\n";
+
+    std::string		text;
+    int				text_size;
+    std::ifstream	read_file(file_path);
+
+    std::vector<char>	buf_vector;
+
+    for (int i = 0; i < sizeof(htmlresponse); i++)
+        buf_vector.push_back(htmlresponse[i]);
+
+    while (getline(read_file, text)) {
+        for (int i = 0; i < text.length(); i++) {
+            buf_vector.push_back(text[i]);
+        }
     }
+
+    char *buf = new char[buf_vector.size()];
+
+    for (int i = 0; i < buf_vector.size(); i++) {
+        buf[i] = buf_vector.at(i);
+    }
+    send(s, buf, buf_vector.size(), 0);
+    read_file.close();
 }
 
-int     KernelEvent::findClientFd(int fd) {
-    for (int i = 0; i < SOMAXCONN; i++) {
-        if (_clients[i].fd == fd)
+int KernelEvent::getClientPos(int fd) {
+    for (int i = 0; i < SOMAXCONN; i++)
+        if (clients[i].fd == fd)
             return i;
-    }
-    // return -1 is no matching FD is found
     return -1;
 }
 
-// for a new connection (request) add in the fd in the _clients array
-// the place to store is is the first fd == 0
-int	    KernelEvent::addClientFd(int fd) {
-    // return -1 on an invalid fd
-    if (fd < 1)
-        return -1;
-    int	i;
-    // looks for the position of the first empty spot
-    i = findClientFd(0);
-    if (i == -1)
-        return -1;
-    _clients[i].fd = fd;
+int KernelEvent::addNewClientFd(int fd) {
+    if (fd < 1) return -1;
+    int i = getClientPos(0);
+    if (i == -1) return -1;
+    clients[i].fd = fd;
     return 0;
 }
 
-// when a connection is lost, we dont want that client_fd to stay
-// in the array of _clients fd's
-int	    KernelEvent::deleteLostConnections(int fd) {
-    if (fd < 1)
-        return -1;
-    int i;
-    // find position in the array where to delete
-    i = findClientFd(fd);
-    if (i == -1)
-        return -1;
-    _clients[i].fd = 0;
-    return (close(fd));
+int KernelEvent::deleteClientFd(int fd) {
+    if (fd < 1) return -1;
+    int i = getClientPos(fd);
+    if (i == -1) return -1;
+    clients[i].fd = 0;
+    return close(fd);
+}
+
+void KernelEvent::recv_msg(int s) {
+    char buf[MAX_MSG_SIZE];
+    int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
+    buf[bytes_read] = 0;
+    printf("client message #%d:\n %s", getClientPos(s), buf);
+    fflush(stdout);
 }
