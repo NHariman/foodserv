@@ -1,5 +1,5 @@
 #include "request_target_parser.hpp"
-
+#define DEBUG 0 // TODO: REMOVE
 /*
 	Transition table for origin form URI states.
 	PT = Path, PR = Percent, PD = PercentDone, QR = Query, ✓ = Done
@@ -37,10 +37,9 @@ URIState	RequestTargetParser::GetNextState(size_t pos) {
 			&RequestTargetParser::PercentDoneHandler,
 			nullptr
 	};
-	URIState	next_state = (this->*table[cur_state])(input[pos]);
-	if (next_state == u_Done)
-		skip_char = true; // skips line endings
-	return next_state;
+	if (DEBUG) cout << "[RTP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
+	skip_char = false;
+	return (this->*table[cur_state])(input[pos]);
 }
 
 void	RequestTargetParser::CheckInvalidState() const {
@@ -85,6 +84,8 @@ void	RequestTargetParser::PushBuffertoField(URIPart part) {
 
 // Starting state transition handler. Only accepts '/' according to origin form rules.
 URIState		RequestTargetParser::StartHandler(char uri_char) {
+	if (DEBUG) cout << "[StartHandler] at: [" << uri_char << "]\n";
+
 	if (uri_char == '/')
 		return u_Path;
 	return u_Invalid;
@@ -94,9 +95,12 @@ URIState		RequestTargetParser::StartHandler(char uri_char) {
 // Always checks that no 2 consecutive '/' are given, which is only used
 // by authority URI components.
 URIState		RequestTargetParser::PathHandler(char uri_char) {
+	if (DEBUG) cout << "[PathHandler] at: [" << uri_char << "]\n";
+
 	_part = pt_Path;
 	switch (uri_char) {
 		case '\0':
+			skip_char = true;
 			return u_Done;
 		case '%':
 			return u_Percent;
@@ -118,11 +122,14 @@ URIState		RequestTargetParser::PathHandler(char uri_char) {
 // Handles transition after '?' input indicating queries is found.
 // '#' is accepted alternative to EOL signaling end of query string.
 URIState		RequestTargetParser::QueryHandler(char uri_char) {
+	if (DEBUG) cout << "[QueryHandler] at: [" << uri_char << "]\n";
+
 	if (_part == pt_Path)
 		PushBuffertoField(_part);
 	_part = pt_Query;
 	switch (uri_char) {
 		case '\0': case '#':
+			skip_char = true;
 			return u_Done;
 		case '%':
 			return u_Percent;
@@ -139,6 +146,8 @@ URIState		RequestTargetParser::QueryHandler(char uri_char) {
 // Handles transition after percent-encoding has been found (% input).
 // Checks if subsequent 2 characters are valid hexadecimal digits.
 URIState		RequestTargetParser::PercentHandler(char uri_char) {
+	if (DEBUG) cout << "[PercentHandler] at: [" << uri_char << "]\n";
+
 	if (PrecededBy(buffer, '%') && IsHexDig(uri_char))
 		return u_Percent;
 	else if (IsHexDig(buffer.back()) && IsHexDig(uri_char))
@@ -153,14 +162,19 @@ URIState		RequestTargetParser::PercentHandler(char uri_char) {
 // in URIPart enum and u_Path & Query state values in the URIState enum.
 // So if we're at Path part, we return the Path state. Ditto for Query.
 URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
+	if (DEBUG) cout << "[PercentDoneHandler] at: [" << uri_char << "]\n";
+
 	NormalizeString(toupper, buffer, buffer.size() - 2);
 	buffer = DecodePercent(buffer);
 	switch (uri_char) {
 		case '\0':
+			skip_char = true;
 			return u_Done;
 		case '#':
-			if (_part == pt_Query)
+			if (_part == pt_Query) {
+				skip_char = true;
 				return u_Done;
+			}
 			break;
 		case '%':
 			return u_Percent;
@@ -176,3 +190,4 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	}
 	return u_Invalid;
 }
+#undef DEBUG // REMOVE
