@@ -24,8 +24,12 @@ HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request
 
 // Only exactly 1 Host definition is accepted.
 bool	HeaderFieldValidator::ValidHost(string host) {
+	if (DEBUG) cout << "ValidHost\n";
+
 	if (host == NO_VAL)
 		throw BadRequestException("Host header mandatory");
+	if (host.find(' ') != string::npos || host.find(',') != string::npos)
+		throw BadRequestException("Multiple hosts not allowed");
 	try {
 		URIHostParser	parser;
 		string			host_parsed;
@@ -33,7 +37,7 @@ bool	HeaderFieldValidator::ValidHost(string host) {
 		// Checks if Host value is valid path
 		parser.Parse(host_parsed, host);
 	}
-	catch (...) {
+	catch (std::exception &e) {
 		throw;
 	}
 	return true;

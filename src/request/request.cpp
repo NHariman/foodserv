@@ -25,7 +25,12 @@ size_t	Request::Parse(char const* buffer) {
 	else{
 		_buf += buf;
 		// cout << "CRLFCRLF found, sending input: [" << _buf << "]\n";
-		bytes_read += _parser.Parse(*this, _buf);
+		try {
+			bytes_read += _parser.Parse(*this, _buf);
+		}
+		catch (std::exception &e) {
+			throw;
+		}
 		if (_parser.cur_state == r_Done)
 			is_complete = true;
 	}
