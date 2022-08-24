@@ -65,7 +65,7 @@ void	RequestTargetParser::PreParseCheck() {
 }
 
 // Checks if there's illegal characters after terminating char.
-void	RequestTargetParser::AfterParseCheck(size_t& pos) {
+void	RequestTargetParser::AfterParseCheck() {
 	if (cur_state == u_Done && pos < input.size() - 1)
 		throw BadRequestException("Extra characters after terminating token in request target");
 }

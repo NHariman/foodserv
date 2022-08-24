@@ -50,20 +50,19 @@ class RequestParser  : public StateParser<RequestState> {
 		NginxConfig				*_config;
 		
 		Request		*_request;
-		size_t		_bytes_read;
 
-		RequestState	RequestLineHandler(size_t pos);
-		RequestState	HeaderFieldHandler(size_t pos);
-		RequestState	HeaderDoneHandler(size_t pos);
-		RequestState	MessageBodyHandler(size_t pos);
-		RequestState	ChunkedHandler(size_t pos);
+		RequestState	RequestLineHandler();
+		RequestState	HeaderFieldHandler();
+		RequestState	HeaderDoneHandler();
+		RequestState	MessageBodyHandler();
+		RequestState	ChunkedHandler();
 
 	protected:
 		RequestState	GetNextState(size_t pos) override;
 		void			CheckInvalidState() const override;
-		void			IncrementCounter(size_t& pos) override;
+		void			IncrementCounter() override;
 		void			PreParseCheck() override;
-		void			AfterParseCheck(size_t& pos) override;
+		void			AfterParseCheck() override;
 };
 
 #endif /* REQUESTPARSER_HPP */

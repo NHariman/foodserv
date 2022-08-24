@@ -52,7 +52,7 @@ bool	URIHostParser::CheckDoneState() {
 }
 
 // Checks if there's illegal characters after terminating char.
-void	URIHostParser::AfterParseCheck(size_t& pos) { 
+void	URIHostParser::AfterParseCheck() { 
 	if (cur_state == h_Done && pos < input.size() - 1)
 		throw BadRequestException("Extra characters after terminating token in URI host");
 	else

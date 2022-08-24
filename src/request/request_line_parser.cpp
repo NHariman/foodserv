@@ -25,7 +25,7 @@ RequestLineState	RequestLineParser::GetNextState(size_t pos) {
 			&RequestLineParser::VersionEndHandler,
 			nullptr
 	};
-	cout << "[RLP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
+	(void)pos;
 	return (this->*table[cur_state])();
 }
 

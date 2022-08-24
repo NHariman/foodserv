@@ -7,7 +7,7 @@
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
-	: StateParser(r_RequestLine, r_Done), _request(NULL), _bytes_read(0) {
+	: StateParser(r_RequestLine, r_Done), _request(NULL) {
 	HeaderFieldValidator header_validator;
 
 	_header_validator = &header_validator;
@@ -17,8 +17,7 @@ RequestParser::RequestParser()
 RequestParser::RequestParser(NginxConfig *config)
 		:	StateParser(r_RequestLine, r_Done),
 			_config(config),
-			_request(NULL),
-			_bytes_read(0) {
+			_request(NULL) {
 	HeaderFieldValidator header_validator;
 
 	_header_validator = &header_validator;
@@ -31,14 +30,13 @@ RequestParser::~RequestParser() {}
 // and passes string to StateParser::ParseString().
 size_t	RequestParser::Parse(Request& request, string buffer) {
 	_request = &request;
-	_bytes_read = 0;
 
 	return ParseString(buffer);
 }
 
 // Retrieves next state based on current state & input.
 RequestState	RequestParser::GetNextState(size_t pos) {
-	static RequestState (RequestParser::*table[])(size_t pos) = {
+	static RequestState (RequestParser::*table[])() = {
 			&RequestParser::RequestLineHandler,
 			&RequestParser::HeaderFieldHandler,
 			&RequestParser::HeaderDoneHandler,
@@ -46,9 +44,9 @@ RequestState	RequestParser::GetNextState(size_t pos) {
 			&RequestParser::ChunkedHandler,
 			nullptr
 	};
-
+	(void)pos;
 	if (DEBUG) cout << "[RP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
-	return (this->*table[cur_state])(pos);
+	return (this->*table[cur_state])();
 }
 
 void	RequestParser::CheckInvalidState() const {
@@ -60,22 +58,19 @@ bool	RequestParser::CheckDoneState() {
 	return cur_state == r_Done;
 }
 
-void	RequestParser::IncrementCounter(size_t& pos) {
-	pos = _bytes_read;
-}
+void	RequestParser::IncrementCounter() {}
 
 void	RequestParser::PreParseCheck() {
 	cout << "RequestParser | preparse " << endl;
 }
 
-void	RequestParser::AfterParseCheck(size_t& pos) {
+void	RequestParser::AfterParseCheck() {
 	// If there are more characters after ending token, assume body
 	// is present but not indicated by Content-Length header.
 	if (cur_state == r_Done && pos < input.size() - 1) { // TODO: check if Content-Length has not been indicated? (truncated message)
 		if (_request->GetField("Content-Length") == NO_VAL)
 			throw LengthRequiredException();
 	}
-
 	if (DEBUG) {
 		cout << "Parsed method: " << _request->GetMethod() << endl; // DEBUG
 		cout << "Target input: " << _request->GetURI().GetInputURI() << endl; // DEBUG
@@ -87,11 +82,10 @@ void	RequestParser::AfterParseCheck(size_t& pos) {
 				cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
 		cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
 	}
-	(void)pos;
 }
 
 // Calls on RequestLineParser to parse request line, as delimited by first LF.
-RequestState	RequestParser::RequestLineHandler(size_t pos) {
+RequestState	RequestParser::RequestLineHandler() {
 	if (DEBUG) cout << "[Request Line Handler] at: [" << input[pos] << "]\n";
 
 	size_t	request_line_end = input.find_first_of('\n');
@@ -99,7 +93,7 @@ RequestState	RequestParser::RequestLineHandler(size_t pos) {
 		throw BadRequestException("Request line missing CRLF line break");
 
 	string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
-	_bytes_read += _request_line_parser.Parse(_request->_request_line, request_line);
+	pos += _request_line_parser.Parse(_request->_request_line, request_line);
 	// if (_header_parser.IsDone() == true)
 		return r_HeaderField;
 	// else
@@ -120,7 +114,7 @@ static size_t	FindFieldEnd(string const& input, size_t pos) {
 }
 
 // Calls on HeaderFieldParser to parse header fields, as delimited by empty line.
-RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
+RequestState	RequestParser::HeaderFieldHandler() {
 	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
 	size_t	field_end = FindFieldEnd(input, pos); // TODO: remove?
@@ -129,7 +123,7 @@ RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 	// string	header_field = input.substr(pos, field_end - pos);
 	string header_field = input.substr(pos);
 	// cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
-	_bytes_read += _header_parser.Parse(_request->_header_fields, header_field);
+	pos += _header_parser.Parse(_request->_header_fields, header_field);
 	if (_header_parser.IsDone() == true)
 		return r_HeaderDone;
 	else
@@ -137,7 +131,7 @@ RequestState	RequestParser::HeaderFieldHandler(size_t pos) {
 }
 
 // Validates parsed header fields and checks if message is expected.
-RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
+RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	int ret_code = _header_validator->Process(_config, *_request);
@@ -154,21 +148,25 @@ RequestState	RequestParser::HeaderDoneHandler(size_t pos) {
 }
 
 // Called when Content-Length indicates message is expected.
-RequestState	RequestParser::MessageBodyHandler(size_t pos) {
+RequestState	RequestParser::MessageBodyHandler() {
 	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
 	_request->_msg_body = input.substr(pos, _request->content_length);
-	_bytes_read += _request->_msg_body.size();
+	pos += _request->_msg_body.size();
 	return r_Done;
 }
 
-RequestState	RequestParser::ChunkedHandler(size_t pos) {
+RequestState	RequestParser::ChunkedHandler() {
 	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos] << "]\n";
 
-	ChunkedParser parser;
+	// if (input[pos]) {
+		ChunkedParser parser;
 
-	_bytes_read += parser.Parse(*_request, input.substr(pos));
-	return r_Done;
+		pos += parser.Parse(*_request, input.substr(pos));
+		return r_Done;
+	// }
+	// else
+	// 	return r_Chunked;
 }
 
 #undef DEBUG // REMOVE

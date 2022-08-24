@@ -2,7 +2,7 @@
 #include "header_field_parser.hpp"
 #include "request.hpp"
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 // List of header fields not allowed in chunk trailer as outlined in
 // RFC 7230 Section 4.1.2.
@@ -76,7 +76,7 @@ bool	ChunkedParser::CheckDoneState() {
 	return (cur_state == c_Done);
 }
 
-void	ChunkedParser::AfterParseCheck(size_t& pos) {
+void	ChunkedParser::AfterParseCheck() {
 	(void)pos;
 	if (cur_state == c_Done && _chunk_size != 0)
 		throw BadRequestException("Missing chunk in message");
@@ -195,6 +195,7 @@ ChunkState	ChunkedParser::TrailerHandler(char c) {
 
 // Handles empty line that must end chunked transfer coding.
 ChunkState	ChunkedParser::EndHandler(char c) {
+	if (DEBUG) cout << "[EndHandler] at: [" << c << "]\n";
 	switch (c) {
 		case '\0':
 			return c_Done;

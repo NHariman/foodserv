@@ -26,20 +26,20 @@ class StateParser {
 		// Template method
 		// Takes string to parse and returns bytes read.
 		size_t	ParseString(string const& input_string) {
-			size_t i = 0;
+			// size_t i = 0;
 
 			InitParser(input_string); // reset counters for repeat calls
 			PreParseCheck();
-			while (NotDone(i)) {
-				cur_state = GetNextState(i);
-				UpdateBuffer(i);
+			while (NotDone(pos)) {
+				cur_state = GetNextState(pos);
+				UpdateBuffer(pos);
 				CheckInvalidState();
 				if (CheckDoneState())
 					break;
-				IncrementCounter(i);
+				IncrementCounter();
 			}
-			AfterParseCheck(i);
-			return i;
+			AfterParseCheck();
+			return pos;
 		}
 
 		// For external classes to check if parsing has been completed.
@@ -51,6 +51,7 @@ class StateParser {
 		State	cur_state;
 		string	buffer; // for keeping track of parsed input
 		string	input; // saving original input
+		size_t	pos; // n. of bytes read
 		bool	skip_char; // for skipping pushing whitespace/EOL to buffer
 
 		// Abstract methods that must be implemented by subclass.
@@ -65,6 +66,7 @@ class StateParser {
 			// buffer.clear();
 			input = input_string;
 			skip_char = false;
+			pos = 0;
 		}
 		virtual void	UpdateBuffer(size_t pos) {
 			if (!skip_char)
@@ -75,7 +77,7 @@ class StateParser {
 			// cout << "| at: [" << (int)input[pos] << "]\n";
 			return (pos <= input.size() && cur_state != end_state);
 		}
-		virtual void			IncrementCounter(size_t& pos) {
+		virtual void			IncrementCounter() {
 			pos += 1;
 		}
 
@@ -88,7 +90,7 @@ class StateParser {
 		virtual void	PreParseCheck() {};
 		// This is for checks after parsing, e.g. if there are characters after
 		// end state has been reached.
-		virtual void	AfterParseCheck(size_t& pos) { (void)pos; };
+		virtual void	AfterParseCheck() {};
 };
 
 #endif /* STATE_PARSER_HPP */
