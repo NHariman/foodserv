@@ -29,13 +29,14 @@ class Request {
 		size_t	max_body_size;
 		bool	is_complete;
 
-		size_t		Parse(char const* buffer);
-		string		GetMethod() const;
-		string		GetTarget() const;
-		URI const&	GetURI() const;
-		string		GetVersion() const;
-		string		GetField(string field_name) const;
-		string		GetMessageBody() const;
+		size_t						Parse(char const* buffer);
+		string						GetMethod() const;
+		string						GetTarget() const;
+		URI const&					GetURI() const;
+		string						GetVersion() const;
+		string						GetField(string field_name) const;
+		map<string, string> const&	GetFields() const;
+		string						GetMessageBody() const;
 	
 		// friend class forward declaration allows RequestParser to
 		// access private `_request_line`, `_header_fields`, `_msg_body`

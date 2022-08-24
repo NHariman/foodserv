@@ -65,3 +65,7 @@ string	Request::GetField(string field_name) const {
 string	Request::GetMessageBody() const {
 	return _msg_body;
 }
+
+map<string, string> const&	Request::GetFields() const {
+	return _header_fields;
+}
