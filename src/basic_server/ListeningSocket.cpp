@@ -1,15 +1,17 @@
 #include "ListeningSocket.hpp"
 
 ListeningSocket::ListeningSocket(const char *hostname, const char *port) : _hostname(hostname), _portnumber(port) {
-	CreateListeningSocket();
+
+	createListeningSocket();
 }
 
-void	ListeningSocket::CreateListeningSocket() {
+void	ListeningSocket::createListeningSocket() {
 	struct 	addrinfo hints;
 	struct 	addrinfo *results;
 	int		yes = 0;
 
 	memset(&hints, 0, sizeof(hints));
+	hints.ai_flags = AI_PASSIVE; // remove?
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
@@ -21,22 +23,16 @@ void	ListeningSocket::CreateListeningSocket() {
 
 	for (_addrinfo = results; _addrinfo != NULL; _addrinfo = results->ai_next) {
 		if ((_socket_fd = socket(_addrinfo->ai_family, _addrinfo->ai_socktype, _addrinfo->ai_protocol)) == -1)
-			continue ; // to to next iteration
+			continue ;
 		if ((setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes))) == -1) {
 			perror("setsockopt");
 			exit (EXIT_FAILURE);
 		}
-
 		if (bind(_socket_fd, _addrinfo->ai_addr, _addrinfo->ai_addrlen) != -1)
-			break ;  // break out of loop when socket is succesfully binded
-		// if the for loops gets to this point, the socket is not able to bind and we go to the next iteration
-		// we need to close the socket which was unable to bind before doing this.
+			break ;
 		close (_socket_fd);
 	}
 	free(results);
-
-	// an extra to print the IP
-	// PrintIpInfo(_addrinfo);
 
 	if (_addrinfo == NULL) {
 		std::cout << "Failed to create and bind a socket..." << std::endl;

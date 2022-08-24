@@ -12,15 +12,15 @@
 static const char html[] = "HTTP/1.1 200 OK\r\n"
 							"Connection: close\r\n"
 							"Content-type: text/html\r\n"
-							"\r\n"
-							"<html>\r\n"
-							"<head>\r\n"
-							"<title>WEBSERV!</title>\r\n"
-							"</head>\r\n"
-							"<body>\r\n"
-							"<h1>Web serv lets goooooo!</h1>\r\n"
-							"</body>\r\n"
-							"</html>\r\n\r\n";
+							"\r\n";
+							// "<html>\r\n"
+							// "<head>\r\n"
+							// "<title>WEBSERV!</title>\r\n"
+							// "</head>\r\n"
+							// "<body>\r\n"
+							// "<h1>Web serv lets goooooo!</h1>\r\n"
+							// "</body>\r\n"
+							// "</html>\r\n\r\n";
 
 
 class ListeningSocket {
@@ -36,7 +36,7 @@ class ListeningSocket {
     public:
         ListeningSocket(const char *hostname, const char *port);
 
-		void	CreateListeningSocket();
+		void	createListeningSocket();
 
         int		getListeningSocket();
 

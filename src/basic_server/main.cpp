@@ -18,8 +18,11 @@ int	main() {
 	// std::cout << "LISTENING SOCKET: "<< ipv6->getListeningSocket() << std::endl;
 
 	// now initialize the kqueue with the newly opened listening socket.
-	KernelEvent	*webserver = new KernelEvent();
+	ListeningSocket	*sock = new ListeningSocket("::", "8080");
+	KernelEvent	*webserver = new KernelEvent(sock->getListeningSocket());
 
 	// delete ipv6;
+	delete sock;
+	delete webserver;
 
 }
