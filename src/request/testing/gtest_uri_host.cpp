@@ -4,21 +4,22 @@
 #include "../uri_host_parser.hpp"
 #include "../exception.hpp"
 
-TEST(URIHostTest, ParseHostRegName) {
+string	ConstructAndParseURI(string uri) {
 	URIHostParser	parser;
 	string			parsed_host;
 
-	parser.Parse(parsed_host, "localhost");
-	EXPECT_EQ(parsed_host, "localhost");
+	parser.Parse(parsed_host, uri);
+	return parsed_host;
+}
 
-	parser.Parse(parsed_host, "localhost:80"); // with port
-	EXPECT_EQ(parsed_host, "localhost:80");
-	
-	parser.Parse(parsed_host, "www.ex%C3%BCmple.com"); // with percent-encoding
-	EXPECT_EQ(parsed_host, "www.exümple.com");
+TEST(URIHostTest, ParseHostRegName) {
+	EXPECT_EQ(ConstructAndParseURI("localhost"), "localhost");
 
-	parser.Parse(parsed_host, "www.example.hello.com");
-	EXPECT_EQ(parsed_host, "www.example.hello.com");
+	EXPECT_EQ(ConstructAndParseURI("localhost:80"), "localhost:80");
+
+	EXPECT_EQ(ConstructAndParseURI("www.ex%C3%BCmple.com"), "www.exümple.com");
+
+	EXPECT_EQ(ConstructAndParseURI("www.example.hello.com"), "www.example.hello.com");
 }
 
 TEST(URIHostTest, ParseHostIPv4) {

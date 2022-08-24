@@ -46,7 +46,7 @@ TEST(RequestHeaderValidatorTest, InvalidHost) {
 	EXPECT_THROW({
 		string req_str = GET_RL + "Host: localhost, www.example.net\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -55,7 +55,7 @@ TEST(RequestHeaderValidatorTest, InvalidHost) {
 	EXPECT_THROW({
 		string req_str = GET_RL + "Expect: 100-continue\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -63,7 +63,7 @@ TEST(RequestHeaderValidatorTest, InvalidHost) {
 	EXPECT_THROW({
 		string req_str = GET_RL + "Host: \n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -72,7 +72,7 @@ TEST(RequestHeaderValidatorTest, InvalidHost) {
 	EXPECT_THROW({
 		string req_str = GET_RL + "Host: /example.com\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -83,7 +83,7 @@ TEST(RequestHeaderValidatorTest, InvalidExpect) {
 	EXPECT_THROW({
 		string req_str = GET_RL_Host + "Expect: 101-continue\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -94,7 +94,7 @@ TEST(RequestHeaderValidatorTest, InvalidContentEncoding) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Encoding: gzip\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -102,7 +102,7 @@ TEST(RequestHeaderValidatorTest, InvalidContentEncoding) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Encoding: \n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -114,7 +114,7 @@ TEST(RequestHeaderValidatorTest, InvalidTransferEncoding) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: compress\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -123,7 +123,7 @@ TEST(RequestHeaderValidatorTest, InvalidTransferEncoding) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: compress, chunked\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -132,7 +132,7 @@ TEST(RequestHeaderValidatorTest, InvalidTransferEncoding) {
 	EXPECT_THROW({
 		string req_str = GET_RL_Host + "Transfer-Encoding: chunked\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -141,7 +141,7 @@ TEST(RequestHeaderValidatorTest, InvalidTransferEncoding) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -153,7 +153,7 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	EXPECT_THROW({
 		string req_str = GET_RL_Host + "Content-Length: 42\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -162,16 +162,16 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: -42\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// invalid value (upper limit)
 	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Length: 1048577\n\n";
+		string req_str = POST_RL_Host + "Content-Length: 104857600\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -180,7 +180,7 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 42a\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -189,7 +189,7 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 42, 53\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -198,7 +198,7 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 42, 42\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);
@@ -207,7 +207,7 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 		HeaderFieldValidator header_validator;
 
 		header_validator.Process(&config, request);

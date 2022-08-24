@@ -87,24 +87,24 @@ TEST(RequestMessageTest, InvalidMessageChunked) {
 	EXPECT_THROW({
 		string req_str = POST_Req + CHUNKED + "0\r\r\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 	}, BadRequestException);
 	// missing last chunk
 	EXPECT_THROW({
 		string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n\r\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 	}, BadRequestException);
 	// missing last CRLF
 	EXPECT_THROW({
 		string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n0\r\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 	}, BadRequestException);
 	EXPECT_THROW({
 		string req_str = POST_Req + CHUNKED + "0\r\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 	}, BadRequestException);
 }
 
@@ -112,11 +112,11 @@ TEST(RequestMessageTest, InvalidChunkedTrailers) {
 	EXPECT_THROW({
 		string req_str = POST_Req + CHUNKED + "0\r\nHost: example.com\r\n\r\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 	}, BadRequestException);
 	EXPECT_THROW({
 		string req_str = POST_Req + CHUNKED + "0\r\nExpect: 100-continue\r\n\r\n";
 		Request request(&config);
-	request.Parse(req_str.c_str());
+		request.Parse(req_str.c_str());
 	}, BadRequestException);
 }

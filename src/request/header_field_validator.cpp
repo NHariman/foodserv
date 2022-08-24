@@ -142,7 +142,7 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 	if (content_length != NO_VAL) {
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
-		CheckContentLengthValue(config, request);	
+		CheckContentLengthValue(config, request);
 		CheckAllowedMethod(request.GetMethod(), request.content_length);
 		if (request.content_length == 0)
 			_status = hv_Done;
