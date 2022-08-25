@@ -43,7 +43,7 @@ TEST(RequestLineTest, InvalidDelimiter) {
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\n\rHost: localhost\n\n");
+		request.Parse("GET /hello.txt HTTP/1.1\n\rHost: localhost\n\n"); // not throwing exception
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);

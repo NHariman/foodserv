@@ -10,7 +10,7 @@ static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");
 
 // Helper function used to construct Request objects with passed string
-// containing request message. Returns parsed message.
+// containing request message + a standard POST request line. Returns parsed message.
 static string	ConstructAndGetMessage(string const& rest_of_header) {
 	string req_str = POST_Req + rest_of_header;
 	Request request(&config);
@@ -42,16 +42,53 @@ TEST(RequestMessageTest, ValidMessageChunked) {
 	EXPECT_EQ(message, "");
 }
 
-// TEST(RequestMessageTest, ValidMessageChunkedMulti) {
-// 	string chunk1 = "4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n";
-// 	string req_str = POST_Req + message;
-// 	Request request(&config);
-	// request.Parse(req_str.c_str());
+TEST(RequestMessageTest, ValidMessageChunkedSplitBySize) {
+	Request request(&config);
 
-// 	message = ConstructAndGetMessage(CHUNKED +
-// 		"4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n");
-// 	EXPECT_EQ(message, "Wikipedia in \r\n\r\nchunks.");
-// }
+	string req_str = POST_Req + CHUNKED;
+	request.Parse(req_str.c_str());
+
+	req_str = "4\r\nWiki\r\n";
+	request.Parse(req_str.c_str());
+
+	req_str = "6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n";
+	request.Parse(req_str.c_str());
+	
+	req_str = "0\r\n\r\n";
+	request.Parse(req_str.c_str());
+
+	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
+}
+
+TEST(RequestMessageTest, ValidMessageChunkedSplitDataMid) {
+	Request request(&config);
+
+	string req_str = POST_Req + CHUNKED;
+	request.Parse(req_str.c_str());
+
+	req_str = "4\r\nWiki\r\n";
+	request.Parse(req_str.c_str());
+
+	req_str = "6\r\npedia \r\nE\r\ni";
+	request.Parse(req_str.c_str());
+	
+	req_str = "n \r\n\r\nchunks.\r\n0\r\n\r\n";
+	request.Parse(req_str.c_str());
+
+	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
+}
+
+TEST(RequestMessageTest, ValidMessageChunkedSplitSizeData) {
+	Request request(&config);
+
+	string req_str = POST_Req + "Transfer-Encoding: chunked\r\n\r\n4\r\n";
+	request.Parse(req_str.c_str());
+
+	req_str = "Wiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n";
+	request.Parse(req_str.c_str());
+
+	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
+}
 
 TEST(RequestMessageTest, ValidMessageChunkedTrailers) {
 	string req = POST_Req + CHUNKED +

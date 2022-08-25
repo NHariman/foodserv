@@ -43,8 +43,7 @@ class ChunkedParser : public StateParser<ChunkState> {
 		size_t		_chunk_size;
 		bool		_chunk_ext;
 		bool		_chunk_trailer;
-		bool		_cr;
-
+		
 		ChunkState	StartHandler(char c);
 		ChunkState	SizeHandler(char c);
 		ChunkState	DataHandler(char c);

@@ -35,7 +35,7 @@ const vector<string>	ChunkedParser::illegal_fields = {
 // Default constructor
 ChunkedParser::ChunkedParser()
 	:	StateParser(c_Start, c_Done), _request(NULL), _chunk_size(0),
-		_chunk_ext(false), _chunk_trailer(false), _cr(false) {}
+		_chunk_ext(false), _chunk_trailer(false) {}
 
 // Destructor
 ChunkedParser::~ChunkedParser() {}
@@ -59,7 +59,7 @@ ChunkState	ChunkedParser::GetNextState(size_t pos) {
 			&ChunkedParser::EndHandler,
 			nullptr
 	};
-	// if (DEBUG) cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
+	if (DEBUG) cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
 	// cout << "GNS: chunk_ext: " << _chunk_ext << ", size: " << _chunk_size
 	// 	<< ", buffer: " << buffer << endl;
 	skip_char = false;
@@ -77,7 +77,6 @@ bool	ChunkedParser::CheckDoneState() {
 }
 
 void	ChunkedParser::AfterParseCheck() {
-	(void)pos;
 	if (cur_state == c_Done && _chunk_size != 0)
 		throw BadRequestException("Missing chunk in message");
 }
@@ -91,6 +90,8 @@ ChunkState	ChunkedParser::StartHandler(char c) {
 		skip_char = true;
 		return c_Last;
 	}
+	else if (c == '\0' && pos != 0)
+		return c_Start;
 	else if (IsHexDig(c))
 		return c_Size;
 	else
@@ -131,6 +132,9 @@ ChunkState	ChunkedParser::DataHandler(char c) {
 	if (_chunk_size > 0)
 		_chunk_size -= 1;
 	switch (c) {
+		case '\0':
+			skip_char = true;
+			return c_Data;
 		case '\r':
 			return HandleCRLF(c, c_Data, (_chunk_size == 0));
 		case '\n':
@@ -206,16 +210,17 @@ ChunkState	ChunkedParser::EndHandler(char c) {
 
 // Helper function for parsing line endings.
 // Accepts both CRLF and just LF as line endings.
+// `skip` is optional argument that defaults to TRUE.
 // If buffer is not empty, pushes buffer to appropriate field.
 ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
 	// Checks for any sequence other than CRLF.
-	if (_cr == true && c == '\r')
+	if (input[pos - 1] == '\r' && c == '\r') {
+		buffer += '\r';
 		return c_Invalid;
-
+	}
 	skip_char = skip;
 	if (!buffer.empty())
 		SaveParsedValue();
-	_cr = (c == '\r');
 	return next_state;
 }
 

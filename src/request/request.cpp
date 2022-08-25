@@ -20,15 +20,15 @@ Request::~Request() {}
 size_t	Request::Parse(char const* buffer) {
 	string buf(buffer);
 
-	if (buf.find("\n\r\n") == string::npos && buf.find("\n\n") == string::npos)
-		_buf += buf;
-	else{
-		_buf += buf;
+	_buf += buf;
+	if (_buf.find("\n\r\n") != string::npos || _buf.find("\n\n") != string::npos) {
+		// cout << "Request buffer complete: [" << _buf << "]\n";
 		try {
 			bytes_read += _parser.Parse(*this, _buf);
 			_buf.clear();
 		}
 		catch (std::exception &e) {
+			cout << "Parse error: " << e.what() << endl; // without this unhandled exceptions cause segfault
 			throw;
 		}
 		if (_parser.cur_state == r_Done)

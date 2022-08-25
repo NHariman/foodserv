@@ -2,6 +2,7 @@
 #define REQUEST_PARSER_HPP
 
 #include <string>
+#include "chunked_parser.hpp"
 #include "exception.hpp"
 #include "header_field_parser.hpp"
 #include "state_parser.hpp"
@@ -36,7 +37,7 @@ class RequestParser  : public StateParser<RequestState> {
 		// Destructor
 		~RequestParser();
 
-		size_t		Parse(Request& request, string buffer);
+		size_t		Parse(Request& request, string const& buffer);
 		bool		CheckDoneState() override;
 
 		// friend class forward declaration allows Request to
@@ -47,6 +48,7 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestLineParser		_request_line_parser;
 		HeaderFieldParser		_header_parser;
 		HeaderFieldValidator	*_header_validator;
+		ChunkedParser			_chunked_parser;
 		NginxConfig				*_config;
 		
 		Request		*_request;

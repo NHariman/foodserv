@@ -1,5 +1,4 @@
 #include "request_parser.hpp"
-#include "chunked_parser.hpp"
 #include "header_field_validator.hpp"
 #include "request.hpp"
 
@@ -28,7 +27,7 @@ RequestParser::~RequestParser() {}
 
 // Casts input buffer into string, resets internal counters,
 // and passes string to StateParser::ParseString().
-size_t	RequestParser::Parse(Request& request, string buffer) {
+size_t	RequestParser::Parse(Request& request, string const& buffer) {
 	_request = &request;
 
 	return ParseString(buffer);
@@ -61,7 +60,7 @@ bool	RequestParser::CheckDoneState() {
 void	RequestParser::IncrementCounter() {}
 
 void	RequestParser::PreParseCheck() {
-	cout << "RequestParser | preparse " << endl;
+	cout << "\nRequestParser | preparse " << endl;
 }
 
 void	RequestParser::AfterParseCheck() {
@@ -124,8 +123,10 @@ RequestState	RequestParser::HeaderFieldHandler() {
 	string header_field = input.substr(pos);
 	// cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
 	pos += _header_parser.Parse(_request->_header_fields, header_field);
-	if (_header_parser.IsDone() == true)
+	if (_header_parser.IsDone() == true) {
+		if (DEBUG) cout << "--- Header Field Parsing complete. ---\n";
 		return r_HeaderDone;
+	}
 	else
 		return r_HeaderField;
 }
@@ -133,9 +134,15 @@ RequestState	RequestParser::HeaderFieldHandler() {
 // Validates parsed header fields and checks if message is expected.
 RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
+	int ret_code;
 
-	int ret_code = _header_validator->Process(_config, *_request);
-	// cout << "Validator return: " << ret_code << endl;
+	try {
+		ret_code = _header_validator->Process(_config, *_request);
+		// cout << "Validator return: " << ret_code << endl;
+	}
+	catch (std::exception &e) {
+		throw;
+	}
 	switch (ret_code) {
 		case hv_Done:
 			return r_Done;
@@ -158,13 +165,17 @@ RequestState	RequestParser::MessageBodyHandler() {
 }
 
 RequestState	RequestParser::ChunkedHandler() {
-	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos] << "]\n";
+	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos]
+		<< "], len of input: " << input.substr(pos).length() << "\n";
 
 	if (input[pos]) {
-		ChunkedParser parser;
-
-		pos += parser.Parse(*_request, input.substr(pos));
-		return r_Done;
+		pos += _chunked_parser.Parse(*_request, input.substr(pos));
+		if (_chunked_parser.IsDone() == true) {
+			if (DEBUG) cout << "--- Chunked Parsing complete. ---\n";
+			return r_Done;
+		}
+		else
+			return r_Chunked;
 	}
 	else {
 		pos += 1;

@@ -47,35 +47,23 @@ TEST(RequestHeaderValidatorTest, InvalidHost) {
 		string req_str = GET_RL + "Host: localhost, www.example.net\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// missing Host
 	EXPECT_THROW({
 		string req_str = GET_RL + "Expect: 100-continue\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	EXPECT_THROW({
 		string req_str = GET_RL + "Host: \n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// bad Host path
 	EXPECT_THROW({
 		string req_str = GET_RL + "Host: /example.com\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 }
 
@@ -84,9 +72,6 @@ TEST(RequestHeaderValidatorTest, InvalidExpect) {
 		string req_str = GET_RL_Host + "Expect: 101-continue\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, ExpectationFailedTypeException);
 }
 
@@ -95,17 +80,11 @@ TEST(RequestHeaderValidatorTest, InvalidContentEncoding) {
 		string req_str = POST_RL_Host + "Content-Encoding: gzip\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, UnsupportedMediaTypeException);
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Encoding: \n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, UnsupportedMediaTypeException);
 }
 
@@ -115,36 +94,24 @@ TEST(RequestHeaderValidatorTest, InvalidTransferEncoding) {
 		string req_str = POST_RL_Host + "Transfer-Encoding: compress\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, NotImplementedException);
 	// not-implemented transfer encoding format
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: compress, chunked\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, NotImplementedException);
 	// T-E definition for not-allowed method
 	EXPECT_THROW({
 		string req_str = GET_RL_Host + "Transfer-Encoding: chunked\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// Content-Length also defined
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 }
 
@@ -154,62 +121,41 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 		string req_str = GET_RL_Host + "Content-Length: 42\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// invalid value (lower limit)
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: -42\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// invalid value (upper limit)
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 104857600\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, PayloadTooLargeException);
 	// invalid value
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 42a\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// multiple different values
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 42, 53\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// multiple identical values
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Content-Length: 42, 42\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 	// Transfer-Encoding also defined
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
-		HeaderFieldValidator header_validator;
-
-		header_validator.Process(&config, request);
 	}, BadRequestException);
 }
