@@ -34,7 +34,6 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 			&HeaderFieldParser::NameHandler,
 			&HeaderFieldParser::ValueStartHandler,
 			&HeaderFieldParser::ValueHandler,
-			&HeaderFieldParser::ValueEndHandler,
 			nullptr
 	};
 	return (this->*table[cur_state])(input[pos]);
@@ -65,10 +64,9 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 			return f_Done;
 		case '\n':
 			pos += 1;
-			return f_Done;
+			return HandleCRLF(c, f_Done);
 		case '\r':
-			skip_char = true;
-			return f_ValueEnd;
+			return HandleCRLF(c, f_Start);
 		default:
 			if (IsTChar(c))
 				return f_Name;
@@ -117,11 +115,9 @@ FieldState	HeaderFieldParser::ValueHandler(char c) {
 			PushFieldValue();
 			return f_Done;
 		case '\n':
-			PushFieldValue();
-			return f_Start;
+			return HandleCRLF(c, f_Start);
 		case '\r':
-			skip_char = true;
-			return f_ValueEnd;
+			return HandleCRLF(c, f_Value);
 		default:
 			if (IsVChar(c) || IsWhitespace(c))
 				return f_Value;
@@ -130,19 +126,23 @@ FieldState	HeaderFieldParser::ValueHandler(char c) {
 	}
 }
 
-// Checks if \r is followed by \n for valid CRLF line ending.
-FieldState	HeaderFieldParser::ValueEndHandler(char c) {
-	if (DEBUG) cout << "[FP ValueEndHandler] at: [" << c << "]\n";
-	if (c =='\n') {
-		if (!buffer.empty())
-			PushFieldValue();
-		return f_Start;
-	}
-	else {
-		buffer += '\r'; // pushes skipped \r character for error printing
+// Helper function for parsing line endings.
+// Accepts both CRLF and just LF as line endings.
+// `skip` is optional argument that defaults to TRUE.
+// If buffer is not empty, pushes buffer to appropriate field.
+FieldState	HeaderFieldParser::HandleCRLF(char c, FieldState next_state, bool skip) {
+	// Checks for any sequence other than CRLF.
+	if (input[pos - 1] == '\r' && c == '\r') {
+		buffer += '\r';
 		return f_Invalid;
 	}
+
+	skip_char = skip;
+	if (!buffer.empty())
+		PushFieldValue();
+	return next_state;
 }
+
 
 // Normalizes field name to lowercase (for easy look-up)
 // and saves buffer to `cur_field` for use once value is parsed.
