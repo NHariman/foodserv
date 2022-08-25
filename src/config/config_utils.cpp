@@ -31,7 +31,7 @@ std::string	TrimValue(std::string value){
 }
 
 std::vector<std::string>	ToStringVector(std::string str) {
-	size_t	i = 0;
+	// size_t	i = 0;
 	size_t	start = 0;
 	size_t	end = 0;
 	std::string key;
