@@ -6,23 +6,24 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/13 09:21:57 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/25 13:07:41 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "listen.hpp"
 
-Listen::Listen(std::string listen) : _listen(listen), _port_number(-1), _ip_number(-1) {
-	std::cout << "String in listen: " << _listen << std::endl;
-	if (CheckCharacters() == false || SplitPortIP() == false) {
-		std::cout << "webserv: invalid port/ip in \"" << _listen << "\" of the \"listen\" directive." << std::endl;
-		// _ip_number = -1; // dit is 4294967295
-		// _port_number = -1;
-		// implement what happens when this is invalid
-		return ;
-	}
-	if (_ip_number == in_addr_t(std::string::npos))
-		_ip_number = 0;
+Listen::Listen(std::string listen) {//: _listen(listen), _port_number(NULL), _ip_number(NULL) {
+	// // std::cout << "String in listen: " << _listen << std::endl;
+	// std::cout << "gets here" << std::endl;
+	// if (CheckCharacters() == false || SplitPortIP() == false) {
+	// 	std::cout << "webserv: invalid port/ip in \"" << _listen << "\" of the \"listen\" directive." << std::endl;
+	// 	// _ip_number = -1; // dit is 4294967295
+	// 	// _port_number = -1;
+	// 	// implement what happens when this is invalid
+	// 	return ;
+	// }
+	// // if (_ip_number == in_addr_t(std::string::npos))
+	// // 	_ip_number = "0.0.0.0";
 }
 
 // checks for any invalid characters
@@ -69,10 +70,12 @@ bool		Listen::CheckPortNumber(std::string port_number) {
 	char_check = port_number.find_first_not_of("0123456789");
 	if (char_check != std::string::npos)
 		return false;
+
+	int check_port;
 	
 	// STOI IS C++ 11 CHANGE THIS
-	_port_number = stoi(port_number);
-	if (_port_number < 0 || _port_number > 65535)
+	check_port = stoi(port_number);
+	if (check_port < 0 || check_port > 65535)
 		return false;
 	return true;
 }
@@ -83,16 +86,18 @@ bool		Listen::CheckIpAddress(std::string ip_address) {
 	if (char_check != std::string::npos)
 		return false;
 
-	_ip_number = inet_addr(ip_address.c_str());
-	if (_ip_number == (in_addr_t)(-1))
-		return false;
+	// _ip_number = inet_addr(ip_address.c_str());
+	// if (_ip_number == (in_addr_t)(-1))
+		// return false;
 	return true;
 }
 
-int			Listen::getPortNumber() {
-	return _port_number;
+std::string		Listen::getPortNumber() {
+	// return _port_number;
+	return "80";
 }
 
-in_addr_t	Listen::getIpNumber() {
-	return _ip_number;
+std::string		Listen::getIpNumber() {
+	// return _ip_number;
+	return "[::]"; 
 }

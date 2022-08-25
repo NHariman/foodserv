@@ -114,6 +114,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 	trimmed_value = TrimValue(value);
 	std::cout << "value: |" << trimmed_value << "|" << std::endl;
 
+
 	if (directive == 0) {
 		_check_list.location_context = true;
 		LocationContext	location(trimmed_value);
@@ -129,7 +130,9 @@ void				ServerContext::SetValue(int directive, std::string value){
 				if (_check_list.listen == true)
 					throw MultipleListensException();
 				_check_list.listen = true;
+				// break ;
 				Listen	listen_port_ip(trimmed_value);
+				// break ;
 				_listen.first = listen_port_ip.getIpNumber();
 				_listen.second = listen_port_ip.getPortNumber();
 				break ;
@@ -186,8 +189,8 @@ void			ServerContext::CheckListVerification(){
 		std::cerr << "WARNING! No location context detected. Default have been set." << std::endl;
 	}
 	if (_check_list.listen == false) {
-		_listen.first = 80;
-		_listen.second = 0;
+		_listen.first = "80";
+		_listen.second = "";
 		std::cerr << "WARNING! No listen detected. Default have been set." << std::endl;
 	}
 	if (_check_list.server_name == false) {
@@ -265,23 +268,24 @@ void          ServerContext::FindDirectiveValuePairs(size_t *start_position, std
 		i = value_end + 1;
 	}
 	*start_position = i;
+
 	CheckListVerification();
 }
 
 //getters
-std::vector<LocationContext>	ServerContext::GetLocationContexts() const {
+std::vector<LocationContext>		ServerContext::GetLocationContexts() const {
     return _location_contexts;
 }
 
-std::pair<in_addr_t, int>	ServerContext::GetListen() const {
+std::pair<std::string, std::string>	ServerContext::GetListen() const {
     return _listen;
 }
 
-in_addr_t					ServerContext::GetIPAddress() const {
+std::string					ServerContext::GetIPAddress() const {
 	return _listen.first;
 }
 
-int							ServerContext::GetPortNumber() const {
+std::string					ServerContext::GetPortNumber() const {
 	return _listen.second;
 }
 

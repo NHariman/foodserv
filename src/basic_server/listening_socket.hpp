@@ -9,8 +9,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-
-
 class ListeningSocket {
     
     private:
@@ -32,7 +30,6 @@ class ListeningSocket {
 
         struct addrinfo*    getAddrInfo();
         int                 getAddrLen();
-        // const char*         getHTML();
 };
 
 #endif

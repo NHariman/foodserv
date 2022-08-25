@@ -1,4 +1,4 @@
-#include "KernelEvent.hpp"
+#include "kernel_event.hpp"
 
 
 KernelEvent::KernelEvent(int sock) : _listening_socket(sock) {
@@ -19,8 +19,9 @@ void	KernelEvent::run_event_loop(int kq, int _listening_socket) {
         int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
         for (int i = 0; i < num_events; i++) {
             // receive new connection
-            if (evList[i].ident == _listening_socket) {
-                int fd = accept(evList[i].ident, (struct sockaddr *) &addr, &socklen);
+            int ident_fd = evList[i].ident;
+            if (ident_fd == _listening_socket) {
+                int fd = accept(ident_fd, (struct sockaddr *) &addr, &socklen);
                 if (addNewClientFd(fd) == 0) {
                     EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
                     kevent(kq, &evSet, 1, NULL, 0, NULL);
@@ -31,14 +32,14 @@ void	KernelEvent::run_event_loop(int kq, int _listening_socket) {
                 }
             } // client disconnected
             else if (evList[i].flags & EV_EOF) {
-                int fd = evList[i].ident;
-                printf("client #%d disconnected.\n", getClientPos(fd));
-                EV_SET(&evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+                // int fd = evList[i].ident;
+                printf("client #%d disconnected.\n", getClientPos(ident_fd));
+                EV_SET(&evSet, ident_fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
                 kevent(kq, &evSet, 1, NULL, 0, NULL);
-                deleteClientFd(fd);
+                deleteClientFd(ident_fd);
             } // read message from client
             else if (evList[i].filter == EVFILT_READ) {
-                recv_msg(evList[i].ident);
+                recv_msg(ident_fd);
                 // EV_SET()
             }
         }
@@ -47,6 +48,7 @@ void	KernelEvent::run_event_loop(int kq, int _listening_socket) {
 
 
 void KernelEvent::serveHTML(int s) {
+    
     const char *file_path = "../../HTML/index.html";
 
     char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
@@ -55,23 +57,22 @@ void KernelEvent::serveHTML(int s) {
                     "\r\n";
 
     std::string		text;
-    int				text_size;
     std::ifstream	read_file(file_path);
 
     std::vector<char>	buf_vector;
 
-    for (int i = 0; i < sizeof(htmlresponse); i++)
+    for (size_t i = 0; i < sizeof(htmlresponse); i++)
         buf_vector.push_back(htmlresponse[i]);
 
     while (getline(read_file, text)) {
-        for (int i = 0; i < text.length(); i++) {
+        for (int i = 0; i < int(text.length()); i++) {
             buf_vector.push_back(text[i]);
         }
     }
 
     char *buf = new char[buf_vector.size()];
 
-    for (int i = 0; i < buf_vector.size(); i++) {
+    for (size_t i = 0; i < buf_vector.size(); i++) {
         buf[i] = buf_vector.at(i);
     }
     send(s, buf, buf_vector.size(), 0);

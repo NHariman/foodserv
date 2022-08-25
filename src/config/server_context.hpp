@@ -36,14 +36,14 @@ struct t_flags_server
 
 class ServerContext {
 	private:
-		t_flags_server					_check_list;
-		std::vector<LocationContext>	_location_contexts;
-		std::pair<in_addr_t, int>		_listen; // changed by sanne
-		std::vector<std::string>		_server_name; // changed by sanne
-		std::string						_root;
-		std::vector<std::string>		_index;
-		int								_client_max_body_size;
-		std::vector<ErrorPage>			_error_page;
+		t_flags_server						_check_list;
+		std::vector<LocationContext>		_location_contexts;
+		std::pair<std::string,std::string>	_listen; // changed by sanne
+		std::vector<std::string>			_server_name; // changed by sanne
+		std::string							_root;
+		std::vector<std::string>			_index;
+		int									_client_max_body_size;
+		std::vector<ErrorPage>				_error_page;
 
 		int							IsDirective(std::string directive);
 		void						SetValue(int directive, std::string value);
@@ -60,17 +60,17 @@ class ServerContext {
 		~ServerContext(){};
 		
 		//getters
-		std::vector<LocationContext>	GetLocationContexts() const;
-		std::pair<in_addr_t, int>	GetListen() const;
-		in_addr_t					GetIPAddress() const;
-		int							GetPortNumber() const;
-		std::vector<std::string>	GetServerNameVector() const;
-		std::string					GetRoot() const;
-		std::vector<std::string>	GetIndex() const;
-		int							GetClientMaxBodySize() const;
-		std::vector<ErrorPage>		GetErrorPage() const;
-		bool						IsErrorPageSet() const;
-		t_flags_server				GetFlags() const;
+		std::vector<LocationContext>		GetLocationContexts() const;
+		std::pair<std::string, std::string>	GetListen() const;
+		std::string							GetIPAddress() const;
+		std::string							GetPortNumber() const;
+		std::vector<std::string>			GetServerNameVector() const;
+		std::string							GetRoot() const;
+		std::vector<std::string>			GetIndex() const;
+		int									GetClientMaxBodySize() const;
+		std::vector<ErrorPage>				GetErrorPage() const;
+		bool								IsErrorPageSet() const;
+		t_flags_server						GetFlags() const;
 
 		// exception classes
 		class InvalidDirectiveException : public std::exception

@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 16:13:56 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/30 16:18:24 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/25 11:48:48 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@
 class Listen {
 	private:
 		std::string	_listen;
-		int			_port_number; // htons?
-		in_addr_t	_ip_number; // change to int? it htons htlons whatever
+		std::string	_port_number; // htons?
+		std::string	_ip_number; // change to int? it htons htlons whatever
 		
 	private:
 		Listen();
@@ -53,8 +53,8 @@ class Listen {
 		bool		SplitPortIP();
 		bool		CheckPortNumber(std::string port_number);
 		bool		CheckIpAddress(std::string ip_address);
-		int			getPortNumber();
-		in_addr_t	getIpNumber();
+		std::string	getPortNumber();
+		std::string	getIpNumber();
 };
 
 #endif

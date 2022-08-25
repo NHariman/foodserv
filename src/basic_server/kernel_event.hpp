@@ -1,3 +1,6 @@
+#ifndef KERNEL_EVENT_HPP
+# define KERNEL_EVENT_HPP
+
 #include <vector>
 #include <err.h>
 #include <netdb.h>
@@ -10,7 +13,8 @@
 #include <fcntl.h>
 #include <fstream>
 
-#include "ListeningSocket.hpp"
+#include "listening_socket.hpp"
+#include "../config/nginx_config.hpp"
 
 #define MAX_EVENTS 32
 #define MAX_MSG_SIZE 500
@@ -40,3 +44,5 @@ class KernelEvent {
 
 		void recv_msg(int s);
 };
+
+#endif

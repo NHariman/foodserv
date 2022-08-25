@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/01 16:35:41 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/25 12:53:26 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,6 @@ void		NginxConfig::FindServerContexts() {
 	if (_amount_server_contexts == 0)
 		throw NoServerContextsException();
 	return ;
-	
 }
 
 // getters

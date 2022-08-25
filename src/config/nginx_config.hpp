@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/01 16:35:53 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/25 12:20:13 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ class NginxConfig {
 		size_t						_amount_server_contexts;
 
 		NginxConfig();
-		bool		IsServerContext(std::string value, size_t *start_pos);
-		void		CheckBrackets();
-		void		FindServerContexts();
-		void		LoadConfigFile(std::ifstream&	configuration_file);
+		bool						IsServerContext(std::string value, size_t *start_pos);
+		void						CheckBrackets();
+		void						FindServerContexts();
+		void						LoadConfigFile(std::ifstream&	configuration_file);
 
 	public:
 		// coplien form
@@ -54,8 +54,8 @@ class NginxConfig {
 		NginxConfig & operator=(const NginxConfig& obj);
 
 		// getters
-		std::string	GetConfigFile() const;
-		size_t		GetServerContextAmount() const;
+		std::string					GetConfigFile() const;
+		size_t						GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
 		
 		//exceptions
