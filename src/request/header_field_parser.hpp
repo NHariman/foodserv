@@ -13,7 +13,6 @@ enum	FieldState {
 	f_Name,
 	f_ValueStart,
 	f_Value,
-	f_ValueEnd,
 	f_Done,
 	f_Invalid
 };
@@ -43,7 +42,7 @@ class HeaderFieldParser : public StateParser<FieldState> {
 		FieldState	NameHandler(char c);
 		FieldState	ValueStartHandler(char c);
 		FieldState	ValueHandler(char c);
-		FieldState	ValueEndHandler(char c);
+		FieldState	HandleCRLF(char c, FieldState next_state);
 		void		PushFieldName();
 		void		PushFieldValue();
 };

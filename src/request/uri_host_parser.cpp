@@ -1,9 +1,10 @@
 #include "uri_host_parser.hpp"
+#include "uri.hpp"
 
 // Default constructor
 URIHostParser::URIHostParser()
-	:	StateParser(h_Start),
-		_uri_host(NULL),
+	:	StateParser(h_Start, h_Done),
+		_uri(NULL),
 		_groups(0),
 		_colons(0),
 		_digits(0),
@@ -14,12 +15,12 @@ URIHostParser::~URIHostParser() {}
 
 // Resets internal counters (in case of repeat calls) and passes
 // input string to StateParser::ParseString().
-size_t	URIHostParser::Parse(string& uri_host, string const& input) {
+size_t	URIHostParser::Parse(URI& uri, string const& input) {
 	_groups = 0;
 	_colons = 0;
 	_digits = 0;
 	_literal = false;
-	_uri_host = &uri_host;
+	_uri= &uri;
 	return ParseString(input);
 }
 
@@ -37,7 +38,6 @@ HostState	URIHostParser::GetNextState(size_t pos) {
 			&URIHostParser::PortHandler,
 			nullptr
 	};
-
 	skip_char = false;
 	return (this->*table[cur_state])(pos);
 }
@@ -52,16 +52,9 @@ bool	URIHostParser::CheckDoneState() {
 }
 
 // Checks if there's illegal characters after terminating char.
-void	URIHostParser::AfterParseCheck(size_t& pos) { 
+void	URIHostParser::AfterParseCheck() { 
 	if (cur_state == h_Done && pos < input.size() - 1)
 		throw BadRequestException("Extra characters after terminating token in URI host");
-	else
-		*_uri_host = buffer;
-}
-
-static HostState	SkipEOL(bool& skip_char) {
-	skip_char = true;
-	return h_Done;
 }
 
 static bool	IsUnreservedSubDelim(char c) {
@@ -79,7 +72,7 @@ static bool	IsIPv4Format(string const& s) {
 HostState	URIHostParser::StartHandler(size_t pos) {
 	switch (input[pos]) {
 		case '\0':
-			return SkipEOL(skip_char);
+			return PushBuffer(_uri->_host, h_Done);
 		case '[':
 			_literal = true;
 			return h_Literal;
@@ -250,15 +243,14 @@ static HostState	HandleIPv4Digits(size_t& digits, size_t& groups,
 // Handles IPv4 address parsing.
 // IPv4 addresses are composed of 4 groups of 1-3 digits, delimited by '.'.
 HostState	URIHostParser::IPv4Handler(size_t pos) {
-
 	switch (input[pos]) {
 		case '\0':
 			if (_groups == 4 && ValidDecOctetGroup(buffer))
-				return SkipEOL(skip_char);
+				return PushBuffer(_uri->_host, h_Done);
 			break;
 		case ':':
 			if (_groups == 4)
-				return h_Port;
+				return PushBuffer(_uri->_host, h_Port);
 			break;
 		case ']':
 			if (_literal && _groups == 4)
@@ -281,9 +273,9 @@ HostState	URIHostParser::IPv4Handler(size_t pos) {
 HostState	URIHostParser::LiteralEndHandler(size_t pos) {
 	switch (input[pos]) {
 		case '\0':
-			return SkipEOL(skip_char);
+			return PushBuffer(_uri->_host, h_Done);
 		case ':':
-			return h_Port;
+			return PushBuffer(_uri->_host, h_Port);
 		default:
 			return h_Invalid;
 	}
@@ -293,9 +285,9 @@ HostState	URIHostParser::LiteralEndHandler(size_t pos) {
 HostState	URIHostParser::RegNameHandler(size_t pos) {
 	switch (input[pos]) {
 		case '\0':
-			return SkipEOL(skip_char);
+			return PushBuffer(_uri->_host, h_Done);
 		case ':':
-			return h_Port;
+			return PushBuffer(_uri->_host, h_Port);
 		case '%':
 			return h_RegNamePct;
 		default:
@@ -322,7 +314,7 @@ HostState	URIHostParser::RegNamePctDoneHandler(size_t pos) {
 	buffer = DecodePercent(buffer);
 	switch (input[pos]) {
 		case '\0':
-			return SkipEOL(skip_char);
+			return PushBuffer(_uri->_host, h_Done);
 		case '%':
 			return h_RegNamePct;
 		default:
@@ -336,9 +328,20 @@ HostState	URIHostParser::RegNamePctDoneHandler(size_t pos) {
 // Checks for digits in port after ':' has been previously found.
 HostState	URIHostParser::PortHandler(size_t pos) {
 	if (input[pos] == '\0')
-		return SkipEOL(skip_char);
+		return PushBuffer(_uri->_port, h_Done);
 	else if (isdigit(input[pos]))
 		return h_Port;
 	else
 		return h_Invalid; 
+}
+
+// Called when ":" signalling port or EOL is found.
+// Pushes buffer to URI::host or port, clears buffer, and return `next_state`.
+HostState	URIHostParser::PushBuffer(string& field, HostState next_state) {
+	if (!buffer.empty()) {
+		field = buffer;
+		buffer.clear();
+	}
+	skip_char = true;
+	return next_state;
 }
