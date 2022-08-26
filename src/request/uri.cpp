@@ -8,6 +8,7 @@ URI::URI(URI const& other)
 	:	_uri_input(other._uri_input),
 		_uri_parsed(other._uri_parsed),
 		_host(other._host),
+		_port(other._port),
 		_path(other._path),
 		_query(other._query) {}
 
@@ -22,6 +23,7 @@ URI&	URI::operator=(URI const& other) {
 		this->_uri_input = other._uri_input;
 		this->_uri_parsed = other._uri_parsed;
 		this->_host = other._host;
+		this->_port = other._port;
 		this->_path = other._path;
 		this->_query = other._query;
 	}
@@ -33,6 +35,7 @@ URI&	URI::operator=(URI const& other) {
 // Clears all fields before parsing new string.
 URI&	URI::operator=(string const& input) {
 	_host.clear();
+	_port.clear();
 	_path.clear();
 	_query.clear();
 	_uri_input = input;
@@ -69,10 +72,20 @@ string	URI::GetURIDebug() const {
 	return uri;
 }
 
+string	URI::GetHostWithPort() const {
+	if (_port.empty())
+		return _host;
+	else
+		return _host + ":" + _port;
+}
+
 string	URI::GetHost() const {
 	return _host;
 }
 
+string	URI::GetPort() const {
+	return _port;
+}
 
 string	URI::GetPath() const {
 	return _path;
@@ -109,7 +122,7 @@ void	URI::ParseInput() {
 	// if no / found, assume it is host string
 	if (slash_pos == string::npos) {
 		URIHostParser	parser;
-		parser.Parse(_host, _uri_input);
+		parser.Parse(*this, _uri_input);
 	}
 	// if starts with /, assumes it is origin-form URI
 	else if (slash_pos == 0) {
@@ -125,10 +138,10 @@ string	URI::ConstructParsedURI() {
 	string	uri;
 
 	if (!_host.empty())
-		uri += _host;
+		uri += GetHostWithPort();
 	if (!_path.empty())
-		uri += _path;
+		uri += GetPath();
 	if (!_query.empty())
-		uri += "?" + _query;
+		uri += "?" + GetQuery();
 	return uri;
 }

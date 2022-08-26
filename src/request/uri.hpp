@@ -35,20 +35,24 @@ class URI {
 		string	GetParsedURI() const;
 		string	GetURIDebug() const;
 		string	GetHost() const;
+		string	GetPort() const;
+		string	GetHostWithPort() const;
 		string	GetPath() const;
 		string	GetQuery() const;
 		void	SetHost(string const& host);
 		void	SetPath(string const& path);
 		void	SetQuery(string const& query);
 
-		// friend class forward declaration allows RequestTargetParser to
+		// friend class forward declaration allows parser classes to
 		// access private & protected members of URI.
 		friend class RequestTargetParser;
+		friend class URIHostParser;
 
 	private:
 		string	_uri_input;
 		string	_uri_parsed;
 		string	_host;
+		string	_port;
 		string	_path;
 		string	_query;
 

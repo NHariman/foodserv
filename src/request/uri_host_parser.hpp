@@ -8,6 +8,8 @@
 
 using namespace std;
 
+class URI;
+
 enum HostState {
 	h_Start = 0,
 	h_Literal,
@@ -34,10 +36,10 @@ class URIHostParser : public StateParser<HostState> {
 		// Destructor
 		~URIHostParser();
 
-		size_t	Parse(string& uri_host, string const& input);
+		size_t	Parse(URI& uri, string const& input);
 
 	private:
-		string	*_uri_host;
+		URI		*_uri;
 		size_t	_groups; // for counting groups of IPv4 sequences
 		size_t	_colons; // for keeping track of colons for IPv6
 		size_t	_digits; // for keeping track of number of digits per group
@@ -53,6 +55,7 @@ class URIHostParser : public StateParser<HostState> {
 		HostState	RegNamePctHandler(size_t pos);
 		HostState	RegNamePctDoneHandler(size_t pos);
 		HostState	PortHandler(size_t pos);
+		HostState	PushBuffer(string& field, HostState next_state);
 
 	protected:
 		HostState	GetNextState(size_t pos) override;
