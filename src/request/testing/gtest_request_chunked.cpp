@@ -9,17 +9,17 @@ static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
 static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");
 
+// Helper function that calls Request::Parse with c-string conversion of passed string.
+static void	ParseChunked(Request& request, string const& req_str) {
+	request.Parse(req_str.c_str());
+}
+
 TEST(RequestChunkedTest, ValidSplitHeaders) {
 	Request request(&config);
 
-	string req_str = POST_Req;
-	request.Parse(req_str.c_str());
-
-	req_str = CHUNKED;
-	request.Parse(req_str.c_str());
-
-	req_str = "4\r\nWiki\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n";
-	request.Parse(req_str.c_str());
+	ParseChunked(request, POST_Req);
+	ParseChunked(request, CHUNKED);
+	ParseChunked(request, "4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n");
 	
 	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
 }
@@ -27,14 +27,9 @@ TEST(RequestChunkedTest, ValidSplitHeaders) {
 TEST(RequestChunkedTest, ValidSplitHeadersMid) {
 	Request request(&config);
 
-	string req_str = POST_Req + "Transfer-Encod";
-	request.Parse(req_str.c_str());
-
-	req_str = "ing: chunked\n\n";
-	request.Parse(req_str.c_str());
-
-	req_str = "4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n";
-	request.Parse(req_str.c_str());
+	ParseChunked(request, POST_Req + "Transfer-Encod");
+	ParseChunked(request, "ing: chunked\n\n");
+	ParseChunked(request, "4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n");
 	
 	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
 }
@@ -42,14 +37,9 @@ TEST(RequestChunkedTest, ValidSplitHeadersMid) {
 TEST(RequestChunkedTest, ValidSplitEmptyLine) {
 	Request request(&config);
 
-	string req_str = POST_Req + "Transfer-Encoding: chunked\r\n";
-	request.Parse(req_str.c_str());
-
-	req_str = "\r\n";
-	request.Parse(req_str.c_str());
-
-	req_str = "4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n";
-	request.Parse(req_str.c_str());
+	ParseChunked(request, POST_Req + "Transfer-Encoding: chunked\r\n");
+	ParseChunked(request, "\r\n");
+	ParseChunked(request, "4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n");
 
 	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
 }
@@ -57,14 +47,40 @@ TEST(RequestChunkedTest, ValidSplitEmptyLine) {
 TEST(RequestChunkedTest, ValidSplitCRLF) {
 	Request request(&config);
 
-	string req_str = POST_Req + "Transfer-Encoding: chunked\r\n\r";
-	request.Parse(req_str.c_str());
-
-	req_str = "\n4\r\nWiki\r";
-	request.Parse(req_str.c_str());
-
-	req_str = "\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n";
-	request.Parse(req_str.c_str());
+	ParseChunked(request, POST_Req + "Transfer-Encoding: chunked\r\n\r");
+	ParseChunked(request, "\n4\r\nWiki\r");
+	ParseChunked(request, "\n6\r\npedia \r\nE\r\nin \r\n\r\nchunks.\r\n0\r\n\r\n");
 
 	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
+}
+
+TEST(RequestChunkedTest, ValidSplitDataCRLF) {
+	Request request(&config);
+
+	ParseChunked(request, POST_Req + "Transfer-Encoding: chunked\r\n\r");
+	ParseChunked(request, "\n4\r\nWiki\r\n6\r\npedia \r\nE\r\nin \r");
+	ParseChunked(request, "\n\r\nchunks.\r\n0\r\n\r\n");
+
+	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
+}
+
+TEST(RequestChunkedTest, InvalidCRLF) {
+	EXPECT_THROW({
+		Request request(&config);
+		ParseChunked(request, POST_Req + CHUNKED + "4\r");
+		ParseChunked(request, "\r\nBye!\r\n0\r\n\r\n");
+
+	}, BadRequestException);
+	EXPECT_THROW({
+		Request request(&config);
+		ParseChunked(request, POST_Req + CHUNKED + "4\r\n");
+		ParseChunked(request, "Bye!\r\r\n0\r\n\r\n");
+
+	}, BadRequestException);
+	EXPECT_THROW({
+		Request request(&config);
+		ParseChunked(request, POST_Req + CHUNKED + "4\r\n");
+		ParseChunked(request, "Bye!\r\n0\r\r\n");
+
+	}, BadRequestException);
 }
