@@ -71,15 +71,7 @@ void	RequestParser::AfterParseCheck() {
 			throw LengthRequiredException();
 	}
 	if (DEBUG) {
-		cout << "Parsed method: " << _request->GetMethod() << endl; // DEBUG
-		cout << "Target input: " << _request->GetURI().GetInputURI() << endl; // DEBUG
-		cout << "Parsed target: " << _request->GetURI().GetURIDebug() << endl; // DEBUG
-		cout << "Parsed version: " << _request->GetVersion() << endl;  // DEBUG
-		cout << "Parsed headers:\n";
-		for (map<string,string>::iterator it = _request->_header_fields.begin();
-			it != _request->_header_fields.end(); it++)
-				cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
-		cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
+		DebugPrint();
 	}
 }
 
@@ -135,7 +127,6 @@ RequestState	RequestParser::HeaderFieldHandler() {
 RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 	int ret_code;
-
 	try {
 		ret_code = _header_validator->Process(_config, *_request);
 		// cout << "Validator return: " << ret_code << endl;
@@ -181,6 +172,18 @@ RequestState	RequestParser::ChunkedHandler() {
 		pos += 1;
 		return r_Chunked;
 	}
+}
+
+void	RequestParser::DebugPrint() {
+	cout << "Parsed method: " << _request->GetMethod() << endl;
+	cout << "Target input: " << _request->GetURI().GetInputURI() << endl;
+	cout << "Parsed target: " << _request->GetURI().GetURIDebug() << endl;
+	cout << "Parsed version: " << _request->GetVersion() << endl;
+	cout << "Parsed headers:\n";
+	for (map<string,string>::const_iterator it = _request->_header_fields.begin();
+		it != _request->_header_fields.end(); it++)
+			cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
+	cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
 }
 
 #undef DEBUG // REMOVE

@@ -58,6 +58,7 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestState	HeaderDoneHandler();
 		RequestState	MessageBodyHandler();
 		RequestState	ChunkedHandler();
+		void			DebugPrint();
 
 	protected:
 		RequestState	GetNextState(size_t pos) override;
