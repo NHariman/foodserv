@@ -5,6 +5,7 @@
 #include "chunked_parser.hpp"
 #include "exception.hpp"
 #include "header_field_parser.hpp"
+#include "header_field_validator.hpp"
 #include "state_parser.hpp"
 #include "request_line_parser.hpp"
 #include "request_utils.hpp"
@@ -47,7 +48,6 @@ class RequestParser  : public StateParser<RequestState> {
 	private:
 		RequestLineParser		_request_line_parser;
 		HeaderFieldParser		_header_parser;
-		HeaderFieldValidator	*_header_validator;
 		ChunkedParser			_chunked_parser;
 		NginxConfig				*_config;
 		

@@ -32,10 +32,10 @@ bool	HeaderFieldValidator::ValidHost(string host) {
 		throw BadRequestException("Multiple hosts not allowed");
 	try {
 		URIHostParser	parser;
-		string			host_parsed;
+		URI				uri;
 
 		// Checks if Host value is valid path
-		parser.Parse(host_parsed, host);
+		parser.Parse(uri, host);
 	}
 	catch (std::exception &e) {
 		throw;

@@ -45,10 +45,10 @@ class Request {
 		friend class	ChunkedParser;
 	
 	private:
+		RequestParser		_parser;
 		struct RequestLine	_request_line;
 		map<string, string>	_header_fields;
 		string				_msg_body;
-		RequestParser		_parser;
 		string				_buf;
 };
 

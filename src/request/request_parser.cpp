@@ -2,25 +2,17 @@
 #include "header_field_validator.hpp"
 #include "request.hpp"
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
-	: StateParser(r_RequestLine, r_Done), _request(NULL) {
-	HeaderFieldValidator header_validator;
-
-	_header_validator = &header_validator;
-}
+	: StateParser(r_RequestLine, r_Done), _config(NULL), _request(NULL) {}
 
 // Config constructor
 RequestParser::RequestParser(NginxConfig *config)
 		:	StateParser(r_RequestLine, r_Done),
 			_config(config),
-			_request(NULL) {
-	HeaderFieldValidator header_validator;
-
-	_header_validator = &header_validator;
-}
+			_request(NULL) {}
 
 // Destructor
 RequestParser::~RequestParser() {}
@@ -29,7 +21,6 @@ RequestParser::~RequestParser() {}
 // and passes string to StateParser::ParseString().
 size_t	RequestParser::Parse(Request& request, string const& buffer) {
 	_request = &request;
-
 	return ParseString(buffer);
 }
 
@@ -60,7 +51,7 @@ bool	RequestParser::CheckDoneState() {
 void	RequestParser::IncrementCounter() {}
 
 void	RequestParser::PreParseCheck() {
-	cout << "\nRequestParser | preparse " << endl;
+	if (DEBUG) cout << "\nRequestParser | preparse " << endl;
 }
 
 void	RequestParser::AfterParseCheck() {
@@ -128,7 +119,10 @@ RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 	int ret_code;
 	try {
-		ret_code = _header_validator->Process(_config, *_request);
+		// allocated on stack because we don't need to remember the return
+		HeaderFieldValidator header_validator;
+
+		ret_code = header_validator.Process(_config, *_request);
 		// cout << "Validator return: " << ret_code << endl;
 	}
 	catch (std::exception &e) {
@@ -150,9 +144,14 @@ RequestState	RequestParser::HeaderDoneHandler() {
 RequestState	RequestParser::MessageBodyHandler() {
 	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
-	_request->_msg_body = input.substr(pos, _request->content_length);
+	_request->_msg_body += input.substr(pos, _request->content_length);
 	pos += _request->_msg_body.size();
-	return r_Done;
+	if (_request->_msg_body.size() == (size_t)_request->content_length)
+		return r_Done;
+	else {
+		pos += 1;
+		return r_MsgBody;
+	}
 }
 
 RequestState	RequestParser::ChunkedHandler() {

@@ -42,7 +42,7 @@ class HeaderFieldParser : public StateParser<FieldState> {
 		FieldState	NameHandler(char c);
 		FieldState	ValueStartHandler(char c);
 		FieldState	ValueHandler(char c);
-		FieldState	HandleCRLF(char c, FieldState next_state, bool skip = true);
+		FieldState	HandleCRLF(char c, FieldState next_state);
 		void		PushFieldName();
 		void		PushFieldValue();
 };

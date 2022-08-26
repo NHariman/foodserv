@@ -128,16 +128,13 @@ FieldState	HeaderFieldParser::ValueHandler(char c) {
 
 // Helper function for parsing line endings.
 // Accepts both CRLF and just LF as line endings.
-// `skip` is optional argument that defaults to TRUE.
 // If buffer is not empty, pushes buffer to appropriate field.
-FieldState	HeaderFieldParser::HandleCRLF(char c, FieldState next_state, bool skip) {
-	// Checks for any sequence other than CRLF.
-	if (input[pos - 1] == '\r' && c == '\r') {
-		buffer += '\r';
+FieldState	HeaderFieldParser::HandleCRLF(char c, FieldState next_state) {
+	// Peeks at next character in input to check for anything other than CRLF.
+	if (c == '\r' && input[pos + 1] != '\n')
 		return f_Invalid;
-	}
 
-	skip_char = skip;
+	skip_char = true;
 	if (!buffer.empty())
 		PushFieldValue();
 	return next_state;

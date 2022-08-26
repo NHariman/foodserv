@@ -21,7 +21,10 @@ size_t	Request::Parse(char const* buffer) {
 	string buf(buffer);
 
 	_buf += buf;
-	if (_buf.find("\n\r\n") != string::npos || _buf.find("\n\n") != string::npos) {
+	// cout << "_buf: " << _buf << endl;
+	// cout << "RequestParser state: " << _parser.cur_state << endl;
+	if (_buf.find("\n\r\n") != string::npos || _buf.find("\n\n") != string::npos
+		|| _parser.cur_state == r_Chunked || _parser.cur_state == r_MsgBody) {
 		// cout << "Request buffer complete: [" << _buf << "]\n";
 		try {
 			bytes_read += _parser.Parse(*this, _buf);

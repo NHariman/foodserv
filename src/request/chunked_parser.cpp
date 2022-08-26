@@ -44,7 +44,7 @@ ChunkedParser::~ChunkedParser() {}
 // calls on parent class StateParser::ParseString().
 size_t	ChunkedParser::Parse(Request& request, string const& input) {
 	_request = &request;
-	cout << "\nSTART -- ChunkedParser input: " << input << endl; // DEBUG
+	if (DEBUG) cout << "\nSTART -- ChunkedParser input: " << input << endl; // DEBUG
 	return ParseString(input);
 }
 
@@ -213,11 +213,11 @@ ChunkState	ChunkedParser::EndHandler(char c) {
 // `skip` is optional argument that defaults to TRUE.
 // If buffer is not empty, pushes buffer to appropriate field.
 ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
-	// Checks for any sequence other than CRLF.
-	if (input[pos - 1] == '\r' && c == '\r') {
-		buffer += '\r';
+	// Peeks at next character in input to check for anything other than CRLF.
+	// if (input[pos - 1] == '\r' && c == '\r') {
+	if (c == '\r' && pos < input.size() - 1 && input[pos + 1] != '\n')
 		return c_Invalid;
-	}
+
 	skip_char = skip;
 	if (!buffer.empty())
 		SaveParsedValue();
