@@ -1,41 +1,52 @@
 #include "header_field_validator.hpp"
+#include "request.hpp"
 
-HeaderFieldValidator::HeaderFieldValidator() : _status(hv_OK) {}
+#define DEBUG 0 // TODO: REMOVE
+
+HeaderFieldValidator::HeaderFieldValidator() : _status(hv_Done) {}
 
 HeaderFieldValidator::~HeaderFieldValidator() {}
 
-HeaderStatus	HeaderFieldValidator::Process(Request& request) {
-	_status = hv_OK;
+HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request) {
+	_status = hv_Done;
+
+	if (DEBUG) cout << "HeaderFieldValidator::Process\n";
+	
 	if (ValidHost(request.GetField("host"))
 			&& ValidExpect(request.GetField("expect"))
 			&& ValidContentEncoding(request.GetField("content-encoding"))
-			&& ValidTransferEncoding(request.content_length,
-										request.GetField("transfer-encoding"))
-			&& ValidContentLength(request.content_length,
-									request.GetField("content-length")))
+			&& ValidTransferEncoding(request)
+			&& ValidContentLength(config, request)
+			&& ValidMethod(config, request))
 		return _status;
 	return hv_Bad;
 }
 
 // Only exactly 1 Host definition is accepted.
-bool HeaderFieldValidator::ValidHost(string host) {
+bool	HeaderFieldValidator::ValidHost(string host) {
+	if (DEBUG) cout << "ValidHost\n";
+
 	if (host == NO_VAL)
 		throw BadRequestException("Host header mandatory");
+	if (host.find(' ') != string::npos || host.find(',') != string::npos)
+		throw BadRequestException("Multiple hosts not allowed");
 	try {
 		URIHostParser	parser;
-		string			host_parsed;
+		URI				uri;
 
 		// Checks if Host value is valid path
-		parser.Parse(host_parsed, host);
+		parser.Parse(uri, host);
 	}
-	catch (...) {
+	catch (std::exception &e) {
 		throw;
 	}
 	return true;
 }
 
 // Only accepts "100-continue" for Expect header.
-bool HeaderFieldValidator::ValidExpect(string expect) {
+bool	HeaderFieldValidator::ValidExpect(string expect) {
+	if (DEBUG) cout << "ValidExpect\n";
+
 	if (expect != NO_VAL && expect != "100-continue")
 		throw ExpectationFailedTypeException();
 	else
@@ -43,23 +54,40 @@ bool HeaderFieldValidator::ValidExpect(string expect) {
 }
 
 // Does not accept any definition of Content-Encoding header.
-bool HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
+bool	HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
+	if (DEBUG) cout << "ValidContentEncoding\n";
+
 	if (content_encoding != NO_VAL)
 		throw UnsupportedMediaTypeException();
 	else
 		return true;
 }
 
+// Used by ValidContentLength & ValidTransferEncoding to check if 
+// Content-Length & Transfer-Encoding (and therefore presence of payload body)
+// is allowed for specified method.
+// GET & DELETE may only have Content-Length of 0 and only POST may have
+// other values (including 0 for empty payloads).
+static void	CheckAllowedMethod(string method, size_t content_length = 1) {
+	if (method != "POST" && content_length != 0)
+		throw BadRequestException("Payload body not allowed for method");
+}
+
 // If Transfer-Encoding is define, only "chunked" value is accepted.
-bool HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
-													string transfer_encoding) {
+bool	HeaderFieldValidator::ValidTransferEncoding(Request& request) {
+	if (DEBUG) cout << "ValidTransferEncoding\n";
+
+	string	transfer_encoding = request.GetField("transfer-encoding");
+
 	if (transfer_encoding != NO_VAL) {
 		// if Content-Length was also defined
-		if (content_length_count != -1)
+		if (request.content_length != -1)
 			throw BadRequestException(
 				"Cannot have both Content-Length and Transfer-Encoding headers");
-		if (transfer_encoding == "chunked")
+		if (transfer_encoding == "chunked") {
+			CheckAllowedMethod(request.GetMethod());
 			_status = hv_MessageChunked;
+		}
 		// if anything other than "chunked" encoding
 		else
 			throw NotImplementedException();
@@ -68,35 +96,73 @@ bool HeaderFieldValidator::ValidTransferEncoding(ssize_t content_length_count,
 }
 
 // Used by ValidContentLength to check for valid values.
-static bool	ValidContentLengthValue(ssize_t& content_length_count,
-												string content_length) {
+static void	CheckContentLengthValue(NginxConfig* config,
+									Request& request) {
+	string	content_length = request.GetField("content-length");
+	string	host = request.GetField("host");
+	string	target = request.GetTarget();
+
 	// non-digit value
 	if (!IsValidString(isdigit, content_length))
-		return false;
+		throw BadRequestException("Invalid Content-Length value");
 
+	request.content_length = std::stoll(content_length);
+	request.max_body_size = MBToBytes(config->GetMaxBodySize(host, target));
+	
 	// if invalid value
-	content_length_count = std::stoll(content_length);
-	if (content_length_count < 0 || content_length_count > PAYLOAD_LIMIT)
-		return false;
-
-	return true;
+	if (request.content_length < 0)
+		throw BadRequestException("Invalid Content-Length value");
+	else if ((size_t)request.content_length > request.max_body_size)
+		throw PayloadTooLargeException();
 }
 
-// Only exactly 1 Content-Length definition is accepted.
-bool HeaderFieldValidator::ValidContentLength(ssize_t& content_length_count,
-												string content_length) {
+// Checks if multiple values defined for Content-Length.
+static void	CheckForMultipleValues(string content_length) {
+	if (content_length.find(',') != string::npos)
+		throw BadRequestException(
+			"Cannot have multiple Content-Length values");
+}
+
+// Checks if Transfer-Encoding & Content-Length are both defined.
+static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
+	if (status == hv_MessageChunked)
+		throw BadRequestException(
+			"Cannot have both Content-Length and Transfer-Encoding headers");
+}
+
+// Only exactly 1 Content-Length definition is accepted
+// and only for POST requests.
+// Sets `content_length` and `max_body_size` attributes within Request.
+bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
+													Request& request) {
+	if (DEBUG) cout << "ValidContentLength\n";
+
+	string	content_length = request.GetField("content-length");
+
 	if (content_length != NO_VAL) {
-		// if Transfer-Encoding was also defined
-		if (_status == hv_MessageChunked)
-			throw BadRequestException(
-				"Cannot have both Content-Length and Transfer-Encoding headers");
-		// if multiple values
-		else if (content_length.find(',') != string::npos)
-			throw BadRequestException(
-				"Cannot have multiple Content-Length values");
-		else if (!ValidContentLengthValue(content_length_count, content_length))
-			throw BadRequestException("Invalid Content-Length value");
-		_status = hv_MessageExpected;
+		CheckIfTransferEncodingDefined(_status);
+		CheckForMultipleValues(content_length);
+		CheckContentLengthValue(config, request);
+		CheckAllowedMethod(request.GetMethod(), request.content_length);
+		if (request.content_length == 0)
+			_status = hv_Done;
+		else
+			_status = hv_MessageExpected;
 	}
 	return true;
 }
+
+bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
+	if (DEBUG) cout << "ValidMethod\n";
+
+	string	host = request.GetField("host");
+	string	target = request.GetTarget();
+	string	method = request.GetMethod();
+
+	// cout << "host: [" << host << "]\n";
+	// cout << "status: " << _status << endl;
+	// cout << "config->IsAllowedMethod: " << config->IsAllowedMethod(host, target, method) << endl;
+	return config->IsAllowedMethod(host, target, method);
+}
+
+#undef DEBUG // REMOVE

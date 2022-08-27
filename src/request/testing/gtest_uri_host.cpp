@@ -4,29 +4,32 @@
 #include "../uri_host_parser.hpp"
 #include "../exception.hpp"
 
-TEST(URIHostTest, ParseHostRegName) {
+string	ConstructAndParseURI(string uri_string) {
 	URIHostParser	parser;
-	string			parsed_host;
+	URI				uri;
 
-	parser.Parse(parsed_host, "www.example.com");
-	EXPECT_EQ(parsed_host, "www.example.com");
+	parser.Parse(uri, uri_string);
+	return uri.GetHostWithPort();
+}
 
-	parser.Parse(parsed_host, "www.example.com:80"); // with port
-	EXPECT_EQ(parsed_host, "www.example.com:80");
-	
-	parser.Parse(parsed_host, "www.ex%C3%BCmple.com"); // with percent-encoding
-	EXPECT_EQ(parsed_host, "www.exümple.com");
+TEST(URIHostTest, ParseHostRegName) {
+	EXPECT_EQ(ConstructAndParseURI("localhost"), "localhost");
 
-	parser.Parse(parsed_host, "www.example.hello.com");
-	EXPECT_EQ(parsed_host, "www.example.hello.com");
+	EXPECT_EQ(ConstructAndParseURI("localhost:80"), "localhost:80");
+
+	EXPECT_EQ(ConstructAndParseURI("www.ex%C3%BCmple.com"), "www.exümple.com");
+
+	EXPECT_EQ(ConstructAndParseURI("www.example.hello.com"), "www.example.hello.com");
 }
 
 TEST(URIHostTest, ParseHostIPv4) {
 	URI	uri("127.0.0.1");
 	EXPECT_EQ(uri.GetHost(), "127.0.0.1");
 
-	uri = "127.0.0.1:3000";
-	EXPECT_EQ(uri.GetHost(), "127.0.0.1:3000"); // with port
+	uri = "127.0.0.1:3000"; // with port
+	EXPECT_EQ(uri.GetHostWithPort(), "127.0.0.1:3000");
+	EXPECT_EQ(uri.GetHost(), "127.0.0.1");
+	EXPECT_EQ(uri.GetPort(), "3000"); 
 }
 
 TEST(URIHostTest, ParseHostIPv6) {
@@ -40,7 +43,9 @@ TEST(URIHostTest, ParseHostIPv6) {
 	EXPECT_EQ(uri.GetHost(), "[2001:db8:85a3:8d3:1319:8a2e:370:7348]");
 
 	uri = "[2001:db8:85a3:8d3:1319:8a2e:370:7348]:443"; // with port
-	EXPECT_EQ(uri.GetHost(), "[2001:db8:85a3:8d3:1319:8a2e:370:7348]:443");
+	EXPECT_EQ(uri.GetHostWithPort(), "[2001:db8:85a3:8d3:1319:8a2e:370:7348]:443");
+	EXPECT_EQ(uri.GetHost(), "[2001:db8:85a3:8d3:1319:8a2e:370:7348]");
+	EXPECT_EQ(uri.GetPort(), "443");
 
 	uri = "[2001:db8:85a3:8d3:1319:8a2e:127.0.0.1]"; // with IPv4 ending
 	EXPECT_EQ(uri.GetHost(), "[2001:db8:85a3:8d3:1319:8a2e:127.0.0.1]");

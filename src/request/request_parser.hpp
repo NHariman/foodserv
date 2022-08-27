@@ -2,19 +2,19 @@
 #define REQUEST_PARSER_HPP
 
 #include <string>
-
+#include "chunked_parser.hpp"
 #include "exception.hpp"
 #include "header_field_parser.hpp"
 #include "header_field_validator.hpp"
 #include "state_parser.hpp"
 #include "request_line_parser.hpp"
 #include "request_utils.hpp"
-#include "request.hpp"
 
 using namespace std;
 
 class Request;
 class HeaderFieldValidator;
+class NginxConfig;
 
 enum RequestState {
 	r_RequestLine = 0,
@@ -33,30 +33,39 @@ class RequestParser  : public StateParser<RequestState> {
 	public:
 		// Default constructor
 		RequestParser();
+		// Config constructor
+		RequestParser(NginxConfig *config);
 		// Destructor
 		~RequestParser();
 
-		size_t		Parse(Request& request, char const* buffer);
+		size_t		Parse(Request& request, string const& buffer);
+		bool		CheckDoneState() override;
+
+		// friend class forward declaration allows Request to
+		// access protected `cur_state` attribute.
+		friend class	Request;
 
 	private:
 		RequestLineParser		_request_line_parser;
 		HeaderFieldParser		_header_parser;
-		HeaderFieldValidator	*_header_validator;
+		ChunkedParser			_chunked_parser;
+		NginxConfig				*_config;
 		
-		Request*	_request;
-		size_t		_bytes_read;
+		Request		*_request;
 
-		RequestState	RequestLineHandler(size_t pos);
-		RequestState	HeaderFieldHandler(size_t pos);
-		RequestState	HeaderDoneHandler(size_t pos);
+		RequestState	RequestLineHandler();
+		RequestState	HeaderFieldHandler();
+		RequestState	HeaderDoneHandler();
+		RequestState	MessageBodyHandler();
+		RequestState	ChunkedHandler();
+		void			DebugPrint();
 
 	protected:
 		RequestState	GetNextState(size_t pos) override;
 		void			CheckInvalidState() const override;
-		bool			CheckDoneState() override;
-		void			IncrementCounter(size_t& pos) override;
+		void			IncrementCounter() override;
 		void			PreParseCheck() override;
-		void			AfterParseCheck(size_t& pos) override;
+		void			AfterParseCheck() override;
 };
 
 #endif /* REQUESTPARSER_HPP */

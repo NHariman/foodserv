@@ -16,24 +16,22 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# List all test files you want to compile
-add_executable(
-  request_test # test executable name
-  request_field.cpp
-  request_line.cpp
-  request_target.cpp
-  uri_host.cpp
-  request_header.cpp
-  ../header_field_parser.cpp
-  ../header_field_validator.cpp
-  ../request_line_parser.cpp
-  ../request_parser.cpp
-  ../request_target_parser.cpp
-  ../request_utils.cpp
-  ../request.cpp
-  ../uri.cpp
-  ../uri_host_parser.cpp
+set(EXEC request_test) # test executable name
+
+file(GLOB SRCS CONFIGURE_DEPENDS
+    "*.cpp"
+    "../*.cpp"
+    "../../config/*.cpp"
+    "../../config/directive_validation/*.cpp"
 )
+
+add_executable(${EXEC})
+
+target_sources(${EXEC}
+  PRIVATE
+    ${SRCS}
+)
+
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(
   request_test # test executable name

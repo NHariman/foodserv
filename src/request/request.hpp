@@ -4,40 +4,52 @@
 #include <map>
 #include <string>
 #include "request_parser.hpp"
-#include "request_line_parser.hpp"
+#include "../config/nginx_config.hpp"
 
 using namespace std;
 
 // returned by GetField when no field by the passed name is found.
 #define NO_VAL "NO SUCH HEADER FIELD"
 
+struct RequestLine;
+class NginxConfig;
+class URI;
+
 class Request {
 	public:
 		// Default constructor
 		Request();
-		// C-string constructor
-		explicit Request(char const* buffer);
+		// Config file constructor
+		explicit Request(NginxConfig* config);
 		// Destructor
 		~Request();
 
 		size_t	bytes_read; // bytes read of request input
-		ssize_t	content_length; // bytes of payload body
+		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
+		size_t	max_body_size;
+		bool	is_complete;
 
-		string		GetMethod() const;
-		string		GetTarget() const;
-		URI const&	GetURI() const;
-		string		GetVersion() const;
-		string		GetField(string field_name) const;
-		string		GetMessageBody() const;
+		size_t						Parse(char const* buffer);
+		string						GetMethod() const;
+		string						GetTarget() const;
+		URI const&					GetURI() const;
+		string						GetVersion() const;
+		string						GetField(string field_name) const;
+		map<string, string> const&	GetFields() const;
+		string						GetMessageBody() const;
 	
 		// friend class forward declaration allows RequestParser to
-		// access private & protected members of Request.
-		friend class RequestParser;
+		// access private `_request_line`, `_header_fields`, `_msg_body`
+		// attributes of Request.
+		friend class	RequestParser;
+		friend class	ChunkedParser;
 	
 	private:
-		struct RequestLine	request_line;
-		map<string, string>	header_fields;
-		string				msg_body;
+		RequestParser		_parser;
+		struct RequestLine	_request_line;
+		map<string, string>	_header_fields;
+		string				_msg_body;
+		string				_buf;
 };
 
 #endif /* REQUEST_HPP */
