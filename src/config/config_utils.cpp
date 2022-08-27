@@ -1,16 +1,15 @@
 #include "config_utils.hpp"
 #include <iostream>
 
-long		ft_atol(std::string value)
+size_t		ft_atosize_t(std::string value)
 {
-	long	number = 0;
-	long	negative = 1;
-	long	i = value.find_first_not_of(" \t\n\v\f\r");
+	size_t	number = 0;
+	size_t	i = value.find_first_not_of(" \t\n\v\f\r");
  
 	if (value[i] == '-' || value[i] == '+')
 	{
 		if (value[i] == '-')
-			negative = -1;
+			throw NegativeNumberException();
 		i++;
 	}
 	while (std::isdigit(value[i]) && value[i])
@@ -18,7 +17,7 @@ long		ft_atol(std::string value)
 		number = (number * 10) + (value[i] - '0');
 		i++;
 	}
-	return (number * negative);
+	return (number);
 }
 
 std::string	TrimValue(std::string value){
@@ -81,7 +80,6 @@ bool	IsNumber(std::string input) {
 }
 
 bool	IsUri(std::string input) {
-	std::cout << input << std::endl;
 	if (input[0] == '/')
 		return true;
 	return false;

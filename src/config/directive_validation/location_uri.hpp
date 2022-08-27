@@ -12,11 +12,11 @@
 
 #include <string>
 #include "../config_utils.hpp"
+#include "../../request/uri.hpp"
 
 class LocationUri {
 	private:
-		bool		_is_empty;
-		std::string _uri;
+		URI			 _uri;
 		bool		_is_directory;
 
 	public:
@@ -27,13 +27,19 @@ class LocationUri {
 		LocationUri&   operator= (LocationUri const &obj);
 
 		std::string	GetUri() const;
+		URI			GetURIClass() const;
+		std::string GetInputURI() const;
 		bool		IsDirectory() const;
-		bool        IsEmpty() const;
 		class BadUriException : public std::exception
 		{
+			private:
+				std::string _err_string;
 			public:
+				BadUriException(std::string uri) {
+					_err_string = "ERROR! Bad uri notation in location block: " + uri + ".";
+				}
 				const char *what() const throw() {
-					return "ERROR! Bad uri notation in location block.";
+					return (_err_string.c_str());
 				}
 		};
 		class MissingArgumentsException : public std::exception

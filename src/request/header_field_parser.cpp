@@ -64,10 +64,9 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 			return f_Done;
 		case '\n':
 			return f_Start;
-		case '\r': {
+		case '\r':
 			skip_char = true;
 			return f_ValueEnd;
-		}
 		default:
 			if (IsTChar(c))
 				return f_Name;
@@ -80,11 +79,10 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
 	switch (c) {
-		case ':': {
+		case ':':
 			PushFieldName();
 			skip_char = true;
 			return f_ValueStart;
-		}
 		default:
 			if (IsTChar(c))
 				return f_Name;
@@ -108,18 +106,15 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 // returns ValueEnd state to check for valid CRLF sequence.
 FieldState	HeaderFieldParser::ValueHandler(char c) {
 	switch (c) {
-		case '\0': {
+		case '\0':
 			PushFieldValue();
 			return f_Done;
-		}
-		case '\n': {
+		case '\n':
 			PushFieldValue();
 			return f_Start;
-		}
-		case '\r': {
+		case '\r':
 			skip_char = true;
 			return f_ValueEnd;
-		}
 		default:
 			if (IsVChar(c) || IsWhitespace(c))
 				return f_Value;
@@ -149,6 +144,17 @@ void	HeaderFieldParser::PushFieldName() {
 	buffer.clear();
 }
 
+// Adds a new field with `cur_field` key and `val` value to map, or
+// appends value (prefixed with comma and space) to an existing key value.
+template <typename T>
+static void	AddOrAppendValue(T *fields, string const& cur_field, string const& val) {
+	if (fields->find(cur_field) != fields->end()) { // if header field already exists
+		(*fields)[cur_field] += ", " + val;
+	}
+	else
+		(*fields)[cur_field] = val;
+}
+
 // Trims trailing whitespace off field value and saves buffer
 // as value of cur_field key in `fields` map that was passed in Parse().
 void	HeaderFieldParser::PushFieldValue() {
@@ -157,6 +163,6 @@ void	HeaderFieldParser::PushFieldValue() {
 
 	while (start != end && IsWhitespace(*end))
 		end--;
-	(*_fields)[_cur_field] = string(start, end + 1);
+	AddOrAppendValue(_fields, _cur_field, string(start, end + 1));
 	buffer.clear();
 }

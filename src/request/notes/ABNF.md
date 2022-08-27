@@ -1,4 +1,4 @@
-### Request ABNF rules:
+## Request
 	HTTP-message = request-line *( header-field CRLF ) CRLF [ message-body ]
 	|_ request-line = method SP request-target SP HTTP-version CRLF
 		|_ method =	token
@@ -17,12 +17,12 @@
 			|_ field-content =	field-vchar [ 1*( SP / HTAB ) field-vchar ]
 				|_ VCHAR          =  %x21-7E ; visible (printing) characters
 		|_  OWS =	*( SP / HTAB ) ; optional whitespace
-     		RWS =	1*( SP / HTAB ) ; required whitespace
+	 		RWS =	1*( SP / HTAB ) ; required whitespace
 
 	|_ message-body = *OCTET
 
 
-### Request target URI ABNF:
+### Request target URI
 For origin servers:  
 
 	request-target = 1*( "/" *pchar ) [ "?" query ]
@@ -45,8 +45,51 @@ Source: [unreserved](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3),
 
 Source: [Query string wiki](https://en.wikipedia.org/wiki/Query_string)
 
-### Host header field:
+## Header Fields
+### Connection
+	Connection = 1#token ; case-insensitive
+
+### Content-Length
+	Content-Length = 1*DIGIT ; no negatives
+
+### Expect
+	Expect = "100-continue" ; case-insensitive
+
+### Host
 	Host = uri-host [ ":" port ]
-	|_ uri-host =	IP-literal / IPv4address / reg-name
-		|_ IP-literal = "[" ( IPv6address / IPvFuture  ) "]"
-	|_ port =		*DIGIT
+	|_ uri-host = IP-literal / IPv4address / reg-name
+		|_ IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+			|_ IPv6address	=                            6( h16 ":" ) ls32
+							/                       "::" 5( h16 ":" ) ls32
+							/ [               h16 ] "::" 4( h16 ":" ) ls32
+							/ [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32
+							/ [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32
+							/ [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32
+							/ [ *4( h16 ":" ) h16 ] "::"              ls32
+							/ [ *5( h16 ":" ) h16 ] "::"              h16
+							/ [ *6( h16 ":" ) h16 ] "::"
+				|_ ls32	= ( h16 ":" h16 ) / IPv4address
+				|_ h16	= 1*4HEXDIG ; case-insensitive
+			|_ IPvFuture = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+		|_ IPv4address = 0-255 "." 0-255 "." 0-255 "." 0-255
+		|_ reg-name    = *( unreserved / pct-encoded / sub-delims )
+	|_ port = *DIGIT
+
+### Transfer-Encoding
+	transfer-coding = "chunked"
+
+## Message
+### Chunked message
+	chunked-body =	*chunk
+					last-chunk
+					trailer-part
+					CRLF
+		|_ chunk =	chunk-size [ chunk-ext ] CRLF
+					chunk-data CRLF
+			|_ chunk-size =	1*HEXDIG
+			|_ chunk-ext = *( ";" token [ "=" token/quoted-string ] )
+			|_ chunk-data =	1*OCTET ; a sequence of chunk-size octets
+		|_ last-chunk =	1*("0") [ chunk-ext ] CRLF
+		|_ trailer-part = *( header-field CRLF )
+
+		

@@ -18,14 +18,16 @@ class StateParser {
 		// Child classes should call it in constructor like so:
 		//		ChildClassParser::ChildClassParser() : StateParser(c_StartEnum)
 		StateParser(State starting_state)
-			: cur_state(starting_state), skip_char(false) {}
+			:	start_state(starting_state),
+				cur_state(starting_state),
+				skip_char(false) {}
 
 		// Template method
 		// Takes string to parse and returns bytes read.
 		size_t	ParseString(string const& input_string) {
 			size_t i = 0;
 
-			input = input_string;
+			InitParser(input_string); // reset counters for repeat calls
 			PreParseCheck();
 			while (NotDone(i)) {
 				cur_state = GetNextState(i);
@@ -40,6 +42,7 @@ class StateParser {
 		}
 
 	protected:
+		State	start_state;
 		State	cur_state;
 		string	buffer; // for keeping track of parsed input
 		string	input; // saving original input
@@ -52,6 +55,12 @@ class StateParser {
 
 		// Concrete methods that can be overridden if custom looping behaviour
 		// is needed.
+		virtual void	InitParser(string const& input_string) {
+			cur_state = start_state;
+			buffer.clear();
+			input = input_string;
+			skip_char = false;
+		}
 		virtual void	UpdateBuffer(size_t pos) {
 			if (!skip_char)
 				buffer += input[pos];

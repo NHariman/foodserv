@@ -1,19 +1,20 @@
 #ifndef REQUEST_PARSER_HPP
 #define REQUEST_PARSER_HPP
 
-#include <map>
 #include <string>
 
 #include "exception.hpp"
 #include "header_field_parser.hpp"
+#include "header_field_validator.hpp"
 #include "state_parser.hpp"
 #include "request_line_parser.hpp"
 #include "request_utils.hpp"
-
-// returned by GetField when no field by the passed name is found.
-#define NO_VAL "NO SUCH HEADER FIELD"
+#include "request.hpp"
 
 using namespace std;
+
+class Request;
+class HeaderFieldValidator;
 
 enum RequestState {
 	r_RequestLine = 0,
@@ -32,26 +33,18 @@ class RequestParser  : public StateParser<RequestState> {
 	public:
 		// Default constructor
 		RequestParser();
-		// C-string constructor
-		explicit RequestParser(char const* buffer);
 		// Destructor
 		~RequestParser();
 
-		size_t	Parse(char const* buffer);
-		string	GetMethod();
-		string	GetTarget();
-		string	GetVersion();
-		string	GetField(string field_name);
-		string	GetMessageBody();
+		size_t		Parse(Request& request, char const* buffer);
 
 	private:
-		RequestLineParser	_request_line_parser;
-		struct RequestLine	_request_line;
-		map<string, string>	_header_fields;
-		HeaderFieldParser	_header_parser;
+		RequestLineParser		_request_line_parser;
+		HeaderFieldParser		_header_parser;
+		HeaderFieldValidator	*_header_validator;
 		
-		string	_msg_body;
-		size_t	_bytes_read;
+		Request*	_request;
+		size_t		_bytes_read;
 
 		RequestState	RequestLineHandler(size_t pos);
 		RequestState	HeaderFieldHandler(size_t pos);

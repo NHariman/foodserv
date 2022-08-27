@@ -1,12 +1,12 @@
 #include "client_max_body_size.hpp"
 #include <climits>
 
-
+ClientMaxBodySize::ClientMaxBodySize() : _value(1) {};
 
 ClientMaxBodySize::ClientMaxBodySize(std::string value) {
     size_t i = 0;
     size_t found_m = 0;
-    long    tmp_value;
+    size_t    tmp_value;
 
     if (value.compare("") == 0)
         throw MissingArgumentsException();
@@ -22,9 +22,7 @@ ClientMaxBodySize::ClientMaxBodySize(std::string value) {
         }
         i++;
     }
-    tmp_value = ft_atol(value.substr(0, i));
-    if (tmp_value < 0)
-        throw NegativeClientMaxBodySizeException();
+    tmp_value = ft_atosize_t(value.substr(0, i));
     if (tmp_value > 2147483647)
         throw TooLargeClientMaxBodySizeException();
     _value = tmp_value;
@@ -47,10 +45,10 @@ int PrintValue(std::string value) {
         }
         i++;
     }
-    _value = ft_atol(value.substr(0, i));
+    _value = ft_atosize_t(value.substr(0, i));
     return (_value);
 }
 
-int ClientMaxBodySize::GetValue() const {
+size_t ClientMaxBodySize::GetValue() const {
     return _value;
 }

@@ -18,109 +18,84 @@
 #include "server_name.hpp"
 #include "directive_validation/directive_validation.hpp"
 #include "config_utils.hpp"
+#include "config_interface.hpp"
 #include "listen.hpp"
 #include <vector>
 #include <string>
 #include <stdexcept>
 
-struct t_flags_server
-{
-	int		location_context;
-	bool	listen;
-	bool	server_name;
-	bool	root;
-	bool	index;
-	bool	client_max_body_size;
-	bool	error_page;
-}; // check list of found keywords in ServerContext
-
-class ServerContext {
+class ServerContext : public ConfigValues {
 	private:
-		t_flags_server						_check_list;
-		std::vector<LocationContext>		_location_contexts;
-		std::pair<std::string,std::string>	_listen; // changed by sanne
-		std::vector<std::string>			_server_name; // changed by sanne
-		std::string							_root;
-		std::vector<std::string>			_index;
-		int									_client_max_body_size;
-		std::vector<ErrorPage>				_error_page;
 
-		int							IsDirective(std::string directive);
-		void						SetValue(int directive, std::string value);
-		void						CheckListVerification();
-		void						FindDirectiveValuePairs(size_t *start_position, std::string config_file);
-		size_t						FindLocationContextEnd(std::string config_file, size_t start);
-		
-		
+		size_t	amount_location_context;
+		bool	bool_listen;
+		bool	bool_server_name;
+
+		size_t								_server_nb;
+		std::vector<LocationContext>		_location_contexts;
+		std::pair<std::string, std::string>	_listen; // changed by sanne
+		std::vector<std::string>			_server_name; // changed by sanne
+
+		size_t					FindLocationContextEnd(std::string config_file, size_t start);
+		//overridden base class functions
+		void					GetDirectiveValuePairs(size_t *start_position, std::string config_file) override; // in this case i do not use override as i want to use it differently.
+		void					CheckListVerification() override;
+		void					SetValue(int directive, std::string value) override;
+		int						IsDirective(std::string directive) override;
+		void					InitChecklist() override;
+
 	public:
-		ServerContext(size_t *start, std::string config_file); // uses a pointer so it can skip through the server bits on its own when it returns
 		ServerContext();
+		ServerContext(size_t *start, std::string config_file, size_t server_nb); // uses a pointer so it can skip through the server bits on its own when it returns
 		ServerContext(const ServerContext &server_context);
 		ServerContext & operator= (const ServerContext &server_context);
 		~ServerContext(){};
 		
+		// check if set
+		bool						IsSet(std::string key) override;
 		//getters
-		std::vector<LocationContext>		GetLocationContexts() const;
+		std::vector<LocationContext>			GetLocationContexts() const;
 		std::pair<std::string, std::string>	GetListen() const;
-		std::string							GetIPAddress() const;
-		std::string							GetPortNumber() const;
-		std::vector<std::string>			GetServerNameVector() const;
-		std::string							GetRoot() const;
-		std::vector<std::string>			GetIndex() const;
-		int									GetClientMaxBodySize() const;
-		std::vector<ErrorPage>				GetErrorPage() const;
-		bool								IsErrorPageSet() const;
-		t_flags_server						GetFlags() const;
+		std::string								GetIPAddress() const;
+		std::string								GetPortNumber() const;
+		std::vector<std::string>				GetServerNameVector() const;
+		std::vector<ErrorPage>					GetErrorPage() const override;
 
-		// exception classes
-		class InvalidDirectiveException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Invalid Key detected in Server block.";
-				}
-		};
 		class MultipleListensException : public std::exception
 		{
 			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple listen keys detected in Server block.";
+				MultipleListensException(size_t server) {
+					_err_string = "ERROR! Multiple listen directives found in server context no. " + std::to_string(server) + " .";
+				};
+				virtual const char *what() const throw() {
+					return _err_string.c_str();
 				}
-		};
-		class MultipleRootException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple root keys detected in Server block.";
-				}
-		};
-		class MultipleClientMaxBodySizeException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple client_max_body_size keys detected in Server block.";
-				}
+			private:
+				std::string		_err_string;
 		};
 		class DuplicateLocationUriException : public std::exception
 		{
 			public:
-				const char *what() const throw() {
-					return "ERROR! Duplicate location URI detected in Server block.";
+				DuplicateLocationUriException(size_t server, std::string uri) {
+					_err_string = "ERROR! Multiple location uri directives (" + uri + ") found in server context no." + std::to_string(server) + " .";
+				};
+				virtual const char *what() const throw() {
+					return _err_string.c_str();
 				}
+			private:
+				std::string		_err_string;
 		};
 		class MultipleServerNameException : public std::exception
 		{
 			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple server_name keys detected in Server block.";
+				MultipleServerNameException(size_t server) {
+					_err_string = "ERROR! Multiple server_names directives found in server context: " + std::to_string(server) + " .";
+				};
+				virtual const char *what() const throw() {
+					return _err_string.c_str();
 				}
-		};
-		class MultipleIndexException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Multiple index keys detected in Server block.";
-				}
+			private:
+				std::string		_err_string;
 		};
 };
 

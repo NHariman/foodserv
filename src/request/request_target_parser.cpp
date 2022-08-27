@@ -19,8 +19,8 @@ RequestTargetParser::RequestTargetParser()
 // Destructor
 RequestTargetParser::~RequestTargetParser() {}
 
-// Initializes pointer to URI object and 
-// calls on parent class StateParser::ParseString().
+// Initializes pointer to URI object, resets internal counters, and
+// passed input string to parent class StateParser::ParseString().
 size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 	_uri = &uri;
 	_part = pt_Path;
@@ -29,7 +29,7 @@ size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 
 // Retrieves next state based on current state & character.
 URIState	RequestTargetParser::GetNextState(size_t pos) {
-	static 	URIState (RequestTargetParser::*table[6])(char uri_char) = {
+	static 	URIState (RequestTargetParser::*table[])(char uri_char) = {
 			&RequestTargetParser::StartHandler,
 			&RequestTargetParser::PathHandler,
 			&RequestTargetParser::QueryHandler,
@@ -75,10 +75,10 @@ void	RequestTargetParser::AfterParseCheck(size_t& pos) {
 void	RequestTargetParser::PushBuffertoField(URIPart part) {
 	if (part == pt_Path) {
 		size_t query_start = buffer.find_first_of("?");
-		_uri->SetPath(buffer.substr(0, query_start));
+		_uri->_path = buffer.substr(0, query_start);
 	}
 	else {
-		_uri->SetQuery(buffer);
+		_uri->_query = buffer;
 	}
 	buffer.clear();
 }
@@ -103,14 +103,16 @@ URIState		RequestTargetParser::PathHandler(char uri_char) {
 		case '?':
 			return u_Query;
 		case '/':
-			if (buffer.back() != '/')
+			if (!PrecededBy(buffer, '/'))
 				return u_Path;
+			break;
 		default:
 			if (IsPChar(uri_char))
 				return u_Path;
 			else
 				return u_Invalid;
 	}
+	return u_Invalid;
 }
 
 // Handles transition after '?' input indicating queries is found.
@@ -137,22 +139,12 @@ URIState		RequestTargetParser::QueryHandler(char uri_char) {
 // Handles transition after percent-encoding has been found (% input).
 // Checks if subsequent 2 characters are valid hexadecimal digits.
 URIState		RequestTargetParser::PercentHandler(char uri_char) {
-	if (buffer.back() == '%' && IsHexDig(uri_char))
+	if (PrecededBy(buffer, '%') && IsHexDig(uri_char))
 		return u_Percent;
 	else if (IsHexDig(buffer.back()) && IsHexDig(uri_char))
 		return u_Percent_Done;
 	return u_Invalid;
 }
-
-// Called after validating percent-encoded tokens and in PercentDone state.
-static void	DecodePercent(string& buffer) {
-	size_t	percent_start = buffer.size() - 3;
-	string	newbuffer = buffer.substr(0, percent_start);
-	string	hex = buffer.substr(percent_start + 1, percent_start + 2);
-	char	c = std::stoi(hex, nullptr, 16);
-	newbuffer += c;
-	buffer = newbuffer;
-} 
 
 // Handles transition after a valid %HH sequence.
 // PChar & '/' input trigger transition to either Query or Path state
@@ -162,13 +154,14 @@ static void	DecodePercent(string& buffer) {
 // So if we're at Path part, we return the Path state. Ditto for Query.
 URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	NormalizeString(toupper, buffer, buffer.size() - 2);
-	DecodePercent(buffer);
+	buffer = DecodePercent(buffer);
 	switch (uri_char) {
 		case '\0':
 			return u_Done;
 		case '#':
 			if (_part == pt_Query)
 				return u_Done;
+			break;
 		case '%':
 			return u_Percent;
 		case '?':
@@ -181,4 +174,5 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 			else
 				return u_Invalid;
 	}
+	return u_Invalid;
 }

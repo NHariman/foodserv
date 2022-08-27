@@ -30,6 +30,7 @@ URI&	URI::operator=(URI const& other) {
 
 // Overloaded assignment operator taking a full URI string.
 // Alternative to constructing with string.
+// Clears all fields before parsing new string.
 URI&	URI::operator=(string const& input) {
 	_host.clear();
 	_path.clear();
@@ -44,19 +45,19 @@ URI&	URI::operator=(string const& input) {
 URI::~URI() {}
 
 // Simplified method for retrieving parsed URI string meant for external classes/users.
-string	URI::Get() {
+string	URI::Get() const {
 	return _uri_parsed;
 }
 
-string	URI::GetInputURI() {
+string	URI::GetInputURI() const {
 	return _uri_input;
 }
 
-string	URI::GetParsedURI() {
+string	URI::GetParsedURI() const {
 	return _uri_parsed;
 }
 
-string	URI::GetURIDebug() {
+string	URI::GetURIDebug() const {
 	string	uri;
 
 	if (!_host.empty())
@@ -68,40 +69,55 @@ string	URI::GetURIDebug() {
 	return uri;
 }
 
-string	URI::GetHost() {
+string	URI::GetHost() const {
 	return _host;
 }
 
 
-string	URI::GetPath() {
+string	URI::GetPath() const {
 	return _path;
 }
 
 
-string	URI::GetQuery() {
+string	URI::GetQuery() const {
 	return _query;
 }
 
+// Validates input string using ParseInput, which sets _host and _uri_parsed.
 void	URI::SetHost(string const& host) {
-	// TODO: call Host parser to validate?
-	_host = host;
-	_uri_parsed = ConstructParsedURI();
+	_uri_input = host;
+	ParseInput();
 }
 
+// Validates input string using ParseInput, which sets _path and _uri_parsed.
 void	URI::SetPath(string const& path) {
-	_path = path;
-	_uri_parsed = ConstructParsedURI();
+	_uri_input = path;
+	ParseInput();
 }
 
+// Warning: assumes query string is correct and does not validate it.
 void	URI::SetQuery(string const& query) {
 	_query = query;
 	_uri_parsed = ConstructParsedURI();
 }
 
-// Parses origin-form URIs only (without host).
+// Parses URIs using either RequestTargetParser or URIHostParser
+// depending on starting character of input string.
 void	URI::ParseInput() {
-	RequestTargetParser	parser;
-	parser.Parse(*this, _uri_input);
+	size_t	slash_pos = _uri_input.find('/');
+
+	// if no / found, assume it is host string
+	if (slash_pos == string::npos) {
+		URIHostParser	parser;
+		parser.Parse(_host, _uri_input);
+	}
+	// if starts with /, assumes it is origin-form URI
+	else if (slash_pos == 0) {
+		RequestTargetParser	parser;
+		parser.Parse(*this, _uri_input);
+	}
+	else
+		throw BadRequestException("badly-formed URI");
 	_uri_parsed = ConstructParsedURI();
 }
 
@@ -109,7 +125,7 @@ string	URI::ConstructParsedURI() {
 	string	uri;
 
 	if (!_host.empty())
-		uri += "//" + _host;
+		uri += _host;
 	if (!_path.empty())
 		uri += _path;
 	if (!_query.empty())
