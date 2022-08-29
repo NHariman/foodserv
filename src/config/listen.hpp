@@ -4,8 +4,10 @@
   \ V  V /  __/ |_) \__ \  __/ |   \ V /  
    \_/\_/ \___|_.__/|___/\___|_|    \_/   
    
-   The Listen class checks the listen directive from the configuratin file.
-   - 
+   The Listen class checks the listen directive from the configuration file.
+   - Sets default values for IP or port if not specified.
+   - Throws exception on invalid values.
+   - Has getters so retrieve the IP and port values as a string.
 */
 
 #ifndef LISTEN_HPP
@@ -35,10 +37,9 @@ class Listen {
 	public:
 		Listen(std::string listen);
 		
-		bool		CheckCharacters();
-		bool		SplitPortIP();
-		bool		CheckPortNumber(std::string port_number);
-		bool		CheckIpAddress(std::string ip_address);
+		void		SplitPortIP();
+		void		CheckPortNumber(std::string port_number);
+		void		CheckIpAddress(std::string ip_address);
 		std::string	getPortNumber();
 		std::string	getIpNumber();
 
