@@ -17,6 +17,7 @@ using namespace std;
 class BadRequestException : public exception {
 	public:
 		BadRequestException() {}
+		virtual ~BadRequestException() throw() { return; }
 
 		BadRequestException(string detail) {
 			string encoded_detail = EncodePercent(detail);
