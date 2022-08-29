@@ -77,3 +77,17 @@ TEST(RequestFieldParserTest, InvalidFields) {
 		request.Parse("GET /hello.txt HTTP/1.1\nHost: localhost\v\n\n");
 	}, BadRequestException);
 }
+
+TEST(RequestFieldParserTest, InvalidFieldSize) {
+	string long_str(8193, 'a');
+	EXPECT_THROW({
+		Request request(&config);
+		string	req_str = "GET /hello.txt HTTP/1.1\nH" + long_str + ": www.example.com\n\n";
+		request.Parse(req_str.c_str());
+	}, RequestHeaderFieldsTooLargeException);
+	EXPECT_THROW({
+		Request request(&config);
+		string	req_str = "GET /hello.txt HTTP/1.1\nHost:" + long_str + "\n\n";
+		request.Parse(req_str.c_str());
+	}, RequestHeaderFieldsTooLargeException);
+}

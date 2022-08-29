@@ -32,11 +32,11 @@ class HeaderFieldParser : public StateParser<FieldState> {
 		FieldState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
 		bool		CheckDoneState() override;
-		void		PreParseCheck() override;
 
 	private:
 		map<string,string>*	_fields;
 		string				_cur_field;
+		size_t				_bytes_read;
 
 		FieldState	StartHandler(char c);
 		FieldState	NameHandler(char c);

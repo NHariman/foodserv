@@ -17,6 +17,7 @@ using namespace std;
 class BadRequestException : public exception {
 	public:
 		BadRequestException() {}
+		virtual ~BadRequestException() throw() { return; }
 
 		BadRequestException(string detail) {
 			string encoded_detail = EncodePercent(detail);
@@ -44,7 +45,7 @@ class LengthRequiredException : public exception {
 		}
 };
 
-// Used for: payload size exceeding 1,048,576 bytes (1mb).
+// Used for: payload size exceeding max (default 1,048,576 bytes (1mb)).
 // Thrown by HeaderFieldValidator::ValidContentLength.
 // Should return 413 code.
 // Server may close connection to prevent client from continuing request.

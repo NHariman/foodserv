@@ -15,7 +15,7 @@
 
 // Default constructor
 HeaderFieldParser::HeaderFieldParser()
-	: StateParser(f_Start, f_Done), _fields(NULL) {}
+	: StateParser(f_Start, f_Done), _fields(NULL), _bytes_read(0) {}
 
 // Destructor
 HeaderFieldParser::~HeaderFieldParser() {}
@@ -36,6 +36,11 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 			&HeaderFieldParser::ValueHandler,
 			nullptr
 	};
+	if (input[pos])
+		_bytes_read += 1;
+	// check if total header fields exceeds 8kb limit.
+	if (_bytes_read > 8192)
+		throw RequestHeaderFieldsTooLargeException();
 	return (this->*table[cur_state])(input[pos]);
 }
 
@@ -46,12 +51,6 @@ void	HeaderFieldParser::CheckInvalidState() const {
 
 bool	HeaderFieldParser::CheckDoneState() {
 	return (cur_state == f_Done);
-}
-
-// Checks if header fields size is greater than 8kb.
-void	HeaderFieldParser::PreParseCheck() {
-	if (input.size() > 8192)
-		throw RequestHeaderFieldsTooLargeException();
 }
 
 // Header field may only start with TChar.
@@ -79,6 +78,9 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
 	if (DEBUG) cout << "[FP NameHandler] at: [" << c << "]\n";
+
+	if (buffer.size() > 8192)
+		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
 		case '\0':
 			return f_Name;
@@ -110,6 +112,9 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 // returns ValueEnd state to check for valid CRLF sequence.
 FieldState	HeaderFieldParser::ValueHandler(char c) {
 	if (DEBUG) cout << "[FP ValueHandler] at: [" << c << "]\n";
+
+	if (buffer.size() > 8192)
+		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
 		case '\0':
 			PushFieldValue();
