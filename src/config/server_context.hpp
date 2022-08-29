@@ -26,14 +26,15 @@
 
 class ServerContext : public ConfigValues {
 	private:
+
 		size_t	amount_location_context;
 		bool	bool_listen;
 		bool	bool_server_name;
 
-		size_t							_server_nb;
-		std::vector<LocationContext>	_location_contexts;
-		std::pair<in_addr_t, int>		_listen; // changed by sanne
-		std::vector<std::string>		_server_name; // changed by sanne
+		size_t								_server_nb;
+		std::vector<LocationContext>		_location_contexts;
+		std::pair<std::string, std::string>	_listen;
+		std::vector<std::string>			_server_name;
 
 		size_t					FindLocationContextEnd(std::string config_file, size_t start);
 		//overridden base class functions
@@ -53,12 +54,12 @@ class ServerContext : public ConfigValues {
 		// check if set
 		bool						IsSet(std::string key) override;
 		//getters
-		std::vector<LocationContext>	GetLocationContexts() const;
-		std::pair<in_addr_t, int>	GetListen() const;
-		in_addr_t					GetIPAddress() const;
-		int							GetPortNumber() const;
-		std::vector<std::string>	GetServerNameVector() const;
-		std::vector<ErrorPage>		GetErrorPage() const override;
+		std::vector<LocationContext>			GetLocationContexts() const;
+		std::pair<std::string, std::string>		GetListen() const;
+		std::string								GetIPAddress() const;
+		std::string								GetPortNumber() const;
+		std::vector<std::string>				GetServerNameVector() const;
+		std::vector<ErrorPage>					GetErrorPage() const override;
 
 		class MultipleListensException : public std::exception
 		{
@@ -69,6 +70,7 @@ class ServerContext : public ConfigValues {
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
 				}
+				virtual ~MultipleListensException() throw() {}
 			private:
 				std::string		_err_string;
 		};
@@ -81,6 +83,7 @@ class ServerContext : public ConfigValues {
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
 				}
+				virtual ~DuplicateLocationUriException() throw() {}
 			private:
 				std::string		_err_string;
 		};
@@ -93,6 +96,7 @@ class ServerContext : public ConfigValues {
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
 				}
+				virtual ~MultipleServerNameException() throw() {}
 			private:
 				std::string		_err_string;
 		};

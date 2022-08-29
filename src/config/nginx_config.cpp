@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   nginx_config.cpp                                   :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
+/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/18 16:27:57 by nhariman      ########   odam.nl         */
+/*   Created: 2022/08/29 17:29:14 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/08/29 17:29:16 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ void		NginxConfig::FindServerContexts() {
 	if (_amount_server_contexts == 0)
 		throw NoServerContextsException();
 	return ;
-	
 }
 
 // getters
@@ -143,12 +142,14 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 
+// check function, add in port selection first
+
 host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::string target) const {
 
 	host_target_pair	 host_target_pair;
 
 	for (size_t server = 0 ; server < _servers.size(); server++) {
-		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
+		for (size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
 			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
 				host_target_pair.server = _servers.at(server);
 				for (size_t loc = 0 ; loc < _servers.at(server).GetLocationContexts().size() ; loc++) {
@@ -165,10 +166,11 @@ host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::strin
 }
 
 ServerContext			NginxConfig::GetHostServer(std::string host) const {
-
+	std::cout << "******IN SERVERCONTEXT : GetHostServer*****" << std::endl;
 	for (size_t server = 0 ; server < _servers.size(); server++) {
 		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
 			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
+				ServerContext check = _servers.at(server);
 				return _servers.at(server);
 			}
 		}

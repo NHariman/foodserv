@@ -42,14 +42,15 @@ void	ServerSelection::SplitRequestHost() {
 
 	// both request server_name and port_number stay empty
 	std::string		request_server_name = "";
-	int				request_port_number = -1;
+	std::string		request_port_number = "";
 	unsigned long	found;
 
 	// if a ':' is found, this means a port number is specified in the request
 	// split the server_name and the port_number of the request.
 	found = request_host.find(':');
 	if (found != std::string::npos) {
-		request_port_number = std::stoi(request_host.substr(found + 1, request_host.length()));
+		// request_port_number = std::stoi(request_host.substr(found + 1, request_host.length()));
+		request_port_number = request_host.substr(found + 1, request_host.length());
 		request_server_name = request_host.substr(0, found);
 	}
 	else
@@ -58,7 +59,7 @@ void	ServerSelection::SplitRequestHost() {
 	std::cout << "\nrequest_port_number: " << request_port_number << std::endl;
 	std::cout << "request_server_name: " << request_server_name << std::endl;
 
-	if (request_port_number != -1) {
+	if (request_port_number != "") {
 		SelectCompatiblePorts(request_port_number);
 		if (_compatible_serverblocks.size() == 1) {
 			_chosen_serverblock = _compatible_serverblocks.at(0);
@@ -76,7 +77,7 @@ void	ServerSelection::SplitRequestHost() {
 
 }
 
-void	ServerSelection::SelectCompatiblePorts(int request_port_number) {
+void	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
 	// see if there are server blocks with compatible port numbers
 	for (std::vector<ServerContext>::iterator it = _serverblocks.begin(); it != _serverblocks.end(); it++) {
 		if (it->GetPortNumber() == request_port_number) {
@@ -95,7 +96,6 @@ void	ServerSelection::SelectCompatibleServerNames(std::string request_server_nam
 			if (it2->compare(request_server_name) == 0) {
 				std::cout << "SERVER BLOCK MATCH FOUND.";
 				_chosen_serverblock = *it;
-				// _compatible_server_blocks.push_back(*it);
 				return ;
 			}
 			else {
@@ -103,4 +103,8 @@ void	ServerSelection::SelectCompatibleServerNames(std::string request_server_nam
 			}
 		}
 	}
+}
+
+std::string		ServerSelection::getHost() {
+	return _chosen_serverblock.GetPortNumber();
 }
