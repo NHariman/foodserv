@@ -6,6 +6,7 @@
    
    The Listen class checks the listen directive from the configuration file.
    - Sets default values for IP or port if not specified.
+   - Default port : 80, deafult IP: 0.0.0.0
    - Throws exception on invalid values.
    - Has getters so retrieve the IP and port values as a string.
 */
@@ -23,11 +24,14 @@
 **	- port cant be negative and not bigger than 65535
 */
 
+# define DEFAULT_PORT "80"
+# define DEFAULT_IP	"0"
+
 class Listen {
 	private:
 		std::string	_listen;
 		std::string	_port_number;
-		std::string	_ip_number;
+		std::string	_ip_address;
 		
 	private:
 		Listen();

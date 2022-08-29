@@ -1,5 +1,5 @@
-#include "ListeningSocket.hpp"
-#include "KernelEvent.hpp"
+#include "listening_socket.hpp"
+#include "kernel_event.hpp"
 
 int	main() {
 	// Socket	ipv4("127.0.0.1", "80");
@@ -18,7 +18,7 @@ int	main() {
 	// std::cout << "LISTENING SOCKET: "<< ipv6->getListeningSocket() << std::endl;
 
 	// now initialize the kqueue with the newly opened listening socket.
-	ListeningSocket	*sock = new ListeningSocket("::", "8080");
+	ListeningSocket	*sock = new ListeningSocket("0", "8080");
 	KernelEvent	*webserver = new KernelEvent(sock->getListeningSocket());
 
 	// delete ipv6;

@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/29 16:11:10 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/29 16:44:46 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,10 @@
 // step 3: If port, check port
 // step 4: If ip, check IP
 
-// DEFAULT PORT = 80
-// DEFAULT IP is in any address 0.0.0.0 for ipv4 and [::0] for IPv6 
 
-Listen::Listen(std::string listen) : _listen(listen) {
+Listen::Listen(std::string listen) : _listen(listen), _port_number(DEFAULT_PORT), _ip_address(DEFAULT_IP) {
 	std::cout << std::endl << "String in listen: " << _listen << std::endl;
 	if (_listen.empty()) {
-		_port_number = "80";
-		_ip_number = "0";
-		std::cout << "defaults set" << std::endl;
 		return ;
 	}
 
@@ -40,6 +35,7 @@ Listen::Listen(std::string listen) : _listen(listen) {
 	// }
 	// // if (_ip_number == in_addr_t(std::string::npos))
 	// // 	_ip_number = "0.0.0.0";
+
 }
 
 /*
@@ -80,9 +76,14 @@ void		Listen::CheckIpAddress(std::string ip_address) {
 	(void)ip_address;
 	std::cout << "in check IP number with >" << ip_address << "<" << std::endl;
 	if (ip_address == "localhost")
-		_ip_number = "127.0.0.1";
-	else if (ip_address == "0")
-		_ip_number = "0";
+		_ip_address = "127.0.0.1";
+	else if (ip_address == "0" || ip_address == "*")
+		_ip_address = "0";
+	else {
+		if (ip_address.find_first_not_of("0123456789:.[]") != std::string::npos)
+			throw InvalidIpException();
+		_ip_address = ip_address;
+	}
 }
 
 std::string		Listen::getPortNumber() {
@@ -91,6 +92,6 @@ std::string		Listen::getPortNumber() {
 }
 
 std::string		Listen::getIpNumber() {
-	return _ip_number;
+	return _ip_address;
 	// return "[::]";
 }
