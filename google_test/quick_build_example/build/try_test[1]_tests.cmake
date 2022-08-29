@@ -1,7 +1,0 @@
-add_test( HelloTestSuite.HelloTest /Users/sannealbreghs/Desktop/foodserv/google_test/quick_build_example/build/try_test [==[--gtest_filter=HelloTestSuite.HelloTest]==] --gtest_also_run_disabled_tests)
-set_tests_properties( HelloTestSuite.HelloTest PROPERTIES WORKING_DIRECTORY /Users/sannealbreghs/Desktop/foodserv/google_test/quick_build_example/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-add_test( FactorialTest.HandlesZeroInput /Users/sannealbreghs/Desktop/foodserv/google_test/quick_build_example/build/try_test [==[--gtest_filter=FactorialTest.HandlesZeroInput]==] --gtest_also_run_disabled_tests)
-set_tests_properties( FactorialTest.HandlesZeroInput PROPERTIES WORKING_DIRECTORY /Users/sannealbreghs/Desktop/foodserv/google_test/quick_build_example/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-add_test( FactorialTest.HandlesPositiveInput /Users/sannealbreghs/Desktop/foodserv/google_test/quick_build_example/build/try_test [==[--gtest_filter=FactorialTest.HandlesPositiveInput]==] --gtest_also_run_disabled_tests)
-set_tests_properties( FactorialTest.HandlesPositiveInput PROPERTIES WORKING_DIRECTORY /Users/sannealbreghs/Desktop/foodserv/google_test/quick_build_example/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-set( try_test_TESTS HelloTestSuite.HelloTest FactorialTest.HandlesZeroInput FactorialTest.HandlesPositiveInput)
