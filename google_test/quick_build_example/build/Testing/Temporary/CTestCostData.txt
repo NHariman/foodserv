@@ -1,0 +1,5 @@
+try_test_NOT_BUILT 0 0
+HelloTestSuite.HelloTest 1 0.00429315
+FactorialTest.HandlesZeroInput 1 0.00401654
+FactorialTest.HandlesPositiveInput 1 0.00463567
+---

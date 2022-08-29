@@ -1,0 +1,7 @@
+add_test( Listen1.Correct /Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build/try_test [==[--gtest_filter=Listen1.Correct]==] --gtest_also_run_disabled_tests)
+set_tests_properties( Listen1.Correct PROPERTIES WORKING_DIRECTORY /Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test( Listen2.Correct /Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build/try_test [==[--gtest_filter=Listen2.Correct]==] --gtest_also_run_disabled_tests)
+set_tests_properties( Listen2.Correct PROPERTIES WORKING_DIRECTORY /Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+add_test( ListenTest.Exceptions /Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build/try_test [==[--gtest_filter=ListenTest.Exceptions]==] --gtest_also_run_disabled_tests)
+set_tests_properties( ListenTest.Exceptions PROPERTIES WORKING_DIRECTORY /Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
+set( try_test_TESTS Listen1.Correct Listen2.Correct ListenTest.Exceptions)

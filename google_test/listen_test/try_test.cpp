@@ -1,49 +1,30 @@
 #include <gtest/gtest.h>
 #include "../../src/config/listen.hpp"
+// #include <gmock/gmock.h>
 
+// int test(int n);
+
+// Test syntax
 /*
-    Test syntax
-    
     TEST(TestSuiteName, TestName) {
     ... test body ...
     }
 */
 
-/*
-
-LISTEN: sets the address and port for IP, both address and port, or only address or only port can be specified.
-		an address may also be a hostname.
-
-all possibilities to check for: 
-
-syntax: 
-listen address[:port];
-
-default:
-listen *:80;
-or
-listen *:8000;
-
-good ones:
-
-listen 127.0.0.1:8000;
-listen 127.0.0.1;
-listen 8000;
-listen *:8000;
-listen localhost:8000;
-listen [::]:8000;
-listen [::1];
-
-*/
-
-TEST(ListenTests, ValidInput) {
-    EXPECT_NO_THROW( {
-
-    });
+TEST(Listen1, Correct) {
+	Listen  test1("127.0.0.1:8000");
+	EXPECT_EQ(test1.getIpNumber(), "127.0.0.1");
+	EXPECT_EQ(test1.getPortNumber(), "8000");
 }
 
-TEST(ListenTests) {
-	EXPECT_THROW({
+TEST(Listen2, Correct) {
+	Listen  test2("8000");
+	EXPECT_EQ(test2.getIpNumber(), "0");
+	EXPECT_EQ(test2.getPortNumber(), "8000");
+}
 
-	});
+TEST(ListenTest, Exceptions) {
+  EXPECT_THROW({
+    Listen test("crap:crap");
+  }, Listen::InvalidIpException);
 }
