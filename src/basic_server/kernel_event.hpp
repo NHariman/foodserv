@@ -14,7 +14,7 @@
 #include <fstream>
 
 #include "listening_socket.hpp"
-#include "../config/nginx_config.hpp"
+// #include "../config/nginx_config.hpp"
 
 #define MAX_EVENTS 32
 #define MAX_MSG_SIZE 500

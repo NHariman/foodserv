@@ -57,6 +57,7 @@ class ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~MethodNotSetException() throw() {}
 		};
 
 		// invalid directive exceptions
@@ -74,6 +75,7 @@ class ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~InvalidDirectiveSetCheckException() throw() {}
 		};
        class InvalidDirectiveException : public std::exception
 		{
@@ -90,6 +92,7 @@ class ConfigValues {
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
 				}
+				virtual ~InvalidDirectiveException() throw() {}
 			private:
 				std::string		_err_string;
 		};
@@ -111,6 +114,7 @@ class ConfigValues {
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
 				}
+				virtual ~DirectiveNotSetException() throw() {}
 			private:
 				std::string		_err_string;
 		};
@@ -128,6 +132,7 @@ class ConfigValues {
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
 				}
+				virtual ~MultipleRootException() throw() {}
 			private:
 				std::string		_err_string;
 		};
@@ -145,6 +150,7 @@ class ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~MultipleIndexException() throw() {}
 		};
         class MultipleClientMaxBodySizeException : public std::exception
 		{
@@ -158,6 +164,7 @@ class ConfigValues {
 				virtual const char *what() const throw() {
 					return _err_string.c_str();
 				}
+				virtual ~MultipleClientMaxBodySizeException() throw() {}
 			private:
 				std::string		_err_string;
 		};
@@ -175,6 +182,7 @@ class ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~MultipleErrorPageException() throw() {}
 		};
         class MultipleAutoindexException : public std::exception
 		{
@@ -190,6 +198,7 @@ class ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~MultipleAutoindexException() throw() {}
 		};
 		class MultipleReturnException : public std::exception
 		{
@@ -205,6 +214,7 @@ class ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~MultipleReturnException() throw() {}
 		};
 };
 

@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/08/26 20:32:33 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/28 12:38:25 by salbregh      ########   odam.nl         */
+/*   Created: 2022/08/29 17:29:21 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/08/29 17:34:16 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ class NginxConfig {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+				virtual ~HostDoesNotExistException() throw() {};
 		};
 
 		class CannotFindMaxBodySizeException : public std::exception {
@@ -135,6 +136,7 @@ class NginxConfig {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+				virtual ~CannotFindMaxBodySizeException() throw() {};
 		};
 		class HostTargetPairDoesNotExistException : public std::exception {
 			private:
@@ -146,6 +148,7 @@ class NginxConfig {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+				virtual ~HostTargetPairDoesNotExistException() throw() {}
 		};
 };
 

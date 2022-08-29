@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   main.cpp                                           :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
+/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/28 12:37:58 by salbregh      ########   odam.nl         */
+/*   Created: 2022/08/29 17:29:59 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/08/29 17:30:00 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ int	main(int ac, const char **av) {
 	(void)ac;
 	try {
 		NginxConfig		input_file(av[1]);
+
+		// input_file.GetHostServer("example.com");
 
 		// ServerSelection	serverblock_selection(input_file.GetServers());
 		

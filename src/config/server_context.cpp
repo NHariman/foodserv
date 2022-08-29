@@ -274,10 +274,6 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 		i = value_end + 1;
 	}
 	*start_position = i;
-<<<<<<< HEAD
-
-	CheckListVerification();
-=======
 }
 
 // check if is set
@@ -308,7 +304,6 @@ bool						ServerContext::IsSet(std::string directive) {
 			return bool_return_dir;
 	}
 	throw InvalidDirectiveException(directive, _server_nb);
->>>>>>> main
 }
 
 //getters

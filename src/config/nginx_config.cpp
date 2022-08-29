@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/08/26 20:32:11 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/28 13:06:53 by salbregh      ########   odam.nl         */
+/*   Created: 2022/08/29 17:29:14 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/08/29 17:29:16 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,10 +166,11 @@ host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::strin
 }
 
 ServerContext			NginxConfig::GetHostServer(std::string host) const {
-
+	std::cout << "******IN SERVERCONTEXT : GetHostServer*****" << std::endl;
 	for (size_t server = 0 ; server < _servers.size(); server++) {
 		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
 			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
+				ServerContext check = _servers.at(server);
 				return _servers.at(server);
 			}
 		}

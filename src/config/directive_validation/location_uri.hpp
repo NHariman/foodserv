@@ -41,6 +41,7 @@ class LocationUri {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~BadUriException() throw() {}
 		};
 		class MissingArgumentsException : public std::exception
 		{

@@ -58,7 +58,9 @@ class LocationContext : public ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~MultipleFastCGIPassException() throw() {}
 		};
+
 		class MultipleAllowedMethodsException : public std::exception
 		{
 			private:
@@ -70,7 +72,9 @@ class LocationContext : public ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~MultipleAllowedMethodsException() throw() {}
 		};
+
 		class BadURIException : public std::exception
 		{
 			private:
@@ -82,6 +86,7 @@ class LocationContext : public ConfigValues {
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
+				virtual ~BadURIException() throw() {}
 		};
 };
 
