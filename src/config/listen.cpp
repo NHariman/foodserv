@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/25 13:45:33 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/29 11:22:11 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ Listen::Listen(std::string listen) { //}: _listen(listen), _port_number(NULL), _
 	std::cout << "String in listen: " << listen << std::endl;
 	// std::cout << "gets here" << std::endl;
 	// if (CheckCharacters() == false || SplitPortIP() == false) {
-	// 	std::cout << "webserv: invalid port/ip in \"" << _listen << "\" of the \"listen\" directive." << std::endl;
+		// std::cout << "webserv: invalid port/ip in \"" << _listen << "\" of the \"listen\" directive." << std::endl;
 	// 	// _ip_number = -1; // dit is 4294967295
 	// 	// _port_number = -1;
 	// 	// implement what happens when this is invalid

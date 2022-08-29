@@ -1,45 +1,31 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   listen.hpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/07/04 16:13:56 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/25 11:48:48 by salbregh      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ __      _____| |__  ___  ___ _ ____   __ 
+ \ \ /\ / / _ \ '_ \/ __|/ _ \ '__\ \ / /   
+  \ V  V /  __/ |_) \__ \  __/ |   \ V /  
+   \_/\_/ \___|_.__/|___/\___|_|    \_/   
+   
+   The Listen class checks the listen directive from the configuratin file.
+   - 
+*/
 
 #ifndef LISTEN_HPP
 # define LISTEN_HPP
 
 #include <iostream>
 #include <string>
-#include <arpa/inet.h>
+#include <exception> 
 
 /*
 **	NOTES:
-
 **	The listen directive 
-
 **	- port cant be negative and not bigger than 65535
-
-**	FUNCTIONS:
-**	- htonl: 
-**	- htons: 
-
-	example from server part: 
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = htonl(INADDR_ANY);
-	address.sin_port = htons(8080);
-
 */
 
 class Listen {
 	private:
 		std::string	_listen;
-		std::string	_port_number; // htons?
-		std::string	_ip_number; // change to int? it htons htlons whatever
+		std::string	_port_number;
+		std::string	_ip_number;
 		
 	private:
 		Listen();
@@ -55,6 +41,22 @@ class Listen {
 		bool		CheckIpAddress(std::string ip_address);
 		std::string	getPortNumber();
 		std::string	getIpNumber();
+
+		/* exceptions */
+
+		class InvalidPortException : public std::exception {
+			public:
+				const char *what() const throw () {
+					return "ERROR! Invalid port number detected.";
+				}
+		};
+
+		class InvalidIpException : public std::exception {
+			public:
+				const char *what() const throw() {
+					return "ERROR! Invalid IP detected.";
+				}
+		};
 };
 
 #endif
