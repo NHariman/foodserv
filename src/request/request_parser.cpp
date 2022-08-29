@@ -95,7 +95,7 @@ static size_t	FindFieldEnd(string const& input, size_t pos) {
 		throw BadRequestException("Header field missing line break");
 }
 
-// Calls on HeaderFieldParser to parse header fields, as delimited by empty line.
+// Calls on HeaderFieldParser to parse header fields.
 RequestState	RequestParser::HeaderFieldHandler() {
 	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
@@ -154,6 +154,11 @@ RequestState	RequestParser::MessageBodyHandler() {
 	}
 }
 
+// void	HandleEndOfChunkedMessage(Request& request) {
+// 	request.content_length = request.GetMessageBody().size();
+// 	request.
+// }
+
 RequestState	RequestParser::ChunkedHandler() {
 	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos]
 		<< "], len of input: " << input.substr(pos).length() << "\n";
@@ -162,6 +167,7 @@ RequestState	RequestParser::ChunkedHandler() {
 		pos += _chunked_parser.Parse(*_request, input.substr(pos));
 		if (_chunked_parser.IsDone() == true) {
 			if (DEBUG) cout << "--- Chunked Parsing complete. ---\n";
+			// HandleEndOfChunkedMessage(*_request);
 			return r_Done;
 		}
 		else

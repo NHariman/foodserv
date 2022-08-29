@@ -34,8 +34,8 @@ const vector<string>	ChunkedParser::illegal_fields = {
 
 // Default constructor
 ChunkedParser::ChunkedParser()
-	:	StateParser(c_Start, c_Done), _request(NULL), _chunk_size(0),
-		_chunk_ext(false), _chunk_trailer(false) {}
+	:	StateParser(c_Start, c_Done), _request(NULL), _chunk_size(0), _chunk_ext_size(0),
+		_chunk_ext(false), _chunk_trailer(false), _cr(false) {}
 
 // Destructor
 ChunkedParser::~ChunkedParser() {}
@@ -60,8 +60,6 @@ ChunkState	ChunkedParser::GetNextState(size_t pos) {
 			nullptr
 	};
 	if (DEBUG) cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
-	// cout << "GNS: chunk_ext: " << _chunk_ext << ", size: " << _chunk_size
-	// 	<< ", buffer: " << buffer << endl;
 	skip_char = false;
 
 	return (this->*table[cur_state])(input[pos]);
@@ -99,24 +97,36 @@ ChunkState	ChunkedParser::StartHandler(char c) {
 }
 
 // Handles parsing of chunk size, ignoring chunk-extensions.
+// Checks for overly-lengthy chunk sizes and chunk extensions.
+// Limit for chunk extension follows 8192B limit of URI & header fields.
+// Limit for chunk size is based on 1,048,576B limit for payload.
 ChunkState	ChunkedParser::SizeHandler(char c) {
 	if (DEBUG) cout << "[SizeHandler] at: [" << c << "]\n";
 
+	// chunk size & chunk extension size check
+	if (buffer.size() > 7)
+		throw PayloadTooLargeException();
+	if (_chunk_ext == true) {
+		if (_chunk_ext_size > 8192)
+			throw PayloadTooLargeException();
+		else
+			return HandleChunkExtension(c);
+	}
 	switch (c) {
+		case '\0':
+			skip_char = true;
+			return c_Size;
 		case '\r':
 			return HandleCRLF(c, c_Size);
 		case '\n':
-			_chunk_ext = false;
 			return HandleCRLF(c, c_Data);
 		case ';':
 			skip_char = true;
 			_chunk_ext = true;
 			return c_Size;
 		default:
-			if (_chunk_ext == true) {
-				skip_char = true;
+			if (isdigit(c))
 				return c_Size;
-			}
 			else
 				return c_Invalid;
 	}
@@ -151,27 +161,31 @@ ChunkState	ChunkedParser::DataHandler(char c) {
 }
 
 // Handles last-chunk parsing, which is '0' followed by CRLF.
-// Like SizeHandler, ignores chunk extensions.
+// Like SizeHandler, ignores chunk extensions but guards against overly-long
+// chunk extensions.
 ChunkState	ChunkedParser::LastHandler(char c) {
 	if (DEBUG) cout << "[LastHandler] at: [" << c << "]\n";
 
+	if (_chunk_ext == true) {
+		if (_chunk_ext_size > 8192)
+			throw PayloadTooLargeException();
+		else
+			return HandleChunkExtension(c);
+	}
 	switch (c) {
+		case '\0':
+			skip_char = true;
+			return c_Last;
 		case '\r':
 			return HandleCRLF(c, c_Last);
 		case '\n':
-			_chunk_ext = false;
 			return HandleCRLF(c, c_Trailer);
 		case ';':
 			skip_char = true;
 			_chunk_ext = true;
 			return c_Last;
 		default:
-			if (_chunk_ext == true) {
-				skip_char = true;
-				return c_Last;
-			}
-			else
-				return c_Invalid;
+			return c_Invalid;
 	}
 }
 
@@ -190,7 +204,8 @@ ChunkState	ChunkedParser::TrailerHandler(char c) {
 			else
 				return c_End;
 		case '\0':
-			return c_Invalid;
+			skip_char = true;
+			return c_Trailer;
 		default:
 			_chunk_trailer = true;
 			return c_Trailer;
@@ -202,25 +217,39 @@ ChunkState	ChunkedParser::EndHandler(char c) {
 	if (DEBUG) cout << "[EndHandler] at: [" << c << "]\n";
 	switch (c) {
 		case '\0':
+			skip_char = true;
 			return c_Done;
 		default:
 			return c_Invalid;
 	}
 }
 
+// Helper function for skipping chunk extensions while checking its size.
+ChunkState	ChunkedParser::HandleChunkExtension(char c) {
+	if (c == '\n') {
+		_chunk_ext = false;
+		_chunk_ext_size = 0;
+		return HandleCRLF(c, ChunkState(cur_state + 1));
+	}
+	skip_char = true;
+	_chunk_ext_size += 1;
+	return cur_state;
+}
+
 // Helper function for parsing line endings.
 // Accepts both CRLF and just LF as line endings.
 // `skip` is optional argument that defaults to TRUE.
+// Uses bool `_cr` to remember if a CR has previously been found.
 // If buffer is not empty, pushes buffer to appropriate field.
 ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
-	// Peeks at next character in input to check for anything other than CRLF.
-	// if (input[pos - 1] == '\r' && c == '\r') {
-	if (c == '\r' && pos < input.size() - 1 && input[pos + 1] != '\n')
+	// Check for any sequence other than CRLF.
+	if (_cr == true && c != '\n')
 		return c_Invalid;
 
 	skip_char = skip;
 	if (!buffer.empty())
 		SaveParsedValue();
+	_cr = (c == '\r');
 	return next_state;
 }
 
