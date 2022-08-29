@@ -30,6 +30,10 @@ class BadRequestException : public exception {
 			return _error_str.c_str();
 		}
 
+		virtual ~BadRequestException() throw() {
+			return ;
+		}
+
 	private:
 		string	_error_str;
 };

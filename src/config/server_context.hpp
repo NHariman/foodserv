@@ -33,8 +33,8 @@ class ServerContext : public ConfigValues {
 
 		size_t								_server_nb;
 		std::vector<LocationContext>		_location_contexts;
-		std::pair<std::string, std::string>	_listen; // changed by sanne
-		std::vector<std::string>			_server_name; // changed by sanne
+		std::pair<std::string, std::string>	_listen;
+		std::vector<std::string>			_server_name;
 
 		size_t					FindLocationContextEnd(std::string config_file, size_t start);
 		//overridden base class functions
@@ -55,7 +55,7 @@ class ServerContext : public ConfigValues {
 		bool						IsSet(std::string key) override;
 		//getters
 		std::vector<LocationContext>			GetLocationContexts() const;
-		std::pair<std::string, std::string>	GetListen() const;
+		std::pair<std::string, std::string>		GetListen() const;
 		std::string								GetIPAddress() const;
 		std::string								GetPortNumber() const;
 		std::vector<std::string>				GetServerNameVector() const;
