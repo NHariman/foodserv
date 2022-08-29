@@ -64,23 +64,35 @@ TEST(RequestChunkedTest, ValidSplitDataCRLF) {
 	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
 }
 
+TEST(RequestChunkedTest, ValidSplitHeadersCRLF) {
+	Request request(&config);
+	ParseChunked(request,  "GET /hello HTTP/1.1\r\nHost: localhost\r\nAccept: text/html\r");
+	ParseChunked(request, "\n\r\n");
+
+	EXPECT_EQ(request.GetField("host"), "localhost");
+	EXPECT_EQ(request.GetField("Accept"), "text/html");
+}
+
 TEST(RequestChunkedTest, InvalidCRLF) {
 	EXPECT_THROW({
 		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r");
-		ParseChunked(request, "\r\nBye!\r\n0\r\n\r\n");
-
+		ParseChunked(request, "GET /hello HTTP/1.1\r");
+		ParseChunked(request, "\r\nHost: localhost\r\n\r\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r\n");
-		ParseChunked(request, "Bye!\r\r\n0\r\n\r\n");
-
+		ParseChunked(request, POST_Req + "Transfer-Encoding: chunked\r\n\r");
+		ParseChunked(request, "\r\n0\r\n\r\n");
 	}, BadRequestException);
 	EXPECT_THROW({
 		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r\n");
-		ParseChunked(request, "Bye!\r\n0\r\r\n");
-
+		ParseChunked(request, POST_Req);
+		ParseChunked(request, "Transfer-Encoding: chunked\r\n\r");
+		ParseChunked(request, "\r\n0\r\n\r\n");
+	}, BadRequestException);
+	EXPECT_THROW({
+		Request request(&config);
+		ParseChunked(request,  "GET /hello HTTP/1.1\r\nHost: localhost\r\nAccept: text/html\r");
+		ParseChunked(request, "\r\n\r\n");
 	}, BadRequestException);
 }

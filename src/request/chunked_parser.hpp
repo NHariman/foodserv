@@ -41,8 +41,10 @@ class ChunkedParser : public StateParser<ChunkState> {
 	private:
 		Request*	_request;
 		size_t		_chunk_size;
+		size_t		_chunk_ext_size;
 		bool		_chunk_ext;
 		bool		_chunk_trailer;
+		bool		_cr; // keeps track of when CR is found
 		
 		ChunkState	StartHandler(char c);
 		ChunkState	SizeHandler(char c);
@@ -50,6 +52,7 @@ class ChunkedParser : public StateParser<ChunkState> {
 		ChunkState	LastHandler(char c);
 		ChunkState	TrailerHandler(char c);
 		ChunkState	EndHandler(char c);
+		ChunkState	HandleChunkExtension(char c);
 		ChunkState	HandleCRLF(char c, ChunkState return_state, bool skip = true);
 		void		ParseTrailerHeader(map<string, string>& fields);
 		void		SaveParsedValue();
