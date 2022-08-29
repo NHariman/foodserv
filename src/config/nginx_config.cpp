@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/08/26 20:32:11 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/26 20:32:16 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/28 13:06:53 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,12 +142,14 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 
+// check function, add in port selection first
+
 host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::string target) const {
 
 	host_target_pair	 host_target_pair;
 
 	for (size_t server = 0 ; server < _servers.size(); server++) {
-		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
+		for (size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
 			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
 				host_target_pair.server = _servers.at(server);
 				for (size_t loc = 0 ; loc < _servers.at(server).GetLocationContexts().size() ; loc++) {

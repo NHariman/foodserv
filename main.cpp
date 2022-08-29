@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/25 13:45:54 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/28 12:37:58 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 #include <stdexcept>
 #include <vector>
 #include "src/config/nginx_config.hpp"
-#include "src/basic_server/listening_socket.hpp"
-#include "src/basic_server/kernel_event.hpp"
-#include "src/config/server_selection.hpp"
+// #include "src/basic_server/listening_socket.hpp"
+// #include "src/basic_server/kernel_event.hpp"
+// #include "src/config/server_selection.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
 	try {
 		NginxConfig		input_file(av[1]);
 
-		ServerSelection	serverblock_selection(input_file.GetServers());
+		// ServerSelection	serverblock_selection(input_file.GetServers());
 		
 		// // add exceptions in the server_selection class to make it able to throw.
 		// std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
