@@ -42,18 +42,16 @@ class RequestTargetParser : public StateParser<URIState> {
 		URI		*_uri;
 		URIPart _part;
 
-		// void		ParseHost(string const& input); // TODO: review later if should be moved
-		void		PushBuffertoField(URIPart part);
 		URIState	StartHandler(char uri_char);
 		URIState	PathHandler(char uri_char);
 		URIState	QueryHandler(char uri_char);
 		URIState	PercentHandler(char uri_char);
 		URIState	PercentDoneHandler(char uri_char);
+		URIState	PushBuffertoField(URIState next_state, bool skip = true);
 	
 	protected:
 		URIState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
-		bool		CheckDoneState() override;
 		void		PreParseCheck() override;
 		void		AfterParseCheck() override;
 };
