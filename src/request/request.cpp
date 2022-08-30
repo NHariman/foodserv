@@ -4,14 +4,21 @@
 // Default constructor // TODO: Review use/removal
 Request::Request()
 	:	bytes_read(0),
+		msg_bytes_read(0),
 		content_length(-1),
 		max_body_size(1048576),
-		_is_complete(false) {}
+		_status(Status::Incomplete),
+		_status_code(0) {}
 
 // Config file constructor
 Request::Request(NginxConfig* config)
-	:	bytes_read(0), content_length(-1), max_body_size(1048576),
-		_parser(config), _is_complete(false) {}
+	:	bytes_read(0),
+		msg_bytes_read(0),
+		content_length(-1),
+		max_body_size(1048576),
+		_parser(config),
+		_status(Status::Incomplete),
+		_status_code(0) {}
 
 // Destructor
 Request::~Request() {}
@@ -26,12 +33,11 @@ size_t	Request::Parse(char const* buffer) {
 		try {
 			bytes_read += _parser.Parse(*this, _buf);
 			_buf.clear();
+			CheckStatus();
 		}
 		catch (std::exception &e) {
 			throw;
 		}
-		if (_parser.cur_state == r_Done)
-			_is_complete = true;
 	}
 	return bytes_read;
 }
@@ -74,8 +80,16 @@ typename Request::FieldsMap const&	Request::GetFields() const {
 	return _header_fields;
 }
 
-bool	Request::IsComplete() const {
-	return (_is_complete == true);
+Request::Status	Request::GetStatus() const {
+	return _status;
+}
+
+int	Request::GetStatusCode() const {
+	return _status_code;
+}
+
+void	Request::SetStatus(Status status) {
+	_status = status;
 }
 
 // Checks if double CRLF indicating end of header section is found
@@ -85,4 +99,15 @@ bool	Request::CanParse() {
 			|| _buf.find("\n\n") != string::npos
 			|| _parser.cur_state == r_Chunked
 			|| _parser.cur_state == r_MsgBody);
+}
+
+// Checks RequestParser status if it's done or if Expect header was given.
+// If latter, only sends 100 (Continue) response if a message is expected
+// but nothing is received yet.
+void	Request::CheckStatus() {
+	if (_parser.cur_state == r_Done)
+		_status = Status::Complete;
+	else if (_status == Status::Expect && msg_bytes_read > 0)
+		_status = Status::Incomplete;
+	return ;
 }

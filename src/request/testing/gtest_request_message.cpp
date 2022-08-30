@@ -34,6 +34,9 @@ TEST(RequestMessageTest, ValidMessageNormal) {
 
 	message = ConstructAndGetMessage("Content-Length: 19\r\n\nHello World!\nBye!\r\n");
 	EXPECT_EQ(message, "Hello World!\nBye!\r\n");
+
+	message = ConstructAndGetMessage("Content-Length: 0\r\n\n");
+	EXPECT_EQ(message, "");
 }
 
 TEST(RequestMessageTest, ValidMessageChunked) {
@@ -153,6 +156,17 @@ TEST(RequestMessageTest, ValidMessageChunkedExt) {
 	message = ConstructAndGetMessage(CHUNKED +
 		"4\r\nBye!\r\n0;ext1=true;ext2\r\n\r\n");
 	EXPECT_EQ(message, "Bye!");
+}
+
+TEST(RequestMessageTest, InvalidMessageNormal) {
+	// message without Content-Length
+	EXPECT_THROW({
+		string req_str = POST_Req + "\r\nHello World!";
+		Request request(&config);
+		request.Parse(req_str.c_str());
+	}, LengthRequiredException);
+	// TODO: add incomplete message check when connection is closed but content-length
+	// not reached
 }
 
 TEST(RequestMessageTest, InvalidMessageChunked) {

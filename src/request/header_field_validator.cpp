@@ -13,7 +13,7 @@ HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request
 	if (DEBUG) cout << "HeaderFieldValidator::Process\n";
 	
 	if (ValidHost(request.GetField("host"))
-			&& ValidExpect(request.GetField("expect"))
+			&& ValidExpect(request)
 			&& ValidContentEncoding(request.GetField("content-encoding"))
 			&& ValidTransferEncoding(request)
 			&& ValidContentLength(config, request)
@@ -44,13 +44,18 @@ bool	HeaderFieldValidator::ValidHost(string host) {
 }
 
 // Only accepts "100-continue" for Expect header.
-bool	HeaderFieldValidator::ValidExpect(string expect) {
+bool	HeaderFieldValidator::ValidExpect(Request& request) {
 	if (DEBUG) cout << "ValidExpect\n";
 
-	if (expect != NO_VAL && expect != "100-continue")
-		throw ExpectationFailedTypeException();
-	else
-		return true;
+	string	expect = request.GetField("expect");
+
+	if (expect != NO_VAL) {
+		if (expect != "100-continue")
+			throw ExpectationFailedTypeException();
+		else
+			request.SetStatus(Request::Status::Expect);
+	}
+	return true;
 }
 
 // Does not accept any definition of Content-Encoding header.
@@ -81,7 +86,7 @@ bool	HeaderFieldValidator::ValidTransferEncoding(Request& request) {
 
 	if (transfer_encoding != NO_VAL) {
 		// if Content-Length was also defined
-		if (request.content_length != -1)
+		if (request.GetField("content-length") != NO_VAL)
 			throw BadRequestException(
 				"Cannot have both Content-Length and Transfer-Encoding headers");
 		if (transfer_encoding == "chunked") {
@@ -159,9 +164,6 @@ bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
 	string	target = request.GetTarget();
 	string	method = request.GetMethod();
 
-	// cout << "host: [" << host << "]\n";
-	// cout << "status: " << _status << endl;
-	// cout << "config->IsAllowedMethod: " << config->IsAllowedMethod(host, target, method) << endl;
 	return config->IsAllowedMethod(host, target, method);
 }
 

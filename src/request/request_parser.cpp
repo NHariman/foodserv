@@ -117,6 +117,7 @@ RequestState	RequestParser::MessageBodyHandler() {
 	
 	_request->_msg_body += input.substr(pos, _request->content_length);
 	pos += _request->_msg_body.size();
+	_request->msg_bytes_read = _request->_msg_body.size();
 	if (_request->_msg_body.size() == (size_t)_request->content_length)
 		return r_Done;
 	else {
@@ -130,7 +131,10 @@ RequestState	RequestParser::ChunkedHandler() {
 	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos]
 		<< "], len of input: " << input.substr(pos).length() << "\n";
 
-	pos += _chunked_parser.Parse(*_request, input.substr(pos));
+	size_t bytes_read = _chunked_parser.Parse(*_request, input.substr(pos));
+	if (input[pos])
+		_request->msg_bytes_read += bytes_read;
+	pos += bytes_read;
 	if (_chunked_parser.IsDone() == true) {
 		if (DEBUG) cout << "--- Chunked Parsing complete. ---\n";
 		HandleEndOfChunkedMessage();
