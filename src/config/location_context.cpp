@@ -1,5 +1,7 @@
 #include "location_context.hpp"
 
+#define DEBUG 0
+
 LocationContext::LocationContext() : 
 _location_uri(),
 _allowed_methods(AllowedMethods()) {
@@ -71,6 +73,8 @@ void							LocationContext::SetValue(int directive, std::string input) {
 	std::string		value;
 
 	value = TrimValue(input);
+
+	if (DEBUG) std::cerr << "location context:\ndirective: " << directive << "\nvalue: " << value << std::endl;
 
 	if (directive == 8) {
 		bool_uri = true;
@@ -173,7 +177,7 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
     
     while (data[i] != '}') {
 		key_start = data.find_first_not_of(" \t\n\v\f\r", i);
-		if (data[key_start] == '}') {
+		if (data[key_start] == '}' || key_start == std::string::npos) {
 			break ;
 		}
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
@@ -186,7 +190,8 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
             value_end = data.find_first_of(';', key_end);
 		    SetValue(ret, data.substr(key_end, value_end - key_end));
         }
-		i = value_end + 1;
+		if (value_end != std::string::npos)
+			i = value_end + 1;
 	}
 	CheckListVerification();
 }
@@ -269,3 +274,5 @@ bool						LocationContext::IsSet(std::string directive) {
 	}
 	throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI());
 }
+
+#undef DEBUG

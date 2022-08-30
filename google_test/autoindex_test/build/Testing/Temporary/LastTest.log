@@ -1,0 +1,57 @@
+Start testing: Aug 30 19:10 CEST
+----------------------------------------------------------
+1/2 Testing: AutoIndexTest.ValidInput
+1/2 Test: AutoIndexTest.ValidInput
+Command: "/Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build/try_test" "--gtest_filter=AutoIndexTest.ValidInput" "--gtest_also_run_disabled_tests"
+Directory: /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build
+"AutoIndexTest.ValidInput" start time: Aug 30 19:10 CEST
+Output:
+----------------------------------------------------------
+Running main() from /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = AutoIndexTest.ValidInput
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from AutoIndexTest
+[ RUN      ] AutoIndexTest.ValidInput
+[       OK ] AutoIndexTest.ValidInput (0 ms)
+[----------] 1 test from AutoIndexTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"AutoIndexTest.ValidInput" end time: Aug 30 19:10 CEST
+"AutoIndexTest.ValidInput" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: AutoIndexTest.invalidInput
+2/2 Test: AutoIndexTest.invalidInput
+Command: "/Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build/try_test" "--gtest_filter=AutoIndexTest.invalidInput" "--gtest_also_run_disabled_tests"
+Directory: /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build
+"AutoIndexTest.invalidInput" start time: Aug 30 19:10 CEST
+Output:
+----------------------------------------------------------
+Running main() from /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = AutoIndexTest.invalidInput
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from AutoIndexTest
+[ RUN      ] AutoIndexTest.invalidInput
+[       OK ] AutoIndexTest.invalidInput (0 ms)
+[----------] 1 test from AutoIndexTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"AutoIndexTest.invalidInput" end time: Aug 30 19:10 CEST
+"AutoIndexTest.invalidInput" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Aug 30 19:10 CEST
