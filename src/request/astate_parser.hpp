@@ -1,5 +1,5 @@
-#ifndef STATE_PARSER_HPP
-#define STATE_PARSER_HPP
+#ifndef ASTATE_PARSER_HPP
+#define ASTATE_PARSER_HPP
 
 #include <iostream>
 
@@ -85,4 +85,4 @@ class AStateParser {
 		virtual void	AfterParseCheck() {};
 };
 
-#endif /* STATE_PARSER_HPP */
+#endif /* ASTATE_PARSER_HPP */

@@ -38,6 +38,7 @@ size_t	Request::Parse(char const* buffer) {
 		catch (http::exception &e) {
 			_status_code = e.which();
 			_status = Status::Bad;
+			throw;
 		}
 	}
 	return bytes_read;
