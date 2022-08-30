@@ -39,7 +39,6 @@ class RequestParser  : public StateParser<RequestState> {
 		~RequestParser();
 
 		size_t		Parse(Request& request, string const& buffer);
-		bool		CheckDoneState() override;
 
 		// friend class forward declaration allows Request to
 		// access protected `cur_state` attribute.
@@ -58,6 +57,7 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestState	HeaderDoneHandler();
 		RequestState	MessageBodyHandler();
 		RequestState	ChunkedHandler();
+		void			HandleEndOfChunkedMessage();
 		void			DebugPrint();
 
 	protected:

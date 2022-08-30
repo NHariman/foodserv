@@ -49,10 +49,6 @@ void	HeaderFieldParser::CheckInvalidState() const {
 		throw BadRequestException("Invalid token in header fields: \"" + buffer + "\"");
 }
 
-bool	HeaderFieldParser::CheckDoneState() {
-	return (cur_state == f_Done);
-}
-
 // Header field may only start with TChar.
 FieldState	HeaderFieldParser::StartHandler(char c) {
 	if (DEBUG) cout << "[FP StartHandler] at: [" << c << "]\n";

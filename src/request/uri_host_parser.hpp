@@ -60,7 +60,6 @@ class URIHostParser : public StateParser<HostState> {
 	protected:
 		HostState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
-		bool		CheckDoneState() override;
 		void		AfterParseCheck() override;
 
 };

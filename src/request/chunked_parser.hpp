@@ -35,7 +35,6 @@ class ChunkedParser : public StateParser<ChunkState> {
 	protected:
 		ChunkState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
-		bool		CheckDoneState() override;
 		void		AfterParseCheck() override;
 
 	private:

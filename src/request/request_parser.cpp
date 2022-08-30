@@ -44,10 +44,6 @@ void	RequestParser::CheckInvalidState() const {
 		throw BadRequestException("Invalid token in request");
 }
 
-bool	RequestParser::CheckDoneState() {
-	return cur_state == r_Done;
-}
-
 void	RequestParser::IncrementCounter() {}
 
 void	RequestParser::PreParseCheck() {
@@ -76,33 +72,13 @@ RequestState	RequestParser::RequestLineHandler() {
 
 	string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
 	pos += _request_line_parser.Parse(_request->_request_line, request_line);
-	// if (_header_parser.IsDone() == true)
-		return r_HeaderField;
-	// else
-	// 	return r_RequestLine;
-}
-
-// Checks if header is ended with correct CRLF or LF sequence.
-static size_t	FindFieldEnd(string const& input, size_t pos) {
-	size_t	only_nls = input.find("\n\n", pos);
-	size_t	crnl = input.find("\n\r\n", pos);
-
-	if (crnl != string::npos)
-		return crnl;
-	else if (only_nls != string::npos)
-		return only_nls;
-	else
-		throw BadRequestException("Header field missing line break");
+	return r_HeaderField;
 }
 
 // Calls on HeaderFieldParser to parse header fields.
 RequestState	RequestParser::HeaderFieldHandler() {
 	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
-	size_t	field_end = FindFieldEnd(input, pos); // TODO: remove?
-	(void)field_end;
-	// cout << "field end: " << field_end << " pos: " << pos << endl;
-	// string	header_field = input.substr(pos, field_end - pos);
 	string header_field = input.substr(pos);
 	// cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
 	pos += _header_parser.Parse(_request->_header_fields, header_field);
@@ -117,17 +93,12 @@ RequestState	RequestParser::HeaderFieldHandler() {
 // Validates parsed header fields and checks if message is expected.
 RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
-	int ret_code;
-	try {
-		// allocated on stack because we don't need to remember the return
-		HeaderFieldValidator header_validator;
 
-		ret_code = header_validator.Process(_config, *_request);
-		// cout << "Validator return: " << ret_code << endl;
-	}
-	catch (std::exception &e) {
-		throw;
-	}
+	// allocated on stack because we don't need to remember the return
+	HeaderFieldValidator	header_validator;
+	int						ret_code;
+
+	ret_code = header_validator.Process(_config, *_request);
 	switch (ret_code) {
 		case hv_Done:
 			return r_Done;
@@ -154,29 +125,28 @@ RequestState	RequestParser::MessageBodyHandler() {
 	}
 }
 
-// void	HandleEndOfChunkedMessage(Request& request) {
-// 	request.content_length = request.GetMessageBody().size();
-// 	request.
-// }
-
+// Called when Transfer-Encoding indicates chunked message is expected.
 RequestState	RequestParser::ChunkedHandler() {
 	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos]
 		<< "], len of input: " << input.substr(pos).length() << "\n";
 
-	if (input[pos]) {
-		pos += _chunked_parser.Parse(*_request, input.substr(pos));
-		if (_chunked_parser.IsDone() == true) {
-			if (DEBUG) cout << "--- Chunked Parsing complete. ---\n";
-			// HandleEndOfChunkedMessage(*_request);
-			return r_Done;
-		}
-		else
-			return r_Chunked;
+	pos += _chunked_parser.Parse(*_request, input.substr(pos));
+	if (_chunked_parser.IsDone() == true) {
+		if (DEBUG) cout << "--- Chunked Parsing complete. ---\n";
+		HandleEndOfChunkedMessage();
+		return r_Done;
 	}
-	else {
-		pos += 1;
+	else
 		return r_Chunked;
-	}
+}
+
+// Assigns Content-Length once chunked message transfer is complete,
+// and removes chunked transfer coding-related header fields as
+// indicated by RFC 7230 4.1.3.
+void	RequestParser::HandleEndOfChunkedMessage() {
+	_request->content_length = _request->GetMessageBody().size();
+	_request->_header_fields.erase("transfer-encoding");
+	_request->_header_fields.erase("trailer");
 }
 
 void	RequestParser::DebugPrint() {

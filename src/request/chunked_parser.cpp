@@ -70,10 +70,6 @@ void	ChunkedParser::CheckInvalidState() const {
 		throw BadRequestException("Invalid token in chunked message: \"" + buffer + "\"");
 }
 
-bool	ChunkedParser::CheckDoneState() {
-	return (cur_state == c_Done);
-}
-
 void	ChunkedParser::AfterParseCheck() {
 	if (cur_state == c_Done && _chunk_size != 0)
 		throw BadRequestException("Missing chunk in message");
@@ -88,7 +84,7 @@ ChunkState	ChunkedParser::StartHandler(char c) {
 		skip_char = true;
 		return c_Last;
 	}
-	else if (c == '\0' && pos != 0)
+	else if (c == '\0')
 		return c_Start;
 	else if (IsHexDig(c))
 		return c_Size;
@@ -265,7 +261,6 @@ void	ChunkedParser::ParseTrailerHeader(map<string, string>& fields) {
 		parser.Parse(fields, buffer);
 	else
 		throw BadRequestException("Forbidden field in chunked message trailer");
-
 }
 
 // Pushes buffer value into appropriate field

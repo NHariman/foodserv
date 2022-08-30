@@ -31,7 +31,6 @@ class HeaderFieldParser : public StateParser<FieldState> {
 	protected:
 		FieldState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
-		bool		CheckDoneState() override;
 
 	private:
 		map<string,string>*	_fields;

@@ -10,7 +10,6 @@ RequestLineParser::~RequestLineParser() {}
 // Initializes pointer to RequestLine struct, resets internal counters,
 // and passes input string to parent class StateParser::ParseString().
 size_t	RequestLineParser::Parse(RequestLine& request_line, string const& input) {
-	pos += 0;
 	_request_line = &request_line;
 	return ParseString(input);
 }

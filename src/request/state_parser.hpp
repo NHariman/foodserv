@@ -26,8 +26,6 @@ class StateParser {
 		// Template method
 		// Takes string to parse and returns bytes read.
 		size_t	ParseString(string const& input_string) {
-			// size_t i = 0;
-
 			InitParser(input_string); // reset counters for repeat calls
 			PreParseCheck();
 			while (NotDone(pos)) {
@@ -57,29 +55,23 @@ class StateParser {
 		// Abstract methods that must be implemented by subclass.
 		virtual State	GetNextState(size_t pos) = 0;
 		virtual void	CheckInvalidState() const = 0;
-		virtual bool	CheckDoneState() = 0;
 
 		// Concrete methods that can be overridden if custom looping behaviour
 		// is needed.
 		virtual void	InitParser(string const& input_string) {
-			// cur_state = start_state;
-			// buffer.clear();
 			input = input_string;
 			skip_char = false;
 			pos = 0;
+		}
+		virtual bool	NotDone(size_t pos) const {
+			return (pos <= input.size() && cur_state != end_state);
 		}
 		virtual void	UpdateBuffer(size_t pos) {
 			if (!skip_char)
 				buffer += input[pos];
 		}
-		virtual bool			NotDone(size_t pos) const {
-			// cout << "Not done? " << boolalpha << (pos < input.size()) << endl;// && cur_state != end_state);
-			// cout << "| at: [" << (int)input[pos] << "]\n";
-			return (pos <= input.size() && cur_state != end_state);
-		}
-		virtual void			IncrementCounter() {
-			pos += 1;
-		}
+		virtual bool	CheckDoneState() { return (cur_state == end_state); }
+		virtual void	IncrementCounter() { pos += 1; }
 
 		// Hooks. Optional extensions points where subclasses can add actions.
 		// They can be overriden by subclasses, but it's not mandatory since

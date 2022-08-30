@@ -47,10 +47,6 @@ void	URIHostParser::CheckInvalidState() const {
 		throw BadRequestException("Invalid token in host URI: \"" + buffer + "\"");
 }
 
-bool	URIHostParser::CheckDoneState() {
-	return (cur_state == h_Done);
-}
-
 // Checks if there's illegal characters after terminating char.
 void	URIHostParser::AfterParseCheck() { 
 	if (cur_state == h_Done && pos < input.size() - 1)
