@@ -35,8 +35,9 @@ size_t	Request::Parse(char const* buffer) {
 			_buf.clear();
 			CheckStatus();
 		}
-		catch (std::exception &e) {
-			throw;
+		catch (http::exception &e) {
+			_status_code = e.which();
+			_status = Status::Bad;
 		}
 	}
 	return bytes_read;
