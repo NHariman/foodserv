@@ -25,6 +25,8 @@ std::string	TrimValue(std::string value){
 	size_t	end = 0;
 
 	start = value.find_first_not_of(" \t\n\v\f\r");
+	if (start == std::string::npos)
+		return (NULL);
 	end = value.find_last_not_of(" \t\n\v\f\r");
 	return (value.substr(start, end - start + 1));
 }
@@ -38,14 +40,13 @@ std::vector<std::string>	ToStringVector(std::string str) {
 
 	for (std::string::size_type i = 0; i < str.size(); i++) {
 		start = str.find_first_not_of(" \t\n\v\f\r", i);
-		end = str.find_first_of(" \t\n\v\f\r", start);
-		if (end == std::string::npos)
-			end = str.size();
-		if (start == end) {
+		if (start == std::string::npos)
 			break ;
-		}
+		end = str.find_first_of(" \t\n\v\f\r", start);
 		key = str.substr(start, end - start);
 		vec.push_back(key);
+		if (end == std::string::npos)
+			break ;
 		i = end;
 	}
 	return (vec);
@@ -59,6 +60,8 @@ size_t		CountArguments(std::string str) {
 
 	while (str[i]) {
 		start = str.find_first_not_of(" \t\n\v\f\r", i);
+		if (start == std::string::npos)
+			return (arguments);
 		end = str.find_first_of(" \t\n\v\f\r", start);
 		if (start == end)
 			break ;
@@ -83,4 +86,10 @@ bool	IsUri(std::string input) {
 	if (input[0] == '/')
 		return true;
 	return false;
+}
+
+bool IsValidHTTPCode(size_t code) {
+	if (code < 100 || code > 599)
+		return false;
+	return true;
 }

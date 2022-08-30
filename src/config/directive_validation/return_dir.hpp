@@ -20,6 +20,7 @@ class ReturnDir {
 
         int     GetCode() const;
         std::string GetUrl() const;
+		bool IsValidReturnCode(size_t code);
         class MissingArgumentsException : public std::exception
 		{
 			public:
@@ -29,9 +30,14 @@ class ReturnDir {
 		};
         class InvalidReturnCodeException : public std::exception
 		{
+			private:
+				std::string _err_msg;
 			public:
+				InvalidReturnCodeException(std::string key){
+					_err_msg = "ERROR! Invalid return code: \"" + key + "\" in return in location block.";
+				}
 				const char *what() const throw() {
-					return "ERROR! Invalid return code in return in location block.";
+					return _err_msg.c_str();
 				}
 		};
         class InvalidAmountOfArgumentsException : public std::exception
