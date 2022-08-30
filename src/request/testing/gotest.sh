@@ -11,6 +11,8 @@ BLUEBG="\033[44m"
 WHITE="\033[1;97m"
 RESET="\033[0m"
 
+DEFAULT_CONF="../../../config_files/default.conf"
+
 choose_test () {
     printf "\n${CYAN}"
 	read -r -n 1 -p $'\nPress [1] for basic test output. Press [2] for visual test output.\n\n' choice
@@ -20,7 +22,7 @@ choose_test () {
 			cd build && ctest
 			;;
 		2)
-			cd build && ./$bin_name
+			cd build && ./$bin_name ${DEFAULT_CONF}
 			;;
 		*) # any other input
 			exit 0

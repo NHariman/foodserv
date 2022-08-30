@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   nginx_config.hpp                                   :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
+/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/06/17 15:44:12 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/18 16:27:57 by nhariman      ########   odam.nl         */
+/*   Created: 2022/08/29 17:29:21 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/08/29 17:34:16 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 #include <vector>
 #include <utility>
 #include "server_context.hpp"
-#include "location_context.hpp"
-#include "directive_validation/directive_validation.hpp"
-#include "config_utils.hpp"
+// #include "location_context.hpp"
+// #include "directive_validation/directive_validation.hpp"
+// #include "config_utils.hpp"
 
 // Coplien form:
 
@@ -50,8 +50,6 @@ class NginxConfig {
 		void		FindServerContexts();
 		void		LoadConfigFile(std::ifstream&	configuration_file);
 
-		
-
 	public:
 		// coplien form
 		NginxConfig();
@@ -60,8 +58,8 @@ class NginxConfig {
 		~NginxConfig(){};
 
 		// getters
-		std::string	GetConfigFile() const;
-		size_t		GetServerContextAmount() const;
+		std::string					GetConfigFile() const;
+		size_t						GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
 
 		// getters that use host/target pairs to retrieve a very specific value
@@ -125,6 +123,7 @@ class NginxConfig {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+				virtual ~HostDoesNotExistException() throw() {};
 		};
 
 		class CannotFindMaxBodySizeException : public std::exception {
@@ -137,6 +136,7 @@ class NginxConfig {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+				virtual ~CannotFindMaxBodySizeException() throw() {};
 		};
 		class HostTargetPairDoesNotExistException : public std::exception {
 			private:
@@ -148,6 +148,7 @@ class NginxConfig {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+				virtual ~HostTargetPairDoesNotExistException() throw() {}
 		};
 };
 

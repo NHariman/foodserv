@@ -47,6 +47,10 @@ bool	IsSpace(int c) {
 	return c == ' ';
 }
 
+bool	IsOctet(int c) {
+	return (c >= 0x00 && c <= 0xFF);
+}
+
 // Checks if character is whitespace as defined by RFC 7230 (space or horizontal tab).
 bool	IsWhitespace(int c) {
 	return (c == ' ' || c == '\t');
@@ -103,7 +107,23 @@ string	DecodePercent(string const& s) {
 	size_t	percent_start = s.size() - 3;
 	string	new_s = s.substr(0, percent_start);
 	string	hex = s.substr(percent_start + 1, percent_start + 2);
+
+	// Check for encoded CR and LF that might be used in response splitting.
+	if (hex == "0D" || hex == "0A")
+		throw BadRequestException("Bad octets found in encoded data");
+	
 	char	c = std::stoi(hex, nullptr, 16);
 	new_s += c;
 	return new_s;
 } 
+
+size_t	MBToBytes(size_t size_mb) {
+	return size_mb * 1048576;
+}
+
+size_t	HextoDec(string hex_string) {
+	size_t n;
+
+	std::istringstream(hex_string) >> std::hex >> n;
+	return n;
+}

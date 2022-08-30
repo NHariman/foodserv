@@ -32,13 +32,13 @@ std::string	TrimValue(std::string value){
 }
 
 std::vector<std::string>	ToStringVector(std::string str) {
-	size_t	i = 0;
+	// size_t	i = 0;
 	size_t	start = 0;
 	size_t	end = 0;
 	std::string key;
 	std::vector<std::string> vec;
 
-	while (str[i]) {
+	for (std::string::size_type i = 0; i < str.size(); i++) {
 		start = str.find_first_not_of(" \t\n\v\f\r", i);
 		if (start == std::string::npos)
 			break ;

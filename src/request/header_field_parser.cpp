@@ -1,5 +1,5 @@
 #include "header_field_parser.hpp"
-
+#define DEBUG 0 // TODO: REMOVE
 /*
 	Transition table for header field parsing
 	ST = f_Start, NM = f_Name, VS = f_ValueStart, VL = f_Value,
@@ -15,7 +15,7 @@
 
 // Default constructor
 HeaderFieldParser::HeaderFieldParser()
-	: StateParser(f_Start), _fields(NULL) {}
+	: StateParser(f_Start, f_Done), _fields(NULL), _bytes_read(0) {}
 
 // Destructor
 HeaderFieldParser::~HeaderFieldParser() {}
@@ -34,9 +34,13 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 			&HeaderFieldParser::NameHandler,
 			&HeaderFieldParser::ValueStartHandler,
 			&HeaderFieldParser::ValueHandler,
-			&HeaderFieldParser::ValueEndHandler,
 			nullptr
 	};
+	if (input[pos])
+		_bytes_read += 1;
+	// check if total header fields exceeds 8kb limit.
+	if (_bytes_read > 8192)
+		throw RequestHeaderFieldsTooLargeException();
 	return (this->*table[cur_state])(input[pos]);
 }
 
@@ -49,24 +53,19 @@ bool	HeaderFieldParser::CheckDoneState() {
 	return (cur_state == f_Done);
 }
 
-// Checks if header fields size is greater than 8kb.
-void	HeaderFieldParser::PreParseCheck() {
-	if (input.size() > 8192)
-		throw RequestHeaderFieldsTooLargeException();
-}
-
 // Header field may only start with TChar.
 FieldState	HeaderFieldParser::StartHandler(char c) {
+	if (DEBUG) cout << "[FP StartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	buffer.clear();
 	switch (c) {
 		case '\0':
 			return f_Done;
 		case '\n':
-			return f_Start;
+			pos += 1;
+			return HandleCRLF(c, f_Done);
 		case '\r':
-			skip_char = true;
-			return f_ValueEnd;
+			return HandleCRLF(c, f_Start);
 		default:
 			if (IsTChar(c))
 				return f_Name;
@@ -78,7 +77,13 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // Header field name may only be TChar with no whitespace before the ':'
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
+	if (DEBUG) cout << "[FP NameHandler] at: [" << c << "]\n";
+
+	if (buffer.size() > 8192)
+		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
+		case '\0':
+			return f_Name;
 		case ':':
 			PushFieldName();
 			skip_char = true;
@@ -93,6 +98,7 @@ FieldState	HeaderFieldParser::NameHandler(char c) {
 
 // Skips whitespace following colon but before value starts.
 FieldState	HeaderFieldParser::ValueStartHandler(char c) {
+	if (DEBUG) cout << "[FP ValueStartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	if (IsWhitespace(c)) {
 		skip_char = true;
@@ -105,16 +111,18 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 // Accepts VChar or whitespace for field value. If \r found,
 // returns ValueEnd state to check for valid CRLF sequence.
 FieldState	HeaderFieldParser::ValueHandler(char c) {
+	if (DEBUG) cout << "[FP ValueHandler] at: [" << c << "]\n";
+
+	if (buffer.size() > 8192)
+		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
 		case '\0':
 			PushFieldValue();
 			return f_Done;
 		case '\n':
-			PushFieldValue();
-			return f_Start;
+			return HandleCRLF(c, f_Start);
 		case '\r':
-			skip_char = true;
-			return f_ValueEnd;
+			return HandleCRLF(c, f_Value);
 		default:
 			if (IsVChar(c) || IsWhitespace(c))
 				return f_Value;
@@ -123,18 +131,20 @@ FieldState	HeaderFieldParser::ValueHandler(char c) {
 	}
 }
 
-// Checks if \r is followed by \n for valid CRLF line ending.
-FieldState	HeaderFieldParser::ValueEndHandler(char c) {
-	if (c =='\n') {
-		if (!buffer.empty())
-			PushFieldValue();
-		return f_Start;
-	}
-	else {
-		buffer += '\r'; // pushes skipped \r character for error printing
+// Helper function for parsing line endings.
+// Accepts both CRLF and just LF as line endings.
+// If buffer is not empty, pushes buffer to appropriate field.
+FieldState	HeaderFieldParser::HandleCRLF(char c, FieldState next_state) {
+	// Peeks at next character in input to check for anything other than CRLF.
+	if (c == '\r' && input[pos + 1] != '\n')
 		return f_Invalid;
-	}
+
+	skip_char = true;
+	if (!buffer.empty())
+		PushFieldValue();
+	return next_state;
 }
+
 
 // Normalizes field name to lowercase (for easy look-up)
 // and saves buffer to `cur_field` for use once value is parsed.
@@ -166,3 +176,4 @@ void	HeaderFieldParser::PushFieldValue() {
 	AddOrAppendValue(_fields, _cur_field, string(start, end + 1));
 	buffer.clear();
 }
+#undef DEBUG // REMOVE

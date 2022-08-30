@@ -28,8 +28,10 @@ class ServerSelection {
 		void	PrintContextVectors();
 		// call the request host line from michelle her code.
 		void	SplitRequestHost();
-		void	SelectCompatiblePorts(int ports);
+		void	SelectCompatiblePorts(std::string ports);
 		void	SelectCompatibleServerNames(std::string, std::vector<ServerContext>);
+
+		std::string		getHost();
 };
 
 #endif
