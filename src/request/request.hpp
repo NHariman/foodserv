@@ -50,6 +50,8 @@ class Request {
 		map<string, string>	_header_fields;
 		string				_msg_body;
 		string				_buf;
+
+		bool	CanParse();
 };
 
 #endif /* REQUEST_HPP */

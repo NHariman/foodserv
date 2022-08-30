@@ -6,8 +6,7 @@ Request::Request()
 	:	bytes_read(0),
 		content_length(-1),
 		max_body_size(1048576),
-		is_complete(false) {} //,
-		// _parser(NULL) {}
+		is_complete(false) {}
 
 // Config file constructor
 Request::Request(NginxConfig* config)
@@ -17,18 +16,18 @@ Request::Request(NginxConfig* config)
 // Destructor
 Request::~Request() {}
 
+// Buffers the input string until either end of header section
+// or start of message is reached.
 size_t	Request::Parse(char const* buffer) {
 	string buf(buffer);
 
 	_buf += buf;
-	if (_buf.find("\n\r\n") != string::npos || _buf.find("\n\n") != string::npos
-		|| _parser.cur_state == r_Chunked || _parser.cur_state == r_MsgBody) {
+	if (CanParse()) {
 		try {
 			bytes_read += _parser.Parse(*this, _buf);
 			_buf.clear();
 		}
 		catch (std::exception &e) {
-			// cout << "Parse error: " << e.what() << endl; // without this unhandled exceptions cause segfault
 			throw;
 		}
 		if (_parser.cur_state == r_Done)
@@ -73,4 +72,13 @@ string	Request::GetMessageBody() const {
 
 map<string, string> const&	Request::GetFields() const {
 	return _header_fields;
+}
+
+// Checks if double CRLF indicating end of header section is found
+// or message stage has been reached.
+bool	Request::CanParse() {
+	return (_buf.find("\n\r\n") != string::npos
+			|| _buf.find("\n\n") != string::npos
+			|| _parser.cur_state == r_Chunked
+			|| _parser.cur_state == r_MsgBody);
 }
