@@ -15,13 +15,13 @@
 
 // Default constructor
 HeaderFieldParser::HeaderFieldParser()
-	: StateParser(f_Start, f_Done), _fields(NULL), _bytes_read(0) {}
+	: AStateParser(f_Start, f_Done), _fields(NULL), _bytes_read(0) {}
 
 // Destructor
 HeaderFieldParser::~HeaderFieldParser() {}
 
 // Initializes pointer to Header Fields map and 
-// calls on parent class StateParser::ParseString().
+// calls on parent class AStateParser::ParseString().
 size_t	HeaderFieldParser::Parse(map<string, string>& fields, string const& input) {
 	_fields = &fields;
 	return ParseString(input);
@@ -47,10 +47,6 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 void	HeaderFieldParser::CheckInvalidState() const {
 	if (cur_state == f_Invalid)
 		throw BadRequestException("Invalid token in header fields: \"" + buffer + "\"");
-}
-
-bool	HeaderFieldParser::CheckDoneState() {
-	return (cur_state == f_Done);
 }
 
 // Header field may only start with TChar.

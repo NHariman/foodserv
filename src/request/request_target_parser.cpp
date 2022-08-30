@@ -14,13 +14,13 @@
 
 // Default constructor
 RequestTargetParser::RequestTargetParser()
-	: StateParser(u_Start, u_Done), _uri(NULL), _part(pt_Invalid) {}
+	: AStateParser(u_Start, u_Done), _uri(NULL), _part(pt_Invalid) {}
 
 // Destructor
 RequestTargetParser::~RequestTargetParser() {}
 
 // Initializes pointer to URI object, resets internal counters, and
-// passed input string to parent class StateParser::ParseString().
+// passed input string to parent class AStateParser::ParseString().
 size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 	_uri = &uri;
 	_part = pt_Path;
@@ -47,16 +47,6 @@ void	RequestTargetParser::CheckInvalidState() const {
 		throw BadRequestException("Invalid token in request target: \"" + buffer + "\"");
 }
 
-// If terminating state is indicated, pushes parsed string 
-// into appropriate URI field (as indicated by _part) and stops loop.
-bool	RequestTargetParser::CheckDoneState() {
-	if (cur_state == u_Done) {
-		PushBuffertoField(_part);
-		return true;
-	}
-	return false;
-}
-
 // Checks if URI string is greater than 8kb (limit of most web servers)
 void	RequestTargetParser::PreParseCheck() {
 	if (input.size() > 8192)
@@ -67,19 +57,6 @@ void	RequestTargetParser::PreParseCheck() {
 void	RequestTargetParser::AfterParseCheck() {
 	if (cur_state == u_Done && pos < input.size() - 1)
 		throw BadRequestException("Extra characters after terminating token in request target");
-}
-
-// Pushes buffer to appropriate URI field when valid ending token indicates
-// transition out of current (path/query) state to next or final state.
-void	RequestTargetParser::PushBuffertoField(URIPart part) {
-	if (part == pt_Path) {
-		size_t query_start = buffer.find_first_of("?");
-		_uri->_path = buffer.substr(0, query_start);
-	}
-	else {
-		_uri->_query = buffer;
-	}
-	buffer.clear();
 }
 
 // Starting state transition handler. Only accepts '/' according to origin form rules.
@@ -100,12 +77,11 @@ URIState		RequestTargetParser::PathHandler(char uri_char) {
 	_part = pt_Path;
 	switch (uri_char) {
 		case '\0':
-			skip_char = true;
-			return u_Done;
+			return PushBuffertoField(u_Done);
 		case '%':
 			return u_Percent;
 		case '?':
-			return u_Query;
+			return PushBuffertoField(u_Query);
 		case '/':
 			if (!PrecededBy(buffer, '/'))
 				return u_Path;
@@ -124,13 +100,10 @@ URIState		RequestTargetParser::PathHandler(char uri_char) {
 URIState		RequestTargetParser::QueryHandler(char uri_char) {
 	if (DEBUG) cout << "[QueryHandler] at: [" << uri_char << "]\n";
 
-	if (_part == pt_Path)
-		PushBuffertoField(_part);
 	_part = pt_Query;
 	switch (uri_char) {
 		case '\0': case '#':
-			skip_char = true;
-			return u_Done;
+			return PushBuffertoField(u_Done);
 		case '%':
 			return u_Percent;
 		case '/': case '?':
@@ -168,13 +141,10 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	buffer = DecodePercent(buffer);
 	switch (uri_char) {
 		case '\0':
-			skip_char = true;
-			return u_Done;
+			return PushBuffertoField(u_Done);
 		case '#':
-			if (_part == pt_Query) {
-				skip_char = true;
-				return u_Done;
-			}
+			if (_part == pt_Query)
+				return PushBuffertoField(u_Done);
 			break;
 		case '%':
 			return u_Percent;
@@ -190,4 +160,20 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	}
 	return u_Invalid;
 }
+
+// Pushes buffer to appropriate URI field when valid ending token indicates
+// transition out of current (path/query) state to next or final state.
+// `skip` is optional argument that defaults to TRUE.
+URIState	RequestTargetParser::PushBuffertoField(URIState next_state, bool skip) {
+	if (_part == pt_Path) {
+		size_t query_start = buffer.find_first_of("?");
+		_uri->_path = buffer.substr(0, query_start);
+	}
+	else
+		_uri->_query = buffer;
+	buffer.clear();
+	skip_char = skip;
+	return next_state;
+}
+
 #undef DEBUG // REMOVE

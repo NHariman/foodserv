@@ -3,7 +3,7 @@
 
 #include <string>
 #include <map>
-#include "state_parser.hpp"
+#include "astate_parser.hpp"
 #include "request_utils.hpp"
 
 using namespace std;
@@ -21,7 +21,7 @@ enum	ChunkState {
 	c_Invalid
 };
 
-class ChunkedParser : public StateParser<ChunkState> {
+class ChunkedParser : public AStateParser<ChunkState> {
 	static const vector<string> illegal_fields;
 
 	public:
@@ -35,7 +35,6 @@ class ChunkedParser : public StateParser<ChunkState> {
 	protected:
 		ChunkState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
-		bool		CheckDoneState() override;
 		void		AfterParseCheck() override;
 
 	private:

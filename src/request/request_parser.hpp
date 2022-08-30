@@ -6,7 +6,7 @@
 #include "exception.hpp"
 #include "header_field_parser.hpp"
 #include "header_field_validator.hpp"
-#include "state_parser.hpp"
+#include "astate_parser.hpp"
 #include "request_line_parser.hpp"
 #include "request_utils.hpp"
 
@@ -29,7 +29,7 @@ enum RequestState {
 // Parses and validates request header components, i.e. request method,
 // request target, HTTP version, header fields, message body.
 
-class RequestParser  : public StateParser<RequestState> {
+class RequestParser  : public AStateParser<RequestState> {
 	public:
 		// Default constructor
 		RequestParser();
@@ -39,7 +39,6 @@ class RequestParser  : public StateParser<RequestState> {
 		~RequestParser();
 
 		size_t		Parse(Request& request, string const& buffer);
-		bool		CheckDoneState() override;
 
 		// friend class forward declaration allows Request to
 		// access protected `cur_state` attribute.
@@ -58,6 +57,7 @@ class RequestParser  : public StateParser<RequestState> {
 		RequestState	HeaderDoneHandler();
 		RequestState	MessageBodyHandler();
 		RequestState	ChunkedHandler();
+		void			HandleEndOfChunkedMessage();
 		void			DebugPrint();
 
 	protected:
