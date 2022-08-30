@@ -19,7 +19,7 @@ enum	FieldState {
 
 // Parses input string into header field names and values.
 
-class HeaderFieldParser : public StateParser<FieldState> {
+class HeaderFieldParser : public AStateParser<FieldState> {
 	public:
 		// Default constructor
 		HeaderFieldParser();

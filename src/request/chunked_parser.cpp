@@ -34,14 +34,14 @@ const vector<string>	ChunkedParser::illegal_fields = {
 
 // Default constructor
 ChunkedParser::ChunkedParser()
-	:	StateParser(c_Start, c_Done), _request(NULL), _chunk_size(0), _chunk_ext_size(0),
+	:	AStateParser(c_Start, c_Done), _request(NULL), _chunk_size(0), _chunk_ext_size(0),
 		_chunk_ext(false), _chunk_trailer(false), _cr(false) {}
 
 // Destructor
 ChunkedParser::~ChunkedParser() {}
 
 // Initializes pointer to Request and 
-// calls on parent class StateParser::ParseString().
+// calls on parent class AStateParser::ParseString().
 size_t	ChunkedParser::Parse(Request& request, string const& input) {
 	_request = &request;
 	if (DEBUG) cout << "\nSTART -- ChunkedParser input: " << input << endl; // DEBUG

@@ -46,7 +46,8 @@ class LengthRequiredException : public exception {
 };
 
 // Used for: payload size exceeding max (default 1,048,576 bytes (1mb)).
-// Thrown by HeaderFieldValidator::ValidContentLength.
+// Thrown by HeaderFieldValidator::ValidContentLength &
+//			ChunkedParser::SizeHandler, ::DataHandler, ::LastHandler.
 // Should return 413 code.
 // Server may close connection to prevent client from continuing request.
 class PayloadTooLargeException : public exception {
@@ -88,7 +89,7 @@ class ExpectationFailedTypeException : public exception {
 
 // Used for: request header fields in total or a single one exceeds
 // 8192 bytes (8kb) (following IBM & Apache).
-// Thrown by HeaderFieldParser::PreParseCheck.
+// Thrown by HeaderFieldParser::GetNextState, ::NameHandler, ::ValueHandler.
 // Should return 431 code.
 class RequestHeaderFieldsTooLargeException : public exception {
 	public:

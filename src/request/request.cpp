@@ -6,12 +6,12 @@ Request::Request()
 	:	bytes_read(0),
 		content_length(-1),
 		max_body_size(1048576),
-		is_complete(false) {}
+		_is_complete(false) {}
 
 // Config file constructor
 Request::Request(NginxConfig* config)
 	:	bytes_read(0), content_length(-1), max_body_size(1048576),
-		is_complete(false), _parser(config) {}
+		_parser(config), _is_complete(false) {}
 
 // Destructor
 Request::~Request() {}
@@ -31,7 +31,7 @@ size_t	Request::Parse(char const* buffer) {
 			throw;
 		}
 		if (_parser.cur_state == r_Done)
-			is_complete = true;
+			_is_complete = true;
 	}
 	return bytes_read;
 }
@@ -70,8 +70,12 @@ string	Request::GetMessageBody() const {
 	return _msg_body;
 }
 
-map<string, string> const&	Request::GetFields() const {
+typename Request::FieldsMap const&	Request::GetFields() const {
 	return _header_fields;
+}
+
+bool	Request::IsComplete() const {
+	return (_is_complete == true);
 }
 
 // Checks if double CRLF indicating end of header section is found

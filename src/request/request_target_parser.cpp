@@ -14,13 +14,13 @@
 
 // Default constructor
 RequestTargetParser::RequestTargetParser()
-	: StateParser(u_Start, u_Done), _uri(NULL), _part(pt_Invalid) {}
+	: AStateParser(u_Start, u_Done), _uri(NULL), _part(pt_Invalid) {}
 
 // Destructor
 RequestTargetParser::~RequestTargetParser() {}
 
 // Initializes pointer to URI object, resets internal counters, and
-// passed input string to parent class StateParser::ParseString().
+// passed input string to parent class AStateParser::ParseString().
 size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 	_uri = &uri;
 	_part = pt_Path;

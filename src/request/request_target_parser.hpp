@@ -28,7 +28,7 @@ enum URIState {
 
 // Parses origin-form URI strings into path & query components of URI object.
 
-class RequestTargetParser : public StateParser<URIState> {
+class RequestTargetParser : public AStateParser<URIState> {
 	public:
 		// Default constructor
 		RequestTargetParser();

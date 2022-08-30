@@ -12,12 +12,12 @@ using namespace std;
 // The state parsing algorithm itself is made for parsing strings byte-by-byte.
 
 template <typename State>
-class StateParser {
+class AStateParser {
 	public:
 		// Constructor taking starting state for initialization.
 		// Child classes should call it in constructor like so:
-		//		ChildClassParser::ChildClassParser() : StateParser(c_StartEnum)
-		StateParser(State starting_state, State ending_state)
+		//		ChildClassParser::ChildClassParser() : AStateParser(c_StartEnum)
+		AStateParser(State starting_state, State ending_state)
 			:	start_state(starting_state),
 				end_state(ending_state),
 				cur_state(starting_state),

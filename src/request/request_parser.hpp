@@ -29,7 +29,7 @@ enum RequestState {
 // Parses and validates request header components, i.e. request method,
 // request target, HTTP version, header fields, message body.
 
-class RequestParser  : public StateParser<RequestState> {
+class RequestParser  : public AStateParser<RequestState> {
 	public:
 		// Default constructor
 		RequestParser();

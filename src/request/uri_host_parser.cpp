@@ -3,7 +3,7 @@
 
 // Default constructor
 URIHostParser::URIHostParser()
-	:	StateParser(h_Start, h_Done),
+	:	AStateParser(h_Start, h_Done),
 		_uri(NULL),
 		_groups(0),
 		_colons(0),
@@ -14,7 +14,7 @@ URIHostParser::URIHostParser()
 URIHostParser::~URIHostParser() {}
 
 // Resets internal counters (in case of repeat calls) and passes
-// input string to StateParser::ParseString().
+// input string to AStateParser::ParseString().
 size_t	URIHostParser::Parse(URI& uri, string const& input) {
 	_groups = 0;
 	_colons = 0;

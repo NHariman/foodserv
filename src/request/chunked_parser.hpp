@@ -21,7 +21,7 @@ enum	ChunkState {
 	c_Invalid
 };
 
-class ChunkedParser : public StateParser<ChunkState> {
+class ChunkedParser : public AStateParser<ChunkState> {
 	static const vector<string> illegal_fields;
 
 	public:

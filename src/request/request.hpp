@@ -15,8 +15,17 @@ struct RequestLine;
 class NginxConfig;
 class URI;
 
+// enum	RequestStatus {
+// 	BAD = -1,
+// 	DONE = 0,
+// 	EXPECT,
+
+// }
+
 class Request {
 	public:
+		typedef std::map<string, string>	FieldsMap;
+
 		// Default constructor
 		Request();
 		// Config file constructor
@@ -27,16 +36,16 @@ class Request {
 		size_t	bytes_read; // bytes read of request input
 		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
 		size_t	max_body_size;
-		bool	is_complete;
 
-		size_t						Parse(char const* buffer);
-		string						GetMethod() const;
-		string						GetTarget() const;
-		URI const&					GetURI() const;
-		string						GetVersion() const;
-		string						GetField(string field_name) const;
-		map<string, string> const&	GetFields() const;
-		string						GetMessageBody() const;
+		size_t				Parse(char const* buffer);
+		string				GetMethod() const;
+		string				GetTarget() const;
+		URI const&			GetURI() const;
+		string				GetVersion() const;
+		string				GetField(string field_name) const;
+		FieldsMap const&	GetFields() const;
+		string				GetMessageBody() const;
+		bool				IsComplete() const;
 	
 		// friend class forward declaration allows RequestParser to
 		// access private `_request_line`, `_header_fields`, `_msg_body`
@@ -47,9 +56,10 @@ class Request {
 	private:
 		RequestParser		_parser;
 		struct RequestLine	_request_line;
-		map<string, string>	_header_fields;
+		FieldsMap			_header_fields;
 		string				_msg_body;
 		string				_buf;
+		bool				_is_complete;
 
 		bool	CanParse();
 };

@@ -6,11 +6,11 @@
 
 // Default constructor // TODO: Review use/removal
 RequestParser::RequestParser()
-	: StateParser(r_RequestLine, r_Done), _config(NULL), _request(NULL) {}
+	: AStateParser(r_RequestLine, r_Done), _config(NULL), _request(NULL) {}
 
 // Config constructor
 RequestParser::RequestParser(NginxConfig *config)
-		:	StateParser(r_RequestLine, r_Done),
+		:	AStateParser(r_RequestLine, r_Done),
 			_config(config),
 			_request(NULL) {}
 
@@ -18,7 +18,7 @@ RequestParser::RequestParser(NginxConfig *config)
 RequestParser::~RequestParser() {}
 
 // Casts input buffer into string, resets internal counters,
-// and passes string to StateParser::ParseString().
+// and passes string to AStateParser::ParseString().
 size_t	RequestParser::Parse(Request& request, string const& buffer) {
 	_request = &request;
 	return ParseString(buffer);

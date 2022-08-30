@@ -2,13 +2,13 @@
 
 // Default constructor
 RequestLineParser::RequestLineParser()
-	: StateParser(l_Start, l_Done) {}
+	: AStateParser(l_Start, l_Done) {}
 
 // Destructor
 RequestLineParser::~RequestLineParser() {}
 
 // Initializes pointer to RequestLine struct, resets internal counters,
-// and passes input string to parent class StateParser::ParseString().
+// and passes input string to parent class AStateParser::ParseString().
 size_t	RequestLineParser::Parse(RequestLine& request_line, string const& input) {
 	_request_line = &request_line;
 	return ParseString(input);

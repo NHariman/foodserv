@@ -29,7 +29,7 @@ enum HostState {
 // Does not accept comma-delimited list of multiple hosts - split string first
 // before passing to parser.
 
-class URIHostParser : public StateParser<HostState> {
+class URIHostParser : public AStateParser<HostState> {
 	public:
 		// Default constructor
 		URIHostParser();
