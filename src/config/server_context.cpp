@@ -14,6 +14,8 @@
 # include <algorithm>
 # include "directive_validation/directive_validation.hpp"
 
+#define DEBUG 0
+
 // error pages are hardcoded in the real nginx:
 // static char ngx_http_error_404_page[] =
 // "<html>" CRLF
@@ -101,6 +103,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 	std::string		trimmed_value;
 
 	trimmed_value = TrimValue(value);
+	if (DEBUG) std::cerr << "server context:\ndirective: " << directive << "\nvalue: " << trimmed_value << std::endl;
 
 
 	if (directive == 0) {
@@ -256,7 +259,7 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 
 	while (config_file[i] != '}') {
 		key_start = config_file.find_first_not_of(" \t\n\v\f\r", i);
-		if (config_file[key_start] == '}') {
+		if (config_file[key_start] == '}' || key_start == std::string::npos) {
 			i = key_start;
 			break ;
 		}
@@ -270,8 +273,8 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 			value_end = config_file.find_first_of(';', key_end);
 			SetValue(ret, config_file.substr(key_end, value_end - key_end));
 		}
-
-		i = value_end + 1;
+		if (value_end != std::string::npos)
+			i = value_end + 1;
 	}
 	*start_position = i;
 }
@@ -331,4 +334,6 @@ std::vector<ErrorPage>		ServerContext::GetErrorPage() const {
 	if (bool_error_page == false)
 		throw DirectiveNotSetException("error_page", _server_nb);
     return _error_page;
-}
+} 
+
+#undef DEBUG

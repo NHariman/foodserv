@@ -5,14 +5,16 @@
 /*                                                     +:+                    */
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/08/29 17:29:14 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/29 17:29:16 by salbregh      ########   odam.nl         */
+/*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
+/*   Updated: 2022/08/30 18:32:56 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nginx_config.hpp"
 #include <stdexcept>
 #include <locale>
+
+#define DEBUG 0
 
 
 // Constructor that takes a file and removes all comments and empty lines
@@ -22,7 +24,7 @@
 
 NginxConfig::NginxConfig() : _amount_server_contexts(0) {
 	std::ifstream	config_file_fd;
-	std::cout << "default constructor" << std::endl;
+	if (DEBUG) std::cout << "default constructor" << std::endl;
 	config_file_fd.open("config_files/default.conf");
 	if (config_file_fd.is_open()) 
 		LoadConfigFile(config_file_fd);
@@ -113,8 +115,10 @@ void		NginxConfig::FindServerContexts() {
 
 	while (_config_file[i]) {
 		key_start = _config_file.find_first_not_of(" \t\n\v\f\r", i);
+		if (key_start == std::string::npos)
+			break ;
 		key_end = _config_file.find_first_of(" \t\n\v\f\r", key_start);
-		if (key_start != std::string::npos && key_end != std::string::npos) {
+		if (key_end != std::string::npos) {
 			i = key_start;
 			if (IsServerContext(_config_file.substr(key_start, key_end - key_start), &i)) {
 				this->_amount_server_contexts++;
@@ -122,7 +126,8 @@ void		NginxConfig::FindServerContexts() {
 				this->_servers.push_back(server);
 			}
 		}
-		i++;
+		if (i != std::string::npos)
+			i++;
 	}
 	if (_amount_server_contexts == 0)
 		throw NoServerContextsException();
@@ -255,3 +260,4 @@ std::string					NginxConfig::GetFastCGIPass(std::string host, std::string target
 		return host_target_pair.location.GetFastCGIPass();
 	throw ConfigValues::DirectiveNotSetException("fastcgi_pass", host, target);
 }
+#undef DEBUG

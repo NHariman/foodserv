@@ -21,6 +21,7 @@ add_executable(
   try_test # test executable name
   try_test.cpp
   ../../src/config/directive_validation/autoindex.cpp
+  ../../src/config/config_utils.cpp
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(

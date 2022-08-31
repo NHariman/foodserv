@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "exception.hpp"
-#include "state_parser.hpp"
+#include "astate_parser.hpp"
 #include "uri.hpp"
 #include "request_utils.hpp"
 
@@ -28,7 +28,7 @@ enum RequestLineState {
 // Parses request line string into method, target, and version
 // components of RequestLine struct to which it receives a reference.
 
-class RequestLineParser : public StateParser<RequestLineState> {
+class RequestLineParser : public AStateParser<RequestLineState> {
 	public:
 		// Default constructor
 		RequestLineParser();

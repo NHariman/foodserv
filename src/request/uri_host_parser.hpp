@@ -4,7 +4,7 @@
 #include <algorithm> // count
 #include "exception.hpp"
 #include "request_utils.hpp"
-#include "state_parser.hpp"
+#include "astate_parser.hpp"
 
 using namespace std;
 
@@ -29,7 +29,7 @@ enum HostState {
 // Does not accept comma-delimited list of multiple hosts - split string first
 // before passing to parser.
 
-class URIHostParser : public StateParser<HostState> {
+class URIHostParser : public AStateParser<HostState> {
 	public:
 		// Default constructor
 		URIHostParser();
@@ -60,7 +60,6 @@ class URIHostParser : public StateParser<HostState> {
 	protected:
 		HostState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
-		bool		CheckDoneState() override;
 		void		AfterParseCheck() override;
 
 };

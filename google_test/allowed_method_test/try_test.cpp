@@ -43,7 +43,7 @@ TEST(AllowedMethodsTest, InvalidInput) {
   }, AllowedMethods::BadMethodException);
   EXPECT_THROW({
     AllowedMethods test("GET POST DELETE BB");
-  }, AllowedMethods::BadMethodException);
+  }, AllowedMethods::TooManyArgumentsException);
   EXPECT_THROW({
     AllowedMethods test("GETPOST DELETE BB");
   }, AllowedMethods::BadMethodException);

@@ -17,6 +17,15 @@ class URI;
 
 class Request {
 	public:
+		enum class Status {
+			Bad = -1,
+			Complete = 0,
+			Incomplete,
+			Expect
+		};
+
+		typedef std::map<string, string>	FieldsMap;
+
 		// Default constructor
 		Request();
 		// Config file constructor
@@ -25,18 +34,21 @@ class Request {
 		~Request();
 
 		size_t	bytes_read; // bytes read of request input
+		size_t	msg_bytes_read; // bytes read of payload body
 		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
 		size_t	max_body_size;
-		bool	is_complete;
 
-		size_t						Parse(char const* buffer);
-		string						GetMethod() const;
-		string						GetTarget() const;
-		URI const&					GetURI() const;
-		string						GetVersion() const;
-		string						GetField(string field_name) const;
-		map<string, string> const&	GetFields() const;
-		string						GetMessageBody() const;
+		size_t				Parse(char const* buffer);
+		string				GetMethod() const;
+		string				GetTarget() const;
+		URI const&			GetURI() const;
+		string				GetVersion() const;
+		string				GetField(string field_name) const;
+		FieldsMap const&	GetFields() const;
+		string				GetMessageBody() const;
+		Status				GetStatus() const;
+		int					GetStatusCode() const;
+		void				SetStatus(Status status);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private `_request_line`, `_header_fields`, `_msg_body`
@@ -47,9 +59,14 @@ class Request {
 	private:
 		RequestParser		_parser;
 		struct RequestLine	_request_line;
-		map<string, string>	_header_fields;
+		FieldsMap			_header_fields;
 		string				_msg_body;
 		string				_buf;
+		Status				_status;
+		int					_status_code;
+
+		bool	CanParse();
+		void	CheckStatus();
 };
 
 #endif /* REQUEST_HPP */

@@ -12,22 +12,26 @@ ReturnDir::ReturnDir(std::string input) {
 		throw MissingArgumentsException();
 	while (input[i]){
 		start = input.find_first_not_of(" \t\n\v\f\r", i);
-		end = input.find_first_of(" \t\n\v\f\r", start);
-		if (start == end)
+		if (start == std::string::npos)
 			break ;
+		end = input.find_first_of(" \t\n\v\f\r", start);
 		key = input.substr(start, end - start);
 		if (IsNumber(key) == false && set == 0)
-			throw InvalidReturnCodeException();
+			throw InvalidReturnCodeException(key);
 		if (set == 0) {
 			_code = ft_atosize_t(key);
+			if (!IsValidReturnCode(_code))
+				throw InvalidReturnCodeException(key);
 			set++;
 		}
-		else if (set > 2)
+		else if (set > 1)
 			throw InvalidAmountOfArgumentsException();
 		else{
 			_url = key;
 			set++;
 		}
+		if (end == std::string::npos)
+			break ;
 		i = end;
 	}
 }
@@ -49,4 +53,10 @@ int		ReturnDir::GetCode() const {
 
 std::string	ReturnDir::GetUrl() const {
 	return _url;
+}
+
+bool ReturnDir::IsValidReturnCode(size_t code) {
+	if (code < 0 || code > 999)
+		return false;
+	return true;
 }

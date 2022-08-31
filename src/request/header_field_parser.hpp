@@ -3,7 +3,7 @@
 
 #include <map>
 #include "exception.hpp"
-#include "state_parser.hpp"
+#include "astate_parser.hpp"
 #include "request_utils.hpp"
 
 using namespace std;
@@ -19,7 +19,7 @@ enum	FieldState {
 
 // Parses input string into header field names and values.
 
-class HeaderFieldParser : public StateParser<FieldState> {
+class HeaderFieldParser : public AStateParser<FieldState> {
 	public:
 		// Default constructor
 		HeaderFieldParser();
@@ -31,7 +31,6 @@ class HeaderFieldParser : public StateParser<FieldState> {
 	protected:
 		FieldState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
-		bool		CheckDoneState() override;
 
 	private:
 		map<string,string>*	_fields;

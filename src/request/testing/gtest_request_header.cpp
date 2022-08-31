@@ -15,9 +15,9 @@ static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files
 // Helper function used by ValidHeaders test to construct and call
 // HeaderFieldValidator on passed request string. Returns result of
 // HeaderFieldValidator::Process().
-static int	ConstructAndProcess(string request_str) {
+static int	ConstructAndProcess(string req_str) {
 	Request request(&config);
-	request.Parse(request_str.c_str());
+	request.Parse(req_str.c_str());
 	HeaderFieldValidator header_validator;
 
 	return header_validator.Process(&config, request);
@@ -34,11 +34,47 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 	status = ConstructAndProcess(DEL_RL_Host + "Content-Length: 0\n\n");
 	EXPECT_EQ(status, hv_Done);
 
-	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0\r\n\n");
+	// message is missing final empty line because when message is complete,
+	// ChunkedHandler clears chunked-related headers and
+	// HeaderFieldValidator will return hv_Done.
+	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0\r\n");
 	EXPECT_EQ(status, hv_MessageChunked);
 
 	status = ConstructAndProcess(POST_RL_Host + "Content-Length: 5\n\nHello");
 	EXPECT_EQ(status, hv_MessageExpected);
+}
+
+static Request::Status	ConstructAndGetStatus(string req_str) {
+	Request request(&config);
+	request.Parse(req_str.c_str());
+
+	return request.GetStatus();
+}
+
+TEST(RequestHeaderValidatorTest, ValidExpect) {
+	Request::Status status;
+	string expect_rq = POST_RL_Host + "Expect: 100-continue\n";
+	
+	status = ConstructAndGetStatus(expect_rq + "\r\n");
+	EXPECT_EQ(status, Request::Status::Complete);
+
+	status = ConstructAndGetStatus(expect_rq + "Content-Length: 5\n\n");
+	EXPECT_EQ(status, Request::Status::Expect);
+
+	status = ConstructAndGetStatus(expect_rq + "Content-Length: 5\n\nHello");
+	EXPECT_EQ(status, Request::Status::Complete);
+
+	status = ConstructAndGetStatus(expect_rq + "Content-Length: 5\n\nHel");
+	EXPECT_EQ(status, Request::Status::Incomplete);
+
+	status = ConstructAndGetStatus(expect_rq + "Transfer-Encoding: chunked\n\n");
+	EXPECT_EQ(status, Request::Status::Expect);
+
+	status = ConstructAndGetStatus(expect_rq + "Transfer-Encoding: chunked\n\n0");
+	EXPECT_EQ(status, Request::Status::Incomplete);
+
+	status = ConstructAndGetStatus(expect_rq + "Transfer-Encoding: chunked\n\n0\n\n");
+	EXPECT_EQ(status, Request::Status::Complete);
 }
 
 TEST(RequestHeaderValidatorTest, InvalidHost) {
