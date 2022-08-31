@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 #include <exception> 
+#include <arpa/inet.h>
 
 /*
 **	NOTES:
@@ -44,6 +45,7 @@ class Listen {
 		void		SplitPortIP();
 		void		CheckPortNumber(std::string port_number);
 		void		CheckIpAddress(std::string ip_address);
+		bool		CheckValidAddress(std::string ip_to_check);
 		std::string	getPortNumber();
 		std::string	getIpNumber();
 
