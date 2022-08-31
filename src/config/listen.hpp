@@ -18,6 +18,7 @@
 #include <string>
 #include <exception> 
 #include <arpa/inet.h>
+#include <netdb.h>
 
 /*
 **	NOTES:

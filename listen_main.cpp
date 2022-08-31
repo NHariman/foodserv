@@ -2,25 +2,25 @@
 
 int     main() {
 	try {
-		Listen  test1("[1234]");
-		std::cout << "test1 IP: " << test1.getIpNumber() << " port: " << test1.getPortNumber() << std::endl;
+		// Listen  test1("[1234]");
+		// std::cout << "test1 IP: " << test1.getIpNumber() << " port: " << test1.getPortNumber() << std::endl;
 		
-		// Listen  test2("8000");
-		// std::cout << "test2 IP: " << test2.getIpNumber() << " port: " << test2.getPortNumber() << std::endl;
+		Listen  test2("8000");
+		std::cout << "test2 IP: " << test2.getIpNumber() << " port: " << test2.getPortNumber() << std::endl;
 
-		// Listen  test3("*:8000");
-		// std::cout << "test3 IP: " << test3.getIpNumber() << " port: " << test3.getPortNumber() << std::endl;
+		Listen  test3("*:8000");
+		std::cout << "test3 IP: " << test3.getIpNumber() << " port: " << test3.getPortNumber() << std::endl;
 
-		// Listen  test4("localhost:8000");
-		// std::cout << "test4 IP: " << test4.getIpNumber() << " port: " << test4.getPortNumber() << std::endl;
+		Listen  test4("localhost:8000");
+		std::cout << "test4 IP: " << test4.getIpNumber() << " port: " << test4.getPortNumber() << std::endl;
 
 
 
-		// Listen  test6("[::]:8000");
-		// std::cout << "test6 IP: " << test6.getIpNumber() << " port: " << test6.getPortNumber() << std::endl;
+		Listen  test6("[::]:8000");
+		std::cout << "test6 IP: " << test6.getIpNumber() << " port: " << test6.getPortNumber() << std::endl;
 
-		// Listen  test7("[::1]");
-		// std::cout << "test7 IP: " << test7.getIpNumber() << " port: " << test7.getPortNumber() << std::endl;
+		Listen  test7("[::0]");
+		std::cout << "test7 IP: " << test7.getIpNumber() << " port: " << test7.getPortNumber() << std::endl;
 
 		// Listen  test8("127.0.0.1");
 		// std::cout << "test8 IP: " << test8.getIpNumber() << " port: " << test8.getPortNumber() << std::endl;

@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/31 14:23:18 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/31 14:56:20 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void		Listen::SplitPortIP() {
 		if (_listen.find('.') != std::string::npos || _listen.find(':') != std::string::npos
 			|| _listen.find("localhost") != std::string::npos || _listen.find("*") != std::string::npos
 			|| _listen.find('[') != std::string::npos) {
-			_port_number = "80";
+			_port_number = DEFAULT_PORT;
 			CheckIpAddress(_listen);
 		}
 		else {
-			_ip_address = "0";
+			_ip_address = DEFAULT_IP;
 			CheckPortNumber(_listen);
 		}
 	}
@@ -63,10 +63,9 @@ void		Listen::CheckIpAddress(std::string ip_address) {
 	if (ip_address == "localhost")
 		_ip_address = "127.0.0.1";
 	else if (ip_address == "0" || ip_address == "*")
-		_ip_address = "0";
+		_ip_address = DEFAULT_IP;
 	else {
 		if (CheckValidAddress(ip_address) == false)
-		// if (ip_address.find_first_not_of("0123456789:.[]") != std::string::npos)
 			throw InvalidIpException();
 		_ip_address = ip_address;
 	}
@@ -76,13 +75,16 @@ bool		Listen::CheckValidAddress(std::string ip_to_check) {
 	char	buf[INET6_ADDRSTRLEN];
 	int		domain;
 	
-	if (ip_to_check.find("[") != std::string::npos)
+	if (ip_to_check.find("[") != std::string::npos) {
 		domain = AF_INET6;
+		ip_to_check = ip_to_check.substr(1, ip_to_check.size() - 2);
+	}
 	else
 		domain = AF_INET;
 
-	if (inet_pton(domain, ip_to_check.c_str(), buf) <= 0)
+	if (inet_pton(domain, ip_to_check.c_str(), buf) <= 0) {
 		return false;
+	}
 	return true;
 }
 
