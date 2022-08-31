@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/08/29 17:29:59 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/31 11:49:27 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/31 17:23:26 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,25 @@
 #include "src/config/nginx_config.hpp"
 // #include "src/basic_server/listening_socket.hpp"
 // #include "src/basic_server/kernel_event.hpp"
-// #include "src/config/server_selection.hpp"
+#include "src/config/server_selection.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
 	try {
+		// 1. all parsing of config.
 		NginxConfig		input_file(av[1]);
 
-		// input_file.GetHostServer("example.com");
+		// 2. start op the server: 
+		// // ListeningSocket	*sock = new ListeningSocket("::", chosen_serverblock.getHost());
+		// // KernelEvent	*webserver = new KernelEvent(sock->getListeningSocket());
+		
+		// 3. get in a request
+		// blabla requestclass()
 
-		// ServerSelection	serverblock_selection(input_file.GetServers());
+		// 4. Server Selection() > take the whole config file,  only contains the server block
+
+		// if host is empty should be 80
+		ServerSelection	serverblock_selection("hell_yeah", "80", input_file.GetServers());
 		
 		// // add exceptions in the server_selection class to make it able to throw.
 		// std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
@@ -36,8 +45,6 @@ int	main(int ac, const char **av) {
 		
 		// std::cout << "GETHOST: " << chosen_serverblock.getHost();
 		// // now initialize the kqueue with the newly opened listening socket.
-		// // ListeningSocket	*sock = new ListeningSocket("::", chosen_serverblock.getHost());
-		// // KernelEvent	*webserver = new KernelEvent(sock->getListeningSocket());
 
 		// // delete sock;
 		// // delete webserver;

@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/08/29 17:29:21 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/29 17:34:16 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/31 16:29:56 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ class NginxConfig {
 		ServerContext				GetHostServer(std::string host) const;
 		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
 
-		
+
 		//exceptions
 		class GetLineFailureException : public std::exception {
 			public:
