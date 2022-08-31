@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/30 18:32:56 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/08/31 14:16:59 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,42 +147,6 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 
-// check function, add in port selection first
-
-host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::string target) const {
-
-	host_target_pair	 host_target_pair;
-
-	for (size_t server = 0 ; server < _servers.size(); server++) {
-		for (size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
-			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
-				host_target_pair.server = _servers.at(server);
-				for (size_t loc = 0 ; loc < _servers.at(server).GetLocationContexts().size() ; loc++) {
-					if (target.compare(_servers.at(server).GetLocationContexts().at(loc).GetLocationUri().GetUri()) == 0) {
-						host_target_pair.location = _servers.at(server).GetLocationContexts().at(loc);
-						return (host_target_pair);
-					}
-				}
-			}
-		}
-	}
-	throw HostTargetPairDoesNotExistException(host, target);
-	return (host_target_pair);
-}
-
-ServerContext			NginxConfig::GetHostServer(std::string host) const {
-	std::cout << "******IN SERVERCONTEXT : GetHostServer*****" << std::endl;
-	for (size_t server = 0 ; server < _servers.size(); server++) {
-		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
-			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
-				ServerContext check = _servers.at(server);
-				return _servers.at(server);
-			}
-		}
-	}
-	throw HostDoesNotExistException(host);
-}
-
 bool								NginxConfig::IsSetInTarget(std::string host, std::string target, std::string directive) const {
 	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
 	return host_target_pair.location.IsSet(directive);
@@ -260,4 +224,5 @@ std::string					NginxConfig::GetFastCGIPass(std::string host, std::string target
 		return host_target_pair.location.GetFastCGIPass();
 	throw ConfigValues::DirectiveNotSetException("fastcgi_pass", host, target);
 }
+
 #undef DEBUG

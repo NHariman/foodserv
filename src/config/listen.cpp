@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/31 11:48:03 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/08/31 14:23:18 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,10 @@
 
 Listen::Listen(std::string listen) : _listen(listen), _port_number(DEFAULT_PORT), _ip_address(DEFAULT_IP) {
 	if (_listen.empty()) {
-		_port_number = "80";
-		_ip_address = "0";
+		_port_number = DEFAULT_PORT;
+		_ip_address = DEFAULT_IP;
 		return ;
 	}
-
 	SplitPortIP();
 }
 
