@@ -16,20 +16,21 @@
 
 class TargetConfig : public LocationContext, virtual public ConfigValues {
 	private:
-		std::string     					RetrieveRoot(ServerContext *server, LocationContext *location);
-		std::vector<std::string>			RetrieveIndex(ServerContext *server, LocationContext *location);
-		size_t								RetrieveMaxBodySize(ServerContext *server, LocationContext *location);
-		std::vector<ErrorPage>				RetrieveErrorPage(ServerContext *server, LocationContext *location);
-		bool								RetrieveAutoindex(ServerContext *server, LocationContext *location);
-		ReturnDir							RetrieveReturn(ServerContext *server, LocationContext *location);
+		std::string     					SetRoot(ServerContext *server, LocationContext *location);
+		std::vector<std::string>			SetIndex(ServerContext *server, LocationContext *location);
+		size_t								SetMaxBodySize(ServerContext *server, LocationContext *location);
+		std::vector<ErrorPage>				SetErrorPage(ServerContext *server, LocationContext *location);
+		bool								SetAutoindex(ServerContext *server, LocationContext *location);
+		ReturnDir							SetReturn(ServerContext *server, LocationContext *location);
 
-		CGIPass								RetrieveCGIPass(ServerContext *server, LocationContext *location);
+		CGIPass								SetCGIPass(ServerContext *server, LocationContext *location);
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig(){};
 		void	SetupTargetConfig(std::string host, std::string port, std::string target, NginxConfig *config);
 		//getters
 		bool						IsAllowedMethod(std::string method);
+		CGIPass						GetCGIPass() const;
 		std::string					GetRoot() const;
 		std::vector<std::string> 	GetIndex() const;
 		size_t						GetMaxBodySize() const;
