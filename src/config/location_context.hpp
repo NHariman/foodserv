@@ -12,13 +12,13 @@
 
 
 // actually this is called a context (sad face)
-class LocationContext : public ConfigValues {
-	private:
+class LocationContext : virtual public ConfigValues {
+	protected:
 		bool						bool_uri;
-		bool						bool_fastcgi_pass;
+		bool						bool_cgi_pass;
 		bool						bool_allowed_methods;	
 		LocationUri					_location_uri;
-		std::string					_fastcgi_pass;
+		CGIPass						_cgi_pass;
 		AllowedMethods				_allowed_methods;
 
 		void						GetDirectiveValuePairs(std::string data) override;
@@ -38,7 +38,7 @@ class LocationContext : public ConfigValues {
 		bool						IsSet(std::string directive) override;
 		// getters
 		LocationUri					GetLocationUri() const;
-		std::string					GetFastCGIPass() const;
+		CGIPass						GetCGIPass() const;
 		AllowedMethods				GetAllowedMethods() const;
 		// overridden getters
 		bool						GetAutoindex() const override;
@@ -47,18 +47,18 @@ class LocationContext : public ConfigValues {
 		size_t						GetClientMaxBodySize() const override;
 		std::vector<ErrorPage>		GetErrorPage() const override;
 		
-		class MultipleFastCGIPassException : public std::exception
+		class MultipleCGIPassException : public std::exception
 		{
 			private:
 				std::string		_err_string;
 			public:
-				MultipleFastCGIPassException(std::string uri) {
-					_err_string = "ERROR! Multiple fastcgi_pass directives detected in Location Context:" + uri + ".";
+				MultipleCGIPassException(std::string uri) {
+					_err_string = "ERROR! Multiple cgi_pass directives detected in Location Context:" + uri + ".";
 				}
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
-				virtual ~MultipleFastCGIPassException() throw() {}
+				virtual ~MultipleCGIPassException() throw() {}
 		};
 
 		class MultipleAllowedMethodsException : public std::exception

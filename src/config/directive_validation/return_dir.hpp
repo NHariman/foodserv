@@ -9,10 +9,12 @@
 
 class ReturnDir {
     private:
+		bool _is_set;
         int _code;
         std::string _url;
+		bool IsValidReturnCode(size_t code);
     public:
-        ReturnDir(){};
+        ReturnDir();
         ReturnDir(std::string input);
         ~ReturnDir(){};
         ReturnDir(ReturnDir const &obj);
@@ -20,7 +22,7 @@ class ReturnDir {
 
         int     GetCode() const;
         std::string GetUrl() const;
-		bool IsValidReturnCode(size_t code);
+		bool	IsSet() const;
         class MissingArgumentsException : public std::exception
 		{
 			public:

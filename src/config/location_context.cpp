@@ -23,7 +23,7 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     bool_index = location_context.bool_index;
     bool_client_max_body_size = location_context.bool_client_max_body_size;
 	bool_error_page = location_context.bool_error_page;
-    bool_fastcgi_pass = location_context.bool_fastcgi_pass;
+    bool_cgi_pass = location_context.bool_cgi_pass;
 	bool_allowed_methods = location_context.bool_allowed_methods;
     _location_uri = location_context._location_uri;
     _autoindex = location_context._autoindex;
@@ -31,17 +31,17 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     _index = location_context._index;
     _client_max_body_size = location_context._client_max_body_size;
 	_error_page = location_context._error_page;
-    _fastcgi_pass = location_context._fastcgi_pass;
+    _cgi_pass = location_context._cgi_pass;
 	_allowed_methods = location_context._allowed_methods;
 
     return (*this);
 }
 
 LocationContext::LocationContext(LocationContext const& location_context) : ConfigValues(location_context),
-bool_fastcgi_pass(location_context.bool_fastcgi_pass),
+bool_cgi_pass(location_context.bool_cgi_pass),
 bool_allowed_methods(location_context.bool_allowed_methods),
 _location_uri(location_context._location_uri),
-_fastcgi_pass(location_context._fastcgi_pass),
+_cgi_pass(location_context._cgi_pass),
 _allowed_methods(location_context._allowed_methods)
 {}
 
@@ -52,12 +52,12 @@ void	LocationContext::InitChecklist() {
     bool_index = false;
     bool_client_max_body_size = false;
 	bool_error_page = false;
-    bool_fastcgi_pass = false;
+    bool_cgi_pass = false;
 	bool_allowed_methods = false;
 }
 
 int								LocationContext::IsDirective(std::string directive) {
-	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
+	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return"};
 
     if (bool_uri == false) {
 		return 8;
@@ -122,11 +122,11 @@ void							LocationContext::SetValue(int directive, std::string input) {
 				break ;
 			}
             case 5: {
-				if (bool_fastcgi_pass == true)
-					throw MultipleFastCGIPassException(_location_uri.GetURIClass().GetInputURI());
-				bool_fastcgi_pass = true;
-				FastCGIPass fastcgi_pass_value(value);
-				_fastcgi_pass = value;
+				if (bool_cgi_pass == true)
+					throw MultipleCGIPassException(_location_uri.GetURIClass().GetInputURI());
+				bool_cgi_pass = true;
+				CGIPass cgi_pass_value(value);
+				_cgi_pass = value;
 				break ;
 			}
             case 6: {
@@ -165,6 +165,9 @@ void							LocationContext::CheckListVerification(){
 	if (bool_allowed_methods == false) {
 		_allowed_methods = AllowedMethods();
 		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a allowed_methods set. Default (No methods allowed) have been set." << std::endl;
+	}
+	if (bool_cgi_pass == false) {
+		_cgi_pass = CGIPass();
 	}
 }
 
@@ -231,10 +234,10 @@ std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
     return _error_page;
 }
 
-std::string							LocationContext::GetFastCGIPass() const {
-	if (bool_fastcgi_pass == false)
-		throw DirectiveNotSetException("fastcgi_pass", _location_uri.GetURIClass().GetInputURI());
-    return _fastcgi_pass;
+std::string							LocationContext::GetCGIPass() const {
+	if (bool_cgi_pass == false)
+		throw DirectiveNotSetException("cgi_pass", _location_uri.GetURIClass().GetInputURI());
+    return _cgi_pass;
 }
 
 AllowedMethods						LocationContext::GetAllowedMethods() const {
@@ -249,7 +252,7 @@ std::string LocationUri::GetInputURI() const {
 
 // use to check if a directive has been set
 bool						LocationContext::IsSet(std::string directive) {
-	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "fastcgi_pass", "allowed_methods", "return"};
+	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return"};
 
 	int	is_directive = std::find(directives, directives + 8, directive) - directives;
 	if (is_directive < 0 || is_directive > 7)
@@ -266,7 +269,7 @@ bool						LocationContext::IsSet(std::string directive) {
 		case 4:
 			return bool_error_page;
 		case 5:
-			return bool_fastcgi_pass;
+			return bool_cgi_pass;
 		case 6:
 			return bool_allowed_methods;
 		case 7:

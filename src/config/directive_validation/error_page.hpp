@@ -17,16 +17,18 @@
 
 class ErrorPage {
 	private:
+		bool				_is_set;
 		std::string			_uri;
 		std::vector<int>	_code;
 		ErrorPage(){};
 	
 	public:
-		~ErrorPage(){};
+		~ErrorPage();
 		ErrorPage(std::string input);
 		ErrorPage(ErrorPage const &obj);
 		ErrorPage&	operator=(ErrorPage const & obj);
 
+		bool				IsSet() const;
 		std::string			GetUri() const;
 		std::vector<int>	GetCodes() const;
 		void				PrintCodes() const;

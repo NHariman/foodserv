@@ -187,42 +187,49 @@ void				ServerContext::SetValue(int directive, std::string value){
 	return ;
 }
 
+bool					HasDefaultLocation(std::vector<LocationContext> locations) {
+	std::string target = "/";
+	for (size_t loc = 0 ; loc < locations.size() ; loc++) {
+		if (target.compare(locations.at(loc).GetLocationUri().GetUri()) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
 // checks if the necessary blocks have been set and otherwise prints a warning
 // if something MUST be set, we should throw an exception
 void			ServerContext::CheckListVerification(){
-	if (amount_location_context > 0) {
+	if (amount_location_context == 0 || HasDefaultLocation(_location_contexts) == false) {
 		LocationContext default_location;
 		_location_contexts.push_back(default_location);
-		std::cerr << "WARNING! No location context detected in server context no." + std::to_string(_server_nb) + " Default have been set." << std::endl;
 	}
 	if (bool_listen == false) {
 		_listen.first = "80"; // changed to string
 		_listen.second = "0"; // changed to string
-		std::cerr << "WARNING! No listen detected in server context no." + std::to_string(_server_nb) + " Defaults (80) have been set." << std::endl;
 	}
 	if (bool_server_name == false) {
 		_server_name.push_back("localhost");
-		std::cerr << "WARNING! No server_name detected in server context no." + std::to_string(_server_nb) + " Default (localhost) have been set." << std::endl;
 	}
 	if (bool_root == false) {
 		_root = "/var/www/html";
-		std::cerr << "WARNING! No server root detected in server context no." + std::to_string(_server_nb) + " Default (/var/www/html) have been set." << std::endl;
 	}
 	if (bool_index == false) {
 		Index	input_value("index.php index.html index.htm index.nginx-debian.html");
 		_index = input_value.GetIndex();
-		std::cerr << "WARNING! No server index detected in server context no." + std::to_string(_server_nb) + " Default (index.php index.html index.htm index.nginx-debian.html) have been set." << std::endl;}
+	}
 	if (bool_client_max_body_size == false) {
 		_client_max_body_size = 1;
-		std::cerr << "WARNING! No client_max_body_size detected in server context no." + std::to_string(_server_nb) + " Default (1mb) has been set." << std::endl;
 	}
 	if (bool_error_page == false) {
-		// hardcoded error pages are used instead?
-		std::cerr << "WARNING! No error_page detected in server context no." + std::to_string(_server_nb) + " Default have been set." << std::endl;
+		bool_error_page = false;
 	}
 	if (bool_autoindex == false) {
 		_autoindex = false;
-		std::cerr << "WARNING! No error_page detected in server context no." + std::to_string(_server_nb) + " Default have been set." << std::endl;
+	}
+	if (bool_return_dir == false) {
+		ReturnDir value;
+		_return_dir = value;
 	}
 }
 

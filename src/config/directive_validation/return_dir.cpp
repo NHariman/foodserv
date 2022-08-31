@@ -1,7 +1,9 @@
 #include "return_dir.hpp"
 #include "../config_utils.hpp"
 
-ReturnDir::ReturnDir(std::string input) {
+ReturnDir::ReturnDir() : _is_set(false) {}
+
+ReturnDir::ReturnDir(std::string input) : _is_set(true) {
 	size_t	i = 0;
 	size_t	start = 0;
 	size_t	end = 0;
@@ -37,14 +39,19 @@ ReturnDir::ReturnDir(std::string input) {
 }
 
 ReturnDir::ReturnDir(ReturnDir const &obj) :
-_code(obj._code), _url(obj._url) {}
+_is_set(obj._is_set), _code(obj._code), _url(obj._url) {}
 
 ReturnDir&		ReturnDir::operator= (ReturnDir const &obj) {
 	if (this == &obj)
 		return (*this);
+	_is_set = obj._is_set;
 	_code = obj._code;
 	_url = obj._url;
 	return (*this);
+}
+
+bool	ReturnDir::IsSet() const {
+	return _is_set;
 }
 
 int		ReturnDir::GetCode() const {
