@@ -1,5 +1,5 @@
-#ifndef HEADER_FIELD_VALIDATOR_HPP
-#define HEADER_FIELD_VALIDATOR_HPP
+#ifndef request_validator_HPP
+#define request_validator_HPP
 
 #include <map>
 #include <string>
@@ -18,12 +18,12 @@ enum HeaderStatus {
 	hv_MessageChunked
 };
 
-class HeaderFieldValidator {
+class RequestValidator {
 	public:
 		// Default constructor
-		HeaderFieldValidator();
+		RequestValidator();
 		// Destructor
-		~HeaderFieldValidator();
+		~RequestValidator();
 
 		HeaderStatus	Process(NginxConfig* config, Request& request);
 
@@ -38,4 +38,4 @@ class HeaderFieldValidator {
 		HeaderStatus	_status;
 };
 
-#endif /* HEADER_FIELD_VALIDATOR_HPP */
+#endif /* request_validator_HPP */

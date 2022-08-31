@@ -2,7 +2,7 @@
 #include <string>
 
 #include "../exception.hpp"
-#include "../header_field_validator.hpp"
+#include "../request_validator.hpp"
 #include "../request.hpp"
 
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
@@ -13,12 +13,12 @@ static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");
 
 // Helper function used by ValidHeaders test to construct and call
-// HeaderFieldValidator on passed request string. Returns result of
-// HeaderFieldValidator::Process().
+// RequestValidator on passed request string. Returns result of
+// RequestValidator::Process().
 static int	ConstructAndProcess(string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
-	HeaderFieldValidator header_validator;
+	RequestValidator header_validator;
 
 	return header_validator.Process(&config, request);
 }
@@ -36,7 +36,7 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 
 	// message is missing final empty line because when message is complete,
 	// ChunkedHandler clears chunked-related headers and
-	// HeaderFieldValidator will return hv_Done.
+	// RequestValidator will return hv_Done.
 	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0\r\n");
 	EXPECT_EQ(status, hv_MessageChunked);
 

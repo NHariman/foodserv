@@ -1,5 +1,5 @@
 #include "request_parser.hpp"
-#include "header_field_validator.hpp"
+#include "request_validator.hpp"
 #include "request.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
@@ -95,10 +95,10 @@ RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	// allocated on stack because we don't need to remember the return
-	HeaderFieldValidator	header_validator;
-	int						ret_code;
+	RequestValidator	validator;
+	int					ret_code;
 
-	ret_code = header_validator.Process(_config, *_request);
+	ret_code = validator.Process(_config, *_request);
 	switch (ret_code) {
 		case hv_Done:
 			return r_Done;

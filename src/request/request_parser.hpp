@@ -5,7 +5,7 @@
 #include "chunked_parser.hpp"
 #include "exception.hpp"
 #include "header_field_parser.hpp"
-#include "header_field_validator.hpp"
+#include "request_validator.hpp"
 #include "astate_parser.hpp"
 #include "request_line_parser.hpp"
 #include "request_utils.hpp"
@@ -13,7 +13,7 @@
 using namespace std;
 
 class Request;
-class HeaderFieldValidator;
+class RequestValidator;
 class NginxConfig;
 
 enum RequestState {

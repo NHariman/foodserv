@@ -64,6 +64,7 @@ class Request {
 		string				_buf;
 		Status				_status;
 		int					_status_code;
+		// Location	location;
 
 		bool	CanParse();
 		void	CheckStatus();

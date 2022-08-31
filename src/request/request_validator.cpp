@@ -1,16 +1,16 @@
-#include "header_field_validator.hpp"
+#include "request_validator.hpp"
 #include "request.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
 
-HeaderFieldValidator::HeaderFieldValidator() : _status(hv_Done) {}
+RequestValidator::RequestValidator() : _status(hv_Done) {}
 
-HeaderFieldValidator::~HeaderFieldValidator() {}
+RequestValidator::~RequestValidator() {}
 
-HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request) {
+HeaderStatus	RequestValidator::Process(NginxConfig* config, Request& request) {
 	_status = hv_Done;
 
-	if (DEBUG) cout << "HeaderFieldValidator::Process\n";
+	if (DEBUG) cout << "RequestValidator::Process\n";
 	
 	if (ValidHost(request.GetField("host"))
 			&& ValidExpect(request)
@@ -23,7 +23,7 @@ HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request
 }
 
 // Only exactly 1 Host definition is accepted.
-bool	HeaderFieldValidator::ValidHost(string host) {
+bool	RequestValidator::ValidHost(string host) {
 	if (DEBUG) cout << "ValidHost\n";
 
 	if (host == NO_VAL)
@@ -44,7 +44,7 @@ bool	HeaderFieldValidator::ValidHost(string host) {
 }
 
 // Only accepts "100-continue" for Expect header.
-bool	HeaderFieldValidator::ValidExpect(Request& request) {
+bool	RequestValidator::ValidExpect(Request& request) {
 	if (DEBUG) cout << "ValidExpect\n";
 
 	string	expect = request.GetField("expect");
@@ -59,7 +59,7 @@ bool	HeaderFieldValidator::ValidExpect(Request& request) {
 }
 
 // Does not accept any definition of Content-Encoding header.
-bool	HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
+bool	RequestValidator::ValidContentEncoding(string content_encoding) {
 	if (DEBUG) cout << "ValidContentEncoding\n";
 
 	if (content_encoding != NO_VAL)
@@ -79,7 +79,7 @@ static void	CheckAllowedMethod(string method, size_t content_length = 1) {
 }
 
 // If Transfer-Encoding is define, only "chunked" value is accepted.
-bool	HeaderFieldValidator::ValidTransferEncoding(Request& request) {
+bool	RequestValidator::ValidTransferEncoding(Request& request) {
 	if (DEBUG) cout << "ValidTransferEncoding\n";
 
 	string	transfer_encoding = request.GetField("transfer-encoding");
@@ -138,7 +138,7 @@ static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
 // Only exactly 1 Content-Length definition is accepted
 // and only for POST requests.
 // Sets `content_length` and `max_body_size` attributes within Request.
-bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
+bool	RequestValidator::ValidContentLength(NginxConfig* config,
 													Request& request) {
 	if (DEBUG) cout << "ValidContentLength\n";
 
@@ -157,7 +157,7 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 	return true;
 }
 
-bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
+bool	RequestValidator::ValidMethod(NginxConfig* config, Request& request) {
 	if (DEBUG) cout << "ValidMethod\n";
 
 	string	host = request.GetField("host");
