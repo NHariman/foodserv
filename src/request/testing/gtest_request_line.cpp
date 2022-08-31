@@ -9,7 +9,7 @@ TEST(RequestLineTest, ParseGet) {
 	Request request(&config);
 	request.Parse("GET /hello.txt HTTP/1.1\nHost: localhost\r\n\n");
 	EXPECT_EQ(request.GetMethod(), "GET");
-	EXPECT_EQ(request.GetTarget(), "/hello.txt");
+	EXPECT_EQ(request.GetTargetString(), "localhost/hello.txt");
 	EXPECT_EQ(request.GetVersion(), "HTTP/1.1");
 }
 
@@ -17,7 +17,7 @@ TEST(RequestLineTest, ParseGetCRLF) {
 	Request request(&config);
 	request.Parse("GET /hello.txt HTTP/1.1\r\nHost: localhost\n\n");
 	EXPECT_EQ(request.GetMethod(), "GET");
-	EXPECT_EQ(request.GetTarget(), "/hello.txt");
+	EXPECT_EQ(request.GetTargetString(), "localhost/hello.txt");
 	EXPECT_EQ(request.GetVersion(), "HTTP/1.1");
 }
 

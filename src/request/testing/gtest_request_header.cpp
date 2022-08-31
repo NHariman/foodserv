@@ -18,9 +18,9 @@ static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files
 static int	ConstructAndProcess(string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
-	RequestValidator header_validator;
+	RequestValidator header_validator(&config);
 
-	return header_validator.Process(&config, request);
+	return header_validator.Process(request);
 }
 
 TEST(RequestHeaderValidatorTest, ValidHeaders) {

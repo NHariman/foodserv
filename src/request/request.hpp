@@ -40,8 +40,8 @@ class Request {
 
 		size_t				Parse(char const* buffer);
 		string				GetMethod() const;
-		string				GetTarget() const;
-		URI const&			GetURI() const;
+		string				GetTargetString() const;
+		URI const&			GetTargetURI() const;
 		string				GetVersion() const;
 		string				GetField(string field_name) const;
 		FieldsMap const&	GetFields() const;
@@ -49,6 +49,7 @@ class Request {
 		Status				GetStatus() const;
 		int					GetStatusCode() const;
 		void				SetStatus(Status status);
+		void				SetTargetHost(string host);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private `_request_line`, `_header_fields`, `_msg_body`
@@ -64,7 +65,7 @@ class Request {
 		string				_buf;
 		Status				_status;
 		int					_status_code;
-		// Location	location;
+		// TargetConfig	_target_config;
 
 		bool	CanParse();
 		void	CheckStatus();

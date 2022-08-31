@@ -3,39 +3,73 @@
 
 #define DEBUG 0 // TODO: REMOVE
 
-RequestValidator::RequestValidator() : _status(hv_Done) {}
+RequestValidator::RequestValidator(NginxConfig* config)
+	: _status(hv_Done), _config(config) {}
 
 RequestValidator::~RequestValidator() {}
 
-HeaderStatus	RequestValidator::Process(NginxConfig* config, Request& request) {
+HeaderStatus	RequestValidator::Process(Request& request) {
 	_status = hv_Done;
 
 	if (DEBUG) cout << "RequestValidator::Process\n";
 	
-	if (ValidHost(request.GetField("host"))
+	// PreConfigValidate(request);
+	// SetupConfig(config, request.GetTargetURI());
+	// PostConfigValidate(request);
+	if (ValidHost(request)
 			&& ValidExpect(request)
 			&& ValidContentEncoding(request.GetField("content-encoding"))
 			&& ValidTransferEncoding(request)
-			&& ValidContentLength(config, request)
-			&& ValidMethod(config, request))
+			&& ValidContentLength(_config, request)
+			&& ValidMethod(_config, request))
 		return _status;
 	return hv_Bad;
 }
 
+bool	RequestValidator::PreConfigValidate(Request& request) {
+	return (ValidHost(request)
+			&& ValidExpect(request)
+			&& ValidContentEncoding(request.GetField("content-encoding"))
+			&& ValidTransferEncoding(request));
+}
+
+void	RequestValidator::SetupConfig(NginxConfig* config,
+			URI const& request_target) {
+	string	host = request_target.GetHost();
+	string	port = request_target.GetPort();
+	string	target = request_target.GetPath(); // TODO: check if query is needed
+	// _target_config = &request._target_config;
+
+	(void)config;
+	// _target_config->Setup(config, host, port, target);
+}
+
+bool	RequestValidator::PostConfigValidate(Request& request) {
+	return (ValidContentLength(_config, request) && ValidMethod(_config, request));
+}
+
+
+void	RequestValidator::ResolveTarget(Request& request) {
+	(void)request;
+}
+
 // Only exactly 1 Host definition is accepted.
-bool	RequestValidator::ValidHost(string host) {
+bool	RequestValidator::ValidHost(Request& request) {
 	if (DEBUG) cout << "ValidHost\n";
 
+	string	host = request.GetField("host");
 	if (host == NO_VAL)
 		throw BadRequestException("Host header mandatory");
 	if (host.find(' ') != string::npos || host.find(',') != string::npos)
 		throw BadRequestException("Multiple hosts not allowed");
 	try {
-		URIHostParser	parser;
-		URI				uri;
-
 		// Checks if Host value is valid path
-		parser.Parse(uri, host);
+		URIHostParser	parser;
+		URI				host_uri;
+
+		parser.Parse(host_uri, host);
+		// If valid, add host to request target URI object.
+		request.SetTargetHost(host);
 	}
 	catch (std::exception &e) {
 		throw;
@@ -104,15 +138,17 @@ bool	RequestValidator::ValidTransferEncoding(Request& request) {
 static void	CheckContentLengthValue(NginxConfig* config,
 									Request& request) {
 	string	content_length = request.GetField("content-length");
-	string	host = request.GetField("host");
-	string	target = request.GetTarget();
+	// string	host = request.GetField("host");
+	// string	target = request.GetTargetString();
 
 	// non-digit value
 	if (!IsValidString(isdigit, content_length))
 		throw BadRequestException("Invalid Content-Length value");
 
 	request.content_length = std::stoll(content_length);
-	request.max_body_size = MBToBytes(config->GetMaxBodySize(host, target));
+	request.max_body_size = MBToBytes(1);
+	(void)config;
+	// request.max_body_size = MBToBytes(config->GetMaxBodySize(host, target));
 	
 	// if invalid value
 	if (request.content_length < 0)
@@ -160,10 +196,10 @@ bool	RequestValidator::ValidContentLength(NginxConfig* config,
 bool	RequestValidator::ValidMethod(NginxConfig* config, Request& request) {
 	if (DEBUG) cout << "ValidMethod\n";
 
-	string	host = request.GetField("host");
-	string	target = request.GetTarget();
+	// string	host = request.GetField("host");
+	// string	target = request.GetTargetString();
 	string	method = request.GetMethod();
-
+	(void)config;
 	return true; // TODO: change when config methods are stable
 	// return config->IsAllowedMethod(host, target, method);
 }

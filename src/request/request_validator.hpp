@@ -5,6 +5,7 @@
 #include <string>
 #include "exception.hpp"
 #include "request_utils.hpp"
+#include "uri.hpp"
 
 using namespace std;
 
@@ -20,22 +21,28 @@ enum HeaderStatus {
 
 class RequestValidator {
 	public:
-		// Default constructor
-		RequestValidator();
+		// Config constructor
+		RequestValidator(NginxConfig* config);
 		// Destructor
 		~RequestValidator();
 
-		HeaderStatus	Process(NginxConfig* config, Request& request);
+		HeaderStatus	Process(Request& request);
 
-		bool	ValidHost(string host);
+	private:
+		HeaderStatus	_status;
+		NginxConfig*	_config;
+		//TargetConfig*	_target_config;
+
+		bool	PreConfigValidate(Request& request);
+		void	SetupConfig(NginxConfig* config, URI const& request_target);
+		bool	PostConfigValidate(Request& request);
+		bool	ValidHost(Request& request);
 		bool	ValidExpect(Request& request);
 		bool	ValidContentEncoding(string host);
 		bool	ValidTransferEncoding(Request& request);
 		bool	ValidContentLength(NginxConfig* config, Request& request);
 		bool	ValidMethod(NginxConfig* config, Request& request);
-	
-	private:
-		HeaderStatus	_status;
+		void	ResolveTarget(Request& request);
 };
 
 #endif /* request_validator_HPP */

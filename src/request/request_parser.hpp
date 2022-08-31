@@ -45,12 +45,11 @@ class RequestParser  : public AStateParser<RequestState> {
 		friend class	Request;
 
 	private:
-		RequestLineParser		_request_line_parser;
-		HeaderFieldParser		_header_parser;
-		ChunkedParser			_chunked_parser;
-		NginxConfig				*_config;
-		
-		Request		*_request;
+		RequestLineParser	_request_line_parser;
+		HeaderFieldParser	_header_parser;
+		ChunkedParser		_chunked_parser;
+		NginxConfig*		_config;
+		Request*			_request;
 
 		RequestState	RequestLineHandler();
 		RequestState	HeaderFieldHandler();

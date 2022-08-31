@@ -48,11 +48,11 @@ string	Request::GetMethod() const {
 	return _request_line.method;
 }
 
-string	Request::GetTarget() const {
+string	Request::GetTargetString() const {
 	return _request_line.target.Get();
 }
 
-URI const&	Request::GetURI() const {
+URI const&	Request::GetTargetURI() const{
 	return _request_line.target;
 }
 
@@ -92,6 +92,10 @@ int	Request::GetStatusCode() const {
 
 void	Request::SetStatus(Status status) {
 	_status = status;
+}
+
+void	Request::SetTargetHost(string host) {
+	_request_line.target.SetHost(host);
 }
 
 // Checks if double CRLF indicating end of header section is found

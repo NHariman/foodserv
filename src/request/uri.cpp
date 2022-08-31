@@ -65,6 +65,8 @@ string	URI::GetURIDebug() const {
 
 	if (!_host.empty())
 		uri += "host: \"" + _host + "\" | ";
+	if (!_port.empty())
+		uri += "port: \"" + _port + "\" | ";
 	if (!_path.empty())
 		uri += "path: \"" + _path + "\" | ";
 	if (!_query.empty())
