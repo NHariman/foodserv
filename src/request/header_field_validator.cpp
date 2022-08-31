@@ -164,7 +164,8 @@ bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
 	string	target = request.GetTarget();
 	string	method = request.GetMethod();
 
-	return config->IsAllowedMethod(host, target, method);
+	return true; // TODO: change when config methods are stable
+	// return config->IsAllowedMethod(host, target, method);
 }
 
 #undef DEBUG // REMOVE

@@ -25,6 +25,8 @@ file(GLOB SRCS CONFIGURE_DEPENDS
     "../../config/directive_validation/*.cpp"
 )
 
+list(FILTER SRCS EXCLUDE REGEX ".*host_target_pair\\.cpp$")
+
 add_executable(${EXEC})
 
 target_sources(${EXEC}

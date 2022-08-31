@@ -69,6 +69,19 @@ TEST(RequestMessageTest, ValidMessageChunkedSplitBySize) {
 	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
 }
 
+// Middle chunk is size 16 (hex 10) split over 2 reads.
+TEST(RequestMessageTest, ValidMessageChunkedSplitBySizeHex) {
+	Request request(&config);
+
+	ParseChunked(request, POST_Req + CHUNKED);
+	ParseChunked(request, "4\r\nWiki\r\n");
+	ParseChunked(request, "6\r\npedia \r\n1");
+	ParseChunked(request, "0\r\nin \r\n\t\t\r\nchunks.\r\n");
+	ParseChunked(request, "0\r\n\r\n");
+
+	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\t\t\r\nchunks.");
+}
+
 TEST(RequestMessageTest, ValidMessageChunkedSplitDataMid) {
 	Request request(&config);
 
