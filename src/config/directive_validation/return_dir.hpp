@@ -39,6 +39,7 @@ class ReturnDir {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+				virtual ~InvalidReturnCodeException() throw();
 		};
         class InvalidAmountOfArgumentsException : public std::exception
 		{
