@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/09/01 22:10:42 by salbregh      ########   odam.nl         */
+/*   Created: 2022/09/01 22:12:11 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/09/01 22:12:13 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,11 @@ void		Listen::CheckPortNumber(std::string port_number) {
 		throw InvalidPortException();
 	else if (stoi(port_number) > 65535 || stoi(port_number) <= 0)
 		throw InvalidPortException();
+<<<<<<< HEAD
 	else if (port_number[0] == '0')
 		throw InvalidPortException();
+=======
+>>>>>>> main
 	_port_number = port_number;
 }
 
