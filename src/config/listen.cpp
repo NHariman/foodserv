@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/31 14:56:20 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/01 22:10:42 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void		Listen::CheckPortNumber(std::string port_number) {
 	if (port_number.find_first_not_of("0123456789") != std::string::npos)
 		throw InvalidPortException();
 	else if (stoi(port_number) > 65535 || stoi(port_number) <= 0)
+		throw InvalidPortException();
+	else if (port_number[0] == '0')
 		throw InvalidPortException();
 	_port_number = port_number;
 }
