@@ -4,77 +4,40 @@
   \ V  V /  __/ |_) \__ \  __/ |   \ V /  
    \_/\_/ \___|_.__/|___/\___|_|    \_/   
    
-   The ServerSelection class chooses the most compatible
-   serverblock to serve the request on. Getters will be
-   provided to use in socket.hpp and server.hpp.
+   The ServerSelection class takes as an argument all serverblocks
+   from the nginx configuration file. 
+   It will then choose the most compatible serverblock to serve the request on.
+
+	TODO: what getters and setters do I need
 */
 
 #include "server_selection.hpp"
 
-ServerSelection::ServerSelection(std::vector<ServerContext> serverblocks): _serverblocks(serverblocks) {
+ServerSelection::ServerSelection(std::string host, std::string port, std::vector<ServerContext> serverblocks)
+	: _host(host), _port(port), _serverblocks(serverblocks) {
+	// host can never be empty as the default is set by nginx
+	if (_port.size() == 0)
+		_port = "80";
+	
 	PrintContextVectors();
-	SplitRequestHost();
+
+	SelectCompatiblePorts(_port);
+	SelectCompatibleServerNames(_host, _compatible_serverblocks);
 }
 
 void	ServerSelection::PrintContextVectors() {
+	int		i = 1;
 	for (std::vector<ServerContext>::iterator it = _serverblocks.begin(); it != _serverblocks.end(); it++) {
-		std::cout << "\nIn server block print for loop: " << std::endl;
+		std::cout << "\n\nNUMBER " << i << std::endl;
+		std::cout << "In server block print for loop: " << std::endl;
 		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
-		std::cout << "IPAddress: " << it->GetIPAddress() << std::endl;
 		std::vector<std::string> server = it->GetServerNameVector();
 		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
 			std::cout << "In servername vector printing: " << std::endl;
 			std::cout << *it2 << std::endl;
 		}
+		i++;
 	}
-}
-
-// for now use example strings that represent the host header:
-// Host = uri-host [ ":" port ] ;
-// string: www.example.com
-// string: example.com:80
-// string:
-// SANNE: add the functions to select which server block to choose
-
-void	ServerSelection::SplitRequestHost() {
-	std::string	request_host = "example.com:80";
-	// std::string	request_host = "www.example.com";
-
-	// both request server_name and port_number stay empty
-	std::string		request_server_name = "";
-	std::string		request_port_number = "";
-	unsigned long	found;
-
-	// if a ':' is found, this means a port number is specified in the request
-	// split the server_name and the port_number of the request.
-	found = request_host.find(':');
-	if (found != std::string::npos) {
-		// request_port_number = std::stoi(request_host.substr(found + 1, request_host.length()));
-		request_port_number = request_host.substr(found + 1, request_host.length());
-		request_server_name = request_host.substr(0, found);
-	}
-	else
-		request_server_name = request_host;
-
-	std::cout << "\nrequest_port_number: " << request_port_number << std::endl;
-	std::cout << "request_server_name: " << request_server_name << std::endl;
-
-	if (request_port_number != "") {
-		SelectCompatiblePorts(request_port_number);
-		if (_compatible_serverblocks.size() == 1) {
-			_chosen_serverblock = _compatible_serverblocks.at(0);
-			return ;
-		}
-	}
-	if (request_server_name.compare("") != 0) {
-		if (_compatible_serverblocks.size() == 0)
-			SelectCompatibleServerNames(request_server_name, _serverblocks);
-		else
-			SelectCompatibleServerNames(request_server_name, _compatible_serverblocks);
-	}
-	else
-		_chosen_serverblock = _serverblocks.at(0);
-
 }
 
 void	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
@@ -95,7 +58,7 @@ void	ServerSelection::SelectCompatibleServerNames(std::string request_server_nam
 			std::cout << *it2 << std::endl;
 			if (it2->compare(request_server_name) == 0) {
 				std::cout << "SERVER BLOCK MATCH FOUND.";
-				_chosen_serverblock = *it;
+				_chosen_servercontext = *it;
 				return ;
 			}
 			else {
@@ -105,6 +68,12 @@ void	ServerSelection::SelectCompatibleServerNames(std::string request_server_nam
 	}
 }
 
-std::string		ServerSelection::getHost() {
-	return _chosen_serverblock.GetPortNumber();
+std::string		ServerSelection::GetHost() {
+	return _chosen_servercontext.GetPortNumber();
 }
+
+ServerContext	ServerSelection::GetChosenServerContext() const {
+	return	_chosen_servercontext;
+}
+
+// function: print choosen server context
