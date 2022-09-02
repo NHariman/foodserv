@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/08/29 17:29:21 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/31 16:29:56 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/02 16:22:19 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,15 +63,15 @@ class NginxConfig {
 		std::vector<ServerContext>	GetServers() const;
 
 		// getters that use host/target pairs to retrieve a very specific value
-		bool						IsSetInHost(std::string host, std::string directive) const;
-		bool						IsSetInTarget(std::string host, std::string target, std::string directive) const;
-		std::string 				GetRoot(std::string host, std::string target) const;
-		std::vector<std::string>	GetIndex(std::string host, std::string target) const;
+		// bool						IsSetInHost(std::string host, std::string directive) const;
+		// bool						IsSetInTarget(std::string host, std::string target, std::string directive) const;
+		// std::string 				GetRoot(std::string host, std::string target) const;
+		// std::vector<std::string>	GetIndex(std::string host, std::string target) const;
 		size_t						GetMaxBodySize(std::string host, std::string target) const;
-		std::vector<ErrorPage>		GetErrorPage(std::string host, std::string target) const;
-		bool						GetAutoindex(std::string host, std::string target) const;
-		ReturnDir					GetReturn(std::string host, std::string target) const;
-		std::string					GetFastCGIPass(std::string host, std::string target) const;
+		// std::vector<ErrorPage>		GetErrorPage(std::string host, std::string target) const;
+		// bool						GetAutoindex(std::string host, std::string target) const;
+		// ReturnDir					GetReturn(std::string host, std::string target) const;
+		// std::string					GetFastCGIPass(std::string host, std::string target) const;
 		bool						IsAllowedMethod(std::string host, std::string target, std::string method) const;
 
 		ServerContext				GetHostServer(std::string host) const;

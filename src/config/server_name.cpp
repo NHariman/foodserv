@@ -6,15 +6,13 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/08 17:01:08 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/07/30 16:20:04 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/02 20:16:17 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_name.hpp"
 
 ServerName::ServerName(std::string server_name): _server_name(server_name) {
-	std::cout << "The string that server name gives: " << _server_name << std::endl;
-	// if (server_name != "")
 	SplitServerNames(_server_name);
 }
 
