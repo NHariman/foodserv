@@ -1,0 +1,19 @@
+Start testing: Sep 03 23:37 CEST
+----------------------------------------------------------
+Unable to find executable: try_test_NOT_BUILT
+1/1 Testing: try_test_NOT_BUILT
+1/1 Test: try_test_NOT_BUILT
+Command: ""
+Directory: /Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build
+"try_test_NOT_BUILT" start time: 
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"try_test_NOT_BUILT" end time: Sep 03 23:37 CEST
+"try_test_NOT_BUILT" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 03 23:37 CEST

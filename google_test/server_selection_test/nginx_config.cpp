@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/02 16:06:54 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/03 23:37:38 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,31 @@ size_t		NginxConfig::GetServerContextAmount() const {
 
 std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
+}
+
+
+// had to add this, probs remove later?
+size_t								NginxConfig::GetMaxBodySize(std::string host, std::string target) const {
+
+	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
+	if (host_target_pair.location.IsSet("client_max_body_size"))
+		return host_target_pair.location.GetClientMaxBodySize();
+	return host_target_pair.server.GetClientMaxBodySize();
+}
+
+// had to add this, probs remove later?
+bool							NginxConfig::IsAllowedMethod(std::string host, std::string target, std::string method) const {
+	host_target_pair	host_target_pair = GetHostTargetServer(host, target);
+
+	switch (IsValidHTTPMethod(method)) {
+		case GET:
+			return host_target_pair.location.GetAllowedMethods().GetGET();
+		case POST:
+			return host_target_pair.location.GetAllowedMethods().GetPOST();
+		case DELETE:
+			return host_target_pair.location.GetAllowedMethods().GetDELETE();
+	}
+	return false;
 }
 
 #undef DEBUG
