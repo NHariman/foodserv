@@ -5,25 +5,69 @@
 #include "src/config/nginx_config.hpp"
 #include "src/config/server_selection.hpp"
 
+void	compare_server_selection() {
+
+}
+
 int	main() {
-	
-	try {
+		try {
+		// SHOULD GRAB BLOK 80
 		NginxConfig	conf("test_config/conf1.conf");
 
 		ServerSelection		test1("localhost", "80", conf.GetServers());
-		test1.PrintContextVectors();
+		test1.PrintChosenServerblock();
 	} catch(const std::exception& e) {
 		std::cerr << e.what() << std::endl;
 	}
 
 	try {
-		NginxConfig	conf("test_config/conf2.conf");
+		// SHOULD GRAB BLOK 80
+		NginxConfig 	conf("test_config/conf1.conf");
+		ServerSelection	test("", "80", conf.GetServers());
+		test.PrintChosenServerblock();
 
-		ServerSelection		test("localhost", "80", conf.GetServers());
-		test.PrintContextVectors();
-	} catch(const std::exception& e) {
+	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}
+
+	try {
+		// SHOULD GRAB BLOK 8080
+		NginxConfig 	conf("test_config/conf1.conf");
+		ServerSelection	test("something", "8080", conf.GetServers());
+		test.PrintChosenServerblock();
+
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
+
+	try {
+		// SHOULD GRAB 8080
+		NginxConfig 	conf("test_config/conf1.conf");
+		ServerSelection	test("", "8080", conf.GetServers());
+		test.PrintChosenServerblock();
+
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
+
+	try {
+		// SHOULD GRAB 80
+		NginxConfig 	conf("test_config/conf1.conf");
+		ServerSelection	test("", "1", conf.GetServers());
+		test.PrintChosenServerblock();
+
+	} catch (const std::exception &e) {
+		std::cout << e.what() << std::endl;
+	}
+
+	// try {
+	// 	NginxConfig	conf("test_config/conf2.conf");
+
+	// 	ServerSelection		test("localhost", "80", conf.GetServers());
+	// 	test.PrintChosenServerblock();
+	// } catch(const std::exception& e) {
+	// 	std::cerr << e.what() << std::endl;
+	// }
 
 
 }

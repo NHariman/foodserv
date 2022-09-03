@@ -32,7 +32,7 @@ class ServerSelection {
 		// call the request host line from michelle her code.
 		// void	SplitRequestHost();
 		bool	SelectCompatiblePorts(std::string ports);
-		bool	SelectCompatibleServerNames(std::string, std::vector<ServerContext>);
+		void	SelectCompatibleServerNames(std::string, std::vector<ServerContext>);
 
 		
 

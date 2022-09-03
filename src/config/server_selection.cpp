@@ -14,17 +14,18 @@
 #include "server_selection.hpp"
 
 ServerSelection::ServerSelection(std::string host, std::string port, std::vector<ServerContext> serverblocks)
-	: _host(host), _port(port), _serverblocks(serverblocks) {
+	: _port(port), _host(host), _serverblocks(serverblocks) {
 	// host can never be empty as the default is set by nginx
-	if (_port.size() == 0)
-		_port = "80";
+	// is this needed or is default already set?
+	// if (_port.size() == 0)
+	// 	_port = "80";
 	
-	// PrintContextVectors();
-
-	if (SelectCompatiblePorts(_port) == false)
-		SelectCompatibleServerNames(_host, _compatible_serverblocks);
-
-	PrintChosenServerblock();
+	if (SelectCompatiblePorts(_port) == false) {
+		if (_compatible_serverblocks.size() == 0)
+			SelectCompatibleServerNames(_host, _serverblocks);
+		else
+			SelectCompatibleServerNames(_host, _compatible_serverblocks);
+	}
 }
 
 void	ServerSelection::PrintContextVectors() {
@@ -34,7 +35,7 @@ void	ServerSelection::PrintContextVectors() {
 		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
 		std::vector<std::string> server = it->GetServerNameVector();
 		if (server.size() == 0) {
-			std::cout << "SIZE IS ZERO";
+			_chosen_servercontext = _compatible_serverblocks.at(0);
 		}
 		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
 			std::cout << "In servername vector printing: " << std::endl;
@@ -47,10 +48,12 @@ void	ServerSelection::PrintContextVectors() {
 
 void	ServerSelection::PrintChosenServerblock() {
 	std::cout << "THE CHOSEN SERVER BLOCK: " << std::endl;
-	std::cout << _chosen_servercontext.GetPortNumber() << std::endl;
+	std::cout << "port: " << _chosen_servercontext.GetPortNumber() << std::endl;
 	std::vector<std::string> server_names = _chosen_servercontext.GetServerNameVector();
+	std::cout << "server_names: ";
 	for (std::vector<std::string>::iterator it = server_names.begin(); it != server_names.end(); it++)
-		std::cout << *it << std::endl;
+		std::cout << *it << " ";//std::endl;
+	std::cout << std::endl << std::endl;;
 }
 
 bool	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
@@ -59,31 +62,30 @@ bool	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
 		if (it->GetPortNumber() == request_port_number)
 			_compatible_serverblocks.push_back(*it);
 	}
-	if (_compatible_serverblocks.size() == 1 || _compatible_serverblocks.size() == 0) {
+	if (_compatible_serverblocks.size() == 1) {
 		_chosen_servercontext = _compatible_serverblocks.at(0);
 		return true;
 	}
 	return false;
 }
 
-bool	ServerSelection::SelectCompatibleServerNames(std::string request_server_name, std::vector<ServerContext> server_vec) {
+void	ServerSelection::SelectCompatibleServerNames(std::string request_server_name, std::vector<ServerContext> server_vec) {
 	for (std::vector<ServerContext>::iterator it = server_vec.begin(); it != server_vec.end(); it++) {
 		std::vector<std::string> server = it->GetServerNameVector();
-		if (server.size() == 0)
-			_chosen_servercontext = _compatible_serverblocks.at(0);
 		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
-			// std::cout << "IN COMPATIBLE SERVERNAMES: " << std::endl;
-			// std::cout << *it2 << std::endl;
 			if (it2->compare(request_server_name) == 0) {
-				// std::cout << "SERVER BLOCK MATCH FOUND.";
 				_chosen_servercontext = *it;
-				return true;
+				return ;
 			}
-			else
-				_chosen_servercontext = _compatible_serverblocks.at(0);
+			// else
+				// _chosen_servercontext = _compatible_serverblocks.at(0);
 		}
 	}
-	return false;
+	if (_compatible_serverblocks.size() == 0) {
+		_chosen_servercontext = _serverblocks.at(0);
+	}
+	else
+		_chosen_servercontext = _compatible_serverblocks.at(0);
 }
 
 std::string		ServerSelection::GetHost() {
