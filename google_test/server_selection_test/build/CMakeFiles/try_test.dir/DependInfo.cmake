@@ -22,6 +22,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/src/config/listen.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/listen.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/listen.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.o.d"
+  "/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/src/config/server_context.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_context.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_context.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/src/config/server_name.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_name.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_name.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o.d"
@@ -36,7 +37,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/sannealbreghs/Desktop/foodserv/src/request/request_utils.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_utils.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_utils.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o" "gcc" "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o.d"
-  "/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/nginx_config.cpp" "CMakeFiles/try_test.dir/nginx_config.cpp.o" "gcc" "CMakeFiles/try_test.dir/nginx_config.cpp.o.d"
   "/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/try_test.cpp" "CMakeFiles/try_test.dir/try_test.cpp.o" "gcc" "CMakeFiles/try_test.dir/try_test.cpp.o.d"
   )
 

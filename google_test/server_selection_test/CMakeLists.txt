@@ -39,7 +39,7 @@ add_executable(
 	../../src/config/listen.cpp 
 	
 	../../src/config/location_context.cpp 
-	nginx_config.cpp 
+	../../src/config/nginx_config.cpp 
 	../../src/config/config_utils.cpp 
 	../../src/config/host_target_pair.cpp 
 	../../src/config/directive_validation/client_max_body_size.cpp 

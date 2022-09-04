@@ -321,19 +321,19 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.s
 
-CMakeFiles/try_test.dir/nginx_config.cpp.o: CMakeFiles/try_test.dir/flags.make
-CMakeFiles/try_test.dir/nginx_config.cpp.o: ../nginx_config.cpp
-CMakeFiles/try_test.dir/nginx_config.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/try_test.dir/nginx_config.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/nginx_config.cpp.o -MF CMakeFiles/try_test.dir/nginx_config.cpp.o.d -o CMakeFiles/try_test.dir/nginx_config.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/nginx_config.cpp
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o: CMakeFiles/try_test.dir/flags.make
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp
 
-CMakeFiles/try_test.dir/nginx_config.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/nginx_config.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/nginx_config.cpp > CMakeFiles/try_test.dir/nginx_config.cpp.i
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.i
 
-CMakeFiles/try_test.dir/nginx_config.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/nginx_config.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/nginx_config.cpp -o CMakeFiles/try_test.dir/nginx_config.cpp.s
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.s
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp
@@ -509,7 +509,7 @@ try_test_OBJECTS = \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_context.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/listen.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.o" \
-"CMakeFiles/try_test.dir/nginx_config.cpp.o" \
+"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o" \
@@ -543,7 +543,7 @@ try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/confi
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_context.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/listen.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.o
-try_test: CMakeFiles/try_test.dir/nginx_config.cpp.o
+try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o
