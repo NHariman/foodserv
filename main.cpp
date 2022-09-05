@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/09/05 12:26:13 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/09/05 12:26:39 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/05 15:10:23 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <vector>
 #include "src/config/nginx_config.hpp"
 // #include "src/basic_server/listening_socket.hpp"
-// #include "src/basic_server/kernel_event.hpp"
+// #include "src/basic_server/kernel_event.hpp"s
 #include "src/config/server_selection.hpp"
 
 int	main(int ac, const char **av) {
@@ -36,7 +36,7 @@ int	main(int ac, const char **av) {
 		// 4. Server Selection() > take the whole config file,  only contains the server block
 
 		// if host is empty should be 80
-		ServerSelection	serverblock_selection("hell_yeah", "80", input_file.GetServers());
+		// ServerSelection	serverblock_selection("hell_yeah", "80", input_file.GetServers());
 		
 		// // add exceptions in the server_selection class to make it able to throw.
 		// std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;

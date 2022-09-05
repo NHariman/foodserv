@@ -45,6 +45,7 @@ int	main() {
 		// SHOULD GRAB 8080
 		NginxConfig 	conf("test_config/conf1.conf");
 		ServerSelection	test("", "8080", conf.GetServers());
+		if (test.GetChosenServerContext().GetServerNameVector().size() == 0)
 		test.PrintChosenServerblock();
 
 	} catch (const std::exception &e) {
@@ -56,7 +57,6 @@ int	main() {
 		NginxConfig 	conf("test_config/conf1.conf");
 		ServerSelection	test("", "1", conf.GetServers());
 		test.PrintChosenServerblock();
-		std::cout << "hier" << std::endl;
 
 	} catch (const std::exception &e) {
 		std::cout << e.what() << std::endl;
