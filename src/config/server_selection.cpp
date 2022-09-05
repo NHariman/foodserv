@@ -14,58 +14,79 @@
 #include "server_selection.hpp"
 
 ServerSelection::ServerSelection(std::string host, std::string port, std::vector<ServerContext> serverblocks)
-	: _host(host), _port(port), _serverblocks(serverblocks) {
+	: _port(port), _host(host), _serverblocks(serverblocks) {
 	// host can never be empty as the default is set by nginx
-	if (_port.size() == 0)
-		_port = "80";
+	// is this needed or is default already set?
+	// if (_port.size() == 0)
+	// 	_port = "80";
 	
-	PrintContextVectors();
-
-	SelectCompatiblePorts(_port);
-	SelectCompatibleServerNames(_host, _compatible_serverblocks);
+	if (SelectCompatiblePorts(_port) == false) {
+		if (_compatible_serverblocks.size() == 0)
+			SelectCompatibleServerNames(_host, _serverblocks);
+		else
+			SelectCompatibleServerNames(_host, _compatible_serverblocks);
+	}
 }
 
 void	ServerSelection::PrintContextVectors() {
 	int		i = 1;
 	for (std::vector<ServerContext>::iterator it = _serverblocks.begin(); it != _serverblocks.end(); it++) {
-		std::cout << "\n\nNUMBER " << i << std::endl;
-		std::cout << "In server block print for loop: " << std::endl;
+		std::cout << "\n\nSERVER BLOCK NUMBER " << i << std::endl;
 		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
 		std::vector<std::string> server = it->GetServerNameVector();
-		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
-			std::cout << "In servername vector printing: " << std::endl;
-			std::cout << *it2 << std::endl;
+		if (server.size() != 0) {
+			for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
+				std::cout << "In servername vector printing: " << std::endl;
+				std::cout << *it2 << std::endl;
+			}
+			i++;
 		}
-		i++;
+	}
+	std::cout << std::endl;
+}
+
+void	ServerSelection::PrintChosenServerblock() {
+	std::cout << "THE CHOSEN SERVER BLOCK: " << std::endl;
+	std::cout << "port: " << _chosen_servercontext.GetPortNumber() << std::endl;
+	std::vector<std::string> server_names = _chosen_servercontext.GetServerNameVector();
+	if (server_names.size() != 0) {
+		std::cout << "server_names: ";
+		for (std::vector<std::string>::iterator it = server_names.begin(); it != server_names.end(); it++)
+			std::cout << *it << " ";//std::endl;
+		std::cout << std::endl << std::endl;
 	}
 }
 
-void	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
+bool	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
 	// see if there are server blocks with compatible port numbers
 	for (std::vector<ServerContext>::iterator it = _serverblocks.begin(); it != _serverblocks.end(); it++) {
-		if (it->GetPortNumber() == request_port_number) {
-			std::cout << "A compatible server block is found based on port number." << std::endl;
+		if (it->GetPortNumber() == request_port_number)
 			_compatible_serverblocks.push_back(*it);
-		}
 	}
+	if (_compatible_serverblocks.size() == 1) {
+		_chosen_servercontext = _compatible_serverblocks.at(0);
+		return true;
+	}
+	return false;
 }
 
 void	ServerSelection::SelectCompatibleServerNames(std::string request_server_name, std::vector<ServerContext> server_vec) {
 	for (std::vector<ServerContext>::iterator it = server_vec.begin(); it != server_vec.end(); it++) {
 		std::vector<std::string> server = it->GetServerNameVector();
 		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
-			std::cout << "IN COMPATIBLE SERVERNAMES: " << std::endl;
-			std::cout << *it2 << std::endl;
 			if (it2->compare(request_server_name) == 0) {
-				std::cout << "SERVER BLOCK MATCH FOUND.";
 				_chosen_servercontext = *it;
 				return ;
 			}
-			else {
-				std::cout << "No match found, using defaults.";
-			}
+			// else
+				// _chosen_servercontext = _compatible_serverblocks.at(0);
 		}
 	}
+	if (_compatible_serverblocks.size() == 0) {
+		_chosen_servercontext = _serverblocks.at(0);
+	}
+	else
+		_chosen_servercontext = _compatible_serverblocks.at(0);
 }
 
 std::string		ServerSelection::GetHost() {
