@@ -66,14 +66,9 @@ class NginxConfig {
 
 		//debugger functions
 		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
-<<<<<<< HEAD
 		ServerContext				GetHostServer(std::string host) const;
 		
 		
-=======
-
-
->>>>>>> 1016e11bf938106516c603cd69321b9884a6c3bc
 		//exceptions
 		class GetLineFailureException : public std::exception {
 			public:
