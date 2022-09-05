@@ -2,7 +2,8 @@
 # define LOCANTION_SELECTION
 
 #include "location_context.hpp"
-
+#include "server_context.hpp"
+#include "directive_validation/location_uri.hpp"
 
 /*
     // ServerSelection selected_servercontext(host, port, config);
@@ -13,18 +14,26 @@
 
 class LocationSelection {
 	private:
-		std::string		_request_uri;
-		ServerContext	_chosen_servercontext;
+		const std::string				_request_uri;
+		const ServerContext				_server_context;
+		std::vector<LocationContext>	_location_context;
+		LocationUri						_location_uri;
+		std::string						_final_uri;
+		bool							_cgi_bool;
 
 		LocationSelection();
 
 	public:
-		LocationSelection(std::string request_uri);
-		std::string	getRequestUri() const;
+		LocationSelection(ServerContext chosen_servercontext, std::string request_uri);
+		
+		// return final request uri stuff
+		std::string		getRequestUri() const;
 		LocationContext getLocationContext() const;
 
+		bool	isCgi() const;
+		
 		// function to print what is in the location Context
-
+		void	PrintLocationContext() const;
 };
 
 #endif

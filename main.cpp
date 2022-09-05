@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/09/05 12:26:13 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/09/05 15:10:23 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/05 16:22:15 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 // #include "src/basic_server/listening_socket.hpp"
 // #include "src/basic_server/kernel_event.hpp"s
 #include "src/config/server_selection.hpp"
+#include "src/config/location_selection.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
@@ -53,7 +54,9 @@ int	main(int ac, const char **av) {
 		// add exceptions in the server_selection class to make it able to throw.
 		std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
 
+		LocationSelection	location_selection(serverblock_selection2.GetChosenServerContext(), "/hello.txt");
 	}
+	
 	catch(const std::exception& e) {
 		std::cerr << e.what() << '\n';
 	}
