@@ -16,6 +16,7 @@ int	main() {
 
 		ServerSelection		test1("localhost", "80", conf.GetServers());
 		test1.PrintChosenServerblock();
+
 	} catch(const std::exception& e) {
 		std::cerr << e.what() << std::endl;
 	}
@@ -55,6 +56,7 @@ int	main() {
 		NginxConfig 	conf("test_config/conf1.conf");
 		ServerSelection	test("", "1", conf.GetServers());
 		test.PrintChosenServerblock();
+		std::cout << "hier" << std::endl;
 
 	} catch (const std::exception &e) {
 		std::cout << e.what() << std::endl;

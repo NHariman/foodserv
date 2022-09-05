@@ -34,14 +34,13 @@ void	ServerSelection::PrintContextVectors() {
 		std::cout << "\n\nSERVER BLOCK NUMBER " << i << std::endl;
 		std::cout << "PortNumber: " << it->GetPortNumber() << std::endl;
 		std::vector<std::string> server = it->GetServerNameVector();
-		if (server.size() == 0) {
-			_chosen_servercontext = _compatible_serverblocks.at(0);
+		if (server.size() != 0) {
+			for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
+				std::cout << "In servername vector printing: " << std::endl;
+				std::cout << *it2 << std::endl;
+			}
+			i++;
 		}
-		for (std::vector<std::string>::iterator it2 = server.begin(); it2 != server.end(); it2++) {
-			std::cout << "In servername vector printing: " << std::endl;
-			std::cout << *it2 << std::endl;
-		}
-		i++;
 	}
 	std::cout << std::endl;
 }
@@ -50,10 +49,12 @@ void	ServerSelection::PrintChosenServerblock() {
 	std::cout << "THE CHOSEN SERVER BLOCK: " << std::endl;
 	std::cout << "port: " << _chosen_servercontext.GetPortNumber() << std::endl;
 	std::vector<std::string> server_names = _chosen_servercontext.GetServerNameVector();
-	std::cout << "server_names: ";
-	for (std::vector<std::string>::iterator it = server_names.begin(); it != server_names.end(); it++)
-		std::cout << *it << " ";//std::endl;
-	std::cout << std::endl << std::endl;;
+	if (server_names.size() != 0) {
+		std::cout << "server_names: ";
+		for (std::vector<std::string>::iterator it = server_names.begin(); it != server_names.end(); it++)
+			std::cout << *it << " ";//std::endl;
+		std::cout << std::endl << std::endl;
+	}
 }
 
 bool	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
