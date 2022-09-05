@@ -7,7 +7,7 @@
 #include "../config/nginx_config.hpp"
 #include "../config/server_context.hpp"
 
-ServerContext			GetHostServer(std::string host, NginxConfig *config) const {
+ServerContext			GetHost(std::string host, NginxConfig *config);
 
 
 #endif

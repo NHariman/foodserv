@@ -18,4 +18,5 @@ LocationContext			GetTarget(ServerContext *server, std::string target) {
 			return (server->GetLocationContexts().at(loc));
 			}
 	}
+	return (GetTarget(server, "/"));
 }

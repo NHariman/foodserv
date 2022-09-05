@@ -2,15 +2,26 @@
 
 #define DEBUG 0
 
-LocationContext::LocationContext() : 
-_location_uri(),
-_allowed_methods(AllowedMethods()) {
+LocationContext::LocationContext() :
+bool_uri(false),
+bool_cgi_pass(false),
+bool_allowed_methods(false),
+_location_uri(LocationUri()),
+_cgi_pass(CGIPass()),
+_allowed_methods(AllowedMethods())
+{
 	InitChecklist();
+	bool_autoindex = false;
+	bool_root = false;
+	bool_index = false;
+	bool_client_max_body_size = false;
+	bool_error_page = false;
 }
 
 LocationContext::LocationContext(std::string data) {
 	InitChecklist();
     GetDirectiveValuePairs(data);
+	CheckListVerification();
 }
 
 LocationContext& LocationContext::operator= (LocationContext const& location_context) {
@@ -191,12 +202,13 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 		}
 		else {
             value_end = data.find_first_of(';', key_end);
+			if (!HasContent(';', key_end, value_end, data))
+				throw BadInputException(_location_uri.GetURIClass().GetInputURI());
 		    SetValue(ret, data.substr(key_end, value_end - key_end));
         }
 		if (value_end != std::string::npos)
 			i = value_end + 1;
 	}
-	CheckListVerification();
 }
 
 // getters
@@ -234,7 +246,7 @@ std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
     return _error_page;
 }
 
-std::string							LocationContext::GetCGIPass() const {
+CGIPass							LocationContext::GetCGIPass() const {
 	if (bool_cgi_pass == false)
 		throw DirectiveNotSetException("cgi_pass", _location_uri.GetURIClass().GetInputURI());
     return _cgi_pass;

@@ -33,6 +33,7 @@
 ServerContext::ServerContext(size_t *start, std::string config_file, size_t server_nb) : _server_nb(server_nb) {
 	InitChecklist();
 	GetDirectiveValuePairs(start, config_file);
+	CheckListVerification();
 }
 
 ServerContext::ServerContext() {
@@ -101,6 +102,9 @@ int			ServerContext::IsDirective(std::string directive){
 // sets the value in the right directive within the server class based off the IsDirective return value
 void				ServerContext::SetValue(int directive, std::string value){
 	std::string		trimmed_value;
+
+	if (value.compare("") == 0)
+		throw BadInputException(_server_nb);
 
 	trimmed_value = TrimValue(value);
 	if (DEBUG) std::cerr << "server context:\ndirective: " << directive << "\nvalue: " << trimmed_value << std::endl;
@@ -187,7 +191,7 @@ void				ServerContext::SetValue(int directive, std::string value){
 	return ;
 }
 
-bool					HasDefaultLocation(std::vector<LocationContext> locations) {
+bool					ServerContext::HasDefaultLocation(std::vector<LocationContext> locations) {
 	std::string target = "/";
 	for (size_t loc = 0 ; loc < locations.size() ; loc++) {
 		if (target.compare(locations.at(loc).GetLocationUri().GetUri()) == 0) {
@@ -202,14 +206,16 @@ bool					HasDefaultLocation(std::vector<LocationContext> locations) {
 void			ServerContext::CheckListVerification(){
 	if (amount_location_context == 0 || HasDefaultLocation(_location_contexts) == false) {
 		LocationContext default_location;
+		amount_location_context++;
 		_location_contexts.push_back(default_location);
+		if (DEBUG) std::cerr << "added default location \"/\"" << std::endl;
 	}
 	if (bool_listen == false) {
 		_listen.first = "80"; // changed to string
 		_listen.second = "0"; // changed to string
 	}
 	if (bool_server_name == false) {
-		_server_name.push_back("localhost");
+		if (DEBUG) _server_name.push_back("localhost");
 	}
 	if (bool_root == false) {
 		_root = "/var/www/html";
@@ -274,10 +280,14 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 		ret = IsDirective(config_file.substr(key_start, key_end - key_start));
 		if (ret == 0) {
 			value_end = FindLocationContextEnd(config_file, key_end);
+			if (!HasContent('{', key_end, value_end, config_file) || !HasContent('}', key_end, value_end, config_file) || !HasContent('\n', key_end, value_end, config_file))
+				throw BadInputException(_server_nb);
 			SetValue(ret, config_file.substr(key_end, value_end - key_end + 1));
 		}
 		else {
 			value_end = config_file.find_first_of(';', key_end);
+			if (!HasContent(';', key_end, value_end, config_file) || !HasContent('\n', key_end, value_end, config_file))
+				throw BadInputException(_server_nb);
 			SetValue(ret, config_file.substr(key_end, value_end - key_end));
 		}
 		if (value_end != std::string::npos)

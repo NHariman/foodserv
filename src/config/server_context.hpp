@@ -101,6 +101,19 @@ class ServerContext : public ConfigValues {
 			private:
 				std::string		_err_string;
 		};
+		class BadInputException : public std::exception
+		{
+			public:
+				BadInputException(size_t server) {
+					_err_string = "ERROR! Bad directive input found in server context: " + std::to_string(server) + " .";
+				};
+				virtual const char *what() const throw() {
+					return _err_string.c_str();
+				}
+				virtual ~BadInputException() throw() {}
+			private:
+				std::string		_err_string;
+		};
 };
 
 #endif

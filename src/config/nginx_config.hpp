@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/08/29 17:29:21 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/31 20:53:01 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/09/05 18:09:20 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 //       A & operator = (const A &a);
 // };
 
+// used for debugging
 struct host_target_pair : public std::pair<ServerContext, LocationContext> {
 	ServerContext server;
 	LocationContext location;
@@ -62,7 +63,7 @@ class NginxConfig {
 		size_t						GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
 
-		// getters that use host/target pairs to retrieve a very specific value
+		// getters that use host/target pairs to retrieve a very specific value, used for debugging.
 		bool						IsSetInHost(std::string host, std::string directive) const;
 		bool						IsSetInTarget(std::string host, std::string target, std::string directive) const;
 		std::string 				GetRoot(std::string host, std::string target) const;
@@ -71,10 +72,10 @@ class NginxConfig {
 		std::vector<ErrorPage>		GetErrorPage(std::string host, std::string target) const;
 		bool						GetAutoindex(std::string host, std::string target) const;
 		ReturnDir					GetReturn(std::string host, std::string target) const;
-		std::string					GetFastCGIPass(std::string host, std::string target) const;
+		CGIPass						GetCGIPass(std::string host, std::string target) const;
 		bool						IsAllowedMethod(std::string host, std::string target, std::string method) const;
 
-		//TBD
+		//debugger functions
 		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
 		ServerContext				GetHostServer(std::string host) const;
 		

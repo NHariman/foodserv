@@ -60,3 +60,13 @@ std::string		CGIPass::GetFileExtension() const {
 std::string		CGIPass::GetExecutablePath() const {
 	return _executable_path;
 }
+
+std::ostream& operator<<(std::ostream& os, const CGIPass& cgi_pass) {
+	if (cgi_pass.IsSet() == false)
+		os << "cgi_pass has not been set.";
+	else {
+		os << "cgi_pass extension: " << cgi_pass.GetFileExtension();
+		os << "\nexecute with path: " << cgi_pass.GetExecutablePath();
+	}
+	return os;
+}

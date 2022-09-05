@@ -2,6 +2,7 @@
 # define CGI_PASS_HPP
 
 #include <string>
+#include <iostream>
 #include "../config_utils.hpp"
 
 class CGIPass : public std::pair<std::string, std::string> {
@@ -54,5 +55,7 @@ class CGIPass : public std::pair<std::string, std::string> {
                 virtual ~NotAFileExtensionException() throw() {}
 		};
 };
+
+std::ostream& operator<<(std::ostream& os, const CGIPass& cgi_pass);
 
 #endif

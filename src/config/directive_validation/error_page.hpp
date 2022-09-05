@@ -20,10 +20,10 @@ class ErrorPage {
 		bool				_is_set;
 		std::string			_uri;
 		std::vector<int>	_code;
-		ErrorPage(){};
+		ErrorPage();
 	
 	public:
-		~ErrorPage();
+		~ErrorPage(){};
 		ErrorPage(std::string input);
 		ErrorPage(ErrorPage const &obj);
 		ErrorPage&	operator=(ErrorPage const & obj);

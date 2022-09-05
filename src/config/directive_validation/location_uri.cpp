@@ -36,3 +36,10 @@ URI				LocationUri::GetURIClass() const {
 bool			LocationUri::IsDirectory() const {
 	return _is_directory;
 }
+
+std::ostream&		operator<<(std::ostream& os, const LocationUri& obj) {
+	os << "URI: " << obj.GetUri();
+	if (obj.IsDirectory() == true)
+		os << " is a directory.";
+	return os;
+}

@@ -75,6 +75,20 @@ class LocationContext : virtual public ConfigValues {
 				virtual ~MultipleAllowedMethodsException() throw() {}
 		};
 
+		class BadInputException : public std::exception
+		{
+			private:
+				std::string		_err_string;
+			public:
+				BadInputException(std::string uri) {
+					_err_string = "ERROR! Multiple allowed_methods directives detected in Location Context:" + uri + ".";
+				}
+				const char *what() const throw() {
+					return (_err_string.c_str());
+				}
+				virtual ~BadInputException() throw() {}
+		};
+
 		class BadURIException : public std::exception
 		{
 			private:

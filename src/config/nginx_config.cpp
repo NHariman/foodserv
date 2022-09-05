@@ -6,11 +6,12 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/31 14:16:59 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/05 18:50:04 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nginx_config.hpp"
+#include "directive_validation/directive_validation.hpp"
 #include <stdexcept>
 #include <locale>
 
@@ -218,11 +219,11 @@ bool							NginxConfig::IsAllowedMethod(std::string host, std::string target, st
 	return false;
 }
 
-std::string					NginxConfig::GetFastCGIPass(std::string host, std::string target) const {
+CGIPass					NginxConfig::GetCGIPass(std::string host, std::string target) const {
 	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
-	if (host_target_pair.location.IsSet("fastcgi_pass"))
-		return host_target_pair.location.GetFastCGIPass();
-	throw ConfigValues::DirectiveNotSetException("fastcgi_pass", host, target);
+	if (host_target_pair.location.IsSet("cgi_pass"))
+		return host_target_pair.location.GetCGIPass();
+	throw ConfigValues::DirectiveNotSetException("cgi_pass", host, target);
 }
 
 #undef DEBUG

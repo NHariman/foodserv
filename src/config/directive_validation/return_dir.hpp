@@ -5,6 +5,7 @@
 # define RETURN_DIR_HPP
 
 #include <string>
+#include <iostream>
 #include "../config_utils.hpp"
 
 class ReturnDir {
@@ -53,5 +54,7 @@ class ReturnDir {
 				}
 		};
 };
+
+std::ostream&		operator<<(std::ostream& os, const ReturnDir& obj);
 
 #endif

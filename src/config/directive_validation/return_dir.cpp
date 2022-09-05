@@ -67,3 +67,13 @@ bool ReturnDir::IsValidReturnCode(size_t code) {
 		return false;
 	return true;
 }
+
+std::ostream&		operator<<(std::ostream& os, const ReturnDir& obj) {
+	if (obj.IsSet() == false)
+		os << "Return was not set.";
+	else {
+		os << "Return dir code: " << obj.GetCode();
+		os << "\nReturn dir url: " << obj.GetUrl();
+	}
+	return os;
+}
