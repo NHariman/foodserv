@@ -348,8 +348,6 @@ std::vector<std::string>	ServerContext::GetServerNameVector() const {
 }
 
 std::vector<ErrorPage>		ServerContext::GetErrorPage() const {
-	if (bool_error_page == false)
-		throw DirectiveNotSetException("error_page", _server_nb);
     return _error_page;
 } 
 

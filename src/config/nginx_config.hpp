@@ -8,9 +8,6 @@
 #include <vector>
 #include <utility>
 #include "server_context.hpp"
-// #include "location_context.hpp"
-// #include "directive_validation/directive_validation.hpp"
-// #include "config_utils.hpp"
 
 // Coplien form:
 
@@ -52,22 +49,13 @@ class NginxConfig {
 		size_t						GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
 
-		// getters that use host/target pairs to retrieve a very specific value, used for debugging.
-		bool						IsSetInHost(std::string host, std::string directive) const;
-		bool						IsSetInTarget(std::string host, std::string target, std::string directive) const;
-		std::string 				GetRoot(std::string host, std::string target) const;
-		std::vector<std::string>	GetIndex(std::string host, std::string target) const;
+		// TBD
 		size_t						GetMaxBodySize(std::string host, std::string target) const;
-		std::vector<ErrorPage>		GetErrorPage(std::string host, std::string target) const;
-		bool						GetAutoindex(std::string host, std::string target) const;
-		ReturnDir					GetReturn(std::string host, std::string target) const;
-		CGIPass						GetCGIPass(std::string host, std::string target) const;
 		bool						IsAllowedMethod(std::string host, std::string target, std::string method) const;
 
-		//debugger functions
+		//debugger functions, TBD
 		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
-		ServerContext				GetHostServer(std::string host) const;
-		
+
 		
 		//exceptions
 		class GetLineFailureException : public std::exception {

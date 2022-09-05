@@ -15,24 +15,26 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 */
 
 void    TargetConfig::SetupTargetConfig(std::string host, std::string port, std::string target, NginxConfig *config) {
-    //ServerSelection server(host, port, config);
+    ServerSelection server(host, port, config->GetServers());
+	ServerContext chosen_server = server.GetChosenServerContext();
    // LocationContext location = GetTarget(&server.GetServer(), target);
-   (void)port;
-    ServerContext   server = GetHost(host, config); // temp
-    LocationContext location = GetTarget(&server, target); // temp
+
+    // ServerContext   server = GetHost(host, config); // temp
+    LocationContext location = GetTarget(&chosen_server, target); // temp
 
     // only set in location
     _location_uri = location.GetLocationUri();
-    _cgi_pass = location.GetCGIPass();
+	if (location.IsSet("cgi_pass"))
+    	_cgi_pass = location.GetCGIPass();
     _allowed_methods = location.GetAllowedMethods();
 
     // can be set in either location OR server
-	_root = SetRoot(&server, &location);
-	_index = SetIndex(&server, &location);
-	_client_max_body_size = SetMaxBodySize(&server, &location);
-	_error_page = SetErrorPage(&server, &location);
-	_autoindex = SetAutoindex(&server, &location);
-	_return_dir = SetReturn(&server, &location);
+	_root = SetRoot(&chosen_server, &location);
+	_index = SetIndex(&chosen_server, &location);
+	_client_max_body_size = SetMaxBodySize(&chosen_server, &location);
+	_error_page = SetErrorPage(&chosen_server, &location);
+	_autoindex = SetAutoindex(&chosen_server, &location);
+	_return_dir = SetReturn(&chosen_server, &location);
 }
 
 /// private getters

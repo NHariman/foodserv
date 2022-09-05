@@ -162,20 +162,20 @@ void							LocationContext::SetValue(int directive, std::string input) {
 
 void							LocationContext::CheckListVerification(){
     if (bool_autoindex == false) {
-		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have an autoindex set. Default in Server context will be used." << std::endl;
+		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have an autoindex set. Default in Server context will be used." << std::endl;
 	}
     if (bool_root == false) {
-		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a root set. Default in Server context will be used." << std::endl;
+		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a root set. Default in Server context will be used." << std::endl;
 	}
 	if (bool_index == false) {
-		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a index set. Default in Server context will be used." << std::endl;
+		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a index set. Default in Server context will be used." << std::endl;
 	}
 	if (bool_client_max_body_size == false) {
-		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a client_max_body_size set. Default in Server context will be used." << std::endl;
+		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a client_max_body_size set. Default in Server context will be used." << std::endl;
 	}
 	if (bool_allowed_methods == false) {
 		_allowed_methods = AllowedMethods();
-		std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a allowed_methods set. Default (No methods allowed) have been set." << std::endl;
+		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a allowed_methods set. Default (No methods allowed) have been set." << std::endl;
 	}
 	if (bool_cgi_pass == false) {
 		_cgi_pass = CGIPass();
@@ -217,44 +217,30 @@ LocationUri							LocationContext::GetLocationUri() const {
 }
 
 bool								LocationContext::GetAutoindex() const {
-	if (bool_autoindex == false)
-		throw DirectiveNotSetException("autoindex", _location_uri.GetURIClass().GetInputURI());
-    return _autoindex;
+   return _autoindex;
 }
 
 std::string							LocationContext::GetRoot() const {
-	if (bool_root == false)
-		throw DirectiveNotSetException("root", _location_uri.GetURIClass().GetInputURI());
-    return _root;
+   return _root;
 }
 
 std::vector<std::string>			LocationContext::GetIndex() const {
-	if (bool_index == false)
-		throw DirectiveNotSetException("index", _location_uri.GetURIClass().GetInputURI());
     return _index;
 }
 
 size_t								LocationContext::GetClientMaxBodySize() const {
-	if (bool_client_max_body_size == false)
-		throw DirectiveNotSetException("client_max_body_size", _location_uri.GetURIClass().GetInputURI());
-    return _client_max_body_size;
+   return _client_max_body_size;
 }
 
 std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
-	if (bool_error_page == false)
-		throw DirectiveNotSetException("error_page", _location_uri.GetURIClass().GetInputURI());
     return _error_page;
 }
 
 CGIPass							LocationContext::GetCGIPass() const {
-	if (bool_cgi_pass == false)
-		throw DirectiveNotSetException("cgi_pass", _location_uri.GetURIClass().GetInputURI());
     return _cgi_pass;
 }
 
 AllowedMethods						LocationContext::GetAllowedMethods() const {
-	if (bool_allowed_methods == false)
-		throw DirectiveNotSetException("allowed_methods", _location_uri.GetURIClass().GetInputURI());
     return _allowed_methods;
 }
 
