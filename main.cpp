@@ -5,8 +5,8 @@
 /*                                                     +:+                    */
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/08/29 17:29:59 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/31 17:23:26 by salbregh      ########   odam.nl         */
+/*   Created: 2022/09/05 12:26:13 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/09/05 12:26:39 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,10 @@ int	main(int ac, const char **av) {
 		// // delete sock;
 		// // delete webserver;
 	
+		ServerSelection	serverblock_selection2("localhost", "80", input_file.GetServers());
+		// add exceptions in the server_selection class to make it able to throw.
+		std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
+
 	}
 	catch(const std::exception& e) {
 		std::cerr << e.what() << '\n';
