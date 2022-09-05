@@ -23,10 +23,6 @@ TEST(OnlyIP, CorrectInput) {
   Listen  test3("255.244.1.0");
 	EXPECT_EQ(test3.getIpNumber(), "255.244.1.0");
 	EXPECT_EQ(test3.getPortNumber(), "80");  
-  
-
-  // TO DO : testing for invalid IP's as in [1:2:3]
-
 }
 
 TEST(OnlyPort, CorrectInput) {
@@ -38,7 +34,10 @@ TEST(OnlyPort, CorrectInput) {
   EXPECT_EQ(test2.getIpNumber(), "0");
   EXPECT_EQ(test2.getPortNumber(), "12345");
 
-  // TO DO: testing for invalid ports like 3123123124
+  Listen  test3("999");
+  EXPECT_EQ(test3.getIpNumber(), "0");
+  EXPECT_EQ(test3.getPortNumber(), "999");
+
 }
 
 TEST(Both, CorrectInput) {
@@ -54,9 +53,13 @@ TEST(Both, CorrectInput) {
 	EXPECT_EQ(test3.getIpNumber(), "0");
 	EXPECT_EQ(test3.getPortNumber(), "80");
 
-  Listen  test4("localhost:10");
-	EXPECT_EQ(test4.getIpNumber(), "127.0.0.1");
-	EXPECT_EQ(test4.getPortNumber(), "10");
+  Listen  test4("255.244.1.0");
+	EXPECT_EQ(test4.getIpNumber(), "255.244.1.0");
+	EXPECT_EQ(test4.getPortNumber(), "80"); 
+
+  Listen  test5("localhost:10");
+	EXPECT_EQ(test5.getIpNumber(), "127.0.0.1");
+	EXPECT_EQ(test5.getPortNumber(), "10");
 }
 
 
@@ -100,4 +103,7 @@ TEST(ListenTestInvalid, Exceptions) {
   EXPECT_THROW({
     Listen  test2("266.0.0.1");
   }, Listen::InvalidIpException);
+  EXPECT_THROW({
+    Listen  test("001");
+  }, Listen::InvalidPortException);
 }

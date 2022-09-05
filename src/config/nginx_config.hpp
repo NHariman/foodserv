@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   nginx_config.hpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/08/29 17:29:21 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/09/05 18:09:20 by nhariman      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef NGINX_CONFIG_HPP
 # define NGINX_CONFIG_HPP
@@ -77,9 +66,14 @@ class NginxConfig {
 
 		//debugger functions
 		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
+<<<<<<< HEAD
 		ServerContext				GetHostServer(std::string host) const;
 		
 		
+=======
+
+
+>>>>>>> 1016e11bf938106516c603cd69321b9884a6c3bc
 		//exceptions
 		class GetLineFailureException : public std::exception {
 			public:

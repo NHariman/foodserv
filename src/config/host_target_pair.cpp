@@ -1,6 +1,6 @@
 #include "nginx_config.hpp"
 
-host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::string target) const {
+host_target_pair		NginxConfig::GetHostTargetServer(std::string host, std::string target) const {
 
 	host_target_pair	 host_target_pair;
 
@@ -26,6 +26,7 @@ host_target_pair			NginxConfig::GetHostTargetServer(std::string host, std::strin
 				}
 	return (host_target_pair);
 }
+
 
 ServerContext			NginxConfig::GetHostServer(std::string host) const {
 

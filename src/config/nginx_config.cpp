@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   nginx_config.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/05 18:50:04 by nhariman      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "nginx_config.hpp"
 #include "directive_validation/directive_validation.hpp"
