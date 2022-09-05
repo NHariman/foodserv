@@ -16,10 +16,12 @@ class LocationSelection {
 	private:
 		const std::string				_request_uri;
 		const ServerContext				_server_context;
-		std::vector<LocationContext>	_location_context;
+		std::vector<LocationContext>	_location_context_vector;
 		LocationUri						_location_uri;
 		std::string						_final_uri;
 		bool							_cgi_bool;
+
+		LocationContext					_chosen_location_context;
 
 		LocationSelection();
 
@@ -29,6 +31,7 @@ class LocationSelection {
 		// return final request uri stuff
 		std::string		getRequestUri() const;
 		LocationContext getLocationContext() const;
+		void			SelectLocationContext();
 
 		bool	isCgi() const;
 		
