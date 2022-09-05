@@ -6,7 +6,7 @@
 #include "index.hpp"
 #include "allowed_methods.hpp"
 #include "error_page.hpp"
-#include "fastcgi_pass.hpp"
+#include "cgi_pass.hpp"
 #include "root.hpp"
 #include "location_uri.hpp"
 #include "return_dir.hpp"

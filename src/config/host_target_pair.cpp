@@ -4,11 +4,11 @@ host_target_pair		NginxConfig::GetHostTargetServer(std::string host, std::string
 
 	host_target_pair	 host_target_pair;
 
-	for (size_t server = 0 ; server < _servers.size(); server++) {
+	for (size_t server = 0 ; server < _servers.size(); ++server) {
 		for(size_t names = 0 ; names < _servers.at(server).GetServerNameVector().at(names).size() ; names++) {
 			if (host.compare(_servers.at(server).GetServerNameVector().at(names)) == 0) {
 				host_target_pair.server = _servers.at(server);
-				for (size_t loc = 0 ; loc < _servers.at(server).GetLocationContexts().size() ; loc++) {
+				for (size_t loc = 0 ; loc < _servers.at(server).GetLocationContexts().size() ; ++loc) {
 					if (target.compare(_servers.at(server).GetLocationContexts().at(loc).GetLocationUri().GetUri()) == 0) {
 						host_target_pair.location = _servers.at(server).GetLocationContexts().at(loc);
 						return (host_target_pair);
@@ -17,7 +17,13 @@ host_target_pair		NginxConfig::GetHostTargetServer(std::string host, std::string
 			}
 		}
 	}
-	throw HostTargetPairDoesNotExistException(host, target);
+	std::string default_value = "/";
+	host_target_pair.server = _servers.at(0);
+	for (size_t loc = 0 ; loc < _servers.at(0).GetLocationContexts().size() ; ++loc) {
+					if (default_value.compare(_servers.at(0).GetLocationContexts().at(loc).GetLocationUri().GetUri()) == 0) {
+						host_target_pair.location = _servers.at(0).GetLocationContexts().at(loc);
+					}
+				}
 	return (host_target_pair);
 }
 
