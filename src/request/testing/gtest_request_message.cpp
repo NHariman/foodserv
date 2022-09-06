@@ -7,7 +7,7 @@
 static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
 
 // Helper function that calls Request::Parse with c-string conversion of passed string.
 static void	ParseChunked(Request& request, string const& req_str) {
@@ -67,6 +67,19 @@ TEST(RequestMessageTest, ValidMessageChunkedSplitBySize) {
 	ParseChunked(request, "0\r\n\r\n");
 
 	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\r\nchunks.");
+}
+
+// Middle chunk is size 16 (hex 10) split over 2 reads.
+TEST(RequestMessageTest, ValidMessageChunkedSplitBySizeHex) {
+	Request request(&config);
+
+	ParseChunked(request, POST_Req + CHUNKED);
+	ParseChunked(request, "4\r\nWiki\r\n");
+	ParseChunked(request, "6\r\npedia \r\n1");
+	ParseChunked(request, "0\r\nin \r\n\t\t\r\nchunks.\r\n");
+	ParseChunked(request, "0\r\n\r\n");
+
+	EXPECT_EQ(request.GetMessageBody(), "Wikipedia in \r\n\t\t\r\nchunks.");
 }
 
 TEST(RequestMessageTest, ValidMessageChunkedSplitDataMid) {

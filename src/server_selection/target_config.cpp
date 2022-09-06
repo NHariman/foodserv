@@ -14,7 +14,7 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 		ReturnDir					_return_dir;
 */
 
-void    TargetConfig::SetupTargetConfig(std::string host, std::string port, std::string target, NginxConfig *config) {
+void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string port, std::string target) {
     ServerSelection server(host, port, config->GetServers());
 	ServerContext chosen_server = server.GetChosenServerContext();
    // LocationContext location = GetTarget(&server.GetServer(), target);

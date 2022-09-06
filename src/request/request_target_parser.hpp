@@ -7,15 +7,6 @@
 
 using namespace std;
 
-class URI;
-
-enum URIPart {
-	pt_Invalid = -1,
-	pt_Host = 0,
-	pt_Path,
-	pt_Query
-};
-
 enum URIState {
 	u_Start = 0,
 	u_Path,
@@ -35,12 +26,11 @@ class RequestTargetParser : public AStateParser<URIState> {
 		// Destructor
 		~RequestTargetParser();
 
-
 		size_t	Parse(URI& uri, string const& input);
 
 	private:
-		URI		*_uri;
-		URIPart _part;
+		URI			*_uri;
+		URI::Part	_part;
 
 		URIState	StartHandler(char uri_char);
 		URIState	PathHandler(char uri_char);

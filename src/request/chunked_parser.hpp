@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include "astate_parser.hpp"
 #include "request_utils.hpp"
 

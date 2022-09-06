@@ -19,7 +19,7 @@ class	exception : public std::exception {
 } // namespace http
 
 // Used for: invalid or badly formed request headers.
-// Thrown by:	HeaderFieldParser, HeaderFieldValidator, RequestLineParser,
+// Thrown by:	HeaderFieldParser, RequestValidator, RequestLineParser,
 //				RequestParser, RequestTargetParser, URIHostParser, URI classes.
 // Should return 400 code.
 class BadRequestException : public http::exception {
@@ -62,7 +62,7 @@ class LengthRequiredException : public http::exception {
 };
 
 // Used for: payload size exceeding max (default 1,048,576 bytes (1mb)).
-// Thrown by HeaderFieldValidator::ValidContentLength &
+// Thrown by RequestValidator::ValidContentLength &
 //			ChunkedParser::SizeHandler, ::DataHandler, ::LastHandler.
 // Should return 413 code.
 // Server may close connection to prevent client from continuing request.
@@ -92,7 +92,7 @@ class URITooLongException : public http::exception {
 };
 
 // Used for: Content-Encoding header field in request.
-// Thrown by HeaderFieldValidator::ValidContentEncoding.
+// Thrown by RequestValidator::ValidContentEncoding.
 // Should return 415 code.
 class UnsupportedMediaTypeException : public http::exception {
 	public:
@@ -106,7 +106,7 @@ class UnsupportedMediaTypeException : public http::exception {
 };
 
 // Used for: Expect header field with any value except "100-continue".
-// Thrown by HeaderFieldValidator::ValidExpect.
+// Thrown by RequestValidator::ValidExpect.
 // Should return 417 code.
 class ExpectationFailedTypeException : public http::exception {
 	public:
@@ -136,7 +136,7 @@ class RequestHeaderFieldsTooLargeException : public http::exception {
 
 // Used for: non-recognized request method or transfer coding.
 // Thrown by:	RequestLineParser::MethodHandler,
-// 				HeaderFieldValidator::ValidTransferEncoding.
+// 				RequestValidator::ValidTransferEncoding.
 // Should return 501 code.
 class NotImplementedException : public http::exception {
 	public:

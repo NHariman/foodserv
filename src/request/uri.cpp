@@ -1,4 +1,6 @@
 #include "uri.hpp"
+#include "request_target_parser.hpp"
+#include "uri_host_parser.hpp"
 
 // Default constructor
 URI::URI() {}
@@ -65,6 +67,8 @@ string	URI::GetURIDebug() const {
 
 	if (!_host.empty())
 		uri += "host: \"" + _host + "\" | ";
+	if (!_port.empty())
+		uri += "port: \"" + _port + "\" | ";
 	if (!_path.empty())
 		uri += "path: \"" + _path + "\" | ";
 	if (!_query.empty())
@@ -99,13 +103,13 @@ string	URI::GetQuery() const {
 // Validates input string using ParseInput, which sets _host and _uri_parsed.
 void	URI::SetHost(string const& host) {
 	_uri_input = host;
-	ParseInput();
+	ParseInput(Part::Host);
 }
 
 // Validates input string using ParseInput, which sets _path and _uri_parsed.
 void	URI::SetPath(string const& path) {
 	_uri_input = path;
-	ParseInput();
+	ParseInput(Part::Path);
 }
 
 // Warning: assumes query string is correct and does not validate it.
@@ -116,16 +120,18 @@ void	URI::SetQuery(string const& query) {
 
 // Parses URIs using either RequestTargetParser or URIHostParser
 // depending on starting character of input string.
-void	URI::ParseInput() {
+// Takes optional argument `part` for specifying which parser
+// should be used. Defaults to -1.
+void	URI::ParseInput(URI::Part part) {
 	size_t	slash_pos = _uri_input.find('/');
 
 	// if no / found, assume it is host string
-	if (slash_pos == string::npos) {
+	if (part == Part::Host || slash_pos == string::npos) {
 		URIHostParser	parser;
 		parser.Parse(*this, _uri_input);
 	}
 	// if starts with /, assumes it is origin-form URI
-	else if (slash_pos == 0) {
+	else if (part == Part::Path || slash_pos == 0) {
 		RequestTargetParser	parser;
 		parser.Parse(*this, _uri_input);
 	}
