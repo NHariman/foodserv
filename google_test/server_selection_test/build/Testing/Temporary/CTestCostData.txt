@@ -1,0 +1,3 @@
+try_test_NOT_BUILT 0 0
+ServerSelectionTest.TestConfig1 1 0.00486493
+---

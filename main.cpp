@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/08/01 16:35:18 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/05 12:21:47 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	main(int ac, const char **av) {
 	try {
 		NginxConfig		input_file(av[1]);
 
-		ServerSelection	serverblock_selection(input_file.GetServers());
+		ServerSelection	serverblock_selection("localhost", "80", input_file.GetServers());
 		// add exceptions in the server_selection class to make it able to throw.
 		std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
 	}

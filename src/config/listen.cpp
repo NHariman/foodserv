@@ -5,44 +5,43 @@
 /*                                                     +:+                    */
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/07 13:10:16 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/08/29 22:33:07 by salbregh      ########   odam.nl         */
+/*   Created: 2022/09/01 22:12:11 by salbregh      #+#    #+#                 */
+/*   Updated: 2022/09/05 12:20:15 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "listen.hpp"
 
-// step 1: split IP and Port from eachother.
-// step 2: If nothing to split, check if IP or port is found; set missing values to their defaults
-// step 3: If port, check port
-// step 4: If ip, check IP
-
-
 Listen::Listen(std::string listen) : _listen(listen), _port_number(DEFAULT_PORT), _ip_address(DEFAULT_IP) {
-	std::cout << std::endl << "String in listen: " << _listen << std::endl;
 	if (_listen.empty()) {
+		_port_number = DEFAULT_PORT;
+		_ip_address = DEFAULT_IP;
 		return ;
 	}
-
 	SplitPortIP();
 }
 
-/*
-** Splits the IP and host into 2 different varaibles.
-** If : is not in a valid position, false will be returned.
-*/
 void		Listen::SplitPortIP() {
 	std::size_t	pos;
 	pos = _listen.find_last_of(":");
-	// only IP or port is given , figure out which one
-	if (pos == std::string::npos || (_listen.front() == '[' && _listen.back() == ']')) {
+	if (pos == _listen.size() - 1) {
+		if (pos == 0) {
+			throw InvalidIpException();
+		}
+		throw InvalidPortException();
+	}
+	else if (pos == 0) {
+		throw InvalidIpException();
+	}
+	else if (pos == std::string::npos || (_listen.front() == '[' && _listen.back() == ']')) {
 		if (_listen.find('.') != std::string::npos || _listen.find(':') != std::string::npos
-			|| _listen.find("localhost") != std::string::npos || _listen.find("*") != std::string::npos) {
-			_port_number = "80";
+			|| _listen.find("localhost") != std::string::npos || _listen.find("*") != std::string::npos
+			|| _listen.find('[') != std::string::npos) {
+			_port_number = DEFAULT_PORT;
 			CheckIpAddress(_listen);
 		}
 		else {
-			_ip_address = "0";
+			_ip_address = DEFAULT_IP;
 			CheckPortNumber(_listen);
 		}
 	}
@@ -53,25 +52,42 @@ void		Listen::SplitPortIP() {
 }
 
 void		Listen::CheckPortNumber(std::string port_number) {			
-	(void)port_number;
-	// std::cout << "in check port number with: >" << port_number << "<" << std::endl;
 	if (port_number.find_first_not_of("0123456789") != std::string::npos)
+		throw InvalidPortException();
+	else if (stoi(port_number) > 65535 || stoi(port_number) <= 0)
+		throw InvalidPortException();
+	else if (port_number[0] == '0')
 		throw InvalidPortException();
 	_port_number = port_number;
 }
 
 void		Listen::CheckIpAddress(std::string ip_address) {
-	(void)ip_address;
-	// std::cout << "in check IP number with >" << ip_address << "<" << std::endl;
 	if (ip_address == "localhost")
 		_ip_address = "127.0.0.1";
 	else if (ip_address == "0" || ip_address == "*")
-		_ip_address = "0";
+		_ip_address = DEFAULT_IP;
 	else {
-		if (ip_address.find_first_not_of("0123456789:.[]") != std::string::npos)
+		if (CheckValidAddress(ip_address) == false)
 			throw InvalidIpException();
 		_ip_address = ip_address;
 	}
+}
+
+bool		Listen::CheckValidAddress(std::string ip_to_check) {
+	char	buf[INET6_ADDRSTRLEN];
+	int		domain;
+	
+	if (ip_to_check.find("[") != std::string::npos) {
+		domain = AF_INET6;
+		ip_to_check = ip_to_check.substr(1, ip_to_check.size() - 2);
+	}
+	else
+		domain = AF_INET;
+
+	if (inet_pton(domain, ip_to_check.c_str(), buf) <= 0) {
+		return false;
+	}
+	return true;
 }
 
 std::string		Listen::getPortNumber() {

@@ -11,6 +11,7 @@
 # define LOCATION_URI_HPP
 
 #include <string>
+#include <iostream>
 #include "../config_utils.hpp"
 #include "../../request/uri.hpp"
 
@@ -51,5 +52,8 @@ class LocationUri {
 				}
 		};
 };
+
+std::ostream&		operator<<(std::ostream& os, const LocationUri& obj);
+
 
 #endif

@@ -1,0 +1,61 @@
+#ifndef CGI_PASS_HPP
+# define CGI_PASS_HPP
+
+#include <string>
+#include <iostream>
+#include "../config_utils.hpp"
+
+class CGIPass : public std::pair<std::string, std::string> {
+	private:
+        bool        _is_set;
+		std::string	_file_extension;
+		std::string _executable_path;
+
+	public:
+		CGIPass();
+		CGIPass(std::string input);
+		~CGIPass(){};
+        CGIPass(CGIPass const &obj);
+        CGIPass& operator=(const CGIPass &obj);
+		std::string		GetFileExtension() const;
+		std::string		GetExecutablePath() const;
+        bool            IsSet() const;
+		class MissingArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Missing Arguments in cgi_pass directive.";
+				}
+		};
+		class TooManyArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Too many Arguments in cgi_pass directive.";
+				}
+		};
+		class NotEnoughArgumentsException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Too many Arguments in cgi_pass directive.";
+				}
+		};
+		class NotAFileExtensionException : public std::exception
+		{
+			private:
+				std::string _err_msg;
+			public:
+				NotAFileExtensionException(std::string extension) {
+					_err_msg = "ERROR! cgi_pass directive failure: " + extension + " is not a file extension (extension must begin with a '.')";
+				}
+				const char *what() const throw() {
+					return (_err_msg.c_str());
+				}
+                virtual ~NotAFileExtensionException() throw() {}
+		};
+};
+
+std::ostream& operator<<(std::ostream& os, const CGIPass& cgi_pass);
+
+#endif

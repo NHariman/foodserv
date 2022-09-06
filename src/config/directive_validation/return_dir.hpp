@@ -5,14 +5,17 @@
 # define RETURN_DIR_HPP
 
 #include <string>
+#include <iostream>
 #include "../config_utils.hpp"
 
 class ReturnDir {
     private:
+		bool _is_set;
         int _code;
         std::string _url;
+		bool IsValidReturnCode(size_t code);
     public:
-        ReturnDir(){};
+        ReturnDir();
         ReturnDir(std::string input);
         ~ReturnDir(){};
         ReturnDir(ReturnDir const &obj);
@@ -20,7 +23,7 @@ class ReturnDir {
 
         int     GetCode() const;
         std::string GetUrl() const;
-		bool IsValidReturnCode(size_t code);
+		bool	IsSet() const;
         class MissingArgumentsException : public std::exception
 		{
 			public:
@@ -28,6 +31,7 @@ class ReturnDir {
 					return "ERROR! missing value in return in location block.";
 				}
 		};
+
         class InvalidReturnCodeException : public std::exception
 		{
 			private:
@@ -39,6 +43,8 @@ class ReturnDir {
 				const char *what() const throw() {
 					return _err_msg.c_str();
 				}
+			
+				virtual ~InvalidReturnCodeException() throw() {}
 		};
         class InvalidAmountOfArgumentsException : public std::exception
 		{
@@ -48,5 +54,7 @@ class ReturnDir {
 				}
 		};
 };
+
+std::ostream&		operator<<(std::ostream& os, const ReturnDir& obj);
 
 #endif

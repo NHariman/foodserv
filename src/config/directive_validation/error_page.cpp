@@ -4,7 +4,9 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 #include "error_page.hpp"
 
-ErrorPage::ErrorPage(std::string input) {
+ErrorPage::ErrorPage() : _is_set(false) {}
+
+ErrorPage::ErrorPage(std::string input) : _is_set(true) {
 	size_t	i = 0;
 	size_t	start = 0;
 	size_t	end = 0;
@@ -40,14 +42,14 @@ ErrorPage::ErrorPage(std::string input) {
 }
 
 ErrorPage::ErrorPage(ErrorPage const &obj) :
-_uri(obj._uri), _code(obj._code) {
-
+_is_set(true), _uri(obj._uri), _code(obj._code) {
 }
 
 ErrorPage&	ErrorPage::operator=(ErrorPage const & obj) {
 	if (this == &obj){
 		return (*this);
 	}
+		_is_set = obj._is_set;
 		_uri = obj._uri;
 		_code = obj._code;
 	return (*this);
@@ -74,14 +76,3 @@ std::ostream& operator<<(std::ostream& os, const ErrorPage& error_page) {
 	}
 	return os;
 }
-
-// int		main(void)
-// {
-// 	ErrorPage test("404             /404.html");
-// 	ErrorPage test_two("500 502 503 504 /50x.html");
-
-// 	std::cout << test;
-// 	std::cout << test_two;
-// 	return 0;
-// }
-
