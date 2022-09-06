@@ -48,14 +48,6 @@ class NginxConfig {
 		std::string					GetConfigFile() const;
 		size_t						GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
-
-		// TBD
-		size_t						GetMaxBodySize(std::string host, std::string target) const;
-		bool						IsAllowedMethod(std::string host, std::string target, std::string method) const;
-
-		//debugger functions, TBD
-		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
-
 		
 		//exceptions
 		class GetLineFailureException : public std::exception {

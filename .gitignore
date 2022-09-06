@@ -37,4 +37,5 @@ Makefile
 .DS_Store
 *.dSYM
 *.rpt
-webserv
+./webserv
+tmp/
