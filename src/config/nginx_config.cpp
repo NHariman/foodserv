@@ -138,27 +138,4 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 }
 
 
-// TBD
-size_t								NginxConfig::GetMaxBodySize(std::string host, std::string target) const {
-
-	host_target_pair	 host_target_pair = GetHostTargetServer(host, target);
-	if (host_target_pair.location.IsSet("client_max_body_size"))
-		return host_target_pair.location.GetClientMaxBodySize();
-	return host_target_pair.server.GetClientMaxBodySize();
-}
-
-bool							NginxConfig::IsAllowedMethod(std::string host, std::string target, std::string method) const {
-	host_target_pair	host_target_pair = GetHostTargetServer(host, target);
-
-	switch (IsValidHTTPMethod(method)) {
-		case GET:
-			return host_target_pair.location.GetAllowedMethods().GetGET();
-		case POST:
-			return host_target_pair.location.GetAllowedMethods().GetPOST();
-		case DELETE:
-			return host_target_pair.location.GetAllowedMethods().GetDELETE();
-	}
-	return false;
-}
-
 #undef DEBUG
