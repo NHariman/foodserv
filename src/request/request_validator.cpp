@@ -44,7 +44,10 @@ bool	RequestValidator::PostConfigValidate(Request& request) {
 
 void	RequestValidator::ResolveTarget(Request& request) {
 	(void)request;
-	request.
+
+// 	string	target = request.GetTargetURI().GetPath();
+// 	string	resolved_target_path = _target_config->GetFinalPath(target);
+// 	request.SetFinalTargetPath(resolved_target_path);
 }
 
 // Only exactly 1 Host definition is accepted.
@@ -57,12 +60,9 @@ bool	RequestValidator::ValidHost(Request& request) {
 	if (host.find(' ') != string::npos || host.find(',') != string::npos)
 		throw BadRequestException("Multiple hosts not allowed");
 	try {
-		// Checks if Host value is valid path
-		URIHostParser	parser;
-		URI				host_uri;
-
-		parser.Parse(host_uri, host);
-		// If valid, add host to request target URI object.
+		// Checks if Host value is valid path.
+		// Calls on URI::SetPath that parses and validates string.
+		// If success, host string is added to request target URI object.
 		request.SetTargetHost(host);
 	}
 	catch (std::exception &e) {

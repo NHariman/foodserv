@@ -5,6 +5,7 @@
 #include <string>
 #include "request_parser.hpp"
 #include "../config/nginx_config.hpp"
+#include "../server_selection/target_config.hpp"
 
 using namespace std;
 
@@ -13,7 +14,6 @@ using namespace std;
 
 struct RequestLine;
 class NginxConfig;
-class URI;
 
 class Request {
 	public:
@@ -39,6 +39,7 @@ class Request {
 		size_t	max_body_size;
 
 		size_t				Parse(char const* buffer);
+		TargetConfig const&	GetTargetConfig() const;
 		string				GetMethod() const;
 		string				GetTargetString() const;
 		URI const&			GetTargetURI() const;
@@ -50,14 +51,15 @@ class Request {
 		int					GetStatusCode() const;
 		void				SetStatus(Status status);
 		void				SetTargetHost(string host);
+		void				SetFinalTargetPath(string target_path);
 	
 		// friend class forward declaration allows RequestParser to
-		// access private `_request_line`, `_header_fields`, `_msg_body`
-		// attributes of Request.
-		friend class	RequestParser;
-		friend class	ChunkedParser;
+		// access private variables of Request.
+		friend class	RequestParser; // accesses _request_line, _header_fields
+		friend class	ChunkedParser; // accesses _header_fields, _msg_body
 	
 	private:
+		TargetConfig		_target_config;
 		RequestParser		_parser;
 		struct RequestLine	_request_line;
 		FieldsMap			_header_fields;
@@ -65,7 +67,6 @@ class Request {
 		string				_buf;
 		Status				_status;
 		int					_status_code;
-		// TargetConfig	_target_config;
 
 		bool	CanParse();
 		void	CheckStatus();
