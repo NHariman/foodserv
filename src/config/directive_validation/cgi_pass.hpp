@@ -4,12 +4,13 @@
 #include <string>
 #include <iostream>
 #include "../config_utils.hpp"
+#include "../../request/uri.hpp"
 
 class CGIPass : public std::pair<std::string, std::string> {
 	private:
-        bool        _is_set;
-		std::string	_file_extension;
-		std::string _executable_path;
+        bool        						_is_set;
+		std::string							_file_extension;
+		std::string							_executable_path;
 
 	public:
 		CGIPass();

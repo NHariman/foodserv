@@ -16,25 +16,21 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 
 void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string port, std::string target) {
     ServerSelection server(host, port, config->GetServers());
-	ServerContext chosen_server = server.GetChosenServerContext();
-   // LocationContext location = GetTarget(&server.GetServer(), target);
-
-    // ServerContext   server = GetHost(host, config); // temp
-    LocationContext location = GetTarget(&chosen_server, target); // temp
+	_server = server.GetChosenServerContext();
+    _location = GetTarget(&_server, target); // temp
 
     // only set in location
-    _location_uri = location.GetLocationUri();
-	if (location.IsSet("cgi_pass"))
-    	_cgi_pass = location.GetCGIPass();
-    _allowed_methods = location.GetAllowedMethods();
+    _location_uri = _location.GetLocationUri();
+	_cgi_pass = _location.GetCGIPass();
+    _allowed_methods = _location.GetAllowedMethods();
 
     // can be set in either location OR server
-	_root = SetRoot(&chosen_server, &location);
-	_index = SetIndex(&chosen_server, &location);
-	_client_max_body_size = SetMaxBodySize(&chosen_server, &location);
-	_error_page = SetErrorPage(&chosen_server, &location);
-	_autoindex = SetAutoindex(&chosen_server, &location);
-	_return_dir = SetReturn(&chosen_server, &location);
+	_root = SetRoot(&_server, &_location);
+	_index = SetIndex(&_server, &_location);
+	_client_max_body_size = SetMaxBodySize(&_server, &_location);
+	_error_page = SetErrorPage(&_server, &_location);
+	_autoindex = SetAutoindex(&_server, &_location);
+	_return_dir = SetReturn(&_server, &_location);
 }
 
 /// private getters
@@ -119,5 +115,16 @@ bool						TargetConfig::GetAutoindex() const {
 
 ReturnDir 					TargetConfig::GetReturn() const {
 	return _return_dir;
+}
+
+std::string					TargetConfig::GetFinalPath() const {
+	return _final_path;
+}
+
+ServerContext				TargetConfig::GetServer() const {
+	return _server;
+}
+LocationContext				TargetConfig::GetLocation() const {
+	return _location;
 }
 

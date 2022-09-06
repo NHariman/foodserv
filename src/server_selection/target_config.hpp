@@ -25,6 +25,10 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		ReturnDir							SetReturn(ServerContext *server, LocationContext *location);
 
 		CGIPass								SetCGIPass(ServerContext *server, LocationContext *location);
+
+		ServerContext						_server;
+		LocationContext						_location;
+		std::string							_final_path;
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig(){};
@@ -39,6 +43,11 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		std::vector<ErrorPage>		GetErrorPage() const;
 		bool						GetAutoindex() const;
 		ReturnDir 					GetReturn() const;
+		std::string					GetFinalPath() const;
+
+		ServerContext				GetServer() const;
+		LocationContext				GetLocation() const;
+
 };
 
 ServerContext			GetHost(std::string host, NginxConfig *config);
