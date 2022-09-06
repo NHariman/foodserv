@@ -43,6 +43,7 @@ class ServerContext : public ConfigValues {
 		void					SetValue(int directive, std::string value) override;
 		int						IsDirective(std::string directive) override;
 		void					InitChecklist() override;
+		
 		bool					HasDefaultLocation(std::vector<LocationContext> locations);
 
 	public:

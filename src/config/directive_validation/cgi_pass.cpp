@@ -37,14 +37,13 @@ CGIPass::CGIPass(std::string input) : _is_set(true) {
 }
 
 CGIPass::CGIPass(CGIPass const &obj) : 
-_is_set(obj._is_set), _file_extension(obj._file_extension), _executable_path(obj._executable_path) {}
+_is_set(obj._is_set), _file_extension(obj._file_extension) {}
 
 CGIPass& CGIPass::operator=(const CGIPass &obj) {
 	if (this == &obj)
 		return (*this);
 	_is_set = obj._is_set;
 	_file_extension = obj._file_extension;
-	_executable_path = obj._executable_path;
 	return (*this);
 }
 
