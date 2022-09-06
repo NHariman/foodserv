@@ -186,7 +186,10 @@ bool	RequestValidator::ValidMethod(string const& method) {
 	if (DEBUG) cout << "ValidMethod\n";
 
 	if (DEBUG) cout << "IsAllowedMethod returns: " <<  _target_config->IsAllowedMethod(method) << endl;
-	return _target_config->IsAllowedMethod(method);
+	if	(_target_config->IsAllowedMethod(method) == false)
+		throw BadRequestException("Method not allowed for specified target");
+	else
+		return true;
 }
 
 

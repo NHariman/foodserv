@@ -196,3 +196,17 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 		request.Parse(req_str.c_str());
 	}, BadRequestException);
 }
+
+// reliant on specific default.conf file used at top.
+TEST(RequestHeaderValidatorTest, InvalidMethod) {
+	EXPECT_THROW({
+		string req_str = "DELETE /hello.txt HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
+		Request request(&config);
+		request.Parse(req_str.c_str());
+	}, BadRequestException);
+	EXPECT_THROW({
+		string req_str = "POST /nonexist HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
+		Request request(&config);
+		request.Parse(req_str.c_str());
+	}, BadRequestException);
+}
