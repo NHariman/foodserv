@@ -50,8 +50,8 @@ class Request {
 		Status				GetStatus() const;
 		int					GetStatusCode() const;
 		void				SetStatus(Status status);
-		void				SetTargetHost(string host);
-		void				SetFinalTargetPath(string target_path);
+		void				SetTargetHost(string const& host);
+		void				SetFinalTargetPath(string const& target_path);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private variables of Request.

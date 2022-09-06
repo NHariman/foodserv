@@ -98,11 +98,11 @@ void	Request::SetStatus(Status status) {
 	_status = status;
 }
 
-void	Request::SetTargetHost(string host) {
+void	Request::SetTargetHost(string const& host) {
 	_request_line.target.SetHost(host);
 }
 
-void	Request::SetFinalTargetPath(string target_path) {
+void	Request::SetFinalTargetPath(string const& target_path) {
 	_request_line.target.SetPath(target_path);
 }
 
