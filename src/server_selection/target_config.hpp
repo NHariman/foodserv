@@ -28,7 +28,8 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig(){};
-		void	SetupTargetConfig(std::string host, std::string port, std::string target, NginxConfig *config);
+		void	Setup(NginxConfig *config, std::string host, std::string port, std::string target);
+		
 		//getters
 		bool						IsAllowedMethod(std::string method);
 		CGIPass						GetCGIPass() const;

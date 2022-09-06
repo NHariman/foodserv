@@ -3,25 +3,20 @@
 
 #define DEBUG 0 // TODO: REMOVE
 
-RequestValidator::RequestValidator(NginxConfig* config)
-	: _status(hv_Done), _config(config) {}
+RequestValidator::RequestValidator(NginxConfig* config,
+									TargetConfig* target_config)
+	:	_status(hv_Done),
+		_config(config),
+		_target_config(target_config) {}
 
 RequestValidator::~RequestValidator() {}
 
 HeaderStatus	RequestValidator::Process(Request& request) {
-	_status = hv_Done;
-
 	if (DEBUG) cout << "RequestValidator::Process\n";
 	
-	// PreConfigValidate(request);
-	// SetupConfig(config, request.GetTargetURI());
-	// PostConfigValidate(request);
-	if (ValidHost(request)
-			&& ValidExpect(request)
-			&& ValidContentEncoding(request.GetField("content-encoding"))
-			&& ValidTransferEncoding(request)
-			&& ValidContentLength(_config, request)
-			&& ValidMethod(_config, request))
+	if (PreConfigValidate(request)
+		&& SetupConfig(_config, request)
+		&& PostConfigValidate(request))
 		return _status;
 	return hv_Bad;
 }
@@ -33,24 +28,23 @@ bool	RequestValidator::PreConfigValidate(Request& request) {
 			&& ValidTransferEncoding(request));
 }
 
-void	RequestValidator::SetupConfig(NginxConfig* config,
-			URI const& request_target) {
-	string	host = request_target.GetHost();
-	string	port = request_target.GetPort();
-	string	target = request_target.GetPath(); // TODO: check if query is needed
-	// _target_config = &request._target_config;
+int	RequestValidator::SetupConfig(NginxConfig* config,
+									Request const& request) {
+	string	host = request.GetTargetURI().GetHost();
+	string	port = request.GetTargetURI().GetPort();
+	string	target = request.GetTargetURI().GetPath(); // TODO: check if query is needed
 
-	(void)config;
-	// _target_config->Setup(config, host, port, target);
+	_target_config->Setup(config, host, port, target);
+	return 1;
 }
 
 bool	RequestValidator::PostConfigValidate(Request& request) {
-	return (ValidContentLength(_config, request) && ValidMethod(_config, request));
+	return (ValidContentLength(request) && ValidMethod(request.GetMethod()));
 }
-
 
 void	RequestValidator::ResolveTarget(Request& request) {
 	(void)request;
+	request.
 }
 
 // Only exactly 1 Host definition is accepted.
@@ -93,7 +87,7 @@ bool	RequestValidator::ValidExpect(Request& request) {
 }
 
 // Does not accept any definition of Content-Encoding header.
-bool	RequestValidator::ValidContentEncoding(string content_encoding) {
+bool	RequestValidator::ValidContentEncoding(string const& content_encoding) {
 	if (DEBUG) cout << "ValidContentEncoding\n";
 
 	if (content_encoding != NO_VAL)
@@ -135,20 +129,16 @@ bool	RequestValidator::ValidTransferEncoding(Request& request) {
 }
 
 // Used by ValidContentLength to check for valid values.
-static void	CheckContentLengthValue(NginxConfig* config,
+static void	CheckContentLengthValue(TargetConfig* target_config,
 									Request& request) {
 	string	content_length = request.GetField("content-length");
-	// string	host = request.GetField("host");
-	// string	target = request.GetTargetString();
 
 	// non-digit value
 	if (!IsValidString(isdigit, content_length))
 		throw BadRequestException("Invalid Content-Length value");
 
 	request.content_length = std::stoll(content_length);
-	request.max_body_size = MBToBytes(1);
-	(void)config;
-	// request.max_body_size = MBToBytes(config->GetMaxBodySize(host, target));
+	request.max_body_size = MBToBytes(target_config->GetMaxBodySize());
 	
 	// if invalid value
 	if (request.content_length < 0)
@@ -174,8 +164,7 @@ static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
 // Only exactly 1 Content-Length definition is accepted
 // and only for POST requests.
 // Sets `content_length` and `max_body_size` attributes within Request.
-bool	RequestValidator::ValidContentLength(NginxConfig* config,
-													Request& request) {
+bool	RequestValidator::ValidContentLength(Request& request) {
 	if (DEBUG) cout << "ValidContentLength\n";
 
 	string	content_length = request.GetField("content-length");
@@ -183,7 +172,7 @@ bool	RequestValidator::ValidContentLength(NginxConfig* config,
 	if (content_length != NO_VAL) {
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
-		CheckContentLengthValue(config, request);
+		CheckContentLengthValue(_target_config, request);
 		CheckAllowedMethod(request.GetMethod(), request.content_length);
 		if (request.content_length == 0)
 			_status = hv_Done;
@@ -193,15 +182,12 @@ bool	RequestValidator::ValidContentLength(NginxConfig* config,
 	return true;
 }
 
-bool	RequestValidator::ValidMethod(NginxConfig* config, Request& request) {
+bool	RequestValidator::ValidMethod(string const& method) {
 	if (DEBUG) cout << "ValidMethod\n";
 
-	// string	host = request.GetField("host");
-	// string	target = request.GetTargetString();
-	string	method = request.GetMethod();
-	(void)config;
-	return true; // TODO: change when config methods are stable
-	// return config->IsAllowedMethod(host, target, method);
+	if (DEBUG) cout << "IsAllowedMethod returns: " <<  _target_config->IsAllowedMethod(method) << endl;
+	return _target_config->IsAllowedMethod(method);
 }
+
 
 #undef DEBUG // REMOVE

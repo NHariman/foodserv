@@ -1,5 +1,5 @@
-#ifndef request_validator_HPP
-#define request_validator_HPP
+#ifndef REQUEST_VALIDATOR_HPP
+#define REQUEST_VALIDATOR_HPP
 
 #include <map>
 #include <string>
@@ -11,6 +11,7 @@ using namespace std;
 
 class Request;
 class NginxConfig;
+class TargetConfig;
 
 enum HeaderStatus {
 	hv_Bad = -1,
@@ -22,7 +23,7 @@ enum HeaderStatus {
 class RequestValidator {
 	public:
 		// Config constructor
-		RequestValidator(NginxConfig* config);
+		RequestValidator(NginxConfig* config, TargetConfig* target_config);
 		// Destructor
 		~RequestValidator();
 
@@ -31,18 +32,18 @@ class RequestValidator {
 	private:
 		HeaderStatus	_status;
 		NginxConfig*	_config;
-		//TargetConfig*	_target_config;
+		TargetConfig*	_target_config;
 
 		bool	PreConfigValidate(Request& request);
-		void	SetupConfig(NginxConfig* config, URI const& request_target);
+		int		SetupConfig(NginxConfig* config, Request const& request);
 		bool	PostConfigValidate(Request& request);
 		bool	ValidHost(Request& request);
 		bool	ValidExpect(Request& request);
-		bool	ValidContentEncoding(string host);
+		bool	ValidContentEncoding(string const& host);
 		bool	ValidTransferEncoding(Request& request);
-		bool	ValidContentLength(NginxConfig* config, Request& request);
-		bool	ValidMethod(NginxConfig* config, Request& request);
+		bool	ValidContentLength(Request& request);
+		bool	ValidMethod(string const& method);
 		void	ResolveTarget(Request& request);
 };
 
-#endif /* request_validator_HPP */
+#endif /* REQUEST_VALIDATOR_HPP */

@@ -7,10 +7,10 @@
 
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
 static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
-static string DEL_RL_Host = "DELETE /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
+static string DEL_RL_Host = "DELETE /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
 
 // Helper function used by ValidHeaders test to construct and call
 // RequestValidator on passed request string. Returns result of
@@ -18,7 +18,8 @@ static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files
 static int	ConstructAndProcess(string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
-	RequestValidator header_validator(&config);
+	TargetConfig	target_config;
+	RequestValidator header_validator(&config, &target_config);
 
 	return header_validator.Process(request);
 }
@@ -36,7 +37,7 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 
 	// message is missing final empty line because when message is complete,
 	// ChunkedHandler clears chunked-related headers and
-	// RequestValidator will return hv_Done.
+	// RequestValidator will return Done.
 	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0\r\n");
 	EXPECT_EQ(status, hv_MessageChunked);
 

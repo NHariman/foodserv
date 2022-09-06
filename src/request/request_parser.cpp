@@ -95,11 +95,11 @@ RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	// allocated on stack because we don't need to remember the return
-	RequestValidator	validator(_config);
-	int					ret_code;
+	RequestValidator	validator(_config, &(_request->_target_config));
+	int					status;
 
-	ret_code = validator.Process(*_request);
-	switch (ret_code) {
+	status = validator.Process(*_request);
+	switch (status) {
 		case hv_Done:
 			return r_Done;
 		case hv_MessageExpected:
