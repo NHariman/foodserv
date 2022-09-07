@@ -22,6 +22,7 @@ class LocationSelection {
 		bool							_cgi_bool;
 
 		LocationContext					_chosen_location_context;
+		std::vector<LocationContext>	_compatible_locationblocks;
 
 		LocationSelection();
 
@@ -32,11 +33,14 @@ class LocationSelection {
 		std::string		getRequestUri() const;
 		LocationContext getLocationContext() const;
 		void			SelectLocationContext();
-
-		bool	isCgi() const;
+		bool			isCgi() const;
+		void			GetLongestMatch();
 		
 		// function to print what is in the location Context
-		void	PrintLocationContext() const;
+		void	PrintLocationContext(std::vector<LocationContext> location_context) const;
+
+
+
 };
 
 #endif
