@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/07 17:42:15 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/07 18:07:23 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,28 @@
 #include <vector>
 #include "src/config/nginx_config.hpp"
 #include "src/basic_server/server.hpp"
-#include "src/server_selection/server_selection.hpp"
+#include "src/config/setup.hpp"
+// #include "src/server_selection/server_selection.hpp"
+#include "src/server_selection/target_config.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
-	try {
-		NginxConfig		input_file(av[1]);
 
-		ServerSelection	serverblock_selection("localhost", "80", input_file.GetServers());
-		// add exceptions in the server_selection class to make it able to throw.
-		std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
+	try {
+		NginxConfig input_file(GetConfigLocation(ac, av));
+		
+		TargetConfig target;
+		target.Setup(&input_file, "localhost", "80", "/");
+	
+		std::cout << std::boolalpha << "Allowed method: GET: " << target.IsAllowedMethod("GET") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: POST: " << target.IsAllowedMethod("POST") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: DELETE: " << target.IsAllowedMethod("DELETE") << std::endl;
+		std::cout << "Get max body size: " << target.GetMaxBodySize() << std::endl;
 	}
-	catch(const std::exception& e) {
+	catch (const std::exception& e) {
 		std::cerr << e.what() << '\n';
 	}
+	return (0);
 	
 	// ServerSelection	chosen_serverblock(input_file.GetServers());
 	// Server servie(80, INADDR_ANY);

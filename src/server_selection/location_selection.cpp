@@ -20,6 +20,9 @@ LocationSelection::LocationSelection(ServerContext chosen_servercontext, std::st
 		_chosen_location_context = _compatible_locationblocks.at(0);
 	else
 		GetLongestMatch();
+
+	// delete later
+	std::cout << _chosen_location_context.GetLocationUri().GetUri() << std::endl;
 }
 
 void	LocationSelection::SelectLocationContext() {
@@ -33,7 +36,7 @@ void	LocationSelection::SelectLocationContext() {
 	}
 }
 
-LocationContext	LocationSelection::getLocationContext() const {
+LocationContext	LocationSelection::GetLocationContext() const {
 	return _chosen_location_context;
 }
 

@@ -6,6 +6,8 @@
 #include "../config/server_context.hpp"
 #include "../config/location_context.hpp"
 #include "server_selection.hpp"
+#include "location_selection.hpp"
+
 #include "get_host.hpp"
 
 # define GET 0

@@ -26,7 +26,7 @@ class LocationSelection {
 	public:
 		LocationSelection(ServerContext chosen_servercontext, std::string request_uri);
 		
-		LocationContext getLocationContext() const;
+		LocationContext GetLocationContext() const;
 		void			SelectLocationContext();
 		void			GetLongestMatch();
 		
