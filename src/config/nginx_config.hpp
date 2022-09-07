@@ -1,4 +1,3 @@
-
 #ifndef NGINX_CONFIG_HPP
 # define NGINX_CONFIG_HPP
 
@@ -48,7 +47,14 @@ class NginxConfig {
 		std::string					GetConfigFile() const;
 		size_t						GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
-		
+
+
+		size_t						GetMaxBodySize(std::string host, std::string target) const;
+		bool						IsAllowedMethod(std::string host, std::string target, std::string method) const;
+
+		ServerContext				GetHostServer(std::string host) const;
+		host_target_pair			GetHostTargetServer(std::string host, std::string target) const;
+
 		//exceptions
 		class GetLineFailureException : public std::exception {
 			public:

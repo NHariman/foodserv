@@ -1,4 +1,3 @@
-
 #include "nginx_config.hpp"
 #include "directive_validation/directive_validation.hpp"
 #include <stdexcept>
@@ -136,6 +135,5 @@ size_t		NginxConfig::GetServerContextAmount() const {
 std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
-
 
 #undef DEBUG
