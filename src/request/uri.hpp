@@ -2,10 +2,7 @@
 #define URI_HPP
 
 #include <iostream>
-
 #include "exception.hpp"
-#include "request_target_parser.hpp"
-#include "uri_host_parser.hpp"
 
 using namespace std;
 
@@ -17,6 +14,13 @@ using namespace std;
 
 class URI {
 	public:
+		enum class Part {
+			Invalid = -1,
+			Host = 0,
+			Path,
+			Query
+		};
+
 		// Default constructor
 		URI();
 		// Copy constructor
@@ -56,7 +60,7 @@ class URI {
 		string	_path;
 		string	_query;
 
-		void	ParseInput();
+		void	ParseInput(Part part = Part::Invalid);
 		string	ConstructParsedURI();
 };
 

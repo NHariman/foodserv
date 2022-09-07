@@ -44,15 +44,19 @@ size_t	Request::Parse(char const* buffer) {
 	return bytes_read;
 }
 
+TargetConfig const&	Request::GetTargetConfig() const {
+	return _target_config;
+}
+
 string	Request::GetMethod() const {
 	return _request_line.method;
 }
 
-string	Request::GetTarget() const {
+string	Request::GetTargetString() const {
 	return _request_line.target.Get();
 }
 
-URI const&	Request::GetURI() const {
+URI const&	Request::GetTargetURI() const{
 	return _request_line.target;
 }
 
@@ -92,6 +96,14 @@ int	Request::GetStatusCode() const {
 
 void	Request::SetStatus(Status status) {
 	_status = status;
+}
+
+void	Request::SetTargetHost(string const& host) {
+	_request_line.target.SetHost(host);
+}
+
+void	Request::SetFinalTargetPath(string const& target_path) {
+	_request_line.target.SetPath(target_path);
 }
 
 // Checks if double CRLF indicating end of header section is found

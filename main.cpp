@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/09/05 12:26:13 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/09/07 15:15:00 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/07 17:27:15 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	main(int ac, const char **av) {
 		// add exceptions in the server_selection class to make it able to throw.
 		std::cout << "Amount of serverblocks: " << input_file.GetServerContextAmount() << std::endl;
 
-		LocationSelection	location_selection(serverblock_selection2.GetChosenServerContext(), "/hoi.txt");
+		LocationSelection	location_selection(serverblock_selection2.GetChosenServerContext(), "/");
 	}
 	
 	catch(const std::exception& e) {

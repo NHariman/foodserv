@@ -1,41 +1,69 @@
-#include "header_field_validator.hpp"
+#include "request_validator.hpp"
 #include "request.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
 
-HeaderFieldValidator::HeaderFieldValidator() : _status(hv_Done) {}
+RequestValidator::RequestValidator(NginxConfig* config,
+									TargetConfig* target_config)
+	:	_status(hv_Done),
+		_config(config),
+		_target_config(target_config) {}
 
-HeaderFieldValidator::~HeaderFieldValidator() {}
+RequestValidator::~RequestValidator() {}
 
-HeaderStatus	HeaderFieldValidator::Process(NginxConfig* config, Request& request) {
-	_status = hv_Done;
-
-	if (DEBUG) cout << "HeaderFieldValidator::Process\n";
+HeaderStatus	RequestValidator::Process(Request& request) {
+	if (DEBUG) cout << "RequestValidator::Process\n";
 	
-	if (ValidHost(request.GetField("host"))
-			&& ValidExpect(request)
-			&& ValidContentEncoding(request.GetField("content-encoding"))
-			&& ValidTransferEncoding(request)
-			&& ValidContentLength(config, request)
-			&& ValidMethod(config, request))
+	if (PreConfigValidate(request)
+		&& SetupConfig(_config, request)
+		&& PostConfigValidate(request))
 		return _status;
 	return hv_Bad;
 }
 
+bool	RequestValidator::PreConfigValidate(Request& request) {
+	return (ValidHost(request)
+			&& ValidExpect(request)
+			&& ValidContentEncoding(request.GetField("content-encoding"))
+			&& ValidTransferEncoding(request));
+}
+
+int	RequestValidator::SetupConfig(NginxConfig* config,
+									Request const& request) {
+	string	host = request.GetTargetURI().GetHost();
+	string	port = request.GetTargetURI().GetPort();
+	string	target = request.GetTargetURI().GetPath(); // TODO: check if query is needed
+
+	_target_config->Setup(config, host, port, target);
+	return 1;
+}
+
+bool	RequestValidator::PostConfigValidate(Request& request) {
+	return (ValidContentLength(request) && ValidMethod(request.GetMethod()));
+}
+
+void	RequestValidator::ResolveTarget(Request& request) {
+	(void)request;
+
+// 	string	target = request.GetTargetURI().GetPath();
+// 	string	resolved_target_path = _target_config->GetFinalPath(target);
+// 	request.SetFinalTargetPath(resolved_target_path);
+}
+
 // Only exactly 1 Host definition is accepted.
-bool	HeaderFieldValidator::ValidHost(string host) {
+bool	RequestValidator::ValidHost(Request& request) {
 	if (DEBUG) cout << "ValidHost\n";
 
+	string	host = request.GetField("host");
 	if (host == NO_VAL)
 		throw BadRequestException("Host header mandatory");
 	if (host.find(' ') != string::npos || host.find(',') != string::npos)
 		throw BadRequestException("Multiple hosts not allowed");
 	try {
-		URIHostParser	parser;
-		URI				uri;
-
-		// Checks if Host value is valid path
-		parser.Parse(uri, host);
+		// Checks if Host value is valid path.
+		// Calls on URI::SetPath that parses and validates string.
+		// If success, host string is added to request target URI object.
+		request.SetTargetHost(host);
 	}
 	catch (std::exception &e) {
 		throw;
@@ -44,7 +72,7 @@ bool	HeaderFieldValidator::ValidHost(string host) {
 }
 
 // Only accepts "100-continue" for Expect header.
-bool	HeaderFieldValidator::ValidExpect(Request& request) {
+bool	RequestValidator::ValidExpect(Request& request) {
 	if (DEBUG) cout << "ValidExpect\n";
 
 	string	expect = request.GetField("expect");
@@ -59,7 +87,7 @@ bool	HeaderFieldValidator::ValidExpect(Request& request) {
 }
 
 // Does not accept any definition of Content-Encoding header.
-bool	HeaderFieldValidator::ValidContentEncoding(string content_encoding) {
+bool	RequestValidator::ValidContentEncoding(string const& content_encoding) {
 	if (DEBUG) cout << "ValidContentEncoding\n";
 
 	if (content_encoding != NO_VAL)
@@ -79,7 +107,7 @@ static void	CheckAllowedMethod(string method, size_t content_length = 1) {
 }
 
 // If Transfer-Encoding is define, only "chunked" value is accepted.
-bool	HeaderFieldValidator::ValidTransferEncoding(Request& request) {
+bool	RequestValidator::ValidTransferEncoding(Request& request) {
 	if (DEBUG) cout << "ValidTransferEncoding\n";
 
 	string	transfer_encoding = request.GetField("transfer-encoding");
@@ -101,18 +129,16 @@ bool	HeaderFieldValidator::ValidTransferEncoding(Request& request) {
 }
 
 // Used by ValidContentLength to check for valid values.
-static void	CheckContentLengthValue(NginxConfig* config,
+static void	CheckContentLengthValue(TargetConfig* target_config,
 									Request& request) {
 	string	content_length = request.GetField("content-length");
-	string	host = request.GetField("host");
-	string	target = request.GetTarget();
 
 	// non-digit value
 	if (!IsValidString(isdigit, content_length))
 		throw BadRequestException("Invalid Content-Length value");
 
 	request.content_length = std::stoll(content_length);
-	request.max_body_size = MBToBytes(config->GetMaxBodySize(host, target));
+	request.max_body_size = MBToBytes(target_config->GetMaxBodySize());
 	
 	// if invalid value
 	if (request.content_length < 0)
@@ -138,8 +164,7 @@ static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
 // Only exactly 1 Content-Length definition is accepted
 // and only for POST requests.
 // Sets `content_length` and `max_body_size` attributes within Request.
-bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
-													Request& request) {
+bool	RequestValidator::ValidContentLength(Request& request) {
 	if (DEBUG) cout << "ValidContentLength\n";
 
 	string	content_length = request.GetField("content-length");
@@ -147,8 +172,8 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 	if (content_length != NO_VAL) {
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
-		CheckContentLengthValue(config, request);
-		CheckAllowedMethod(request.GetMethod(), request.content_length);
+		CheckContentLengthValue(_target_config, request);
+		// CheckAllowedMethod(request.GetMethod(), request.content_length);
 		if (request.content_length == 0)
 			_status = hv_Done;
 		else
@@ -157,14 +182,15 @@ bool	HeaderFieldValidator::ValidContentLength(NginxConfig* config,
 	return true;
 }
 
-bool	HeaderFieldValidator::ValidMethod(NginxConfig* config, Request& request) {
+bool	RequestValidator::ValidMethod(string const& method) {
 	if (DEBUG) cout << "ValidMethod\n";
 
-	string	host = request.GetField("host");
-	string	target = request.GetTarget();
-	string	method = request.GetMethod();
-
-	return config->IsAllowedMethod(host, target, method);
+	// if (DEBUG) cout << "IsAllowedMethod returns: " <<  _target_config->IsAllowedMethod(method) << endl;
+	// if	(_target_config->IsAllowedMethod(method) == false)
+	// 	throw BadRequestException("Method not allowed for specified target");
+	// else
+		return true;
 }
+
 
 #undef DEBUG // REMOVE

@@ -1,4 +1,5 @@
 #include "request_target_parser.hpp"
+
 #define DEBUG 0 // TODO: REMOVE
 /*
 	Transition table for origin form URI states.
@@ -14,7 +15,7 @@
 
 // Default constructor
 RequestTargetParser::RequestTargetParser()
-	: AStateParser(u_Start, u_Done), _uri(NULL), _part(pt_Invalid) {}
+	: AStateParser(u_Start, u_Done), _uri(NULL), _part(URI::Part::Invalid) {}
 
 // Destructor
 RequestTargetParser::~RequestTargetParser() {}
@@ -23,7 +24,7 @@ RequestTargetParser::~RequestTargetParser() {}
 // passed input string to parent class AStateParser::ParseString().
 size_t	RequestTargetParser::Parse(URI& uri, string const& input) {
 	_uri = &uri;
-	_part = pt_Path;
+	_part = URI::Part::Path;
 	return ParseString(input);
 }
 
@@ -74,7 +75,7 @@ URIState		RequestTargetParser::StartHandler(char uri_char) {
 URIState		RequestTargetParser::PathHandler(char uri_char) {
 	if (DEBUG) cout << "[PathHandler] at: [" << uri_char << "]\n";
 
-	_part = pt_Path;
+	_part = URI::Part::Path;
 	switch (uri_char) {
 		case '\0':
 			return PushBuffertoField(u_Done);
@@ -100,7 +101,7 @@ URIState		RequestTargetParser::PathHandler(char uri_char) {
 URIState		RequestTargetParser::QueryHandler(char uri_char) {
 	if (DEBUG) cout << "[QueryHandler] at: [" << uri_char << "]\n";
 
-	_part = pt_Query;
+	_part = URI::Part::Query;
 	switch (uri_char) {
 		case '\0': case '#':
 			return PushBuffertoField(u_Done);
@@ -143,7 +144,7 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 		case '\0':
 			return PushBuffertoField(u_Done);
 		case '#':
-			if (_part == pt_Query)
+			if (_part == URI::Part::Query)
 				return PushBuffertoField(u_Done);
 			break;
 		case '%':
@@ -165,7 +166,7 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 // transition out of current (path/query) state to next or final state.
 // `skip` is optional argument that defaults to TRUE.
 URIState	RequestTargetParser::PushBuffertoField(URIState next_state, bool skip) {
-	if (_part == pt_Path) {
+	if (_part == URI::Part::Path) {
 		size_t query_start = buffer.find_first_of("?");
 		_uri->_path = buffer.substr(0, query_start);
 	}

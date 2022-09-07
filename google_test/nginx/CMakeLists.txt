@@ -23,7 +23,7 @@ add_executable(
   ../../src/request/request_utils.cpp 
   ../../src/request/chunked_parser.cpp 
   ../../src/request/header_field_parser.cpp 
-  ../../src/request/header_field_validator.cpp 
+  ../../tmp/header_field_validator.cpp 
   ../../src/request/request_line_parser.cpp 
   ../../src/request/request.cpp 
   ../../src/request/request_parser.cpp 
@@ -49,6 +49,10 @@ add_executable(
 		../../src/config/directive_validation/location_uri.cpp 
 		../../src/config/directive_validation/return_dir.cpp 
 		../../src/config/directive_validation/root.cpp
+
+    ../../src/config/server_selection.cpp
+		../../src/server_selection/get_host.cpp
+		../../src/server_selection/target_config.cpp
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(

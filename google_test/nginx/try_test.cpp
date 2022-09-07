@@ -259,21 +259,21 @@ TEST(CMBSTest, ReturnInputTests) {
 }
 
 //////////////////////////////
-//**   MODULE FASTCGIPASS **//
+//**   MODULE CGIPASS **//
 //////////////////////////////
 
-TEST(FastcgipassTest, InvalidInput) {
+TEST(cgipassTest, InvalidInput) {
 	EXPECT_THROW({
-		FastCGIPass test("");
-	}, FastCGIPass::MissingArgumentsException);
+		CGIPass test("");
+	}, CGIPass::MissingArgumentsException);
 	EXPECT_THROW({
-		FastCGIPass test("dadfadf dafdfsafadsf");
-	}, FastCGIPass::TooManyArgumentsException);
+		CGIPass test("dadfadf dafdfsafadsf");
+	}, CGIPass::TooManyArgumentsException);
 }
 
 TEST(FastcgipassTest, ValidInput){
 	EXPECT_NO_THROW({
-		FastCGIPass test("link_here");
+		CGIPass test(".py link_here");
 	});
 }
 
@@ -343,3 +343,8 @@ TEST(ReturnTest, ValidInput){
 	});
 
 }
+
+//////////////////////////////
+//** MODULE TargetConfig  **//
+//////////////////////////////
+

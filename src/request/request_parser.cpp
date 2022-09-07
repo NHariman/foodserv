@@ -1,5 +1,5 @@
 #include "request_parser.hpp"
-#include "header_field_validator.hpp"
+#include "request_validator.hpp"
 #include "request.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
@@ -95,11 +95,11 @@ RequestState	RequestParser::HeaderDoneHandler() {
 	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
 
 	// allocated on stack because we don't need to remember the return
-	HeaderFieldValidator	header_validator;
-	int						ret_code;
+	RequestValidator	validator(_config, &(_request->_target_config));
+	int					status;
 
-	ret_code = header_validator.Process(_config, *_request);
-	switch (ret_code) {
+	status = validator.Process(*_request);
+	switch (status) {
 		case hv_Done:
 			return r_Done;
 		case hv_MessageExpected:
@@ -155,8 +155,8 @@ void	RequestParser::HandleEndOfChunkedMessage() {
 
 void	RequestParser::DebugPrint() {
 	cout << "Parsed method: " << _request->GetMethod() << endl;
-	cout << "Target input: " << _request->GetURI().GetInputURI() << endl;
-	cout << "Parsed target: " << _request->GetURI().GetURIDebug() << endl;
+	cout << "Target input: " << _request->GetTargetURI().GetInputURI() << endl;
+	cout << "Parsed target: " << _request->GetTargetURI().GetURIDebug() << endl;
 	cout << "Parsed version: " << _request->GetVersion() << endl;
 	cout << "Parsed headers:\n";
 	for (map<string,string>::const_iterator it = _request->_header_fields.begin();

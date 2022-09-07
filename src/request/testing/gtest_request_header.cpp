@@ -2,25 +2,26 @@
 #include <string>
 
 #include "../exception.hpp"
-#include "../header_field_validator.hpp"
+#include "../request_validator.hpp"
 #include "../request.hpp"
 
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
 static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
-static string DEL_RL_Host = "DELETE /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
+static string DEL_RL_Host = "DELETE /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/config_files/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
 
 // Helper function used by ValidHeaders test to construct and call
-// HeaderFieldValidator on passed request string. Returns result of
-// HeaderFieldValidator::Process().
+// RequestValidator on passed request string. Returns result of
+// RequestValidator::Process().
 static int	ConstructAndProcess(string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
-	HeaderFieldValidator header_validator;
+	TargetConfig	target_config;
+	RequestValidator header_validator(&config, &target_config);
 
-	return header_validator.Process(&config, request);
+	return header_validator.Process(request);
 }
 
 TEST(RequestHeaderValidatorTest, ValidHeaders) {
@@ -36,7 +37,7 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 
 	// message is missing final empty line because when message is complete,
 	// ChunkedHandler clears chunked-related headers and
-	// HeaderFieldValidator will return hv_Done.
+	// RequestValidator will return Done.
 	status = ConstructAndProcess(POST_RL_Host + "Transfer-Encoding: chunked\n\n0\r\n");
 	EXPECT_EQ(status, hv_MessageChunked);
 
@@ -191,6 +192,20 @@ TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	// Transfer-Encoding also defined
 	EXPECT_THROW({
 		string req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
+		Request request(&config);
+		request.Parse(req_str.c_str());
+	}, BadRequestException);
+}
+
+// reliant on specific default.conf file used at top.
+TEST(RequestHeaderValidatorTest, InvalidMethod) {
+	EXPECT_THROW({
+		string req_str = "DELETE /hello.txt HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
+		Request request(&config);
+		request.Parse(req_str.c_str());
+	}, BadRequestException);
+	EXPECT_THROW({
+		string req_str = "POST /nonexist HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
 		Request request(&config);
 		request.Parse(req_str.c_str());
 	}, BadRequestException);
