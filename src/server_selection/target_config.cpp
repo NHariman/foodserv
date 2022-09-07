@@ -17,7 +17,10 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string port, std::string target) {
     ServerSelection server(host, port, config->GetServers());
 	_server = server.GetChosenServerContext();
-    _location = GetTarget(&_server, target); // temp
+
+	
+	LocationSelection	location(_server, target);
+    _location = location.GetLocationContext();
 
     // only set in location
     _location_uri = _location.GetLocationUri();
