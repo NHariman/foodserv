@@ -1,9 +1,9 @@
 #ifndef LOCANTION_SELECTION
 # define LOCANTION_SELECTION
 
-#include "location_context.hpp"
-#include "server_context.hpp"
-#include "directive_validation/location_uri.hpp"
+#include "../config/location_context.hpp"
+#include "../config/server_context.hpp"
+#include "../config/directive_validation/location_uri.hpp"
 
 /*
     // ServerSelection selected_servercontext(host, port, config);

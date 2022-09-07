@@ -14,7 +14,7 @@
 #ifndef SERVER_SELECTION_HPP
 # define SERVER_SELECTION_HPP
 
-#include "server_context.hpp"
+#include "../config/server_context.hpp"
 
 class ServerSelection {
 	private:

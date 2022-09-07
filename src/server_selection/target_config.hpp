@@ -5,7 +5,7 @@
 #include "../config/nginx_config.hpp"
 #include "../config/server_context.hpp"
 #include "../config/location_context.hpp"
-#include "../config/server_selection.hpp"
+#include "server_selection.hpp"
 #include "get_host.hpp"
 
 # define GET 0
