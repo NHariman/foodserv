@@ -5,6 +5,10 @@
 #include "../server_selection/target_config.hpp"
 #include "../request/request.hpp"
 
+#include <vector>
+
+// https://github.com/klange/cgiserver/blob/master/cgiserver.c
+
 /*
 HOW TO CGI:
 - set environment
@@ -44,12 +48,14 @@ HOW TO CGI:
 class CGI {
     private:
         CGIPass _cgi_data;
+        std::vector<std::string> _env;
 
     public:
         CGI(){};
         ~CGI(){};
         Setup(CGIPass *cgi_data, Request *request); // also probably needs the request class to set ENVs with.
-
+        void    SetHeaders(Request *request);
+        void    execute();
 
         
 };
