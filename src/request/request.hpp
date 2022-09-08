@@ -5,7 +5,7 @@
 #include <string>
 #include "request_parser.hpp"
 #include "../config/nginx_config.hpp"
-#include "../server_selection/target_config.hpp"
+#include "../resolved_target/target_config.hpp"
 
 using namespace std;
 

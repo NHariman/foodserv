@@ -16,10 +16,12 @@ class LocationContext : virtual public ConfigValues {
 	protected:
 		bool						bool_uri;
 		bool						bool_cgi_pass;
-		bool						bool_allowed_methods;	
+		bool						bool_allowed_methods;
+		bool						bool_alias;
 		LocationUri					_location_uri;
 		CGIPass						_cgi_pass;
 		AllowedMethods				_allowed_methods;
+		std::string					_alias;
 
 		void						GetDirectiveValuePairs(std::string data) override;
 		int							IsDirective(std::string directive) override;
@@ -40,6 +42,7 @@ class LocationContext : virtual public ConfigValues {
 		LocationUri					GetLocationUri() const;
 		CGIPass						GetCGIPass() const;
 		AllowedMethods				GetAllowedMethods() const;
+		std::string					GetAlias() const;
 		// overridden getters
 		bool						GetAutoindex() const override;
 		std::string					GetRoot() const override;
@@ -81,12 +84,25 @@ class LocationContext : virtual public ConfigValues {
 				std::string		_err_string;
 			public:
 				BadInputException(std::string uri) {
-					_err_string = "ERROR! Multiple allowed_methods directives detected in Location Context:" + uri + ".";
+					_err_string = "ERROR! Multiple index directives detected in Location Context:" + uri + ".";
 				}
 				const char *what() const throw() {
 					return (_err_string.c_str());
 				}
 				virtual ~BadInputException() throw() {}
+		};
+		class MultipleAliasException : public std::exception
+		{
+			private:
+				std::string		_err_string;
+			public:
+				MultipleAliasException(std::string uri) {
+					_err_string = "ERROR! Multiple alias directives detected in Location Context:" + uri + ".";
+				}
+				const char *what() const throw() {
+					return (_err_string.c_str());
+				}
+				virtual ~MultipleAliasException() throw() {}
 		};
 
 		class BadURIException : public std::exception

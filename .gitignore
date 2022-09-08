@@ -39,3 +39,4 @@ Makefile
 *.rpt
 ./webserv
 tmp/
+*_tmp.cpp

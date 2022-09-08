@@ -4,45 +4,60 @@ FLAGS = -Wall -Werror -Wextra -std=c++11
 
 MAIN = nginx_main.cpp
 
-REQUEST =	src/request/request_utils.cpp \
-			src/request/chunked_parser.cpp \
-			src/request/header_field_parser.cpp \
-			src/request/header_field_validator.cpp \
-			src/request/request_line_parser.cpp \
-			src/request/request.cpp \
-			src/request/request_parser.cpp \
-			src/request/request_target_parser.cpp \
-			src/request/uri_host_parser.cpp \
-			src/request/uri.cpp 
+OBJDIR = obj
 
-CONFIG = src/config/config_interface.cpp \
-		src/config/setup.cpp \
-		src/config/server_name.cpp \
-		src/config/server_context.cpp \
-		src/config/listen.cpp \
-		src/config/location_context.cpp \
-		src/config/nginx_config.cpp \
-		src/config/config_utils.cpp \
-		src/config/directive_validation/client_max_body_size.cpp \
-		src/config/directive_validation/allowed_methods.cpp \
-		src/config/directive_validation/autoindex.cpp \
-		src/config/directive_validation/error_page.cpp \
-		src/config/directive_validation/fastcgi_pass.cpp \
-		src/config/directive_validation/index.cpp \
-		src/config/directive_validation/location_uri.cpp \
-		src/config/directive_validation/return_dir.cpp \
-		src/config/directive_validation/root.cpp
+SRC_DIR = src
 
-OFILES = $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o)
+REQ_DIR = request
+
+CONFIG_DIR = config
+
+SERV_SELECT = server_selection
+
+REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,	request_utils.cpp \
+											chunked_parser.cpp \
+											header_field_parser.cpp \
+											request_line_parser.cpp \
+											request.cpp \
+											request_parser.cpp \
+											request_target_parser.cpp \
+											uri_host_parser.cpp \
+											uri.cpp)
+
+CONFIG = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/,	config_interface.cpp \
+												setup.cpp \
+												server_name.cpp \
+												server_context.cpp \
+												listen.cpp \
+												location_context.cpp \
+												nginx_config.cpp \
+												config_utils.cpp \
+												directive_validation/client_max_body_size.cpp \
+												directive_validation/allowed_methods.cpp \
+												directive_validation/autoindex.cpp \
+												directive_validation/error_page.cpp \
+												directive_validation/cgi_pass.cpp \
+												directive_validation/index.cpp \
+												directive_validation/location_uri.cpp \
+												directive_validation/return_dir.cpp \
+												directive_validation/root.cpp)
+
+
+SERVER_SELECTION = 	$(addprefix $(SRC_DIR)/$(SERV_SELECT)/,	server_selection.cpp \
+															location_selection.cpp \
+															target_config.cpp)
+
+
+OFILES = $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(SERVER_SELECTION:.cpp=.o)
 
 NAME = webserv
 
 all: $(NAME)
 
 $(NAME): $(OFILES) 
-	@$(COMPILE) $(OFILES) -o $@ 
+	@$(COMPILE) $(FLAGS) $(OFILES) -o $@ 
 
-%.o: %.cpp %.hpp src/config/directive_validation/directive_validation.hpp
+%.o: %.cpp
 	$(COMPILE) $(FLAGS) -c $< -o $@
 
 clean:

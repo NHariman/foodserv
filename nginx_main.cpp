@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/07 18:21:24 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/09/08 15:28:03 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <stdexcept>
 #include <vector>
 #include "src/config/nginx_config.hpp"
-#include "src/basic_server/server.hpp"
 #include "src/resolved_target/server_selection.hpp"
 #include "src/config/setup.hpp"
 #include "src/resolved_target/target_config.hpp"
@@ -32,6 +31,7 @@ int	main(int ac, const char **av) {
 		std::cout << std::boolalpha << "Allowed method: POST: " << target.IsAllowedMethod("POST") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: DELETE: " << target.IsAllowedMethod("DELETE") << std::endl;
 		std::cout << "Get max body size: " << target.GetMaxBodySize() << std::endl;
+		std::cout << "Get Alias: " << target.GetAlias() << std::endl;
 
 
 	}

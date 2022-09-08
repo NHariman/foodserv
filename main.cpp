@@ -1,7 +1,6 @@
-// #include "src/basic_server/server.hpp"
 #include "src/config/nginx_config.hpp"
 #include "src/config/setup.hpp"
-#include "src/server_selection/target_config.hpp"
+#include "src/resolved_target/target_config.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
