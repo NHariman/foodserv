@@ -44,8 +44,6 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		bool								SetAutoindex(ServerContext *server, LocationContext *location);
 		ReturnDir							SetReturn(ServerContext *server, LocationContext *location);
 
-		CGIPass								SetCGIPass(ServerContext *server, LocationContext *location);
-
 		ServerContext						_server;
 		LocationContext						_location;
 		std::string							_final_path;
@@ -63,6 +61,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		std::vector<ErrorPage>		GetErrorPage() const;
 		bool						GetAutoindex() const;
 		ReturnDir 					GetReturn() const;
+		std::string					GetAlias() const;
 		std::string					GetFinalPath() const;
 
 		ServerContext				GetServer() const;

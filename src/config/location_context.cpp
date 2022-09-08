@@ -6,6 +6,7 @@ LocationContext::LocationContext() :
 bool_uri(false),
 bool_cgi_pass(false),
 bool_allowed_methods(false),
+bool_alias(false),
 _location_uri(LocationUri()),
 _cgi_pass(CGIPass()),
 _allowed_methods(AllowedMethods())
@@ -31,6 +32,7 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
 	bool_uri = location_context.bool_uri;
     bool_autoindex = location_context.bool_autoindex;
     bool_root = location_context.bool_root;
+	bool_alias = location_context.bool_alias;
     bool_index = location_context.bool_index;
     bool_client_max_body_size = location_context.bool_client_max_body_size;
 	bool_error_page = location_context.bool_error_page;
@@ -39,6 +41,7 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     _location_uri = location_context._location_uri;
     _autoindex = location_context._autoindex;
     _root = location_context._root;
+	_alias = location_context._alias;
     _index = location_context._index;
     _client_max_body_size = location_context._client_max_body_size;
 	_error_page = location_context._error_page;
@@ -51,9 +54,11 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
 LocationContext::LocationContext(LocationContext const& location_context) : ConfigValues(location_context),
 bool_cgi_pass(location_context.bool_cgi_pass),
 bool_allowed_methods(location_context.bool_allowed_methods),
+bool_alias(location_context.bool_alias),
 _location_uri(location_context._location_uri),
 _cgi_pass(location_context._cgi_pass),
-_allowed_methods(location_context._allowed_methods)
+_allowed_methods(location_context._allowed_methods),
+_alias(location_context._alias)
 {}
 
 void	LocationContext::InitChecklist() {
@@ -65,16 +70,17 @@ void	LocationContext::InitChecklist() {
 	bool_error_page = false;
     bool_cgi_pass = false;
 	bool_allowed_methods = false;
+	bool_alias = false;
 }
 
 int								LocationContext::IsDirective(std::string directive) {
-	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return"};
+	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return", "alias"};
 
     if (bool_uri == false) {
-		return 8;
+		return 9;
 	}
-	int	is_directive = std::find(directives, directives + 8, directive) - directives;
-	if (is_directive < 0 || is_directive > 7)
+	int	is_directive = std::find(directives, directives + 9, directive) - directives;
+	if (is_directive < 0 || is_directive > 8)
 		throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI(), directive);
 	else
 		return (is_directive);
@@ -87,7 +93,7 @@ void							LocationContext::SetValue(int directive, std::string input) {
 
 	if (DEBUG) std::cerr << "location context:\ndirective: " << directive << "\nvalue: " << value << std::endl;
 
-	if (directive == 8) {
+	if (directive == 9) {
 		bool_uri = true;
 		LocationUri		uri_value(value);
 		_location_uri = uri_value;
@@ -156,6 +162,14 @@ void							LocationContext::SetValue(int directive, std::string input) {
 				_return_dir = return_dir_value;
 				break ;
 			}
+            case 8: {
+				if (bool_alias == true)
+					throw MultipleAliasException(_location_uri.GetURIClass().GetInputURI());
+				Root alias_value(value);
+				bool_alias = true;
+				_alias = value;
+				break ;
+			}
 		}
 	}
 }
@@ -196,7 +210,7 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 		}
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
 		ret = IsDirective(data.substr(key_start, key_end - key_start));
-		if (ret == 8) {
+		if (ret == 9) {
             SetValue(ret, data.substr(key_start, key_end - key_start));
 			value_end = data.find_first_of('{', key_end);
 		}
@@ -222,6 +236,10 @@ bool								LocationContext::GetAutoindex() const {
 
 std::string							LocationContext::GetRoot() const {
    return _root;
+}
+
+std::string							LocationContext::GetAlias() const {
+   return _alias;
 }
 
 std::vector<std::string>			LocationContext::GetIndex() const {
