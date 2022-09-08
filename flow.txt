@@ -24,7 +24,7 @@ Response processing
 |	2. Expect? serve 100 (Continue)
 |	3. Complete?
 |		- Resolve request target path
-|			- string TargetConfig::GetFinalPath(string target)
+|			- string TargetConfig::GetResolvedPath(string target)
 |				- if redirect (return): use string ReturnDir::GetUrl() and resolve variables to get final path
 |				- if autoindex: if target doesn't exist, return path to index file
 |				- if alias/root: prepend any root path and substitutes any alias path
