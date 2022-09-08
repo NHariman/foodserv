@@ -8,7 +8,7 @@
 */
 
 LocationSelection::LocationSelection(ServerContext chosen_servercontext, std::string request_uri)
-	: _server_context(chosen_servercontext), _request_uri(request_uri) {
+	: _request_uri(request_uri), _server_context(chosen_servercontext) {
 	_location_context_vector = _server_context.GetLocationContexts();
 
 	// PrintLocationContext(_location_context_vector);
@@ -46,7 +46,7 @@ void		LocationSelection::GetLongestMatch() {
 	size_t			longest_match = 0;
 	
 	for (std::vector<LocationContext>::const_iterator it = _compatible_locationblocks.begin(); it != _compatible_locationblocks.end(); it++) {
-		int		match_size = 0;
+		size_t		match_size = 0;
 		config_uri = it->GetLocationUri().GetUri();
 
 		for (size_t i = 0; i < config_uri.size(); i++) {

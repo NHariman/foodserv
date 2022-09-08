@@ -51,8 +51,8 @@ add_executable(
 		../../src/config/directive_validation/root.cpp
 
     ../../src/config/server_selection.cpp
-		../../src/server_selection/get_host.cpp
-		../../src/server_selection/target_config.cpp
+		../../src/resolved_target/get_host.cpp
+		../../src/resolved_target/target_config.cpp
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(

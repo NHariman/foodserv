@@ -17,9 +17,9 @@
 #include <vector>
 #include "src/config/nginx_config.hpp"
 #include "src/basic_server/server.hpp"
-#include "src/server_selection/server_selection.hpp"
+#include "src/resolved_target/server_selection.hpp"
 #include "src/config/setup.hpp"
-#include "src/server_selection/target_config.hpp"
+#include "src/resolved_target/target_config.hpp"
 
 int	main(int ac, const char **av) {
 	try {

@@ -125,8 +125,8 @@ ReturnDir 					TargetConfig::GetReturn() const {
 	return _return_dir;
 }
 
-std::string					TargetConfig::GetFinalPath() const {
-	return _final_path;
+std::string					TargetConfig::GetResolvedPath() const {
+	return _resolved_path;
 }
 
 ServerContext				TargetConfig::GetServer() const {
