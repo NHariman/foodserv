@@ -1,0 +1,54 @@
+Read from socket if server detects ready to read
+|
+v
+Request
+|	1. Buffers input string until either end of header section or start of message
+|
+|__	Request parsing
+|	|
+|	v
+|	Request validation
+|	|	1. Fills TargetConfig object with appropriate config values for querying
+|	|		- Setup(NginxConfig*, string host, string port, string target)
+|	|			- If port is not specified, sends empty string
+|	|	2. Validate header, some using TargetConfig methods
+|	|		- bool IsAllowedMethod(string method)
+|	|		- size_t GetMaxBodySize(void)
+|	|	3. If "Expect: 100-continue" is given, jump to send 100 (Continue) response
+|	v
+|	Request message parsing
+|
+v
+Response processing
+|	1. Error? serve error page
+|	2. Expect? serve 100 (Continue)
+|	3. Complete?
+|		- Resolve request target path
+|			- string TargetConfig::GetFinalPath(string target)
+|				- if redirect (return): use string ReturnDir::GetUrl() and resolve variables to get final path
+|				- if autoindex: if target doesn't exist, return path to index file
+|				- if alias/root: prepend any root path and substitutes any alias path
+|		- CGI?
+|			- bool TargetConfig::GetCGIPass::IsSet()
+|		- Redirect? return given status + new path in Location header
+|			- bool TargetConfig::GetReturn::IsSet()
+|				- true? int ReturnDir::GetCode()
+|
+|__ Execute request
+|		1. CGI handling
+|		2. File handling based on method
+|			- GET: get file or index
+|			- POST: goes through CGI
+|			- DELETE: delete file if present
+|
+v
+Generate response
+|
+v
+Dispatch response if server detects ready to write
+|
+v
+Clean up
+|	1. Check if response fully written
+|	2. Check if connection should be closed
+|	3. Close client fd
