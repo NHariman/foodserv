@@ -26,6 +26,7 @@ void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string p
     _location_uri = _location.GetLocationUri();
 	_cgi_pass = _location.GetCGIPass();
     _allowed_methods = _location.GetAllowedMethods();
+	_alias = _location.GetAlias();
 
     // can be set in either location OR server
 	_root = SetRoot(&_server, &_location);
@@ -98,6 +99,10 @@ CGIPass						TargetConfig::GetCGIPass() const {
 
 std::string					TargetConfig::GetRoot() const {
 	return _root;
+}
+
+std::string					TargetConfig::GetAlias() const {
+	return _alias;
 }
 
 std::vector<std::string> 	TargetConfig::GetIndex() const {
