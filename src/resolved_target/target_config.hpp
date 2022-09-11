@@ -7,6 +7,7 @@
 #include "../config/location_context.hpp"
 #include "server_selection.hpp"
 #include "location_selection.hpp"
+#include "resolved_path.hpp"
 
 
 # define GET 0
@@ -29,7 +30,7 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 		// unique
 		ServerContext						_server;
 		LocationContext						_location;
-		std::string							_final_path;		
+		std::string							_resolved_path;		
 */
 
 // grandparent inheritance 
@@ -47,6 +48,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		ServerContext						_server;
 		LocationContext						_location;
 		std::string							_resolved_path;
+	
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig(){};
@@ -66,7 +68,6 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;
-
 };
 
 

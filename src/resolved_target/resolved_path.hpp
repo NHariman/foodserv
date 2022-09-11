@@ -1,12 +1,12 @@
-LocationUri				    _location_uri;
-bool					    _autoindex;
-std::string				    _root;
-std::vector<std::string>	_index;
-int					        _client_max_body_size;
-std::vector<ErrorPage>		_error_page;
-CGIPass					    _cgi_pass;
-AllowedMethods				_allowed_methods;
-ReturnDir				    _return_dir;
+// LocationUri				    _location_uri;
+// bool					    _autoindex;
+// std::string				    _root;
+// std::vector<std::string>	_index;
+// int					        _client_max_body_size;
+// std::vector<ErrorPage>		_error_page;
+// CGIPass					    _cgi_pass;
+// AllowedMethods				_allowed_methods;
+// ReturnDir				    _return_dir;
 
 /*
     DIRECTIVE THAT CAN BE IN OUR LOCATION CONTEXT:
@@ -24,3 +24,23 @@ ReturnDir				    _return_dir;
 // if root is set WITHIN the location: use that root
 // if root is not set within the location, but it is in the server, use that root
 // if root is not set at all: check if default is /
+
+#ifndef RESOLVED_PATH
+# define RESOLVED_PATH
+
+#include "target_config.hpp"
+
+class TargetConfig;
+
+class ResolvedPath {
+
+    private:
+        std::string		_path;
+        
+        void    AppendRoot();
+    public:
+        ResolvedPath(TargetConfig target_config);
+
+};
+
+#endif
