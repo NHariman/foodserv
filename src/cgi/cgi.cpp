@@ -1,61 +1,56 @@
-#include <string>
-#include <iostream>
+#include "cgi.hpp"
 
-#include "../config/directive_validation/cgi_pass.hpp"
-#include "../server_selection/target_config.hpp"
-#include "../request/request.hpp"
+void CGI::SetHeaders(Request *request) {
+	_env.push_back("CONTENT_LENGTH=" + request->GetField("CONTENT_LENGTH"));
+	_env.push_back("CONTENT_TYPE=" + request->GetField("CONTENT_TYPE"));
+	_env.push_back("DOCUMENT_ROOT=" + request->GetField("DOCUMENT_ROOT"));
+	_env.push_back("HTTP_COOKIE=" + request->GetField("HTTP_COOKIE"));
+	_env.push_back("HTTP_HOST=" + request->GetField("HTTP_HOST"));
+	_env.push_back("HTTP_REFERER=" + request->GetField("HTTP_REFERER"));
+	_env.push_back("HTTP_USER_AGENT=" + request->GetField("HTTP_USER_AGENT"));
+	_env.push_back("PATH_TRANSLATED=" + request->GetField("PATH_TRANSLATED"));
+	_env.push_back("QUERY_STRING=" + request->GetField("QUERY_STRING"));
+	_env.push_back("REDIRECT_STATUS=" + request->GetField("REDIRECT_STATUS"));
+	_env.push_back("REMOTE_ADDR=" + request->GetField("REMOTE_ADDR"));
+	_env.push_back("REMOTE_HOST=" + request->GetField("REMOTE_HOST"));
+	_env.push_back("REQUEST_METHOD=" + request->GetField("REQUEST_METHOD"));
+	_env.push_back("SCRIPT_FILENAME=" + request->GetField("SCRIPT_FILENAME"));
+	_env.push_back("SCRIPT_NAME=" + request->GetField("SCRIPT_NAME"));
+	_env.push_back("SERVER_NAME=" + request->GetField("SERVER_NAME"));
+	_env.push_back("SERVER_PORT=" + request->GetField("SERVER_PORT"));
+	_env.push_back("SERVER_PROTOCOL=" + request->GetField("SERVER_PROTOCOL"));
+	_env.push_back("SERVER_SOFTWARE=" + request->GetField("SERVER_SOFTWARE"));
+}
 
-#include <vector>
+void    CGI::execute() {
+	vtoa env(_env);
+	vtoa argv(_argv);
 
-// https://github.com/klange/cgiserver/blob/master/cgiserver.c
-
-/*
-HOW TO CGI:
-- set environment
-- find file with the correct extension within the path, correct extension can be found in CGIPass with GetExtension();
-- set up pipes so you can execute it and read from stdout
-- needs request fd
-- execute it with the path to the executable necessary to compile and execute the file with, found in CGIPass with GetExecutablePath();
-- if a dud path is given, error 404.
-- catch what's been written to stdout and save it in a buffer to return in response.
-*/
-
-/*
-* Set CGI environment variables.
-* CONTENT_LENGTH    : POST message length
-* CONTENT_TYPE      : POST encoding type
-* DOCUMENT_ROOT     : the root directory
-* GATEWAY_INTERFACE : The CGI version (CGI/1.1)
-* HTTP_COOKIE       : Cookies provided by client
-* HTTP_HOST         : Same as above
-* HTTP_REFERER      : Referer page.
-* HTTP_USER_AGENT   : Browser user agent
-* PATH_TRANSLATED   : On-disk file path
-* QUERY_STRING      : /file.ext?this_stuff&here
-* REDIRECT_STATUS   : HTTP status of CGI redirection (PHP)
-* REMOTE_ADDR       : IP of remote user
-* REMOTE_HOST       : Hostname of remote user (reverse DNS)
-* REQUEST_METHOD    : GET, POST, HEAD, etc.
-* SCRIPT_FILENAME   : Same as PATH_TRANSLATED (PHP, primarily)
-* SCRIPT_NAME       : Request file path
-* SERVER_NAME       : Our hostname or Host: header
-* SERVER_PORT       : TCP host port
-* SERVER_PROTOCOL   : The HTTP version of the request
-* SERVER_SOFTWARE   : Our application name and version
-*/
-
-
-class CGI {
-    private:
-        CGIPass _cgi_data;
-        std::vector<std::string> _env;
-
-    public:
-        CGI(){};
-        ~CGI(){};
-        Setup(CGIPass *cgi_data, Request *request); // also probably needs the request class to set ENVs with.
-        void    SetHeaders(Request *request);
-        void    execute();
-
-        
-};
+	int fd[2];
+	int pid;
+	int tmp_fd = dup(STDIN_FILENO);
+	if (pipe(fd) != 0) {
+		throw PipeFailureException();
+	}
+	pid = fork();
+	if (pid < 0) {
+		throw ForkFailureException();
+	}
+	else if (pid == 0) {
+		dup2(tmp_fd, STDIN_FILENO);
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[0]);
+		close(fd[1]);
+		close(tmp_fd);
+		execve(_cgi_data.GetExecutablePath().c_str(), argv.GetArray(), env.GetArray());
+		throw ExecuteFailureException();
+	}
+	else {
+		close(tmp_fd);
+		close(fd[1]);
+		waitpid(-1, NULL, WUNTRACED);
+		tmp_fd = dup(fd[0]);
+		close(fd[0]);
+	}
+	close(tmp_fd);
+}
