@@ -25,10 +25,13 @@
 // if root is not set within the location, but it is in the server, use that root
 // if root is not set at all: check if default is /
 
+// create some kind of slash check function, that will merge double slashes
+
 #ifndef RESOLVED_PATH
 # define RESOLVED_PATH
 
 #include "target_config.hpp"
+#include <algorithm>
 
 class TargetConfig;
 
@@ -37,10 +40,16 @@ class ResolvedPath {
     private:
         std::string		_path;
 		TargetConfig	*_target_config;
+
+		std::string		_locationblock_uri;
+		std::string		_request_uri;
         
         void    AppendRoot();
+        void	SetAlias();
+		int		CharOccurence(std::string str, char c);
+
     public:
-        ResolvedPath(TargetConfig *target_config);
+        ResolvedPath(TargetConfig *target_config, std::string target);
 
 };
 
