@@ -44,6 +44,8 @@ class RequestValidator {
 		bool	ValidContentLength(Request& request);
 		bool	ValidMethod(string const& method);
 		void	ResolveTarget(Request& request);
+
+		
 };
 
 #endif /* REQUEST_VALIDATOR_HPP */

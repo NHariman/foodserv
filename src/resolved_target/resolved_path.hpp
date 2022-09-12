@@ -45,7 +45,8 @@ class ResolvedPath {
 		std::string		_request_uri;
         
         void    AppendRoot();
-        void	SetAlias();
+        void	ReplaceAlias();
+        void    ReplaceReturn();
 		int		CharOccurence(std::string str, char c);
 
     public:

@@ -51,7 +51,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 	
 	public:
 		TargetConfig(){};
-		virtual ~TargetConfig(){};
+		virtual ~TargetConfig() {};
 		void	Setup(NginxConfig *config, std::string host, std::string port, std::string target);
 		
 		//getters

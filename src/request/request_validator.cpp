@@ -33,7 +33,6 @@ int	RequestValidator::SetupConfig(NginxConfig* config,
 	string	host = request.GetTargetURI().GetHost();
 	string	port = request.GetTargetURI().GetPort();
 	string	target = request.GetTargetURI().GetPath(); // TODO: check if query is needed
-
 	_target_config->Setup(config, host, port, target);
 	return 1;
 }
@@ -173,7 +172,7 @@ bool	RequestValidator::ValidContentLength(Request& request) {
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
 		CheckContentLengthValue(_target_config, request);
-		// CheckAllowedMethod(request.GetMethod(), request.content_length);
+		CheckAllowedMethod(request.GetMethod(), request.content_length);
 		if (request.content_length == 0)
 			_status = hv_Done;
 		else

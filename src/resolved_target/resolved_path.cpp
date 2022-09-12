@@ -18,14 +18,21 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 	std::cout << "LOCATION BLOCK URI : " << _locationblock_uri << std::endl;
 	std::cout << "REQUEST URI: " << _request_uri << std::endl;
 
-    if (target_config->GetAlias().empty() == false) // misschien naar isSet
-        SetAlias();
+    if (target_config->GetReturn().IsSet() == true)
+        std::cout << "return is set: " << target_config->GetReturn().GetUrl() << std::endl;
+    else if (target_config->GetAlias().empty() == false) // misschien naar isSet
+        ReplaceAlias();
     else
         AppendRoot();
 }
 
 
 // RETURN DIRECTIVE
+void    ResolvedPath::ReplaceReturn() {
+    // if this happends, i also need to send a return code 301
+    _path = _target_config->GetReturn().GetUrl();
+    std::cout << "final path" << std::endl;
+}
 
 void    ResolvedPath::AppendRoot() {
     std::string _path = _target_config->GetRoot();
@@ -37,14 +44,14 @@ void    ResolvedPath::AppendRoot() {
 
 }
 
-void    ResolvedPath::SetAlias() {
+void    ResolvedPath::ReplaceAlias() {
     std::cout << "In set alias function with alias: " << _target_config->GetAlias() << std::endl;
     std::cout << "and location uri: " << _locationblock_uri << std::endl;
     std::cout << "request uri: " << _request_uri<< std::endl;
 
 
-	CharOccurence(_locationblock_uri, '/');
-	CharOccurence(_request_uri, '/');
+	// CharOccurence(_locationblock_uri, '/');
+	// CharOccurence(_request_uri, '/');
 }
 
 int		ResolvedPath::CharOccurence(std::string str, char c) {
@@ -52,24 +59,4 @@ int		ResolvedPath::CharOccurence(std::string str, char c) {
 	
 	std::cout << c << " occurs in \'" << str << "\' " << count << " times." << std::endl;
  	return count;
-	// std::cout << c 
-	// std::cout << 
 }
-//     #include <iostream>
-// #include <algorithm>
-// #include <string>
- 
-// int main()
-// {
-//     std::string s = "C++,Java";
-//     char ch = '+';
- 
-//     int count = std::count_if (s.begin(), s.end(),
-//                             [&ch](char c) {
-//                                 return c == ch;
-//                             });
-//     std::cout << "Character " << ch << " occurs " << count << " times";
- 
-//     return 0;
-// }
-// }
