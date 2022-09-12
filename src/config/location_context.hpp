@@ -10,8 +10,6 @@
 #include "config_interface.hpp"
 #include "directive_validation/directive_validation.hpp"
 
-// TODO: add operator= overload to be able to do: _path = target_config.GetLocationUri()
-
 // actually this is called a context (sad face)
 class LocationContext : virtual public ConfigValues {
 	protected:

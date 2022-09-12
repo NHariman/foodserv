@@ -25,7 +25,7 @@ int	main(int ac, const char **av) {
 		NginxConfig input_file(GetConfigLocation(ac, av));
 		
 		TargetConfig target;
-		target.Setup(&input_file, "localhost", "80", "/");
+		target.Setup(&input_file, "localhost", "80", "/test");
 	
 		std::cout << std::boolalpha << "Allowed method: GET: " << target.IsAllowedMethod("GET") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: POST: " << target.IsAllowedMethod("POST") << std::endl;

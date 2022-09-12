@@ -36,10 +36,11 @@ class ResolvedPath {
 
     private:
         std::string		_path;
+		TargetConfig	*_target_config;
         
         void    AppendRoot();
     public:
-        ResolvedPath(TargetConfig target_config);
+        ResolvedPath(TargetConfig *target_config);
 
 };
 
