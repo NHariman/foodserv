@@ -6,6 +6,8 @@
 #include "exception.hpp"
 #include "request_utils.hpp"
 #include "uri.hpp"
+#include "../config/nginx_config.hpp"
+#include "../resolved_target/target_config.hpp"
 
 using namespace std;
 
