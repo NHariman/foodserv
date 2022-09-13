@@ -42,14 +42,6 @@ bool	RequestValidator::PostConfigValidate(Request& request) {
 	return (ValidContentLength(request) && ValidMethod(request.GetMethod()));
 }
 
-void	RequestValidator::ResolveTarget(Request& request) {
-	(void)request;
-
-// 	string	target = request.GetTargetURI().GetPath();
-// 	string	resolved_target_path = _target_config->GetFinalPath(target);
-// 	request.SetFinalTargetPath(resolved_target_path);
-}
-
 // Only exactly 1 Host definition is accepted.
 bool	RequestValidator::ValidHost(Request& request) {
 	if (DEBUG) cout << "ValidHost\n";

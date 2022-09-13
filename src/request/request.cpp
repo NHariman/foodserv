@@ -102,7 +102,7 @@ void	Request::SetTargetHost(string const& host) {
 	_request_line.target.SetHost(host);
 }
 
-void	Request::SetFinalTargetPath(string const& target_path) {
+void	Request::SetResolvedTargetPath(string const& target_path) {
 	_request_line.target.SetPath(target_path);
 }
 
