@@ -22,3 +22,13 @@ size_t	RequestHandler::Parse(char const* buffer) {
 		_requests.push(request);
 	return ret;
 }
+
+
+
+// void	RequestValidator::ResolveTarget(Request& request) {
+// 	(void)request;
+
+// // 	string	target = request.GetTargetURI().GetPath();
+// // 	string	resolved_target_path = _target_config->GetResolvedPath(target);
+// // 	request.SetResolvedTargetPath(resolved_target_path);
+// }
