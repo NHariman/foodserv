@@ -17,6 +17,7 @@ _allowed_methods(AllowedMethods())
 	bool_index = false;
 	bool_client_max_body_size = false;
 	bool_error_page = false;
+	bool_return_dir = false;
 }
 
 LocationContext::LocationContext(std::string data) {
@@ -36,6 +37,7 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     bool_index = location_context.bool_index;
     bool_client_max_body_size = location_context.bool_client_max_body_size;
 	bool_error_page = location_context.bool_error_page;
+	bool_return_dir = location_context.bool_return_dir;
     bool_cgi_pass = location_context.bool_cgi_pass;
 	bool_allowed_methods = location_context.bool_allowed_methods;
     _location_uri = location_context._location_uri;
@@ -43,6 +45,7 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     _root = location_context._root;
 	_alias = location_context._alias;
     _index = location_context._index;
+	_return_dir = location_context._return_dir;
     _client_max_body_size = location_context._client_max_body_size;
 	_error_page = location_context._error_page;
     _cgi_pass = location_context._cgi_pass;
@@ -71,6 +74,7 @@ void	LocationContext::InitChecklist() {
     bool_cgi_pass = false;
 	bool_allowed_methods = false;
 	bool_alias = false;
+	bool_return_dir = false;
 }
 
 int								LocationContext::IsDirective(std::string directive) {
@@ -254,6 +258,10 @@ std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
     return _error_page;
 }
 
+ReturnDir						LocationContext::GetReturn() const {
+    return _return_dir;
+}
+
 CGIPass							LocationContext::GetCGIPass() const {
     return _cgi_pass;
 }
@@ -268,7 +276,7 @@ std::string LocationUri::GetInputURI() const {
 
 // use to check if a directive has been set
 bool						LocationContext::IsSet(std::string directive) {
-	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return"};
+	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return", "alias"};
 
 	int	is_directive = std::find(directives, directives + 8, directive) - directives;
 	if (is_directive < 0 || is_directive > 7)
@@ -290,6 +298,8 @@ bool						LocationContext::IsSet(std::string directive) {
 			return bool_allowed_methods;
 		case 7:
 			return bool_return_dir;
+		case 8:
+			return bool_alias;
 	}
 	throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI());
 }
