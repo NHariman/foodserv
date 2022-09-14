@@ -175,13 +175,12 @@ bool	RequestValidator::ValidContentLength(Request& request) {
 
 bool	RequestValidator::ValidMethod(string const& method) {
 	if (DEBUG) cout << "ValidMethod\n";
+	if (DEBUG) cout << "IsAllowedMethod returns: " <<  _target_config->IsAllowedMethod(method) << endl;
 
-	// if (DEBUG) cout << "IsAllowedMethod returns: " <<  _target_config->IsAllowedMethod(method) << endl;
-	// if	(_target_config->IsAllowedMethod(method) == false)
-	// 	throw BadRequestException("Method not allowed for specified target");
-	// else
+	if	(_target_config->IsAllowedMethod(method) == false)
+		throw BadRequestException("Method not allowed for specified target");
+	else
 		return true;
 }
-
 
 #undef DEBUG // REMOVE

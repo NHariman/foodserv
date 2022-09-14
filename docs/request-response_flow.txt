@@ -25,7 +25,7 @@ Response processing
 |	3. Complete?
 |		- Resolve request target path
 |			- string TargetConfig::GetResolvedPath(string target)
-|				- if redirect (return): use string ReturnDir::GetUrl() and resolve variables to get final path
+|				- if redirect (return): use string ReturnDir::GetUrl() to get final path
 |				- if target is valid directory:  
 |       				- if autoindex is on & index file exists: return resolved path to index file.
 |       				- if autoindex is on & index file DOES NOT exist: return resolved directory path.

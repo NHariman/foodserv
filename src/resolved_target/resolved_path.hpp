@@ -54,6 +54,7 @@ class ResolvedPath {
     public:
         ResolvedPath(TargetConfig *target_config, std::string target);
         std::string     GetResolvedPath() const;
+        void	        RequestIsValidDirectory();
 
 };
 

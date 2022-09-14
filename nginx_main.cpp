@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/14 17:25:09 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/14 17:54:30 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main(int ac, const char **av) {
 		NginxConfig input_file(GetConfigLocation(ac, av));
 		
 		TargetConfig target;
-		target.Setup(&input_file, "localhost", "80", "/test");
+		target.Setup(&input_file, "localhost", "80", "/");
 		// test ook : /test2/meer
 	
 		// std::cout << std::boolalpha << "Allowed method: GET: " << target.IsAllowedMethod("GET") << std::endl;

@@ -20,9 +20,28 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
     /* If return is set, we set the path to what return gives are url for redirection */
     if (target_config->GetReturn().IsSet()) {
         _path = _target_config->GetReturn().GetUrl();
-        return ;
     }
-
+    /* Check is the request if a directory */
+    else if (_request_uri[_request_uri.size() - 1] == '/') { // change this for utils: isDirectory function
+        if (IsValidDirectory(_request_uri)) {
+            std::cout << "the request uri is a existing direcotry";
+			RequestIsValidDirectory();
+			// if atoindex is on & index file exists:
+			// return resolved path to index file
+        }
+        else {
+            std::cout << "it is not exsisting" << std::endl;
+			// return an empty string.
+			_path = "";
+        }
+    }
+	else {
+		std::cout << "request is not a directory" << std::endl;
+		if (target_config->GetAlias().empty() == false)
+			ReplaceAlias();
+		else
+			AppendRoot();
+	}
 
     // if (_request_uri[_request_uri.size() - 1] != '/') {
     //     else if (target_config->GetAlias().empty() == false) // misschien naar isSet
@@ -35,6 +54,10 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
     // // }
 }
 
+void	ResolvedPath::RequestIsValidDirectory()  {
+	if (_target_config->GetAutoindex())
+		std::cout << "AUTO INDEX IS SET" << std::endl;
+}
 
 // RETURN DIRECTIVE
 void    ResolvedPath::ReplaceReturn() {
@@ -54,6 +77,8 @@ void    ResolvedPath::AppendRoot() {
 }
 
 void    ResolvedPath::ReplaceAlias() {
+	// replace alias still needs a lot of work
+
     std::cout << "In set alias function with alias: " << _target_config->GetAlias() << std::endl;
     std::cout << "and location uri: " << _locationblock_uri << std::endl;
     std::cout << "request uri: " << _request_uri<< std::endl;
