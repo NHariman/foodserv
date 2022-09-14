@@ -7,10 +7,7 @@ LocationUri::LocationUri(std::string input) : _uri(input) {
 		throw MissingArgumentsException();
 	if (IsUri(input) == false)
 		throw BadUriException(input);
-	if (input[input.size() - 1] == '/')
-		_is_directory = true;
-	else
-		_is_directory = false;
+	_is_directory = IsDirectory(input);
 }
 
 LocationUri::LocationUri(LocationUri const &obj) :
@@ -33,13 +30,13 @@ URI				LocationUri::GetURIClass() const {
 	return _uri;
 }
 
-bool			LocationUri::IsDirectory() const {
+bool			LocationUri::IsDir() const {
 	return _is_directory;
 }
 
 std::ostream&		operator<<(std::ostream& os, const LocationUri& obj) {
 	os << "URI: " << obj.GetUri();
-	if (obj.IsDirectory() == true)
+	if (obj.IsDir() == true)
 		os << " is a directory.";
 	return os;
 }

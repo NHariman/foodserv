@@ -40,3 +40,4 @@ Makefile
 ./webserv
 tmp/
 *_tmp.cpp
+*_tmp.hpp

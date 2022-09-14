@@ -40,7 +40,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		std::string     					SetRoot(ServerContext *server, LocationContext *location);
 		std::vector<std::string>			SetIndex(ServerContext *server, LocationContext *location);
 		size_t								SetMaxBodySize(ServerContext *server, LocationContext *location);
-		std::vector<ErrorPage>				SetErrorPage(ServerContext *server, LocationContext *location);
+		std::map<int, std::string>			SetErrorPage(ServerContext *server, LocationContext *location);
 		bool								SetAutoindex(ServerContext *server, LocationContext *location);
 		ReturnDir							SetReturn(ServerContext *server, LocationContext *location);
 
@@ -58,7 +58,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		std::string					GetRoot() const;
 		std::vector<std::string> 	GetIndex() const;
 		size_t						GetMaxBodySize() const;
-		std::vector<ErrorPage>		GetErrorPage() const;
+		std::map<int, std::string>	GetErrorPage() const;
 		bool						GetAutoindex() const;
 		ReturnDir 					GetReturn() const;
 		std::string					GetAlias() const;

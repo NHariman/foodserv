@@ -10,10 +10,13 @@
 #ifndef ERROR_PAGE_HPP
 # define ERROR_PAGE_HPP
 
+# include <map>
 # include <vector>
 # include <string>
 # include <iostream>
 # include "../config_utils.hpp"
+
+void	AddToErrorPageMap(std::map<int, std::string> *map, std::string input);
 
 class ErrorPage {
 	private:
@@ -32,34 +35,51 @@ class ErrorPage {
 		std::string			GetUri() const;
 		std::vector<int>	GetCodes() const;
 		void				PrintCodes() const;
-		class InvalidInputException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Invalid error code detected in error_page.";
-				}
-		};
-		class DuplicateUriException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Duplicate Uri detected in error_page.";
-				}
-		};
-		class BadErrorCodeException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Bad error code, must be between 300 and 599 in error_page block.";
-				}
-		};
-		class MissingArgumentsException : public std::exception
-		{
-			public:
-				const char *what() const throw() {
-					return "ERROR! Missing Arguments in error_page block.";
-				}
-		};
+
+
+};
+class InvalidCodeInputException : public std::exception
+{
+	public:
+		const char *what() const throw() {
+			return "ERROR! Invalid error code detected in error_page.";
+		}
+};
+class DuplicateUriException : public std::exception
+{
+	public:
+		const char *what() const throw() {
+			return "ERROR! Duplicate Uri detected in error_page.";
+		}
+};
+class DuplicateErrorCodeException : public std::exception
+{
+	public:
+		const char *what() const throw() {
+			return "ERROR! Duplicate error code detected in error_page.";
+		}
+};
+class BadErrorCodeException : public std::exception
+{
+	public:
+		const char *what() const throw() {
+			return "ERROR! Bad error code, must be between 300 and 599 in error_page block.";
+		}
+};
+class MissingArgumentsException : public std::exception
+{
+	public:
+		const char *what() const throw() {
+			return "ERROR! Missing Arguments in error_page block.";
+		}
+};
+
+class BadErrorURIException : public std::exception
+{
+	public:
+		const char *what() const throw() {
+			return "ERROR! Bad error_page URI in error_page block.";
+		}
 };
 
 std::ostream& operator<<(std::ostream& os, const ErrorPage& error_page);

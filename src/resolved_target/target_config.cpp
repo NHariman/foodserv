@@ -58,7 +58,7 @@ size_t								TargetConfig::SetMaxBodySize(ServerContext *server, LocationContex
 	return server->GetClientMaxBodySize();
 }
 
-std::vector<ErrorPage>				TargetConfig::SetErrorPage(ServerContext *server, LocationContext *location) {
+std::map<int, std::string>				TargetConfig::SetErrorPage(ServerContext *server, LocationContext *location) {
 
 	if (location->IsSet("error_page"))
 		return location->GetErrorPage();
@@ -66,7 +66,6 @@ std::vector<ErrorPage>				TargetConfig::SetErrorPage(ServerContext *server, Loca
 }
 
 bool								TargetConfig::SetAutoindex(ServerContext *server, LocationContext *location) {
-
 	if (location->IsSet("autoindex"))
 		return location->GetAutoindex();
 	return server->GetAutoindex();
@@ -113,7 +112,7 @@ size_t						TargetConfig::GetMaxBodySize() const {
 	return _client_max_body_size;
 }
 
-std::vector<ErrorPage>		TargetConfig::GetErrorPage() const {
+std::map<int, std::string>		TargetConfig::GetErrorPage() const {
 	return _error_page;
 }
 

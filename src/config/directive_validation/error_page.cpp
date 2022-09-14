@@ -4,6 +4,39 @@
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 #include "error_page.hpp"
 
+
+void	AddToErrorPageMap(std::map<int, std::string> *map, std::string input) {
+	int code;
+
+	if (input.compare("") == 0)
+		throw MissingArgumentsException();
+
+	std::vector<std::string> items = ToStringVector(input);
+
+	std::string uri = items[items.size() - 1];
+	if (IsUri(uri) == false)
+		throw BadErrorURIException();
+	for (size_t i = 0; i < (items.size() - 1); ++i) {
+		if (IsNumber(items[i]) == true) {
+			code = std::atoi(items[i].c_str());
+			if (code < 300 || code > 599)
+				throw BadErrorCodeException();
+			std::map<int,std::string>::iterator it = map->find(code);
+			if (it == map->end())
+				map->insert(std::pair<int, std::string> (code, uri));
+			else
+				throw DuplicateErrorCodeException();
+		}
+		else
+			throw InvalidCodeInputException();
+	}
+
+	for(std::map<int, std::string>::const_iterator it = map->begin();
+    it != map->end(); ++it){
+    std::cout << it->first << " " << it->second << "\n";
+	}
+}
+
 ErrorPage::ErrorPage() : _is_set(false) {}
 
 ErrorPage::ErrorPage(std::string input) : _is_set(true) {
@@ -23,7 +56,7 @@ ErrorPage::ErrorPage(std::string input) : _is_set(true) {
 		key = input.substr(start, end - start);
 		if (IsNumber(key) == true) {
 			if (_uri.empty() == false)
-				throw InvalidInputException();
+				throw InvalidCodeInputException();
 			code = std::atoi(key.c_str());
 			if (code < 300 || code > 599)
 				throw BadErrorCodeException();
@@ -36,7 +69,7 @@ ErrorPage::ErrorPage(std::string input) : _is_set(true) {
 				throw DuplicateUriException();
 		}
 		else
-			throw InvalidInputException();
+			throw BadErrorCodeException();
 		i = end;
 	}
 }

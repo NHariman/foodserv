@@ -2,6 +2,7 @@
 # define CONFIG_INTERFACE_HPP
 
 #include "directive_validation/directive_validation.hpp"
+#include <map>
 
 class ConfigValues {
     protected:
@@ -15,7 +16,7 @@ class ConfigValues {
         std::string						_root;
 		std::vector<std::string>		_index;
 		size_t							_client_max_body_size;
-		std::vector<ErrorPage>			_error_page;
+		std::map<int, std::string>		_error_page;
 		bool							_autoindex;
 		ReturnDir						_return_dir;
     
@@ -36,7 +37,7 @@ class ConfigValues {
        virtual std::string					GetRoot() const;
        virtual std::vector<std::string>	    GetIndex() const;
        virtual size_t						GetClientMaxBodySize() const;
-       virtual std::vector<ErrorPage>		GetErrorPage() const;
+       virtual std::map<int, std::string>	GetErrorPage() const;
        virtual bool						    GetAutoindex() const;
        virtual ReturnDir                    GetReturn() const;
 
@@ -167,22 +168,6 @@ class ConfigValues {
 				virtual ~MultipleClientMaxBodySizeException() throw() {}
 			private:
 				std::string		_err_string;
-		};
-        class MultipleErrorPageException : public std::exception
-		{
-			private:
-				std::string		_err_string;
-			public:
-                MultipleErrorPageException(size_t server) {
-					_err_string = "ERROR! Multiple error_page directives detected in Server Context: " + std::to_string(server) + " .";
-				}
-				MultipleErrorPageException(std::string uri) {
-					_err_string = "ERROR! Multiple error_page directives detected in Location Context:" + uri + ".";
-				}
-				const char *what() const throw() {
-					return (_err_string.c_str());
-				}
-				virtual ~MultipleErrorPageException() throw() {}
 		};
         class MultipleAutoindexException : public std::exception
 		{
