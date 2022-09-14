@@ -1,5 +1,0 @@
-add_test([=[AutoIndexTest.ValidInput]=]  /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build/try_test [==[--gtest_filter=AutoIndexTest.ValidInput]==] --gtest_also_run_disabled_tests)
-set_tests_properties([=[AutoIndexTest.ValidInput]=]  PROPERTIES WORKING_DIRECTORY /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-add_test([=[AutoIndexTest.invalidInput]=]  /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build/try_test [==[--gtest_filter=AutoIndexTest.invalidInput]==] --gtest_also_run_disabled_tests)
-set_tests_properties([=[AutoIndexTest.invalidInput]=]  PROPERTIES WORKING_DIRECTORY /Users/nhariman/webserv_nginxconfig/google_test/autoindex_test/build SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-set(  try_test_TESTS AutoIndexTest.ValidInput AutoIndexTest.invalidInput)

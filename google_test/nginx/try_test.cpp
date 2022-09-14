@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "../../src/config/nginx_config.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
+# include <map>
+#include <string>
 
 // Test syntax
 /*
@@ -62,81 +64,115 @@ TEST(AllowedMethodsTest, InvalidInput) {
 
 TEST(AutoIndexTest, ValidInput) {
 	EXPECT_NO_THROW({
-		Autoindex test("on");
+		SetAutoindex("on");
 	});
 	EXPECT_NO_THROW({
-		Autoindex test("off");
+		SetAutoindex("off");
 	});
+	EXPECT_TRUE(SetAutoindex("on"));
+	EXPECT_FALSE(SetAutoindex("off"));
 }
 
 TEST(AutoIndexTest, invalidInput) {
 	EXPECT_THROW({
-		Autoindex test("onf");
+		SetAutoindex("onf");
 	}, Autoindex::InvalidAutoindexException);
 	EXPECT_THROW({
-		Autoindex test("offe");
+		SetAutoindex("offe");
 	}, Autoindex::InvalidAutoindexException);
 	EXPECT_THROW({
-		Autoindex test("1");
+		SetAutoindex("1");
 	}, Autoindex::InvalidAutoindexException);
 	EXPECT_THROW({
-		Autoindex test("off e");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("off e");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("on e");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("on e");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("k on");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("k on");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("oh off");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("oh off");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("");
+		SetAutoindex("");
 	}, Autoindex::MissingArgumentsException);
 }
 
 //////////////////////////////
-//**   MODULE ERROR PAGE  **//
+//**   MODULE ERROR_PAGE  **//
 //////////////////////////////
 
 TEST(ErrorPageTest, ValidInput) {
-	EXPECT_NO_THROW({
-		ErrorPage test("500 502 503 504 /50x.html");
-	});
-	EXPECT_NO_THROW({
-		ErrorPage test("404             /404.html");
-	});
-	EXPECT_NO_THROW({
-		ErrorPage test("404 /404.html");
-	});
-	EXPECT_NO_THROW({
-		ErrorPage test("500 502 503 504 404 403 402 405 /50x.html");
-	});
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "500 502 503 504 /50x.html");
+	});}
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "404             /404.html");
+	});}
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "404 /404.html");
+	});}
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "500 502 503 504 404 403 402 405 /50x.html");
+	});}
 }
 
 TEST(ErrorPageTest, InvalidInput) {
-	EXPECT_THROW({
-		ErrorPage test("404 /404.html 404");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 404.html /stuff.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 abc /404.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404d 404 /404.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 404.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 /404.html /404.html");
-	}, ErrorPage::DuplicateUriException);
-	EXPECT_THROW({
-		ErrorPage test("");
-	}, ErrorPage::MissingArgumentsException);
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 /404.html 404");
+			}, ErrorPage::BadErrorURIException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 404.html /stuff.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 abc /404.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404d 404 /404.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 404.html");
+			}, ErrorPage::BadErrorURIException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 /404.html /404.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "");
+		}, ErrorPage::MissingArgumentsException);
+	}
+	
+	
+	
 }
 
 //////////////////////////////
@@ -299,11 +335,11 @@ TEST(LocationURITest, ValidInput){
 	});
 	{
 		LocationUri test("/test/");
-		EXPECT_TRUE(test.IsDirectory());
+		EXPECT_TRUE(test.IsDir());
 	}
 	{
 		LocationUri test("/test");
-		EXPECT_FALSE(test.IsDirectory());
+		EXPECT_FALSE(test.IsDir());
 	}
 }
 

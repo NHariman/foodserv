@@ -112,7 +112,6 @@ void							LocationContext::SetValue(int directive, std::string input) {
 				if (bool_autoindex == true)
 					throw MultipleAutoindexException(_location_uri.GetURIClass().GetInputURI());
 				bool_autoindex = true;
-				std::cout << "set autoindex: " << std::boolalpha << SetAutoindex(value) << std::endl;
 				_autoindex = SetAutoindex(value);
 				break ;
 			}

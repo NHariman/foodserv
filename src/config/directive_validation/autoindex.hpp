@@ -31,7 +31,7 @@ public:
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Too many Arguments in autoindex.";
+					return "ERROR! Too many arguments in autoindex.";
 				}
 		};
 };

@@ -81,3 +81,10 @@ bool						ConfigValues::HasErrorPage() const {
 std::map<int, std::string>		ConfigValues::GetErrorPage() const {
     return _error_page;
 }
+
+void							ConfigValues::PrintErrorPage() const {
+	for(std::map<int, std::string>::const_iterator it = _error_page.begin();
+    it != _error_page.end(); ++it){
+    std::cout << it->first << " " << it->second << "\n";
+	}
+}
