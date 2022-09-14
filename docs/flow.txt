@@ -26,7 +26,10 @@ Response processing
 |		- Resolve request target path
 |			- string TargetConfig::GetResolvedPath(string target)
 |				- if redirect (return): use string ReturnDir::GetUrl() and resolve variables to get final path
-|				- if autoindex: if target doesn't exist, return path to index file
+|				- if target is directory:
+|         - if autoindex is on & index file exists: return resolved path to index file.
+|         - if autoindex is on & index file DOES NOT exist: return resolved directory path.
+|         - if autoindex is off/not specified: return empty string (treated as 404 error).
 |				- if alias/root: prepend any root path and substitutes any alias path
 |		- CGI?
 |			- bool TargetConfig::GetCGIPass::IsSet()
@@ -38,7 +41,7 @@ Response processing
 |		1. CGI handling
 |		2. File handling based on method
 |			- GET: get file or index
-|			- POST: goes through CGI
+|			- POST: 
 |			- DELETE: delete file if present
 |
 v
