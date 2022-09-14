@@ -6,7 +6,7 @@
 
 class vtoa {
 	private:
-		char *const * _array;
+		const char ** _array;
 		vtoa();
 	public:
 		vtoa(std::vector<std::string> vec);

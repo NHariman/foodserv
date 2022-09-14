@@ -1,14 +1,14 @@
 #include "vtoa.hpp"
 
 vtoa::vtoa(std::vector<std::string> vec) {
-    _array = new const char *[vec.size()];
+    _array = new const char*[vec.size()];
     for (size_t i = 0; i < vec.size(); ++i) {
         _array[i] = vec[i].c_str();
     }
 }
 
-const char** vtoa::GetArray() const {
-    return _array;
+ char *const * vtoa::GetArray() const {
+    return (char *const *)_array;
 }
 
 vtoa::~vtoa() {

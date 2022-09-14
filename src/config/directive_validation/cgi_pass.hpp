@@ -9,6 +9,7 @@
 class CGIPass : public std::pair<std::string, std::string> {
 	private:
         bool        						_is_set;
+		size_t								_len;
 		std::string							_file_extension;
 		std::string							_executable_path;
 
@@ -20,6 +21,7 @@ class CGIPass : public std::pair<std::string, std::string> {
         CGIPass& operator=(const CGIPass &obj);
 		std::string		GetFileExtension() const;
 		std::string		GetExecutablePath() const;
+		std::string		GetLen() const;
         bool            IsSet() const;
 		class MissingArgumentsException : public std::exception
 		{

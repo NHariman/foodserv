@@ -29,6 +29,10 @@ HOW TO CGI:
 */
 
 /*
+https://stackoverflow.com/questions/28921089/i-have-written-my-own-http-server-and-i-want-to-execute-a-cgi-script-through-thi
+*/
+
+/*
 * Set CGI environment variables.
 * CONTENT_LENGTH    : POST message length
 * CONTENT_TYPE      : POST encoding type
@@ -52,19 +56,23 @@ HOW TO CGI:
 * SERVER_SOFTWARE   : Our application name and version
 */
 
-
+/* CGI logic:
+	- if 2 arguments: use 2nd argument to execute file
+	- if 1 argument: consider it an executable and try to execute it
+*/
 class CGI {
 	private:
 		CGIPass _cgi_data;
 		std::vector<std::string> _env;
 		std::vector<std::string> _argv;
+		void    SetHeaders(Request *request);
+		void	SetArgv(Request *request);
 
 	public:
 		CGI(){};
 		~CGI(){};
-		void    Setup(CGIPass *cgi_data, Request *request); // also probably needs the request class to set ENVs with.
-		void    SetHeaders(Request *request);
-		void    execute();
+		void    setup(CGIPass *cgi_data, Request *request); // also probably needs the request class to set ENVs with.
+		size_t    execute();
 
 		
 };
@@ -97,18 +105,18 @@ class ForkFailureException : public std::exception
 		virtual ~ForkFailureException() throw() {}
 };
 
-class ExecuteFailureException : public std::exception
+class WaitFailureException : public std::exception
 {
 	private:
 		std::string		_err_string;
 	public:
-		ExecuteFailureException() {
-			_err_string = "ERROR! Failed to execute CGI.";
+		WaitFailureException() {
+			_err_string = "ERROR! Failed CGI waitpid.";
 		}
 		const char *what() const throw() {
 			return (_err_string.c_str());
 		}
-		virtual ~ExecuteFailureException() throw() {}
+		virtual ~WaitFailureException() throw() {}
 };
 
 #endif

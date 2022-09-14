@@ -270,8 +270,8 @@ std::string LocationUri::GetInputURI() const {
 bool						LocationContext::IsSet(std::string directive) {
 	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return"};
 
-	int	is_directive = std::find(directives, directives + 8, directive) - directives;
-	if (is_directive < 0 || is_directive > 7)
+	int	is_directive = std::find(directives, directives + 9, directive) - directives;
+	if (is_directive < 0 || is_directive > 8)
 		throw InvalidDirectiveSetCheckException(_location_uri.GetURIClass().GetInputURI());
 	switch (is_directive) {
 		case 0:
