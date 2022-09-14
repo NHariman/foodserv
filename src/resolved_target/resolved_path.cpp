@@ -24,7 +24,7 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
     /* Check is the request if a directory */
     else if (_request_uri[_request_uri.size() - 1] == '/') { // change this for utils: isDirectory function
         if (IsValidDirectory(_request_uri)) {
-            std::cout << "the request uri is a existing direcotry";
+            std::cout << "the request uri is a existing direcotry" << std::endl;
 			RequestIsValidDirectory();
 			// if atoindex is on & index file exists:
 			// return resolved path to index file
@@ -55,8 +55,8 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 }
 
 void	ResolvedPath::RequestIsValidDirectory()  {
-    std::cout << "in here";
-	if (_target_config->GetAutoindex())
+    std::cout << "in here" << std::endl;
+	if (_target_config->GetAutoindex() == true)
 		std::cout << "AUTO INDEX IS SET" << std::endl;
 }
 
