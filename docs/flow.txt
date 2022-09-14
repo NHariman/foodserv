@@ -26,10 +26,10 @@ Response processing
 |		- Resolve request target path
 |			- string TargetConfig::GetResolvedPath(string target)
 |				- if redirect (return): use string ReturnDir::GetUrl() and resolve variables to get final path
-|				- if target is directory:
-|         - if autoindex is on & index file exists: return resolved path to index file.
-|         - if autoindex is on & index file DOES NOT exist: return resolved directory path.
-|         - if autoindex is off/not specified: return empty string (treated as 404 error).
+|				- if target is valid directory:  
+|       				- if autoindex is on & index file exists: return resolved path to index file.
+|       				- if autoindex is on & index file DOES NOT exist: return resolved directory path.
+|       				- if autoindex is off/not specified: return empty string (treated as 404 error).
 |				- if alias/root: prepend any root path and substitutes any alias path
 |		- CGI?
 |			- bool TargetConfig::GetCGIPass::IsSet()
