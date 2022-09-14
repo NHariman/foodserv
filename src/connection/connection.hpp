@@ -17,6 +17,7 @@ class Connection {
 	private:
 		NginxConfig*	_config;
 		Request			_request;
+		Response		_response;
 		int				_fd; // TODO: change to specific socket/connection_fd
 		bool			_close_connection;
 

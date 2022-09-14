@@ -2,7 +2,11 @@
 
 // Socket fd & config file constructor
 Connection::Connection(int fd, NginxConfig* config)
-	: _config(config), _request(config), _fd(fd), _close_connection(false) {}
+	:	_config(config),
+		_request(config),
+		_response(),
+		_fd(fd),
+		_close_connection(false) {}
 
 // Destructor
 Connection::~Connection() {}
@@ -15,11 +19,11 @@ void	Connection::Receive(char const* buffer) {
 		case Request::Status::Incomplete:
 			break;
 		case Request::Status::Bad:
-			HandleError(); break;
+			_response.HandleError(); break;
 		case Request::Status::Complete:
-			HandleResponse(); break;
+			_response.HandleRegular(); break;
 		case Request::Status::Expect:
-			HandleExpect(); break;
+			_response.HandleExpect(); break;
 	}
 }
 
