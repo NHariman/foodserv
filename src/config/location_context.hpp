@@ -48,6 +48,7 @@ class LocationContext : virtual public ConfigValues {
 		std::vector<std::string>	GetIndex() const override;
 		size_t						GetClientMaxBodySize() const override;
 		std::vector<ErrorPage>		GetErrorPage() const override;
+		ReturnDir					GetReturn() const override;
 		
 		class MultipleCGIPassException : public std::exception
 		{
