@@ -43,6 +43,7 @@ class ResolvedPath {
 
 		std::string		_locationblock_uri;
 		std::string		_request_uri;
+
         
         void    AppendRoot();
         void	ReplaceAlias();
@@ -51,6 +52,7 @@ class ResolvedPath {
 
     public:
         ResolvedPath(TargetConfig *target_config, std::string target);
+        std::string     GetResolvedPath() const ;
 
 };
 
