@@ -5,7 +5,7 @@
 #include <string>
 #include "request_parser.hpp"
 #include "../config/nginx_config.hpp"
-#include "../server_selection/target_config.hpp"
+#include "../resolved_target/target_config.hpp"
 
 using namespace std;
 
@@ -51,7 +51,7 @@ class Request {
 		int					GetStatusCode() const;
 		void				SetStatus(Status status);
 		void				SetTargetHost(string const& host);
-		void				SetFinalTargetPath(string const& target_path);
+		void				SetResolvedTargetPath(string const& target_path);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private variables of Request.

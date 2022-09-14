@@ -1,3 +1,0 @@
-AllowedMethodsTest.ValidInput 3 0.00121052
-AllowedMethodsTest.InvalidInput 1 0.00345057
----

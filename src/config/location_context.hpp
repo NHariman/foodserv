@@ -43,12 +43,7 @@ class LocationContext : virtual public ConfigValues {
 		CGIPass						GetCGIPass() const;
 		AllowedMethods				GetAllowedMethods() const;
 		std::string					GetAlias() const;
-		// overridden getters
-		bool						GetAutoindex() const override;
-		std::string					GetRoot() const override;
-		std::vector<std::string>	GetIndex() const override;
-		size_t						GetClientMaxBodySize() const override;
-		std::vector<ErrorPage>		GetErrorPage() const override;
+
 		
 		class MultipleCGIPassException : public std::exception
 		{
@@ -84,7 +79,7 @@ class LocationContext : virtual public ConfigValues {
 				std::string		_err_string;
 			public:
 				BadInputException(std::string uri) {
-					_err_string = "ERROR! Multiple index directives detected in Location Context:" + uri + ".";
+					_err_string = "ERROR! Invalid input detected in Location Context:" + uri + ".";
 				}
 				const char *what() const throw() {
 					return (_err_string.c_str());
@@ -117,6 +112,20 @@ class LocationContext : virtual public ConfigValues {
 					return (_err_string.c_str());
 				}
 				virtual ~BadURIException() throw() {}
+		};
+
+		class RootAndAliasException : public std::exception
+		{
+			private:
+				std::string		_err_string;
+			public:
+				RootAndAliasException(std::string uri) {
+					_err_string = "ERROR! Location Context:" + uri + " contains both alias and root, please only use one.";
+				}
+				const char *what() const throw() {
+					return (_err_string.c_str());
+				}
+				virtual ~RootAndAliasException() throw() {}
 		};
 };
 

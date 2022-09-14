@@ -166,16 +166,16 @@ void				ServerContext::SetValue(int directive, std::string value){
 			}
 			case 6:{
 				bool_error_page = true;
-				ErrorPage	error_page_value(trimmed_value);
-				_error_page.push_back(error_page_value);
+				AddToErrorPageMap(&_error_page, trimmed_value);
+				// ErrorPage	error_page_value(trimmed_value);
+				// _error_page.push_back(error_page_value);
 				break ;
 			}
 			case 7: {
 				if (bool_autoindex == true)
 					throw MultipleAutoindexException(_server_nb);
 				bool_autoindex = true;
-				Autoindex	autoindex_value(trimmed_value);
-				_autoindex = autoindex_value.GetStatus();
+				_autoindex = SetAutoindex(trimmed_value);
 				break ;
 			}
             case 8: {
@@ -346,9 +346,5 @@ std::string					ServerContext::GetPortNumber() const {
 std::vector<std::string>	ServerContext::GetServerNameVector() const {
     return _server_name;
 }
-
-std::vector<ErrorPage>		ServerContext::GetErrorPage() const {
-    return _error_page;
-} 
 
 #undef DEBUG

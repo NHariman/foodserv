@@ -6,15 +6,13 @@
 # include <string>
 #include "../config_utils.hpp"
 
+bool SetAutoindex(std::string value);
+
 class Autoindex {
 private:
-    bool _status;
-    Autoindex(){};
 public:
-    Autoindex(std::string value);
+    Autoindex(){};
     ~Autoindex(){};
-
-    bool GetStatus() const;
     class InvalidAutoindexException : public std::exception
 		{
 			public:
@@ -33,7 +31,7 @@ public:
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Too many Arguments in autoindex.";
+					return "ERROR! Too many arguments in autoindex.";
 				}
 		};
 };
