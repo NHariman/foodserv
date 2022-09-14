@@ -3,6 +3,7 @@
 
 #include "directive_validation/directive_validation.hpp"
 #include <map>
+#include <iostream>
 
 class ConfigValues {
     protected:
@@ -40,8 +41,8 @@ class ConfigValues {
        virtual std::map<int, std::string>	GetErrorPage() const;
        virtual bool						    GetAutoindex() const;
        virtual ReturnDir                    GetReturn() const;
-
        virtual bool							HasErrorPage() const;
+	   void									PrintErrorPage() const;
 
 	   // checks if a directive has been set
        virtual bool							IsSet(std::string directive) = 0;
