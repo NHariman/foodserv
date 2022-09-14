@@ -87,6 +87,12 @@ bool	IsUri(std::string input) {
 		return true;
 	return false;
 }
+bool	IsDirectory(std::string input) {
+	if (input[input.size() - 1] == '/')
+		return true;
+	else
+		return false;
+}
 
 bool IsValidHTTPCode(size_t code) {
 	if (code < 100 || code > 599)

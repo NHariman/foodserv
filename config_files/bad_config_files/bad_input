@@ -1,4 +1,5 @@
 server{
+                fdjaldkfj dkljfa;
                listen 80;
                server_name localhost www.localhost;
 
@@ -8,19 +9,22 @@ server{
                index index.php index.html index.htm index.nginx-debian.html;
 
                location / {
+                        alias stuff;
                        autoindex on;
                        root /a_place;
                        index a_name;
-                       index a_name;
                        allowed_methods GET;
                        client_max_body_size 5M;
+                       return 301 /usr/bin/python3;
                }
               location /test {
                        autoindex on;
                }
 
                location /cgi-bin {
-                     cgi_pass .py http://127.0.0.1:8080;
+                     cgi_pass .py /usr/bin/python3;
               }
                client_max_body_size 64M;
+               autoindex off;
+               return 301 $scheme://www.new-name.com$request_uri;
 }

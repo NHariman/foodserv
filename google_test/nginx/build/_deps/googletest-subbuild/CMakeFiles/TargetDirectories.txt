@@ -1,3 +1,0 @@
-/Users/nhariman/webserv_nginxconfig/google_test/nginx/build/_deps/googletest-subbuild/CMakeFiles/googletest-populate.dir
-/Users/nhariman/webserv_nginxconfig/google_test/nginx/build/_deps/googletest-subbuild/CMakeFiles/edit_cache.dir
-/Users/nhariman/webserv_nginxconfig/google_test/nginx/build/_deps/googletest-subbuild/CMakeFiles/rebuild_cache.dir

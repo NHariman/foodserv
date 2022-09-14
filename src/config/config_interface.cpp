@@ -1,5 +1,21 @@
 #include "config_interface.hpp"
 
+/*
+        bool	bool_root;
+	    bool	bool_index;
+	    bool	bool_client_max_body_size;
+	    bool	bool_error_page;
+	    bool	bool_autoindex;
+	    bool	bool_return_dir;
+
+        std::string						_root;
+		std::vector<std::string>		_index;
+		size_t							_client_max_body_size;
+		std::map<int, std::string>		_error_page;
+		bool							_autoindex;
+		ReturnDir						_return_dir;
+*/
+
 ConfigValues::ConfigValues() : bool_root(false),
 bool_index(false),
 bool_client_max_body_size(false),
@@ -62,6 +78,6 @@ bool						ConfigValues::HasErrorPage() const {
 	return bool_error_page;
 }
 
-std::vector<ErrorPage>		ConfigValues::GetErrorPage() const {
+std::map<int, std::string>		ConfigValues::GetErrorPage() const {
     return _error_page;
 }
