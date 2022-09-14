@@ -55,6 +55,7 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 }
 
 void	ResolvedPath::RequestIsValidDirectory()  {
+    std::cout << "in here";
 	if (_target_config->GetAutoindex())
 		std::cout << "AUTO INDEX IS SET" << std::endl;
 }
