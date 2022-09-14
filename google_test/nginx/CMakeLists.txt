@@ -22,7 +22,6 @@ add_executable(
   try_test.cpp
   ../../src/request/chunked_parser.cpp 
   ../../src/request/header_field_parser.cpp 
-  ../../src/request/request_handler.cpp 
   ../../src/request/request_line_parser.cpp 
   ../../src/request/request_parser.cpp 
   ../../src/request/request_target_parser.cpp 

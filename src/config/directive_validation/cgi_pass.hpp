@@ -21,7 +21,7 @@ class CGIPass : public std::pair<std::string, std::string> {
         CGIPass& operator=(const CGIPass &obj);
 		std::string		GetFileExtension() const;
 		std::string		GetExecutablePath() const;
-		std::string		GetLen() const;
+		size_t			GetLen() const;
         bool            IsSet() const;
 		class MissingArgumentsException : public std::exception
 		{

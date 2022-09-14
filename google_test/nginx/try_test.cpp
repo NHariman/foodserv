@@ -125,9 +125,28 @@ TEST(ErrorPageTest, ValidInput) {
 		EXPECT_NO_THROW({
 		AddToErrorPageMap(&map, "500 502 503 504 404 403 402 405 /50x.html");
 	});}
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "500 502 503 504 /50x.html");
+		AddToErrorPageMap(&map, "404 /404.html");
+	});}
 }
 
 TEST(ErrorPageTest, InvalidInput) {
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+		AddToErrorPageMap(&map, "500 502 503 404 /50x.html");
+		AddToErrorPageMap(&map, "404 /404.html");	
+		}, ErrorPage::DuplicateErrorCodeException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 /404.html 404");
+			}, ErrorPage::BadErrorURIException);
+	}
 	{
 		std::map<int, std::string> map;
 		EXPECT_THROW({
