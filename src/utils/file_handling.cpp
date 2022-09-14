@@ -2,7 +2,7 @@
 #include <sys/stat.h>
 #include "utils.hpp"
 
-bool	IsFile(std::string const& path) {
+bool	IsValidFile(std::string const& path) {
 	struct stat sb;
 
 	if (stat(path.c_str(), &sb) == 0)
@@ -10,7 +10,7 @@ bool	IsFile(std::string const& path) {
 	return false;
 }
 
-bool	IsDirectory(std::string const& path) {
+bool	IsValidDirectory(std::string const& path) {
 	struct stat sb;
 
 	if (stat(path.c_str(), &sb) == 0) {

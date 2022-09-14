@@ -31,6 +31,7 @@
 # define RESOLVED_PATH
 
 #include "target_config.hpp"
+#include "../utils/utils.hpp"
 #include <algorithm>
 
 class TargetConfig;
@@ -52,7 +53,7 @@ class ResolvedPath {
 
     public:
         ResolvedPath(TargetConfig *target_config, std::string target);
-        std::string     GetResolvedPath() const ;
+        std::string     GetResolvedPath() const;
 
 };
 

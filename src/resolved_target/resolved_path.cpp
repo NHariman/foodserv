@@ -17,20 +17,22 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 	std::cout << "LOCATION BLOCK URI : " << _locationblock_uri << std::endl;
 	std::cout << "REQUEST URI: " << _request_uri << std::endl;
 
-    // replace this for if directory function
-    if (_request_uri[_request_uri.size() - 1] != '/') {
-        if (target_config->GetReturn().IsSet() == true) {
-            std::cout << "return is set: " << target_config->GetReturn().GetUrl() << std::endl;
-            _path = target_config->GetReturn().GetUrl();
-        }
-        else if (target_config->GetAlias().empty() == false) // misschien naar isSet
-            ReplaceAlias();
-        else
-            AppendRoot();
+    /* If return is set, we set the path to what return gives are url for redirection */
+    if (target_config->GetReturn().IsSet()) {
+        _path = _target_config->GetReturn().GetUrl();
+        return ;
     }
-    // else {
-    //     if autoinex is set
+
+
+    // if (_request_uri[_request_uri.size() - 1] != '/') {
+    //     else if (target_config->GetAlias().empty() == false) // misschien naar isSet
+    //         ReplaceAlias();
+    //     else
+    //         AppendRoot();
     // }
+    // // else {
+    // //     if autoinex is set
+    // // }
 }
 
 
