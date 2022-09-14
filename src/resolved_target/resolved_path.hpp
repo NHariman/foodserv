@@ -55,6 +55,7 @@ class ResolvedPath {
         ResolvedPath(TargetConfig *target_config, std::string target);
         std::string     GetResolvedPath() const;
         void	        RequestIsValidDirectory();
+        bool            CheckIndexFiles();
 
 };
 

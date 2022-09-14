@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "../../src/config/nginx_config.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
+# include <map>
+#include <string>
 
 // Test syntax
 /*
@@ -8,6 +10,8 @@
 		... test body ...
 		}
 */
+
+
 
 //////////////////////////////
 //**MODULE ALLOWED METHODS**//
@@ -60,81 +64,115 @@ TEST(AllowedMethodsTest, InvalidInput) {
 
 TEST(AutoIndexTest, ValidInput) {
 	EXPECT_NO_THROW({
-		Autoindex test("on");
+		SetAutoindex("on");
 	});
 	EXPECT_NO_THROW({
-		Autoindex test("off");
+		SetAutoindex("off");
 	});
+	EXPECT_TRUE(SetAutoindex("on"));
+	EXPECT_FALSE(SetAutoindex("off"));
 }
 
 TEST(AutoIndexTest, invalidInput) {
 	EXPECT_THROW({
-		Autoindex test("onf");
+		SetAutoindex("onf");
 	}, Autoindex::InvalidAutoindexException);
 	EXPECT_THROW({
-		Autoindex test("offe");
+		SetAutoindex("offe");
 	}, Autoindex::InvalidAutoindexException);
 	EXPECT_THROW({
-		Autoindex test("1");
+		SetAutoindex("1");
 	}, Autoindex::InvalidAutoindexException);
 	EXPECT_THROW({
-		Autoindex test("off e");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("off e");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("on e");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("on e");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("k on");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("k on");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("oh off");
-	}, Autoindex::InvalidAutoindexException);
+		SetAutoindex("oh off");
+	}, Autoindex::TooManyArgumentsException);
 	EXPECT_THROW({
-		Autoindex test("");
+		SetAutoindex("");
 	}, Autoindex::MissingArgumentsException);
 }
 
 //////////////////////////////
-//**   MODULE ERROR PAGE  **//
+//**   MODULE ERROR_PAGE  **//
 //////////////////////////////
 
 TEST(ErrorPageTest, ValidInput) {
-	EXPECT_NO_THROW({
-		ErrorPage test("500 502 503 504 /50x.html");
-	});
-	EXPECT_NO_THROW({
-		ErrorPage test("404             /404.html");
-	});
-	EXPECT_NO_THROW({
-		ErrorPage test("404 /404.html");
-	});
-	EXPECT_NO_THROW({
-		ErrorPage test("500 502 503 504 404 403 402 405 /50x.html");
-	});
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "500 502 503 504 /50x.html");
+	});}
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "404             /404.html");
+	});}
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "404 /404.html");
+	});}
+	{
+		std::map<int, std::string> map;
+		EXPECT_NO_THROW({
+		AddToErrorPageMap(&map, "500 502 503 504 404 403 402 405 /50x.html");
+	});}
 }
 
 TEST(ErrorPageTest, InvalidInput) {
-	EXPECT_THROW({
-		ErrorPage test("404 /404.html 404");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 404.html /stuff.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 abc /404.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404d 404 /404.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 404.html");
-	}, ErrorPage::InvalidInputException);
-	EXPECT_THROW({
-		ErrorPage test("404 /404.html /404.html");
-	}, ErrorPage::DuplicateUriException);
-	EXPECT_THROW({
-		ErrorPage test("");
-	}, ErrorPage::MissingArgumentsException);
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 /404.html 404");
+			}, ErrorPage::BadErrorURIException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 404.html /stuff.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 abc /404.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404d 404 /404.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 404.html");
+			}, ErrorPage::BadErrorURIException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "404 /404.html /404.html");
+			}, ErrorPage::InvalidCodeInputException);
+	}
+	{
+		std::map<int, std::string> map;
+		EXPECT_THROW({
+			AddToErrorPageMap(&map, "");
+		}, ErrorPage::MissingArgumentsException);
+	}
+	
+	
+	
 }
 
 //////////////////////////////
@@ -267,11 +305,11 @@ TEST(cgipassTest, InvalidInput) {
 		CGIPass test("");
 	}, CGIPass::MissingArgumentsException);
 	EXPECT_THROW({
-		CGIPass test("dadfadf dafdfsafadsf");
+		CGIPass test("dadfadf dafdfsafadsf dafdadfaf");
 	}, CGIPass::TooManyArgumentsException);
 }
 
-TEST(FastcgipassTest, ValidInput){
+TEST(cgipassTest, ValidInput){
 	EXPECT_NO_THROW({
 		CGIPass test(".py link_here");
 	});
@@ -297,11 +335,11 @@ TEST(LocationURITest, ValidInput){
 	});
 	{
 		LocationUri test("/test/");
-		EXPECT_TRUE(test.IsDirectory());
+		EXPECT_TRUE(test.IsDir());
 	}
 	{
 		LocationUri test("/test");
-		EXPECT_FALSE(test.IsDirectory());
+		EXPECT_FALSE(test.IsDir());
 	}
 }
 
@@ -342,6 +380,85 @@ TEST(ReturnTest, ValidInput){
 		ReturnDir test("42 url");
 	});
 
+}
+
+//////////////////////////////
+//**MODULE NGINX PARSING  **//
+//////////////////////////////
+TEST(NginxConfigTest, valid) {
+	EXPECT_NO_THROW({
+		NginxConfig test("../../../config_files/default.conf");
+	});	
+	EXPECT_NO_THROW({
+		NginxConfig test("../../../config_files/multiple_servers.conf");
+	});
+	EXPECT_NO_THROW({
+		NginxConfig test("../../../config_files/simple.conf");
+	});	
+}
+
+TEST(NginxConfigTest, invalid) {
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/open_brackets.conf");}, NginxConfig::OpenBracketsException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/outside_server.conf");}, NginxConfig::BadServerContextException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/misspelled_server.conf");}, NginxConfig::BadServerContextException);
+	EXPECT_THROW({
+		NginxConfig test("../../config_files/bad_config_files/dfhdkfh.conf");}, NginxConfig::InvalidFileLocationException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/empty.conf");}, NginxConfig::NoServerContextsException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_listen");}, ServerContext::MultipleListensException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_Server_name");}, ServerContext::MultipleServerNameException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/bad_input");}, ConfigValues::InvalidDirectiveException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_location");}, ServerContext::DuplicateLocationUriException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_CMBS");}, ConfigValues::MultipleClientMaxBodySizeException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/location_error_cmbs");}, ConfigValues::MultipleClientMaxBodySizeException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_autoindex");}, ConfigValues::MultipleAutoindexException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/location_error_autoindex");}, ConfigValues::MultipleAutoindexException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_root");}, ConfigValues::MultipleRootException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/location_error_root");}, ConfigValues::MultipleRootException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_return");}, ConfigValues::MultipleReturnException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/location_error_return");}, ConfigValues::MultipleReturnException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_index");}, ConfigValues::MultipleIndexException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/location_error_index");}, ConfigValues::MultipleIndexException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/location_error_misspelling");}, ConfigValues::InvalidDirectiveException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/location_error_index");}, ConfigValues::MultipleIndexException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_allowed_methods.conf");}, LocationContext::MultipleAllowedMethodsException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_alias.conf");}, LocationContext::MultipleAliasException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/double_cgi.conf");}, LocationContext::MultipleCGIPassException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/root_alias.conf");}, LocationContext::RootAndAliasException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/misspelled_error.conf");}, ConfigValues::InvalidDirectiveException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/misspelled_listen.conf");}, ConfigValues::InvalidDirectiveException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/misspelled_index.conf");}, ConfigValues::InvalidDirectiveException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/misspelled_client_max_body_size.conf");}, ConfigValues::InvalidDirectiveException);
+	EXPECT_THROW({
+		NginxConfig test("../../../config_files/bad_config_files/misspelled_server.conf");}, NginxConfig::BadServerContextException);
+	
 }
 
 //////////////////////////////

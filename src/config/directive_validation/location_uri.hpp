@@ -30,7 +30,7 @@ class LocationUri {
 		std::string	GetUri() const;
 		URI			GetURIClass() const;
 		std::string GetInputURI() const;
-		bool		IsDirectory() const;
+		bool		IsDir() const;
 		class BadUriException : public std::exception
 		{
 			private:

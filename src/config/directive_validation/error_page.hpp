@@ -10,29 +10,20 @@
 #ifndef ERROR_PAGE_HPP
 # define ERROR_PAGE_HPP
 
+# include <map>
 # include <vector>
 # include <string>
 # include <iostream>
 # include "../config_utils.hpp"
 
-class ErrorPage {
-	private:
-		bool				_is_set;
-		std::string			_uri;
-		std::vector<int>	_code;
-		ErrorPage();
-	
-	public:
-		~ErrorPage(){};
-		ErrorPage(std::string input);
-		ErrorPage(ErrorPage const &obj);
-		ErrorPage&	operator=(ErrorPage const & obj);
+void	AddToErrorPageMap(std::map<int, std::string> *map, std::string input);
 
-		bool				IsSet() const;
-		std::string			GetUri() const;
-		std::vector<int>	GetCodes() const;
-		void				PrintCodes() const;
-		class InvalidInputException : public std::exception
+class ErrorPage {
+
+	public:
+		ErrorPage(){};
+		~ErrorPage(){};
+		class InvalidCodeInputException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
@@ -44,6 +35,13 @@ class ErrorPage {
 			public:
 				const char *what() const throw() {
 					return "ERROR! Duplicate Uri detected in error_page.";
+				}
+		};
+		class DuplicateErrorCodeException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Duplicate error code detected in error_page.";
 				}
 		};
 		class BadErrorCodeException : public std::exception
@@ -60,8 +58,15 @@ class ErrorPage {
 					return "ERROR! Missing Arguments in error_page block.";
 				}
 		};
-};
+	
+		class BadErrorURIException : public std::exception
+		{
+			public:
+				const char *what() const throw() {
+					return "ERROR! Bad error_page URI in error_page block.";
+				}
+		};
 
-std::ostream& operator<<(std::ostream& os, const ErrorPage& error_page);
+};
 
 #endif

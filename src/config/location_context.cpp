@@ -30,6 +30,8 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     if (this == &location_context) {
         return (*this);
 	}
+
+	// bool
 	bool_uri = location_context.bool_uri;
     bool_autoindex = location_context.bool_autoindex;
     bool_root = location_context.bool_root;
@@ -40,6 +42,8 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
 	bool_return_dir = location_context.bool_return_dir;
     bool_cgi_pass = location_context.bool_cgi_pass;
 	bool_allowed_methods = location_context.bool_allowed_methods;
+
+	// values
     _location_uri = location_context._location_uri;
     _autoindex = location_context._autoindex;
     _root = location_context._root;
@@ -108,13 +112,14 @@ void							LocationContext::SetValue(int directive, std::string input) {
 				if (bool_autoindex == true)
 					throw MultipleAutoindexException(_location_uri.GetURIClass().GetInputURI());
 				bool_autoindex = true;
-				Autoindex	autoindex_value(value);
-				_autoindex = autoindex_value.GetStatus();
+				_autoindex = SetAutoindex(value);
 				break ;
 			}
 			case 1: {
 				if (bool_root == true)
 					throw MultipleRootException(_location_uri.GetURIClass().GetInputURI());
+				if (bool_alias == true)
+					throw RootAndAliasException(_location_uri.GetURIClass().GetInputURI());
 				bool_root = true;
 				Root root_value(value);
 				_root = value;
@@ -138,8 +143,11 @@ void							LocationContext::SetValue(int directive, std::string input) {
 			}
             case 4: {
 				bool_error_page = true;
-				ErrorPage	error_page_value(value);
-				_error_page.push_back(error_page_value);
+				AddToErrorPageMap(&_error_page, value);
+				// ErrorPage	error_page_value(value);
+				// _error_page.push_back(error_page_value);
+				// if the same error is given twice, throw an error
+				// change this to a map for easier handler
 				break ;
 			}
             case 5: {
@@ -169,6 +177,8 @@ void							LocationContext::SetValue(int directive, std::string input) {
             case 8: {
 				if (bool_alias == true)
 					throw MultipleAliasException(_location_uri.GetURIClass().GetInputURI());
+				if (bool_root == true)
+					throw RootAndAliasException(_location_uri.GetURIClass().GetInputURI());
 				Root alias_value(value);
 				bool_alias = true;
 				_alias = value;
@@ -234,32 +244,8 @@ LocationUri							LocationContext::GetLocationUri() const {
 	return _location_uri;
 }
 
-bool								LocationContext::GetAutoindex() const {
-   return _autoindex;
-}
-
-std::string							LocationContext::GetRoot() const {
-   return _root;
-}
-
 std::string							LocationContext::GetAlias() const {
    return _alias;
-}
-
-std::vector<std::string>			LocationContext::GetIndex() const {
-    return _index;
-}
-
-size_t								LocationContext::GetClientMaxBodySize() const {
-   return _client_max_body_size;
-}
-
-std::vector<ErrorPage>				LocationContext::GetErrorPage() const {
-    return _error_page;
-}
-
-ReturnDir						LocationContext::GetReturn() const {
-    return _return_dir;
 }
 
 CGIPass							LocationContext::GetCGIPass() const {
@@ -278,8 +264,8 @@ std::string LocationUri::GetInputURI() const {
 bool						LocationContext::IsSet(std::string directive) {
 	const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return", "alias"};
 
-	int	is_directive = std::find(directives, directives + 8, directive) - directives;
-	if (is_directive < 0 || is_directive > 7)
+	int	is_directive = std::find(directives, directives + 9, directive) - directives;
+	if (is_directive < 0 || is_directive > 8)
 		throw InvalidDirectiveSetCheckException(_location_uri.GetURIClass().GetInputURI());
 	switch (is_directive) {
 		case 0:

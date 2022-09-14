@@ -61,7 +61,6 @@ class ServerContext : public ConfigValues {
 		std::string								GetIPAddress() const;
 		std::string								GetPortNumber() const;
 		std::vector<std::string>				GetServerNameVector() const;
-		std::vector<ErrorPage>					GetErrorPage() const override;
 
 		class MultipleListensException : public std::exception
 		{

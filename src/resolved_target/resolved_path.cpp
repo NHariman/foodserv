@@ -26,8 +26,6 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
         if (IsValidDirectory(_request_uri)) {
             std::cout << "the request uri is a existing direcotry" << std::endl;
 			RequestIsValidDirectory();
-			// if atoindex is on & index file exists:
-			// return resolved path to index file
         }
         else {
             std::cout << "it is not exsisting" << std::endl;
@@ -56,8 +54,30 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 
 void	ResolvedPath::RequestIsValidDirectory()  {
     std::cout << "in here" << std::endl;
-	if (_target_config->GetAutoindex() == true)
+	if (_target_config->GetAutoindex() == true) {
 		std::cout << "AUTO INDEX IS SET" << std::endl;
+        CheckIndexFiles();
+        // if (CheckIndex()) {
+            // return file _path = file path
+        // }
+        // else {
+            // _path = directory path
+        // }
+        // now go through all index files, to see if one of them exists
+        // if one exists -> send this path
+        // if none exist -> send the path up to directory
+    }
+
+}
+
+bool    ResolvedPath::CheckIndexFiles() {
+    // loop through all index files given
+    std::vector<std::string> index_vector = _target_config->GetIndex();
+    std::cout << "index vector size: " << index_vector.size();
+
+    for (std::vector<std::string>::const_iterator it = index_vector.begin(); it != index_vector.end(); it++) {
+        std::cout << *it << std::endl;
+    }
 }
 
 // RETURN DIRECTIVE

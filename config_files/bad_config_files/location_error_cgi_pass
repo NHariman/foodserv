@@ -11,15 +11,16 @@ server{
                        autoindex on;
                        root /a_place;
                        index a_name;
-                       index a_name;
                        allowed_methods GET;
                        client_max_body_size 5M;
+                       error_page 404 /error404.html;
                }
               location /test {
                        autoindex on;
                }
 
                location /cgi-bin {
+                     cgi_pass .py http://127.0.0.1:8080;
                      cgi_pass .py http://127.0.0.1:8080;
               }
                client_max_body_size 64M;
