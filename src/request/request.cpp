@@ -48,11 +48,11 @@ TargetConfig const&	Request::GetTargetConfig() const {
 	return _target_config;
 }
 
-string	Request::GetMethod() const {
+string const&	Request::GetMethod() const {
 	return _method;
 }
 
-string	Request::GetTargetString() const {
+string const&	Request::GetTargetString() const {
 	return _target.Get();
 }
 
@@ -60,7 +60,7 @@ URI const&	Request::GetTargetURI() const{
 	return _target;
 }
 
-Request::Status	Request::GetStatus() const {
+Request::Status	Request::GetRequestStatus() const {
 	return _request_status;
 }
 
@@ -68,7 +68,7 @@ void	Request::SetMethod(string const& method) {
 	_method = method;
 }
 
-void	Request::SetStatus(Status status) {
+void	Request::SetRequestStatus(Status status) {
 	_request_status = status;
 }
 
