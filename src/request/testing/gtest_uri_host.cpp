@@ -2,7 +2,7 @@
 
 #include "../uri.hpp"
 #include "../uri_host_parser.hpp"
-#include "../exception.hpp"
+#include "../../err/exception.hpp"
 
 string	ConstructAndParseURI(string uri_string) {
 	URIHostParser	parser;

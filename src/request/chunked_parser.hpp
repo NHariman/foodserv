@@ -5,7 +5,8 @@
 #include <map>
 #include <vector>
 #include "astate_parser.hpp"
-#include "request_utils.hpp"
+#include "../utils/request_utils.hpp"
+#include "../utils/utils.hpp"
 
 using namespace std;
 
@@ -54,7 +55,7 @@ class ChunkedParser : public AStateParser<ChunkState> {
 		ChunkState	EndHandler(char c);
 		ChunkState	HandleChunkExtension(char c);
 		ChunkState	HandleCRLF(char c, ChunkState return_state, bool skip = true);
-		void		ParseTrailerHeader(map<string, string>& fields);
+		void		ParseTrailerHeader();
 		void		SaveParsedValue();
 };
 

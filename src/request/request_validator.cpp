@@ -73,7 +73,7 @@ bool	RequestValidator::ValidExpect(Request& request) {
 		if (expect != "100-continue")
 			throw ExpectationFailedTypeException();
 		else
-			request.SetStatus(Request::Status::Expect);
+			request.SetRequestStatus(Request::Status::Expect);
 	}
 	return true;
 }

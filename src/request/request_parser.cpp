@@ -71,7 +71,8 @@ RequestState	RequestParser::RequestLineHandler() {
 		throw BadRequestException("Request line missing CRLF line break");
 
 	string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
-	pos += _request_line_parser.Parse(_request->_request_line, request_line);
+	pos += _request_line_parser.Parse(*_request, request_line);
+	// pos += _request_line_parser.Parse(_request->_request_line, request_line);
 	return r_HeaderField;
 }
 
@@ -81,7 +82,7 @@ RequestState	RequestParser::HeaderFieldHandler() {
 
 	string header_field = input.substr(pos);
 	// cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
-	pos += _header_parser.Parse(_request->_header_fields, header_field);
+	pos += _header_parser.Parse(*_request, header_field);
 	if (_header_parser.IsDone() == true) {
 		if (DEBUG) cout << "--- Header Field Parsing complete. ---\n";
 		return r_HeaderDone;
@@ -115,10 +116,14 @@ RequestState	RequestParser::HeaderDoneHandler() {
 RequestState	RequestParser::MessageBodyHandler() {
 	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
-	_request->_msg_body += input.substr(pos, _request->content_length);
-	pos += _request->_msg_body.size();
-	_request->msg_bytes_read = _request->_msg_body.size();
-	if (_request->_msg_body.size() == (size_t)_request->content_length)
+	// _request->_msg_body += input.substr(pos, _request->content_length);
+	string	new_message = _request->GetMessageBody() + input.substr(pos, _request->content_length);
+	_request->SetMessageBody(new_message);
+
+	size_t	msg_size = _request->GetMessageBody().size();
+	pos += msg_size;
+	_request->msg_bytes_read = msg_size;
+	if (msg_size == (size_t)_request->content_length)
 		return r_Done;
 	else {
 		pos += 1;
@@ -149,18 +154,18 @@ RequestState	RequestParser::ChunkedHandler() {
 // indicated by RFC 7230 4.1.3.
 void	RequestParser::HandleEndOfChunkedMessage() {
 	_request->content_length = _request->GetMessageBody().size();
-	_request->_header_fields.erase("transfer-encoding");
-	_request->_header_fields.erase("trailer");
+	_request->RemoveField("transfer-encoding");
+	_request->RemoveField("trailer");
 }
 
 void	RequestParser::DebugPrint() {
 	cout << "Parsed method: " << _request->GetMethod() << endl;
 	cout << "Target input: " << _request->GetTargetURI().GetInputURI() << endl;
 	cout << "Parsed target: " << _request->GetTargetURI().GetURIDebug() << endl;
-	cout << "Parsed version: " << _request->GetVersion() << endl;
+	cout << "Parsed version: " << _request->GetHTTPVersion() << endl;
 	cout << "Parsed headers:\n";
-	for (map<string,string>::const_iterator it = _request->_header_fields.begin();
-		it != _request->_header_fields.end(); it++)
+	for (map<string,string>::const_iterator it = _request->GetFields().begin();
+		it != _request->GetFields().end(); it++)
 			cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
 	cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
 }

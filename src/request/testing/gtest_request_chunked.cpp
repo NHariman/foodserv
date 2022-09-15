@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "../exception.hpp"
+#include "../../err/exception.hpp"
 #include "../request.hpp"
 
 static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";

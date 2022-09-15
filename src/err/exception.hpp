@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include "request_utils.hpp"
+#include "../utils/request_utils.hpp"
 
 // Exception interface for returning error codes.
 namespace http {
@@ -27,8 +27,8 @@ class BadRequestException : public http::exception {
 		BadRequestException() {}
 		virtual ~BadRequestException() throw() { return; }
 
-		BadRequestException(string detail) {
-			string encoded_detail = EncodePercent(detail);
+		BadRequestException(std::string detail) {
+			std::string encoded_detail = EncodePercent(detail);
 			_error_str = "400: Bad request";
 			if (!encoded_detail.empty()) {
 				_error_str += " | " + encoded_detail;
@@ -44,7 +44,7 @@ class BadRequestException : public http::exception {
 		}
 
 	private:
-		string	_error_str;
+		std::string	_error_str;
 };
 
 // Used for: request containing message body but no Content-Length header.

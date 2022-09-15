@@ -2,7 +2,7 @@
 
 #include "../uri.hpp"
 #include "../request_target_parser.hpp"
-#include "../exception.hpp"
+#include "../../err/exception.hpp"
 
 TEST(RequestTargetTest, ParsePathSimple) {
 	URI	request_uri("/contact_form.php");

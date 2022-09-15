@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../request.hpp"
-#include "../exception.hpp"
+#include "../../err/exception.hpp"
 
 static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
 
@@ -10,7 +10,7 @@ TEST(RequestLineTest, ParseGet) {
 	request.Parse("GET /hello.txt HTTP/1.1\nHost: localhost\r\n\n");
 	EXPECT_EQ(request.GetMethod(), "GET");
 	EXPECT_EQ(request.GetTargetString(), "localhost/hello.txt");
-	EXPECT_EQ(request.GetVersion(), "HTTP/1.1");
+	EXPECT_EQ(request.GetHTTPVersion(), "HTTP/1.1");
 }
 
 TEST(RequestLineTest, ParseGetCRLF) {
@@ -18,7 +18,7 @@ TEST(RequestLineTest, ParseGetCRLF) {
 	request.Parse("GET /hello.txt HTTP/1.1\r\nHost: localhost\n\n");
 	EXPECT_EQ(request.GetMethod(), "GET");
 	EXPECT_EQ(request.GetTargetString(), "localhost/hello.txt");
-	EXPECT_EQ(request.GetVersion(), "HTTP/1.1");
+	EXPECT_EQ(request.GetHTTPVersion(), "HTTP/1.1");
 }
 
 TEST(RequestLineTest, InvalidSpaces) {

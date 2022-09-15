@@ -50,15 +50,15 @@ URI&	URI::operator=(string const& input) {
 URI::~URI() {}
 
 // Simplified method for retrieving parsed URI string meant for external classes/users.
-string	URI::Get() const {
+string const&	URI::Get() const {
 	return _uri_parsed;
 }
 
-string	URI::GetInputURI() const {
+string const&	URI::GetInputURI() const {
 	return _uri_input;
 }
 
-string	URI::GetParsedURI() const {
+string const&	URI::GetParsedURI() const {
 	return _uri_parsed;
 }
 
@@ -83,20 +83,20 @@ string	URI::GetHostWithPort() const {
 		return _host + ":" + _port;
 }
 
-string	URI::GetHost() const {
+string const&	URI::GetHost() const {
 	return _host;
 }
 
-string	URI::GetPort() const {
+string const&	URI::GetPort() const {
 	return _port;
 }
 
-string	URI::GetPath() const {
+string const&	URI::GetPath() const {
 	return _path;
 }
 
 
-string	URI::GetQuery() const {
+string const&	URI::GetQuery() const {
 	return _query;
 }
 

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "../exception.hpp"
+#include "../../err/exception.hpp"
 #include "../request_validator.hpp"
 #include "../request.hpp"
 
@@ -49,7 +49,7 @@ static Request::Status	ConstructAndGetStatus(string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
 
-	return request.GetStatus();
+	return request.GetRequestStatus();
 }
 
 TEST(RequestHeaderValidatorTest, ValidExpect) {
