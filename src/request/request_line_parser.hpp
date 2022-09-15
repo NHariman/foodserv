@@ -4,16 +4,14 @@
 #include <string>
 #include <vector>
 
-#include "exception.hpp"
+#include "../err/exception.hpp"
 #include "astate_parser.hpp"
 #include "uri.hpp"
-#include "request_utils.hpp"
+#include "../utils/utils.hpp"
 
-struct RequestLine {
-	string	method;
-	URI		target;
-	string	version;
-};
+// struct RequestLine;
+
+class Request;
 
 enum RequestLineState {
 	l_Start = 0,
@@ -35,7 +33,7 @@ class RequestLineParser : public AStateParser<RequestLineState> {
 		// Destructor
 		~RequestLineParser();
 
-		size_t	Parse(RequestLine& request_line, string const& input);
+		size_t	Parse(Request& request, string const& input);
 
 	protected:
 		RequestLineState	GetNextState(size_t pos) override;
@@ -44,7 +42,7 @@ class RequestLineParser : public AStateParser<RequestLineState> {
 		void				IncrementCounter() override;
 
 	private:
-		RequestLine*	_request_line;
+		Request*			_request;
 
 		RequestLineState	StartHandler();
 		RequestLineState	MethodHandler();

@@ -4,18 +4,22 @@
 #include <map>
 #include <string>
 #include "request_parser.hpp"
+#include "ahttp_message.hpp"
 #include "../config/nginx_config.hpp"
 #include "../resolved_target/target_config.hpp"
 
 using namespace std;
 
-// returned by GetField when no field by the passed name is found.
-#define NO_VAL "NO SUCH HEADER FIELD"
-
-struct RequestLine;
 class NginxConfig;
 
-class Request {
+// Inherits the following protected attributes from AHTTPMessage:
+// 		std::string							_http_version;
+// 		int									_status_code;
+// 		std::string							_message_body;
+// 		std::map<std::string, std::string>	_header_fields;
+// Along with their respective getters & setters.
+
+class Request : public AHTTPMessage {
 	public:
 		enum class Status {
 			Bad = -1,
@@ -39,34 +43,32 @@ class Request {
 		size_t	max_body_size;
 
 		size_t				Parse(char const* buffer);
+
+		// Getters
 		TargetConfig const&	GetTargetConfig() const;
 		string				GetMethod() const;
 		string				GetTargetString() const;
 		URI const&			GetTargetURI() const;
-		string				GetVersion() const;
-		string				GetField(string field_name) const;
-		FieldsMap const&	GetFields() const;
-		string				GetMessageBody() const;
 		Status				GetStatus() const;
-		int					GetStatusCode() const;
+
+		// Setters
+		void				SetMethod(string const& method);
+		void				SetTarget(string const& target);
 		void				SetStatus(Status status);
 		void				SetTargetHost(string const& host);
 		void				SetResolvedTargetPath(string const& target_path);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private variables of Request.
-		friend class	RequestParser; // accesses _request_line, _header_fields
-		friend class	ChunkedParser; // accesses _header_fields, _msg_body
+		friend class	RequestParser; // accesses _target_config
 	
 	private:
 		TargetConfig		_target_config;
 		RequestParser		_parser;
-		struct RequestLine	_request_line;
-		FieldsMap			_header_fields;
-		string				_msg_body;
+		string				_method;
+		URI					_target;
 		string				_buf;
-		Status				_status;
-		int					_status_code;
+		Status				_request_status;
 
 		bool	CanParse();
 		void	CheckStatus();

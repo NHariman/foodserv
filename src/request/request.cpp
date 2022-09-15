@@ -3,22 +3,22 @@
 
 // Default constructor // TODO: Review use/removal
 Request::Request()
-	:	bytes_read(0),
+	:	AHTTPMessage(),
+		bytes_read(0),
 		msg_bytes_read(0),
 		content_length(-1),
 		max_body_size(1048576),
-		_status(Status::Incomplete),
-		_status_code(0) {}
+		_request_status(Status::Incomplete) {}
 
 // Config file constructor
 Request::Request(NginxConfig* config)
-	:	bytes_read(0),
+	:	AHTTPMessage(),
+		bytes_read(0),
 		msg_bytes_read(0),
 		content_length(-1),
 		max_body_size(1048576),
 		_parser(config),
-		_status(Status::Incomplete),
-		_status_code(0) {}
+		_request_status(Status::Incomplete) {}
 
 // Destructor
 Request::~Request() {}
@@ -36,8 +36,8 @@ size_t	Request::Parse(char const* buffer) {
 			CheckStatus();
 		}
 		catch (http::exception &e) {
-			_status_code = e.which();
-			_status = Status::Bad;
+			SetStatusCode(e.which());
+			_request_status = Status::Bad;
 			throw;
 		}
 	}
@@ -49,61 +49,39 @@ TargetConfig const&	Request::GetTargetConfig() const {
 }
 
 string	Request::GetMethod() const {
-	return _request_line.method;
+	return _method;
 }
 
 string	Request::GetTargetString() const {
-	return _request_line.target.Get();
+	return _target.Get();
 }
 
 URI const&	Request::GetTargetURI() const{
-	return _request_line.target;
-}
-
-string	Request::GetVersion() const {
-	return _request_line.version;
-}
-
-// Retrieves header field value associated with `field_name` parameter.
-// If no header field with that name is found, returns macro NO_VAL, which
-// expands to string "NO SUCH HEADER FIELD" (defined in request_parser.hpp).
-// Example use:
-//		request_parser.GetField("host")
-string	Request::GetField(string field_name) const {
-	// Normalizes field name to lowercase for case-insensitive searching
-	NormalizeString(tolower, field_name, 0);
-	map<string, string>::const_iterator	found = _header_fields.find(field_name);
-	if (found == _header_fields.end())
-		return NO_VAL;
-	return found->second;
-}
-
-string	Request::GetMessageBody() const {
-	return _msg_body;
-}
-
-typename Request::FieldsMap const&	Request::GetFields() const {
-	return _header_fields;
+	return _target;
 }
 
 Request::Status	Request::GetStatus() const {
-	return _status;
+	return _request_status;
 }
 
-int	Request::GetStatusCode() const {
-	return _status_code;
+void	Request::SetMethod(string const& method) {
+	_method = method;
 }
 
 void	Request::SetStatus(Status status) {
-	_status = status;
+	_request_status = status;
+}
+
+void	Request::SetTarget(string const& target) {
+	_target = target;
 }
 
 void	Request::SetTargetHost(string const& host) {
-	_request_line.target.SetHost(host);
+	_target.SetHost(host);
 }
 
 void	Request::SetResolvedTargetPath(string const& target_path) {
-	_request_line.target.SetPath(target_path);
+	_target.SetPath(target_path);
 }
 
 // Checks if double CRLF indicating end of header section is found
@@ -120,8 +98,8 @@ bool	Request::CanParse() {
 // but nothing is received yet.
 void	Request::CheckStatus() {
 	if (_parser.cur_state == r_Done)
-		_status = Status::Complete;
-	else if (_status == Status::Expect && msg_bytes_read > 0)
-		_status = Status::Incomplete;
+		_request_status = Status::Complete;
+	else if (_request_status == Status::Expect && msg_bytes_read > 0)
+		_request_status = Status::Incomplete;
 	return ;
 }

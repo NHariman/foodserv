@@ -2,11 +2,14 @@
 #define HEADER_FIELD_PARSER_HPP
 
 #include <map>
-#include "exception.hpp"
+#include "../err/exception.hpp"
 #include "astate_parser.hpp"
-#include "request_utils.hpp"
+#include "../utils/request_utils.hpp"
+#include "../utils/utils.hpp"
 
 using namespace std;
+
+class Request;
 
 enum	FieldState {
 	f_Start = 0,
@@ -26,14 +29,14 @@ class HeaderFieldParser : public AStateParser<FieldState> {
 		// Destructor
 		~HeaderFieldParser();
 
-		size_t Parse(map<string, string>& fields, string const& input);
+		size_t Parse(Request& request, string const& input);
 
 	protected:
 		FieldState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
 
 	private:
-		map<string,string>*	_fields;
+		Request*			_request;
 		string				_cur_field;
 		size_t				_bytes_read;
 

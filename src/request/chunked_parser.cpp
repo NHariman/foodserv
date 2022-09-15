@@ -133,7 +133,7 @@ ChunkState	ChunkedParser::SizeHandler(char c) {
 ChunkState	ChunkedParser::DataHandler(char c) {
 	if (DEBUG) cout << "[DataHandler] at: [" << c << "] | chunk size: " << _chunk_size << "\n";
 
-	if (_request->_msg_body.size() + _chunk_size > _request->max_body_size)
+	if (_request->GetMessageBody().size() + _chunk_size > _request->max_body_size)
 		throw PayloadTooLargeException();
 	if (_chunk_size > 0)
 		_chunk_size -= 1;
@@ -251,14 +251,14 @@ ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
 
 // Checks if trailer field is forbidden (according to RFC 7230 Section 4.1.2)
 // and if not, if it is a valid header field (using HeaderFieldParser).
-void	ChunkedParser::ParseTrailerHeader(map<string, string>& fields) {
+void	ChunkedParser::ParseTrailerHeader() {
 	HeaderFieldParser	parser;
 	size_t	field_name_end = buffer.find_first_of(':');
 	string	field_name = buffer.substr(0, field_name_end);
 
 	if (find(illegal_fields.begin(), illegal_fields.end(), field_name)
 			== illegal_fields.end())
-		parser.Parse(fields, buffer);
+		parser.Parse(*_request, buffer);
 	else
 		throw BadRequestException("Forbidden field in chunked message trailer");
 }
@@ -272,10 +272,10 @@ void	ChunkedParser::SaveParsedValue() {
 			_chunk_size = HextoDec(buffer);
 			break;
 		case c_Data:
-			_request->_msg_body += buffer;
+			_request->SetMessageBody(_request->GetMessageBody() + buffer);
 			break;
 		case c_Trailer:
-			ParseTrailerHeader(_request->_header_fields);
+			ParseTrailerHeader();
 			break;
 		default:
 			return ;

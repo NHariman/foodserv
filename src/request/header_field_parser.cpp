@@ -1,4 +1,5 @@
 #include "header_field_parser.hpp"
+#include "request.hpp"
 #define DEBUG 0 // TODO: REMOVE
 /*
 	Transition table for header field parsing
@@ -15,15 +16,15 @@
 
 // Default constructor
 HeaderFieldParser::HeaderFieldParser()
-	: AStateParser(f_Start, f_Done), _fields(NULL), _bytes_read(0) {}
+	: AStateParser(f_Start, f_Done), _request(NULL), _bytes_read(0) {}
 
 // Destructor
 HeaderFieldParser::~HeaderFieldParser() {}
 
 // Initializes pointer to Header Fields map and 
 // calls on parent class AStateParser::ParseString().
-size_t	HeaderFieldParser::Parse(map<string, string>& fields, string const& input) {
-	_fields = &fields;
+size_t	HeaderFieldParser::Parse(Request& request, string const& input) {
+	_request = &request;
 	return ParseString(input);
 }
 
@@ -141,24 +142,11 @@ FieldState	HeaderFieldParser::HandleCRLF(char c, FieldState next_state) {
 	return next_state;
 }
 
-
-// Normalizes field name to lowercase (for easy look-up)
-// and saves buffer to `cur_field` for use once value is parsed.
+// Saves buffer to `cur_field` for use once value is parsed.
 void	HeaderFieldParser::PushFieldName() {
-	NormalizeString(tolower, buffer, 0);
+	// NormalizeString(tolower, buffer, 0);
 	_cur_field = buffer;
 	buffer.clear();
-}
-
-// Adds a new field with `cur_field` key and `val` value to map, or
-// appends value (prefixed with comma and space) to an existing key value.
-template <typename T>
-static void	AddOrAppendValue(T *fields, string const& cur_field, string const& val) {
-	if (fields->find(cur_field) != fields->end()) { // if header field already exists
-		(*fields)[cur_field] += ", " + val;
-	}
-	else
-		(*fields)[cur_field] = val;
 }
 
 // Trims trailing whitespace off field value and saves buffer
@@ -169,7 +157,7 @@ void	HeaderFieldParser::PushFieldValue() {
 
 	while (start != end && IsWhitespace(*end))
 		end--;
-	AddOrAppendValue(_fields, _cur_field, string(start, end + 1));
+	_request->SetHeaderField(_cur_field, string(start, end + 1));
 	buffer.clear();
 }
 #undef DEBUG // REMOVE

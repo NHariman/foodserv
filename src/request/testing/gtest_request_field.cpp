@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../request.hpp"
-#include "../exception.hpp"
+#include "../../err/exception.hpp"
 
 static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
 

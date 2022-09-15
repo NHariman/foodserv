@@ -24,6 +24,7 @@ file(GLOB SRCS CONFIGURE_DEPENDS
     "../../config/*.cpp"
     "../../config/directive_validation/*.cpp"
     "../../resolved_target/*.cpp"
+    "../../utils/*.cpp"
 )
 
 # list(FILTER SRCS EXCLUDE REGEX ".*host_target_pair\\.cpp$")
