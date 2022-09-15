@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "../exception.hpp"
+#include "../../err/exception.hpp"
 #include "../request_validator.hpp"
 #include "../request.hpp"
 

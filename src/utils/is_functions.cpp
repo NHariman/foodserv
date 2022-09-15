@@ -1,4 +1,7 @@
-#include "request_utils.hpp"
+#include <cctype> // isalpha, isdigit, toupper
+#include <iostream>
+
+using namespace std;
 
 // Used for validating hexademical digits following '%' inputs indicating
 // percent-encoding.
@@ -66,64 +69,4 @@ bool	IsValidString(int (*validity_checker)(int), string const& s,
 			return false;
 	}
 	return true;
-}
-
-// Used by RequestTargetParser & URIHostParser to check if previously-read char
-// (that's been pushed to buffer) is `c`.
-bool	PrecededBy(string const& read_buf, char c) {
-	return (read_buf.back() == c);
-}
-
-// Used by RequestParser and RequestTargetParser to normalize input
-// to either lower or uppercase.
-void	NormalizeString(int (*convert)(int), string& s, size_t start) {
-	std::transform(s.begin() + start, s.end(), s.begin() + start, convert);
-}
-
-// Used by BadRequestException to safely print error messages.
-// Converts non-printable characters in string to percent-encoded values.
-string EncodePercent(string const& s) {
-    stringstream escaped;
-    escaped.fill('0');
-    escaped << hex;
-
-    for (string::const_iterator i = s.begin(); i != s.end(); ++i) {
-        string::value_type c = (*i);
-        // Keep printable characters
-        if (isprint(c)) {
-            escaped << c;
-            continue;
-        }
-        // Any other characters are percent-encoded
-        escaped << uppercase;
-        escaped << '%' << setw(2) << static_cast<unsigned>(c);
-        escaped << nouppercase;
-    }
-    return escaped.str();
-}
-
-// Used by RequestTargetParser and URIHostParser to decode percent-encoded values.
-string	DecodePercent(string const& s) {
-	size_t	percent_start = s.size() - 3;
-	string	new_s = s.substr(0, percent_start);
-	string	hex = s.substr(percent_start + 1, percent_start + 2);
-
-	// Check for encoded CR and LF that might be used in response splitting.
-	if (hex == "0D" || hex == "0A")
-		throw BadRequestException("Bad octets found in encoded data");
-	
-	char	c = std::stoi(hex, nullptr, 16);
-	new_s += c;
-	return new_s;
-} 
-
-size_t	MBToBytes(size_t size_mb) {
-	return size_mb * 1048576;
-}
-
-size_t	HextoDec(string hex_string) {
-	size_t n;
-
-	std::istringstream(hex_string) >> std::hex >> n;
-	return n;
 }

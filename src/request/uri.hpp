@@ -2,7 +2,7 @@
 #define URI_HPP
 
 #include <iostream>
-#include "exception.hpp"
+#include "../err/exception.hpp"
 
 using namespace std;
 
