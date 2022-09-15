@@ -46,15 +46,15 @@ class Request : public AHTTPMessage {
 
 		// Getters
 		TargetConfig const&	GetTargetConfig() const;
-		string				GetMethod() const;
-		string				GetTargetString() const;
+		string const&		GetMethod() const;
+		string const&		GetTargetString() const;
 		URI const&			GetTargetURI() const;
-		Status				GetStatus() const;
+		Status				GetRequestStatus() const;
 
 		// Setters
 		void				SetMethod(string const& method);
 		void				SetTarget(string const& target);
-		void				SetStatus(Status status);
+		void				SetRequestStatus(Status status);
 		void				SetTargetHost(string const& host);
 		void				SetResolvedTargetPath(string const& target_path);
 	

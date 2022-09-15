@@ -49,7 +49,7 @@ static Request::Status	ConstructAndGetStatus(string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
 
-	return request.GetStatus();
+	return request.GetRequestStatus();
 }
 
 TEST(RequestHeaderValidatorTest, ValidExpect) {
