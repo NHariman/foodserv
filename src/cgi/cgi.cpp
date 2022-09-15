@@ -161,10 +161,10 @@ int		CGI::ParentProcess(int *fd, int tmp_fd) {
 	close(fd[1]);
 	if (waitpid(pid, &status, 0) == -1)
 		throw WaitFailureException();
-	tmp_fd = dup(fd[0]);
 	while (read(fd[0], buffer, 1000) != -1) {
 		_content.append(buffer);
 	}
+	tmp_fd = dup(fd[0]);
 	close(fd[0]);
 	if (WIFEXITED(status)) {
 		es = WEXITSTATUS(status);
