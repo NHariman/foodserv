@@ -125,24 +125,10 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_parser.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/request/header_field_parser.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_parser.cpp.s
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o: CMakeFiles/try_test.dir/flags.make
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp
-
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.i
-
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.s
-
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.i: cmake_force
@@ -156,7 +142,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.i: cmake_force
@@ -170,7 +156,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.i: cmake_force
@@ -184,7 +170,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.i: cmake_force
@@ -198,7 +184,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.i: cmake_force
@@ -212,7 +198,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_hos
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.i: cmake_force
@@ -223,19 +209,33 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.s
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o: CMakeFiles/try_test.dir/flags.make
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o: CMakeFiles/try_test.dir/flags.make
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.i
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.i
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.s
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.s
+
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o: CMakeFiles/try_test.dir/flags.make
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp
+
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.i
+
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.s
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_interface.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_interface.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/config_interface.cpp
@@ -349,24 +349,10 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_u
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.s
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o: CMakeFiles/try_test.dir/flags.make
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp
-
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.i
-
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.s
-
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.i: cmake_force
@@ -380,7 +366,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directiv
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.i: cmake_force
@@ -394,7 +380,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directiv
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.i: cmake_force
@@ -408,7 +394,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directiv
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.i: cmake_force
@@ -419,24 +405,24 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directiv
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.s
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o: CMakeFiles/try_test.dir/flags.make
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o: CMakeFiles/try_test.dir/flags.make
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.i
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp > CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.i
 
-CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.s
+CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.s
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.i: cmake_force
@@ -450,7 +436,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directiv
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.i: cmake_force
@@ -464,7 +450,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directiv
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.i: cmake_force
@@ -478,7 +464,7 @@ CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directiv
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o: CMakeFiles/try_test.dir/flags.make
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o: /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o: CMakeFiles/try_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o -MF CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o.d -o CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.o -c /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp
 
 CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/root.cpp.i: cmake_force
@@ -495,14 +481,14 @@ try_test_OBJECTS = \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_utils.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/chunked_parser.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_parser.cpp.o" \
-"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o" \
-"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o" \
+"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o" \
+"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_interface.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/setup.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_name.cpp.o" \
@@ -511,12 +497,11 @@ try_test_OBJECTS = \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.o" \
-"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o" \
-"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o" \
+"CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o" \
 "CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o" \
@@ -529,14 +514,14 @@ try_test: CMakeFiles/try_test.dir/try_test.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_utils.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/chunked_parser.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_parser.cpp.o
-try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/header_field_validator.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_line_parser.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_parser.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/request_target_parser.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri_host_parser.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/request/uri.cpp.o
-try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_selection.cpp.o
+try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.cpp.o
+try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_interface.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/setup.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/server_name.cpp.o
@@ -545,12 +530,11 @@ try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/confi
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/location_context.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/config_utils.cpp.o
-try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/host_target_pair.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/client_max_body_size.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/allowed_methods.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/autoindex.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/error_page.cpp.o
-try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/fastcgi_pass.cpp.o
+try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/cgi_pass.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/index.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.cpp.o
 try_test: CMakeFiles/try_test.dir/Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/return_dir.cpp.o
@@ -559,7 +543,7 @@ try_test: CMakeFiles/try_test.dir/build.make
 try_test: lib/libgtest_main.a
 try_test: lib/libgtest.a
 try_test: CMakeFiles/try_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Linking CXX executable try_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Linking CXX executable try_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/try_test.dir/link.txt --verbose=$(VERBOSE)
 	/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/cmake/data/CMake.app/Contents/bin/cmake -D TEST_TARGET=try_test -D TEST_EXECUTABLE=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/try_test -D TEST_EXECUTOR= -D TEST_WORKING_DIR=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=try_test_TESTS -D CTEST_FILE=/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/try_test[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/cmake/data/CMake.app/Contents/share/cmake-3.20/Modules/GoogleTestAddTests.cmake
 

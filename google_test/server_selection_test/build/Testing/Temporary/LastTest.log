@@ -1,30 +1,19 @@
-Start testing: Sep 05 11:12 CEST
+Start testing: Sep 15 22:53 CEST
 ----------------------------------------------------------
-1/1 Testing: ServerSelectionTest.TestConfig1
-1/1 Test: ServerSelectionTest.TestConfig1
-Command: "/Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/try_test" "--gtest_filter=ServerSelectionTest.TestConfig1" "--gtest_also_run_disabled_tests"
+Unable to find executable: try_test_NOT_BUILT
+1/1 Testing: try_test_NOT_BUILT
+1/1 Test: try_test_NOT_BUILT
+Command: ""
 Directory: /Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build
-"ServerSelectionTest.TestConfig1" start time: Sep 05 11:12 CEST
+"try_test_NOT_BUILT" start time: 
 Output:
 ----------------------------------------------------------
-Running main() from /Users/sannealbreghs/Desktop/foodserv/google_test/server_selection_test/build/_deps/googletest-src/googletest/src/gtest_main.cc
-Note: Google Test filter = ServerSelectionTest.TestConfig1
-[==========] Running 1 test from 1 test suite.
-[----------] Global test environment set-up.
-[----------] 1 test from ServerSelectionTest
-[ RUN      ] ServerSelectionTest.TestConfig1
-[       OK ] ServerSelectionTest.TestConfig1 (0 ms)
-[----------] 1 test from ServerSelectionTest (0 ms total)
-
-[----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (0 ms total)
-[  PASSED  ] 1 test.
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ServerSelectionTest.TestConfig1" end time: Sep 05 11:12 CEST
-"ServerSelectionTest.TestConfig1" time elapsed: 00:00:00
+"try_test_NOT_BUILT" end time: Sep 15 22:53 CEST
+"try_test_NOT_BUILT" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 05 11:12 CEST
+End testing: Sep 15 22:53 CEST
