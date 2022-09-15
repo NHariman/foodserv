@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/14 18:33:30 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/09/15 17:16:52 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,96 @@ int	main(int ac, const char **av) {
 		NginxConfig input_file(GetConfigLocation(ac, av));
 		
 		TargetConfig target;
+		TargetConfig target_test;
+		TargetConfig target_cgi_bin;
+		TargetConfig target_cgi_bin_two;
 		target.Setup(&input_file, "localhost", "80", "/");
+		target_test.Setup(&input_file, "localhost", "80", "/test");
+		target_cgi_bin.Setup(&input_file, "localhost", "80", "/cgi-bin/");
+		target_cgi_bin_two.Setup(&input_file, "localhost", "80", "/cgi-bin1/");
 	
+
+		std::cout << "*****FOR LOCATION: / ******" << std::endl;
+
+		std::cout << "location URI: " << target.GetLocationUri().GetInputURI() << std::endl;
+		std::cout <<  "is directory? " << std::boolalpha << target.GetLocationUri().IsDir() << std::endl;
+		std::cout << "root: " << target.GetRoot() << std::endl;
+		std::cout << "index: ";
+		for (size_t i = 0; i < target.GetIndex().size(); i++)
+   			std::cout << target.GetIndex().at(i) << ' ';
+		std::cout << std::endl;
+		std::cout << "Get max body size: " << target.GetMaxBodySize() << std::endl;
+		std::cout << "Print error_page: " << std::endl;
+		target.PrintErrorPage();
+		std::cout << "Get autoindex: " << std::boolalpha << target.GetAutoindex() << std::endl;
 		std::cout << std::boolalpha << "Allowed method: GET: " << target.IsAllowedMethod("GET") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: POST: " << target.IsAllowedMethod("POST") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: DELETE: " << target.IsAllowedMethod("DELETE") << std::endl;
-		std::cout << "Get max body size: " << target.GetMaxBodySize() << std::endl;
-		std::cout << "Get autoindex: " << std::boolalpha << target.GetAutoindex() << std::endl;
+		std::cout << target.GetReturn() << std::endl;
+		std::cout << "cgi_pass: " << target.GetCGIPass() << std::endl;
+		std::cout << "alias: " << target.GetAlias() << std::endl;
+
+
+		std::cout << "\n*****FOR LOCATION: /test ******" << std::endl;
+		std::cout << "location URI: " << target_test.GetLocationUri().GetInputURI() << std::endl;
+		std::cout << "is directory? " << target_test.GetLocationUri().IsDir() << std::endl;
+		std::cout << "root: " << target_test.GetRoot() << std::endl;
+		std::cout << "index: ";
+		for (size_t i = 0; i < target_test.GetIndex().size(); i++)
+   			std::cout << target_test.GetIndex().at(i) << ' ';
+		std::cout << std::endl;
+		std::cout << "Get max body size: " << target_test.GetMaxBodySize() << std::endl;
 		std::cout << "Print error_page: " << std::endl;
-		target.PrintErrorPage();
+		target_test.PrintErrorPage();
+		std::cout << "Get autoindex: " << std::boolalpha << target_test.GetAutoindex() << std::endl;
+		std::cout << std::boolalpha << "Allowed method: GET: " << target_test.IsAllowedMethod("GET") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: POST: " << target_test.IsAllowedMethod("POST") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: DELETE: " << target_test.IsAllowedMethod("DELETE") << std::endl;
+		std::cout << target_test.GetReturn() << std::endl;
+		std::cout << "cgi_pass: " << target_test.GetCGIPass() << std::endl;
+		std::cout << "alias: " << target_test.GetAlias() << std::endl;
+
+
+		std::cout << "\n*****FOR LOCATION: /cgi-bin ******" << std::endl;
+		std::cout << "location URI: " << target_cgi_bin.GetLocationUri().GetInputURI() << std::endl;
+		std::cout << "is directory? " << target_cgi_bin.GetLocationUri().IsDir() << std::endl;
+		std::cout << "root: " << target_cgi_bin.GetRoot() << std::endl;
+		std::cout << "index: ";
+		for (size_t i = 0; i < target_cgi_bin.GetIndex().size(); i++)
+   			std::cout << target_cgi_bin.GetIndex().at(i) << ' ';
+		std::cout << std::endl;
+		std::cout << "Get max body size: " << target_cgi_bin.GetMaxBodySize() << std::endl;
+		std::cout << "Print error_page: " << std::endl;
+		target_cgi_bin.PrintErrorPage();
+		std::cout << "Get autoindex: " << std::boolalpha << target_cgi_bin.GetAutoindex() << std::endl;
+		std::cout << std::boolalpha << "Allowed method: GET: " << target_cgi_bin.IsAllowedMethod("GET") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: POST: " << target_cgi_bin.IsAllowedMethod("POST") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: DELETE: " << target_cgi_bin.IsAllowedMethod("DELETE") << std::endl;
+		std::cout << target_cgi_bin.GetReturn() << std::endl;
+		std::cout << "cgi_pass: " << target_cgi_bin.GetCGIPass() << std::endl;
+		std::cout << "alias: " << target_cgi_bin.GetAlias() << std::endl;
+
+
+
+
+		std::cout << "\n*****FOR LOCATION: /cgi-bin1 ******" << std::endl;
+		std::cout << "location URI: " << target_cgi_bin_two.GetLocationUri().GetInputURI() << std::endl;
+		std::cout << "is directory? " << target_cgi_bin_two.GetLocationUri().IsDir() << std::endl;
+		std::cout << "root: " << target_cgi_bin_two.GetRoot() << std::endl;
+		std::cout << "index: ";
+		for (size_t i = 0; i < target_cgi_bin_two.GetIndex().size(); i++)
+   			std::cout << target_cgi_bin_two.GetIndex().at(i) << ' ';
+		std::cout << std::endl;
+		std::cout << "Get max body size: " << target_cgi_bin_two.GetMaxBodySize() << std::endl;
+		std::cout << "Print error_page: " << std::endl;
+		target_cgi_bin_two.PrintErrorPage();
+		std::cout << "Get autoindex: " << std::boolalpha << target_cgi_bin_two.GetAutoindex() << std::endl;
+		std::cout << std::boolalpha << "Allowed method: GET: " << target_cgi_bin_two.IsAllowedMethod("GET") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: POST: " << target_cgi_bin_two.IsAllowedMethod("POST") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: DELETE: " << target_cgi_bin_two.IsAllowedMethod("DELETE") << std::endl;
+		std::cout << target_cgi_bin_two.GetReturn() << std::endl;
+		std::cout << "cgi_pass: " << target_cgi_bin_two.GetCGIPass() << std::endl;
+		std::cout << "alias: " << target_cgi_bin_two.GetAlias() << std::endl;
 
 	}
 	catch (const std::exception& e) {

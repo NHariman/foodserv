@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/Users/nhariman/homebrew/bin/python3
 import sys
 
 print("Content-type:text/html\r\n\r\n")

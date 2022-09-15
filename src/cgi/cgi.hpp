@@ -7,10 +7,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <dirent.h>
 
 #include "../config/directive_validation/cgi_pass.hpp"
-#include "../server_selection/target_config.hpp"
+#include "../resolved_target/target_config.hpp"
 #include "../request/request.hpp"
+#include "../utils/utils.hpp"
 #include "vtoa.hpp"
 
 #include <vector>
@@ -62,16 +64,27 @@ https://stackoverflow.com/questions/28921089/i-have-written-my-own-http-server-a
 */
 class CGI {
 	private:
-		CGIPass _cgi_data;
+		CGIPass *_cgi_data;
+		Request *_request;
+		TargetConfig *_target;
 		std::vector<std::string> _env;
 		std::vector<std::string> _argv;
-		void    SetHeaders(Request *request);
-		void	SetArgv(Request *request);
+		bool		_valid_file;
+		std::string	_file_name;
+		std::string _content;
+
+
+		void    SetHeaders();
+		void	SetArgv();
+		std::string FindFile();
+		bool		HasExtension(std::string file_name);
+		void	ChildProcess(int *fd, int tmp_fd, CGI cgi);
+		int		ParentProcess(int *fd, int tmp_fd);
 
 	public:
 		CGI(){};
 		~CGI(){};
-		void    setup(CGIPass *cgi_data, Request *request); // also probably needs the request class to set ENVs with.
+		bool    setup(Request *request); // also probably needs the request class to set ENVs with.
 		size_t    execute();
 
 		

@@ -50,6 +50,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig(){};
+		TargetConfig&	operator= (TargetConfig const &obj);
 		void	Setup(NginxConfig *config, std::string host, std::string port, std::string target);
 		
 		//getters
@@ -62,8 +63,8 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		bool						GetAutoindex() const;
 		ReturnDir 					GetReturn() const;
 		std::string					GetAlias() const;
-		std::string					GetResolvedPath() const;
 
+		std::string					GetResolvedPath() const;
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;
 

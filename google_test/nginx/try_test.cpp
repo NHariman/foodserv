@@ -32,6 +32,22 @@ TEST(AllowedMethodsTest, ValidInput) {
 	EXPECT_NO_THROW({
 		AllowedMethods test("GET POST DELETE");
 	});
+	{
+		AllowedMethods test("GET POST DELETE");
+		EXPECT_TRUE(test.GetPOST());
+	}
+	{
+		AllowedMethods test("GET POST DELETE");
+		EXPECT_TRUE(test.GetGET());
+	}
+	{
+		AllowedMethods test("GET POST DELETE");
+		EXPECT_TRUE(test.GetGET());
+	}
+	{
+		AllowedMethods test("GET POST DELETE");
+		EXPECT_TRUE(test.GetDELETE());
+	}
 }
 
 TEST(AllowedMethodsTest, InvalidInput) {
@@ -332,6 +348,12 @@ TEST(cgipassTest, ValidInput){
 	EXPECT_NO_THROW({
 		CGIPass test(".py link_here");
 	});
+	EXPECT_NO_THROW({
+		CGIPass test("./py");
+	});
+	EXPECT_NO_THROW({
+		CGIPass test("path/to/executable");
+	});	
 }
 
 //////////////////////////////
