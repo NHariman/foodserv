@@ -1,16 +1,17 @@
 #include "request_line_parser.hpp"
+#include "request.hpp"
 
 // Default constructor
 RequestLineParser::RequestLineParser()
-	: AStateParser(l_Start, l_Done) {}
+	: AStateParser(l_Start, l_Done), _request(NULL) {}
 
 // Destructor
 RequestLineParser::~RequestLineParser() {}
 
 // Initializes pointer to RequestLine struct, resets internal counters,
 // and passes input string to parent class AStateParser::ParseString().
-size_t	RequestLineParser::Parse(RequestLine& request_line, string const& input) {
-	_request_line = &request_line;
+size_t	RequestLineParser::Parse(Request& request, string const& input) {
+	_request = &request;
 	return ParseString(input);
 }
 
@@ -66,7 +67,7 @@ RequestLineState	RequestLineParser::MethodHandler() {
 	string	method = input.substr(pos, method_end);
 	if (find(methods.begin(), methods.end(), method) == methods.end())
 		throw NotImplementedException();
-	_request_line->method = method;
+	_request->SetMethod(method);
 	pos += method_end + 1;
 	return l_Target;
 }
@@ -79,7 +80,7 @@ RequestLineState	RequestLineParser::TargetHandler() {
 	if (target_end == pos) 
 		throw BadRequestException("Request target missing single space delimiter");
 
-	_request_line->target = input.substr(pos, target_end); // calls on RequestTargetParser
+	_request->SetTarget(input.substr(pos, target_end)); // calls on RequestTargetParser
 	pos += target_end + 1;
 	return l_Version;
 }
@@ -96,7 +97,7 @@ RequestLineState	RequestLineParser::VersionHandler() {
 	}
 	if (version != "HTTP/1.1")
 		throw HTTPVersionNotSupportedException();
-	_request_line->version = version;
+	_request->SetHTTPVersion(version);
 	pos += version_end;
 	return l_VersionEnd;
 }
