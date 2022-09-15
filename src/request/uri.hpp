@@ -34,15 +34,18 @@ class URI {
 		// Destructor
 		~URI();
 
-		string	Get() const;
-		string	GetInputURI() const;
-		string	GetParsedURI() const;
-		string	GetURIDebug() const;
-		string	GetHost() const;
-		string	GetPort() const;
-		string	GetHostWithPort() const;
-		string	GetPath() const;
-		string	GetQuery() const;
+		// Getters
+		string const&	Get() const;
+		string const&	GetInputURI() const;
+		string const&	GetParsedURI() const;
+		string			GetURIDebug() const;
+		string const&	GetHost() const;
+		string const&	GetPort() const;
+		string			GetHostWithPort() const;
+		string const&	GetPath() const;
+		string const&	GetQuery() const;
+
+		// Setters
 		void	SetHost(string const& host);
 		void	SetPath(string const& path);
 		void	SetQuery(string const& query);
