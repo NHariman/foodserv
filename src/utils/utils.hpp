@@ -20,4 +20,7 @@ bool	IsWhitespace(int c);
 bool	IsValidString(int (*validity_checker)(int), std::string const& s,
 						std::string const& allow  = std::string());
 
+// mime_types.cpp
+std::string	GetType(std::string const& extension);
+
 #endif /* UTILS_HPP */
