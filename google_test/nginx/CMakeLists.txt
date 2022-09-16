@@ -25,7 +25,6 @@ add_executable(
   ../../src/request/request_line_parser.cpp 
   ../../src/request/request_parser.cpp 
   ../../src/request/request_target_parser.cpp 
-  ../../src/request/request_utils.cpp 
   ../../src/request/request_validator.cpp 
   ../../src/request/request.cpp 
   ../../src/request/uri_host_parser.cpp 
@@ -52,6 +51,10 @@ add_executable(
     ../../src/resolved_target/server_selection.cpp
 		../../src/resolved_target/location_selection.cpp
 		../../src/resolved_target/target_config.cpp
+
+    ../../src/utils/file_handling.cpp
+    ../../src/utils/is_functions.cpp
+    ../../src/utils/request_utils.cpp
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(
