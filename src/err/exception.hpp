@@ -50,7 +50,7 @@ class BadRequestException : public http::exception {
 // Used for: resource is unable to be accessed.
 // Thrown by FileHandler::GetFileContents.
 // Should return 403 code.
-class LengthRequiredException : public http::exception {
+class ForbiddenException : public http::exception {
 	public:
 		virtual const char* what() const throw() {
 			return ("403: Forbidden");
