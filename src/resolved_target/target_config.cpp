@@ -35,6 +35,8 @@ void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string p
 	_error_page = SetErrorPage(&_server, &_location);
 	_autoindex = SetAutoindex(&_server, &_location);
 	_return_dir = SetReturn(&_server, &_location);
+
+	ResolvedPath	resolved_path(this, target);
 }
 
 /// private getters
@@ -131,6 +133,7 @@ std::string					TargetConfig::GetResolvedPath() const {
 ServerContext				TargetConfig::GetServer() const {
 	return _server;
 }
+
 LocationContext				TargetConfig::GetLocation() const {
 	return _location;
 }
