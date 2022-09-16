@@ -1,9 +1,10 @@
 #ifndef REQUEST_TARGET_PARSER_HPP
 #define REQUEST_TARGET_PARSER_HPP
 
-#include "uri.hpp"
-#include "request_utils.hpp"
 #include "astate_parser.hpp"
+#include "uri.hpp"
+#include "../utils/request_utils.hpp"
+#include "../utils/utils.hpp"
 
 using namespace std;
 

@@ -3,9 +3,9 @@
 
 #include <map>
 #include <string>
-#include "exception.hpp"
-#include "request_utils.hpp"
+#include "../err/exception.hpp"
 #include "uri.hpp"
+#include "../utils/request_utils.hpp"
 #include "../config/nginx_config.hpp"
 #include "../resolved_target/target_config.hpp"
 

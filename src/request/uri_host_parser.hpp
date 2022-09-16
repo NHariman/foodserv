@@ -2,9 +2,10 @@
 #define URI_HOST_PARSER_HPP
 
 #include <algorithm> // count
-#include "exception.hpp"
-#include "request_utils.hpp"
 #include "astate_parser.hpp"
+#include "../err/exception.hpp"
+#include "../utils/request_utils.hpp"
+#include "../utils/utils.hpp"
 
 using namespace std;
 
