@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "../../src/config/nginx_config.hpp"
-#include "../../src/resolved_target/target_config.cpp"
+#include "../../src/resolved_target/target_config.hpp"
 
 using namespace std;
 
@@ -12,6 +12,5 @@ TEST(RootTest, RootTest) {
 
 	target.Setup(&test, "localhost", "80", "/");
 
-	
-	
+		
 }
