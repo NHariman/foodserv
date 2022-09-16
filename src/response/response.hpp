@@ -10,6 +10,7 @@
 // 		int									_status_code;
 // 		std::string							_message_body;
 // 		std::map<std::string, std::string>	_header_fields;
+// 		size_t								_content_length;
 // Along with their respective getters & setters.
 
 class Response : public AHTTPMessage {
@@ -19,6 +20,8 @@ class Response : public AHTTPMessage {
 		// Destructor
 		~Response();
 
+		bool	IsComplete() const;
+
 		// Getters
 		std::string const&	GetReasonPhrase() const;
 
@@ -27,6 +30,7 @@ class Response : public AHTTPMessage {
 
 	private:
 		std::string	_reason_phrase;
+		bool		_complete;
 		
 };
 

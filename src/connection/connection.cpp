@@ -4,7 +4,7 @@
 Connection::Connection(int fd, NginxConfig* config)
 	:	_config(config),
 		_request(config),
-		_response_handler(),
+		_response_handler(config),
 		_fd(fd),
 		_close_connection(false) {}
 
@@ -30,12 +30,3 @@ void	Connection::Receive(char const* buffer) {
 void	Connection::Dispatch() {
 
 }
-
-
-// void	RequestValidator::ResolveTarget(Request& request) {
-// 	(void)request;
-
-// // 	string	target = request.GetTargetURI().GetPath();
-// // 	string	resolved_target_path = _target_config->GetResolvedPath(target);
-// // 	request.SetResolvedTargetPath(resolved_target_path);
-// }

@@ -4,10 +4,12 @@
 #include "request.hpp"
 #include "response.hpp"
 
+class NginxConfig;
+
 class ResponseHandler {
 	public:
-		// Default constructor
-		ResponseHandler();
+		// Config file constructor
+		explicit ResponseHandler(NginxConfig* config);
 		// Destructor
 		~ResponseHandler();
 
@@ -16,7 +18,13 @@ class ResponseHandler {
 		void HandleRegular(Request& request);
 
 	private:
-		Response	_response;
+		NginxConfig*	_config;
+		Request*		_request;
+		Response		_response;
+		FileHandler		_file_h;
+
+		std::string FindCustomErrorPage(int error_code);
+		void		HandleCustomError(std::string const& error_page_path);
 };
 
 #endif /* RESPONSE_HANDLER_HPP */
