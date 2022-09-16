@@ -1,4 +1,4 @@
-Start testing: Sep 15 22:53 CEST
+Start testing: Sep 16 17:14 CEST
 ----------------------------------------------------------
 Unable to find executable: try_test_NOT_BUILT
 1/1 Testing: try_test_NOT_BUILT
@@ -12,8 +12,8 @@ Output:
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"try_test_NOT_BUILT" end time: Sep 15 22:53 CEST
+"try_test_NOT_BUILT" end time: Sep 16 17:14 CEST
 "try_test_NOT_BUILT" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 15 22:53 CEST
+End testing: Sep 16 17:14 CEST
