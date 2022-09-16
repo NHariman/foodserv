@@ -8594,4 +8594,15 @@ CMakeFiles/try_test.dir/try_test.cpp.o
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/usr/include/sys/_types/_iovec_t.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/usr/include/netinet6/in6.h
  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/usr/include/netdb.h
+ /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.cpp
+ /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/target_config.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/config/config_interface.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/config/nginx_config.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/config/server_context.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/config/location_context.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/server_selection.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/location_selection.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/config/directive_validation/location_uri.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/resolved_target/resolved_path.hpp
+ /Users/sannealbreghs/Desktop/foodserv/src/utils/utils.hpp
 

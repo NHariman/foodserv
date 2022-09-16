@@ -1,19 +1,19 @@
-Start testing: Sep 16 20:24 CEST
+Start testing: Sep 16 20:56 CEST
 ----------------------------------------------------------
-Unable to find executable: /Users/sannealbreghs/Desktop/foodserv/google_test/resolved_path_test/build/try_test
-1/1 Testing: RootTest.RootTest
-1/1 Test: RootTest.RootTest
-Command: "" "--gtest_filter=RootTest.RootTest" "--gtest_also_run_disabled_tests"
+Unable to find executable: try_test_NOT_BUILT
+1/1 Testing: try_test_NOT_BUILT
+1/1 Test: try_test_NOT_BUILT
+Command: ""
 Directory: /Users/sannealbreghs/Desktop/foodserv/google_test/resolved_path_test/build
-"RootTest.RootTest" start time: 
+"try_test_NOT_BUILT" start time: 
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"RootTest.RootTest" end time: Sep 16 20:24 CEST
-"RootTest.RootTest" time elapsed: 00:00:00
+"try_test_NOT_BUILT" end time: Sep 16 20:56 CEST
+"try_test_NOT_BUILT" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Sep 16 20:24 CEST
+End testing: Sep 16 20:56 CEST
