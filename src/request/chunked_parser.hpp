@@ -2,7 +2,6 @@
 #define CHUNKED_PARSER_HPP
 
 #include <string>
-#include <map>
 #include <vector>
 #include "astate_parser.hpp"
 #include "../utils/request_utils.hpp"

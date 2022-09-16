@@ -6,14 +6,12 @@
 #include "uri.hpp"
 #include "../err/exception.hpp"
 #include "../utils/request_utils.hpp"
-#include "../config/nginx_config.hpp"
 #include "../resolved_target/target_config.hpp"
 
 using namespace std;
 
 class Request;
 class NginxConfig;
-class TargetConfig;
 
 enum HeaderStatus {
 	hv_Bad = -1,

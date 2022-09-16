@@ -2,18 +2,15 @@
 #define REQUEST_PARSER_HPP
 
 #include <string>
-#include "chunked_parser.hpp"
-#include "../err/exception.hpp"
-#include "header_field_parser.hpp"
-#include "request_validator.hpp"
 #include "astate_parser.hpp"
+#include "chunked_parser.hpp"
+#include "header_field_parser.hpp"
 #include "request_line_parser.hpp"
-// #include "../utils/request_utils.hpp"
+#include "../err/exception.hpp"
 
 using namespace std;
 
 class Request;
-class RequestValidator;
 class NginxConfig;
 
 enum RequestState {

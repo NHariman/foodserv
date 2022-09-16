@@ -4,12 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "../err/exception.hpp"
 #include "astate_parser.hpp"
 #include "uri.hpp"
+#include "../err/exception.hpp"
 #include "../utils/utils.hpp"
-
-// struct RequestLine;
 
 class Request;
 
