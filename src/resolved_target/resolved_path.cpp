@@ -11,29 +11,35 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 	if (DEBUG) std::cout << "LOCATION BLOCK URI : " << _locationblock_uri << std::endl;
 	if (DEBUG) std::cout << "REQUEST URI: " << _request_uri << std::endl;
 
-    /* If return is set, we set the path to what return gives are url for redirection */
-    if (target_config->GetReturn().IsSet()) {
-        _path = _target_config->GetReturn().GetUrl();
-    }
-    /* Check is the request if a directory */
-    else if (_request_uri[_request_uri.size() - 1] == '/') { // change this for utils: isDirectory function
-        if (IsValidDirectory(_request_uri)) {
-            std::cout << "the request uri is a existing direcotry" << std::endl;
-			RequestIsValidDirectory();
-        }
-        else {
-            std::cout << "it is not exsisting" << std::endl;
-			// return an empty string.
-			_path = "";
-        }
-    }
-	else {
-		std::cout << "request is not a directory" << std::endl;
-		if (target_config->GetAlias().empty() == false)
-			ReplaceAlias();
-		else
-			AppendRoot();
-	}
+    if (CheckReturn())
+		return ;
+
+	/* checking root and alias goes in an if statement, root will be ignored if alias is set */
+	if (_target_config->GetAlias().empty() == false)
+		ReplaceAlias();
+	else if (_target_config->GetRoot().empty() == false)
+		AppendRoot();
+		// if (DEBUG) std::cout << "alis is set";
+
+    // /* Check is the request if a directory */
+    // else if (_request_uri[_request_uri.size() - 1] == '/') { // change this for utils: isDirectory function
+    //     if (IsValidDirectory(_request_uri)) {
+    //         std::cout << "the request uri is a existing direcotry" << std::endl;
+	// 		RequestIsValidDirectory();
+    //     }
+    //     else {
+    //         std::cout << "it is not exsisting" << std::endl;
+	// 		// return an empty string.
+	// 		_path = "";
+    //     }
+    // }
+	// else {
+	// 	std::cout << "request is not a directory" << std::endl;
+	// 	if (target_config->GetAlias().empty() == false)
+	// 		ReplaceAlias();
+	// 	else
+	// 		AppendRoot();
+	// }
 
     // if (_request_uri[_request_uri.size() - 1] != '/') {
     //     else if (target_config->GetAlias().empty() == false) // misschien naar isSet
@@ -44,6 +50,14 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
     // // else {
     // //     if autoinex is set
     // // }
+}
+
+bool	ResolvedPath::CheckReturn() {
+    if (_target_config->GetReturn().IsSet()) {
+        _path = _target_config->GetReturn().GetUrl();
+		return true;
+	}
+	return false;
 }
 
 void	ResolvedPath::RequestIsValidDirectory()  {

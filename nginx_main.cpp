@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/16 20:40:48 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/16 21:23:56 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	main(int ac, const char **av) {
 		// std::cout << "Get autoindex: " << std::boolalpha << target.GetAutoindex() << std::endl;
 		// std::cout << "Print error_page: " << std::endl;
 		// target.PrintErrorPage();
+		std::cout << "PATH RETURNED: " << target.GetResolvedPath() << std::endl;
 
 	}
 	catch (const std::exception& e) {
@@ -41,33 +42,3 @@ int	main(int ac, const char **av) {
 	}
 	return (0);
 }
-
-// int	main(int ac, const char **av) {
-// 	try {
-// 		NginxConfig input_file(GetConfigLocation(ac, av));
-// 		std::cout << "try to get CMBS: " << std::endl;
-// 		// std::cout << "CMBS in location WITH one set\n" << \
-// 		// input_file.GetServers().at(0).GetLocationContexts().at(0).GetClientMaxBodySize() << std::endl;
-// 		// try {
-// 		// 	std::cout << "CMBS in location WITHOUT one set " << \
-// 		// 	input_file.GetServers().at(0).GetLocationContexts().at(1).GetClientMaxBodySize() << std::endl;
-// 		// }
-// 		// catch (const std::exception& e) {
-// 		// 	std::cerr << e.what() << "\n";
-// 		// }
-// 		std::cout << "now from NginxConfig" << std::endl;
-// 		std::cout << "CMBS in location WITH one set VIA nginxconf ";
-// 		std::cout << input_file.GetMaxBodySize("localhost", "/") << std::endl;
-// 		// std::cout << "CMBS in location WITHOUT one set VIA nginxconf " << \
-// 		// input_file.GetMaxBodySize("localhost", "/test") << std::endl;
-// 		// std::cout << "Get GET" << std::endl;
-// 		// std::cout << std::boolalpha << input_file.IsAllowedMethod("localhost", "/", "GET") << std::endl;
-// 		// std::cout << "testing fastcgi_pass\n";
-// 		// std::cout << input_file.GetCGIPass("localhost", "/cgi-bin") << std::endl;
-// 		// std::cout << input_file.GetReturn("localhost", "/") << std::endl;
-// 	}
-// 	catch (const std::exception& e) {
-// 		std::cerr << e.what() << '\n';
-// 	}
-// 	return (0);
-// }

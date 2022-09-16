@@ -37,6 +37,7 @@ void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string p
 	_return_dir = SetReturn(&_server, &_location);
 
 	ResolvedPath	resolved_path(this, target);
+	_resolved_path = resolved_path.GetResolvedPath();
 }
 
 /// private getters

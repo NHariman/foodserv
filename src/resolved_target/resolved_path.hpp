@@ -46,6 +46,8 @@ class ResolvedPath {
 		std::string		_request_uri;
 
         
+        bool    CheckReturn();
+        
         void    AppendRoot();
         void	ReplaceAlias();
         void    ReplaceReturn();
