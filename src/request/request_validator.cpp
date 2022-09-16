@@ -125,17 +125,14 @@ static void	CheckContentLengthValue(TargetConfig* target_config,
 									Request& request) {
 	string	content_length = request.GetField("content-length");
 
-	// non-digit value
+	// non-digit value (also catches '-' denoting negatives)
 	if (!IsValidString(isdigit, content_length))
 		throw BadRequestException("Invalid Content-Length value");
 
-	request.content_length = std::stoll(content_length);
+	request.SetContentLength(std::stoull(content_length));
 	request.max_body_size = MBToBytes(target_config->GetMaxBodySize());
 	
-	// if invalid value
-	if (request.content_length < 0)
-		throw BadRequestException("Invalid Content-Length value");
-	else if ((size_t)request.content_length > request.max_body_size)
+	if (request.GetContentLength() > request.max_body_size)
 		throw PayloadTooLargeException();
 }
 
@@ -165,8 +162,8 @@ bool	RequestValidator::ValidContentLength(Request& request) {
 		CheckIfTransferEncodingDefined(_status);
 		CheckForMultipleValues(content_length);
 		CheckContentLengthValue(_target_config, request);
-		CheckAllowedMethod(request.GetMethod(), request.content_length);
-		if (request.content_length == 0)
+		CheckAllowedMethod(request.GetMethod(), request.GetContentLength());
+		if (request.GetContentLength() == 0)
 			_status = hv_Done;
 		else
 			_status = hv_MessageExpected;

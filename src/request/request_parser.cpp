@@ -117,13 +117,14 @@ RequestState	RequestParser::MessageBodyHandler() {
 	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
 	// _request->_msg_body += input.substr(pos, _request->content_length);
-	string	new_message = _request->GetMessageBody() + input.substr(pos, _request->content_length);
+	string	new_message = _request->GetMessageBody()
+		+ input.substr(pos, _request->GetContentLength());
 	_request->SetMessageBody(new_message);
 
 	size_t	msg_size = _request->GetMessageBody().size();
 	pos += msg_size;
 	_request->msg_bytes_read = msg_size;
-	if (msg_size == (size_t)_request->content_length)
+	if (msg_size == _request->GetContentLength())
 		return r_Done;
 	else {
 		pos += 1;
@@ -153,7 +154,7 @@ RequestState	RequestParser::ChunkedHandler() {
 // and removes chunked transfer coding-related header fields as
 // indicated by RFC 7230 4.1.3.
 void	RequestParser::HandleEndOfChunkedMessage() {
-	_request->content_length = _request->GetMessageBody().size();
+	_request->SetContentLength(_request->GetMessageBody().size());
 	_request->RemoveField("transfer-encoding");
 	_request->RemoveField("trailer");
 }

@@ -6,7 +6,6 @@ Request::Request()
 	:	AHTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
-		content_length(-1),
 		max_body_size(1048576),
 		_request_status(Status::Incomplete) {}
 
@@ -15,7 +14,6 @@ Request::Request(NginxConfig* config)
 	:	AHTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
-		content_length(-1),
 		max_body_size(1048576),
 		_parser(config),
 		_request_status(Status::Incomplete) {}

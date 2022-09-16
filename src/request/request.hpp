@@ -5,7 +5,6 @@
 #include <string>
 #include "request_parser.hpp"
 #include "ahttp_message.hpp"
-#include "../config/nginx_config.hpp"
 #include "../resolved_target/target_config.hpp"
 
 using namespace std;
@@ -17,6 +16,7 @@ class NginxConfig;
 // 		int									_status_code;
 // 		std::string							_message_body;
 // 		std::map<std::string, std::string>	_header_fields;
+// 		size_t								_content_length;
 // Along with their respective getters & setters.
 
 class Request : public AHTTPMessage {
@@ -39,7 +39,6 @@ class Request : public AHTTPMessage {
 
 		size_t	bytes_read; // bytes read of request input
 		size_t	msg_bytes_read; // bytes read of payload body
-		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
 		size_t	max_body_size;
 
 		size_t				Parse(char const* buffer);
