@@ -48,5 +48,18 @@ TEST(RootTest, ResolvedPathTesting) {
 }
 {
 	target.Setup(&test, "localhost", "80", "/dir/more");
+	EXPECT_EQ(target.GetResolvedPath(), "");
+}
+{
+	target.Setup(&test, "localhost", "80", "/auto/on/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/otherpage.html");
+}
+{
+	target.Setup(&test, "localhost", "8080", "/auto/on/");
+	EXPECT_EQ(target.GetResolvedPath(), "");
+}
+{
+	target.Setup(&test, "localhost", "8888", "/auto/on/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
 }
 }

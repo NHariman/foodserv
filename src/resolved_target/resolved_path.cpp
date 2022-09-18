@@ -1,10 +1,6 @@
 #include "resolved_path.hpp"
 
-#define DEBUG 1
-
-// CHECK 1: is return set
-// CHECK 2: either append root or alias
-// CHECK 3: 
+#define DEBUG 0
 
 ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _target_config(target_config), _request_uri(target) {
 	_locationblock_uri = _target_config->GetLocationUri().GetUri();
@@ -21,8 +17,12 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 		AppendRoot();
 	}
 
-	if (LocationIsDirectory())
-		std::cout << "Location is a directory" << std::endl; 
+	if (LocationIsDirectory()) {
+		if (!_target_config->GetAutoindex())
+			_path = "";
+		else
+			_path = SearchIndexFiles();
+	}
 
 	CleanUpPath();
 
@@ -40,38 +40,24 @@ void    ResolvedPath::AppendRoot() {
 	_path = _target_config->GetRoot().append(_locationblock_uri);
 }
 
-void	ResolvedPath::RequestIsValidDirectory()  {
-    std::cout << "in here" << std::endl;
-	if (_target_config->GetAutoindex() == true) {
-		std::cout << "AUTO INDEX IS SET" << std::endl;
-        // CheckIndexFiles();
-        // if (CheckIndex()) {
-            // return file _path = file path
-        // }
-        // else {
-            // _path = directory path
-        // }
-        // now go through all index files, to see if one of them exists
-        // if one exists -> send this path
-        // if none exist -> send the path up to directory
-    }
-
-}
-
 bool	ResolvedPath::LocationIsDirectory() const {
 	if (_locationblock_uri[_locationblock_uri.size() - 1] == '/')
 		return true;
 	return false;
 }
 
-bool    ResolvedPath::SearchIndexFiles() {
-    // loop through all index files given
+std::string    ResolvedPath::SearchIndexFiles() {
     std::vector<std::string> index_vector = _target_config->GetIndex();
-    std::cout << "index vector size: " << index_vector.size();
 
     for (std::vector<std::string>::const_iterator it = index_vector.begin(); it != index_vector.end(); it++) {
-        std::cout << *it << std::endl;
+		std::string tmp = _path;
+		tmp = tmp.append(*it);
+		if (IsValidFile(tmp)) {
+			return tmp;
+		}
+		tmp.clear();
     }
+	return "";
 }
 
 void    ResolvedPath::ReplaceAlias() {
@@ -88,7 +74,7 @@ void    ResolvedPath::ReplaceAlias() {
 void	ResolvedPath::CleanUpPath() {
 	std::string	tmp;
 
-	for (int i = 0; i < _path.size(); i++) {
+	for (size_t i = 0; i < _path.size(); i++) {
 		while (_path[i] == '/' && _path[i + 1] == '/')
 			i++;
 		tmp += _path[i];

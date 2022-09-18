@@ -49,14 +49,14 @@ class ResolvedPath {
         bool    CheckReturn();
         void    AppendRoot();
         void	ReplaceAlias();
-        
+
 		// int		CharOccurence(std::string str, char c);
 
     public:
         ResolvedPath(TargetConfig *target_config, std::string target);
         std::string     GetResolvedPath() const;
         void	        RequestIsValidDirectory();
-        bool            SearchIndexFiles();
+        std::string     SearchIndexFiles();
         void            CleanUpPath();
         bool	        LocationIsDirectory() const;
 

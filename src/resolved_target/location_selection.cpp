@@ -39,8 +39,6 @@ void		LocationSelection::GetLongestMatch() {
 	std::string		config_uri;
 	LocationContext	tmp;
 	size_t			longest_match = 0;
-
-	std::cout << "in longest msatch" << std::endl;
 	
 	for (std::vector<LocationContext>::const_iterator it = _compatible_locationblocks.begin(); it != _compatible_locationblocks.end(); it++) {
 		size_t		match_size = 0;
