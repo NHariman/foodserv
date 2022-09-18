@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   nginx_main.cpp                                     :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/16 21:23:56 by salbregh      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -34,7 +22,8 @@ int	main(int ac, const char **av) {
 		// std::cout << "Get autoindex: " << std::boolalpha << target.GetAutoindex() << std::endl;
 		// std::cout << "Print error_page: " << std::endl;
 		// target.PrintErrorPage();
-		std::cout << "PATH RETURNED: " << target.GetResolvedPath() << std::endl;
+
+		std::cout << "PATH: " << target.GetResolvedPath() << std::endl;
 
 	}
 	catch (const std::exception& e) {

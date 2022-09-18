@@ -64,13 +64,6 @@ void    ResolvedPath::ReplaceAlias() {
 	// TO DO
 }
 
-// int		ResolvedPath::CharOccurence(std::string str, char c) {
-// 	int count = std::count(str.begin(), str.end(), c);
-	
-// 	std::cout << c << " occurs in \'" << str << "\' " << count << " times." << std::endl;
-//  	return count;
-// }
-
 void	ResolvedPath::CleanUpPath() {
 	std::string	tmp;
 
