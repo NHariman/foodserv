@@ -46,16 +46,19 @@ class ResolvedPath {
 		std::string		_request_uri;
 
         
+        bool    CheckReturn();
         void    AppendRoot();
         void	ReplaceAlias();
-        void    ReplaceReturn();
-		int		CharOccurence(std::string str, char c);
+
+		// int		CharOccurence(std::string str, char c);
 
     public:
         ResolvedPath(TargetConfig *target_config, std::string target);
         std::string     GetResolvedPath() const;
         void	        RequestIsValidDirectory();
-        bool            CheckIndexFiles();
+        std::string     SearchIndexFiles();
+        void            CleanUpPath();
+        bool	        LocationIsDirectory() const;
 
 };
 

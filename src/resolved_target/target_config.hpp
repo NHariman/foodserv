@@ -14,6 +14,8 @@
 # define POST 1
 # define DELETE 2
 
+class ResolvedPath;
+
 /*
 Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 
@@ -56,14 +58,14 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		
 		//getters
 		bool						IsAllowedMethod(std::string method);
-		CGIPass						GetCGIPass() const;
-		std::string					GetRoot() const;
-		std::vector<std::string> 	GetIndex() const;
+		// CGIPass						GetCGIPass() const;
+		// std::string					GetRoot() const;
+		// std::vector<std::string> 	GetIndex() const;
 		size_t						GetMaxBodySize() const;
-		std::map<int, std::string>	GetErrorPage() const;
-		bool						GetAutoindex() const;
-		ReturnDir 					GetReturn() const;
-		std::string					GetAlias() const;
+		// std::map<int, std::string>	GetErrorPage() const;
+		// bool						GetAutoindex() const;
+		// ReturnDir 					GetReturn() const;
+		// std::string					GetAlias() const;
 		std::string					GetResolvedPath() const;
 
 		ServerContext				GetServer() const;
