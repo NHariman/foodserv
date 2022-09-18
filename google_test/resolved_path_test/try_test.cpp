@@ -26,3 +26,27 @@ TEST(ReturnTest, ResolvedPathTesting) {
 }
 }
 
+
+TEST(RootTest, ResolvedPathTesting) {
+	NginxConfig		test("/Users/sannealbreghs/Desktop/foodserv/test_config/root.conf");
+	TargetConfig	target;
+{
+	target.Setup(&test, "localhost", "80", "/hoi");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/hoi");
+}
+{
+	target.Setup(&test, "localhost", "80", "/hoi/otherroot");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/hoi/otherroot");
+}
+{
+	target.Setup(&test, "localhost", "80", "/doei/he");
+	EXPECT_EQ(target.GetResolvedPath(), "/Crap/doei");
+}
+{
+	target.Setup(&test, "localhost", "80", "/moreslashes");
+	EXPECT_EQ(target.GetResolvedPath(), "/Slash/queen/moreslashes");
+}
+{
+	target.Setup(&test, "localhost", "80", "/dir/more");
+}
+}
