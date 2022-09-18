@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+Start testing: Sep 16 20:56 CEST
+----------------------------------------------------------
+Unable to find executable: try_test_NOT_BUILT
+1/1 Testing: try_test_NOT_BUILT
+1/1 Test: try_test_NOT_BUILT
+Command: ""
+Directory: /Users/sannealbreghs/Desktop/foodserv/google_test/resolved_path_test/build
+"try_test_NOT_BUILT" start time: 
+=======
 Start testing: Sep 16 20:24 CEST
 ----------------------------------------------------------
 Unable to find executable: /Users/sannealbreghs/Desktop/foodserv/google_test/resolved_path_test/build/try_test
@@ -6,14 +16,23 @@ Unable to find executable: /Users/sannealbreghs/Desktop/foodserv/google_test/res
 Command: "" "--gtest_filter=RootTest.RootTest" "--gtest_also_run_disabled_tests"
 Directory: /Users/sannealbreghs/Desktop/foodserv/google_test/resolved_path_test/build
 "RootTest.RootTest" start time: 
+>>>>>>> 4f9335efff6b67200021938ae88c67d9ce1a83cc
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
+<<<<<<< HEAD
+"try_test_NOT_BUILT" end time: Sep 16 20:56 CEST
+"try_test_NOT_BUILT" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 16 20:56 CEST
+=======
 "RootTest.RootTest" end time: Sep 16 20:24 CEST
 "RootTest.RootTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
 End testing: Sep 16 20:24 CEST
+>>>>>>> 4f9335efff6b67200021938ae88c67d9ce1a83cc
