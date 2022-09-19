@@ -40,7 +40,7 @@ TEST(RootTest, ResolvedPathTesting) {
 }
 {
 	target.Setup(&test, "localhost", "80", "/doei/he");
-	EXPECT_EQ(target.GetResolvedPath(), "/Crap/doei");
+	EXPECT_EQ(target.GetResolvedPath(), "/Crap/doei/he");
 }
 {
 	target.Setup(&test, "localhost", "80", "/moreslashes");
@@ -51,15 +51,15 @@ TEST(RootTest, ResolvedPathTesting) {
 	EXPECT_EQ(target.GetResolvedPath(), "");
 }
 {
-	target.Setup(&test, "localhost", "80", "/auto/on/");
+	target.Setup(&test, "localhost", "80", "/");
 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/otherpage.html");
 }
 {
-	target.Setup(&test, "localhost", "8080", "/auto/on/");
+	target.Setup(&test, "localhost", "8080", "/foodserv/HTML/");
 	EXPECT_EQ(target.GetResolvedPath(), "");
 }
 {
-	target.Setup(&test, "localhost", "8888", "/auto/on/");
+	target.Setup(&test, "localhost", "8888", "/Desktop/foodserv/HTML/");
 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
 }
 }
