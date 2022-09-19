@@ -63,3 +63,7 @@ TEST(RootTest, ResolvedPathTesting) {
 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
 }
 }
+
+TEST(AlisTest, ResolvedPathTesting) {
+	
+}
