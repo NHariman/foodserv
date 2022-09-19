@@ -16,7 +16,7 @@ LocationSelection::LocationSelection(ServerContext chosen_servercontext, std::st
 		_chosen_location_context = _location_context_vector.at(0);
 	else if (_compatible_locationblocks.size() == 1)
 		_chosen_location_context = _compatible_locationblocks.at(0);
-	else
+	else 
 		GetLongestMatch();
 }
 
@@ -47,8 +47,10 @@ void		LocationSelection::GetLongestMatch() {
 		for (size_t i = 0; i < config_uri.size(); i++) {
 			if (config_uri[i] == _request_uri[i])
 				match_size++;
-			if (match_size > longest_match)
+			if (match_size > longest_match) {
+				longest_match = match_size;
 				tmp = *it;
+			}
 		}
 	}
 	_chosen_location_context = tmp;

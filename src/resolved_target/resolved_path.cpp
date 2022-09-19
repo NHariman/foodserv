@@ -1,6 +1,6 @@
 #include "resolved_path.hpp"
 
-#define DEBUG 0
+#define DEBUG 1
 
 ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _target_config(target_config), _request_uri(target) {
 	_locationblock_uri = _target_config->GetLocationUri().GetUri();
@@ -11,8 +11,10 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 		return ;
 
 	/* checking root and alias goes in an if statement, root will be ignored if alias is set */
-	if (_target_config->GetAlias().empty() == false)
+	if (_target_config->GetAlias().empty() == false) {
+		if (DEBUG) std::cout << "in this if" << std::endl;
 		ReplaceAlias();
+	}
 	else if (_target_config->GetRoot().empty() == false) {
 		AppendRoot();
 	}
@@ -37,7 +39,7 @@ bool	ResolvedPath::CheckReturn() {
 }
 
 void    ResolvedPath::AppendRoot() {
-	_path = _target_config->GetRoot().append(_locationblock_uri);
+	_path = _target_config->GetRoot().append(_request_uri);
 }
 
 bool	ResolvedPath::LocationIsDirectory() const {
@@ -62,6 +64,7 @@ std::string    ResolvedPath::SearchIndexFiles() {
 
 void    ResolvedPath::ReplaceAlias() {
 	// TO DO
+	if (DEBUG) std::cout << "in replace alias" << std::endl;
 }
 
 void	ResolvedPath::CleanUpPath() {
