@@ -22,7 +22,6 @@ TEST(ReturnTest, ResolvedPathTesting) {
 {
 	target.Setup(&test, "localhost", "8080", "/test");
 	EXPECT_EQ(target.GetResolvedPath(), "/test/return/in/location");
-
 }
 }
 
@@ -53,10 +52,6 @@ TEST(RootTest, ResolvedPathTesting) {
 {
 	target.Setup(&test, "localhost", "80", "/");
 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/otherpage.html");
-}
-{
-	target.Setup(&test, "localhost", "8080", "/auto/on/");
-	EXPECT_EQ(target.GetResolvedPath(), "");
 }
 {
 	target.Setup(&test, "localhost", "8888", "/Desktop/foodserv/HTML/");
@@ -90,3 +85,22 @@ TEST(AliasTest, ResolvedPathTesting) {
 }
 }
 
+TEST (AutoIndex, ResolvedPathTesting) {
+	NginxConfig		test("/Users/sannealbreghs/Desktop/foodserv/test_config/root.conf");
+	TargetConfig	target;
+{
+	target.Setup(&test, "local", "666", "/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/");
+	EXPECT_EQ(target.GetGerenateIndexBool(), true);
+}
+{
+	target.Setup(&test, "localhost", "8080", "/auto/on/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/auto/on/");
+	EXPECT_EQ(target.GetGerenateIndexBool(), true);
+}
+{
+	target.Setup(&test, "localhost", "666", "/HTML/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/otherpage.html");
+	EXPECT_EQ(target.GetGerenateIndexBool(), false);
+}
+}

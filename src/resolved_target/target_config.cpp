@@ -81,6 +81,10 @@ ReturnDir							TargetConfig::SetReturn(ServerContext *server, LocationContext *
 	return server->GetReturn();
 }
 
+void		TargetConfig::SetGenerateIndexBool(bool index) {
+	_index_bool = index;
+}
+
 // public getters
 bool							TargetConfig::IsAllowedMethod(std::string method) {
 
@@ -127,15 +131,18 @@ size_t						TargetConfig::GetMaxBodySize() const {
 // 	return _return_dir;
 // }
 
-std::string					TargetConfig::GetResolvedPath() const {
+std::string			TargetConfig::GetResolvedPath() const {
 	return _resolved_path;
 }
 
-ServerContext				TargetConfig::GetServer() const {
+ServerContext		TargetConfig::GetServer() const {
 	return _server;
 }
 
-LocationContext				TargetConfig::GetLocation() const {
+LocationContext		TargetConfig::GetLocation() const {
 	return _location;
 }
 
+bool				TargetConfig::GetGerenateIndexBool() const {
+	return _index_bool;
+}	
