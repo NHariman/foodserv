@@ -48,14 +48,14 @@ TEST(RootTest, ResolvedPathTesting) {
 }
 {
 	target.Setup(&test, "localhost", "80", "/dir/more");
-	EXPECT_EQ(target.GetResolvedPath(), "");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/dir/more");
 }
 {
 	target.Setup(&test, "localhost", "80", "/");
 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/otherpage.html");
 }
 {
-	target.Setup(&test, "localhost", "8080", "/foodserv/HTML/");
+	target.Setup(&test, "localhost", "8080", "/auto/on/");
 	EXPECT_EQ(target.GetResolvedPath(), "");
 }
 {
@@ -63,3 +63,30 @@ TEST(RootTest, ResolvedPathTesting) {
 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
 }
 }
+
+TEST(AliasTest, ResolvedPathTesting) {
+	NginxConfig		test("/Users/sannealbreghs/Desktop/foodserv/test_config/alias.conf");
+	TargetConfig	target;
+
+{
+	target.Setup(&test, "localhost", "80", "/html-pages/index.html");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
+}
+{
+	target.Setup(&test, "localhost", "80", "/html-pages");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
+}
+{
+	target.Setup(&test, "test", "888", "/pages/");
+	EXPECT_EQ(target.GetResolvedPath(), "");
+}
+{
+	target.Setup(&test, "test", "888", "/test2/index.html");
+	EXPECT_EQ(target.GetResolvedPath(), "/User/sannealbreghs/Desktop/foodserv/HTML/index.html");
+}
+{
+	target.Setup(&test, "noname", "888", "/test_config/alias.conf");
+	EXPECT_EQ(target.GetResolvedPath(), "/User/sannealbreghs/Desktop/foodserv/test_config/alias.conf");
+}
+}
+
