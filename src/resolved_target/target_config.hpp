@@ -50,11 +50,15 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		ServerContext						_server;
 		LocationContext						_location;
 		std::string							_resolved_path;
+		bool								_index_bool;
+
 	
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig() {};
 		void	Setup(NginxConfig *config, std::string host, std::string port, std::string target);
+
+		void	SetGenerateIndexBool(bool index);
 		
 		//getters
 		bool						IsAllowedMethod(std::string method);
@@ -67,6 +71,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		// ReturnDir 					GetReturn() const;
 		// std::string					GetAlias() const;
 		std::string					GetResolvedPath() const;
+		bool						GetGerenateIndexBool() const;
 
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;

@@ -6,13 +6,13 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 	_locationblock_uri = _target_config->GetLocationUri().GetUri();
 	if (DEBUG) std::cout << "LOCATION BLOCK URI : " << _locationblock_uri << std::endl;
 	if (DEBUG) std::cout << "REQUEST URI: " << _request_uri << std::endl;
+	_target_config->SetGenerateIndexBool(false);
 
     if (CheckReturn())
 		return ;
 
 	/* checking root and alias goes in an if statement, root will be ignored if alias is set */
 	if (_target_config->GetAlias().empty() == false) {
-		if (DEBUG) std::cout << "in this if" << std::endl;
 		ReplaceAlias();
 	}
 	else if (_target_config->GetRoot().empty() == false) {
@@ -20,7 +20,7 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 	}
 
 	if (LocationIsDirectory()) {
-		std::cout << "is path in directory check" << std::endl;
+		// target_config.SetGenerateIndexBool(false);
 		if (!_target_config->GetAutoindex())
 			_path = "";
 		else
@@ -55,12 +55,12 @@ std::string    ResolvedPath::SearchIndexFiles() {
     for (std::vector<std::string>::const_iterator it = index_vector.begin(); it != index_vector.end(); it++) {
 		std::string tmp = _path;
 		tmp = tmp.append(*it);
-		if (IsValidFile(tmp)) {
+		if (IsValidFile(tmp))
 			return tmp;
-		}
 		tmp.clear();
     }
-	return "";
+	_target_config->SetGenerateIndexBool(true);
+	return _path;
 }
 
 void    ResolvedPath::ReplaceAlias() {
@@ -71,7 +71,6 @@ void    ResolvedPath::ReplaceAlias() {
 	if (DEBUG) std::cout << "request uri: " << _request_uri << std::endl;
 	if (DEBUG) std::cout << "alias: " << _target_config->GetAlias() << std::endl;
 
-	// first double check if locaion uri and
 	size_t pos = 0;
 	while (pos < _locationblock_uri.size() && _locationblock_uri[pos] == _request_uri[pos])
 		pos++;
