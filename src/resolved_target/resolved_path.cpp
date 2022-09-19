@@ -11,8 +11,10 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 		return ;
 
 	/* checking root and alias goes in an if statement, root will be ignored if alias is set */
-	if (_target_config->GetAlias().empty() == false)
+	if (_target_config->GetAlias().empty() == false) {
+		if (DEBUG) std::cout << "in this if" << std::endl;
 		ReplaceAlias();
+	}
 	else if (_target_config->GetRoot().empty() == false) {
 		AppendRoot();
 	}
@@ -37,11 +39,11 @@ bool	ResolvedPath::CheckReturn() {
 }
 
 void    ResolvedPath::AppendRoot() {
-	_path = _target_config->GetRoot().append(_locationblock_uri);
+	_path = _target_config->GetRoot().append(_request_uri);
 }
 
 bool	ResolvedPath::LocationIsDirectory() const {
-	if (_locationblock_uri[_locationblock_uri.size() - 1] == '/')
+	if (_path[_path.size() - 1] == '/')
 		return true;
 	return false;
 }
@@ -61,7 +63,20 @@ std::string    ResolvedPath::SearchIndexFiles() {
 }
 
 void    ResolvedPath::ReplaceAlias() {
-	// TO DO
+	std::string	substr;
+
+	if (DEBUG) std::cout << "in replace alias" << std::endl;
+	if (DEBUG) std::cout << "location uri: " << _locationblock_uri << std::endl;
+	if (DEBUG) std::cout << "request uri: " << _request_uri << std::endl;
+	if (DEBUG) std::cout << "alias: " << _target_config->GetAlias() << std::endl;
+
+	// first double check if locaion uri and
+	size_t pos = 0;
+	while (pos < _locationblock_uri.size() && _locationblock_uri[pos] == _request_uri[pos])
+		pos++;
+	substr = _request_uri.substr(pos);
+	std::string _alias = _target_config->GetAlias();
+	_path = _alias.append(substr);
 }
 
 void	ResolvedPath::CleanUpPath() {
