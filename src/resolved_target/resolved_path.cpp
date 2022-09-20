@@ -21,7 +21,8 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 
 	if (LocationIsDirectory()) {
 		// target_config.SetGenerateIndexBool(false);
-		if (!_target_config->GetAutoindex())
+		if (_target_config->GetCGIPass().IsSet() == true) {}
+		else if (!_target_config->GetAutoindex())
 			_path = "";
 		else
 			_path = SearchIndexFiles();
