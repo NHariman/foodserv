@@ -143,6 +143,6 @@ LocationContext		TargetConfig::GetLocation() const {
 	return _location;
 }
 
-bool				TargetConfig::GetGerenateIndexBool() const {
+bool				TargetConfig::GetGenerateIndexBool() const {
 	return _index_bool;
 }	

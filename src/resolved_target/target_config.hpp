@@ -71,7 +71,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		// ReturnDir 					GetReturn() const;
 		// std::string					GetAlias() const;
 		std::string					GetResolvedPath() const;
-		bool						GetGerenateIndexBool() const;
+		bool						GetGenerateIndexBool() const;
 
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;
