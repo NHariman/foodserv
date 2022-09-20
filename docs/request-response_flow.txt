@@ -40,7 +40,7 @@ Response processing
 |__ Execute request
 |		1. CGI handling
 |		2. File handling based on method
-|			- GET: get file or index
+|			- GET: get file or index (generate one first if TargetConfig::MustGenerateIndex is true)
 |			- POST: 
 |			- DELETE: delete file if present
 |
