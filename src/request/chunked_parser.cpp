@@ -94,7 +94,7 @@ ChunkState	ChunkedParser::StartHandler(char c) {
 
 // Handles parsing of chunk size, ignoring chunk-extensions.
 // Checks for overly-lengthy chunk sizes and chunk extensions.
-// Limit for chunk extension follows 8192B limit of URI & header fields.
+// Limit for chunk extension follows 8kb limit of URI & header fields.
 // Limit for chunk size is based on 1,048,576B limit for payload.
 ChunkState	ChunkedParser::SizeHandler(char c) {
 	if (DEBUG) cout << "[SizeHandler] at: [" << c << "]\n";
@@ -103,7 +103,7 @@ ChunkState	ChunkedParser::SizeHandler(char c) {
 	if (buffer.size() > 7)
 		throw PayloadTooLargeException();
 	if (_chunk_ext == true) {
-		if (_chunk_ext_size > 8192)
+		if (_chunk_ext_size > MAX_CHUNKEXT_SIZE)
 			throw PayloadTooLargeException();
 		else
 			return HandleChunkExtension(c);
@@ -163,7 +163,7 @@ ChunkState	ChunkedParser::LastHandler(char c) {
 	if (DEBUG) cout << "[LastHandler] at: [" << c << "]\n";
 
 	if (_chunk_ext == true) {
-		if (_chunk_ext_size > 8192)
+		if (_chunk_ext_size > MAX_CHUNKEXT_SIZE)
 			throw PayloadTooLargeException();
 		else
 			return HandleChunkExtension(c);

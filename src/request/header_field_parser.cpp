@@ -40,7 +40,7 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 	if (input[pos])
 		_bytes_read += 1;
 	// check if total header fields exceeds 8kb limit.
-	if (_bytes_read > 8192)
+	if (_bytes_read > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
 	return (this->*table[cur_state])(input[pos]);
 }
@@ -76,7 +76,7 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 FieldState	HeaderFieldParser::NameHandler(char c) {
 	if (DEBUG) cout << "[FP NameHandler] at: [" << c << "]\n";
 
-	if (buffer.size() > 8192)
+	if (buffer.size() > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
 		case '\0':
@@ -110,7 +110,7 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 FieldState	HeaderFieldParser::ValueHandler(char c) {
 	if (DEBUG) cout << "[FP ValueHandler] at: [" << c << "]\n";
 
-	if (buffer.size() > 8192)
+	if (buffer.size() > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
 		case '\0':

@@ -50,7 +50,7 @@ void	RequestTargetParser::CheckInvalidState() const {
 
 // Checks if URI string is greater than 8kb (limit of most web servers)
 void	RequestTargetParser::PreParseCheck() {
-	if (input.size() > 8192)
+	if (input.size() > MAX_URI_SIZE)
 		throw URITooLongException();
 }
 
