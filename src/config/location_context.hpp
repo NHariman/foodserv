@@ -10,7 +10,6 @@
 #include "config_interface.hpp"
 #include "directive_validation/directive_validation.hpp"
 
-
 // actually this is called a context (sad face)
 class LocationContext : virtual public ConfigValues {
 	protected:

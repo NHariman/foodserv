@@ -7,11 +7,14 @@
 #include "../config/location_context.hpp"
 #include "server_selection.hpp"
 #include "location_selection.hpp"
+#include "resolved_path.hpp"
 
 
 # define GET 0
 # define POST 1
 # define DELETE 2
+
+class ResolvedPath;
 
 /*
 Variables inside TargetConfig, inherited from LocationContext and ConfigValues
@@ -29,7 +32,7 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 		// unique
 		ServerContext						_server;
 		LocationContext						_location;
-		std::string							_final_path;		
+		std::string							_resolved_path;		
 */
 
 // grandparent inheritance 
@@ -47,27 +50,33 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		ServerContext						_server;
 		LocationContext						_location;
 		std::string							_resolved_path;
+		bool								_index_bool;
+
+	
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig(){};
 		TargetConfig&	operator= (TargetConfig const &obj);
 		void	Setup(NginxConfig *config, std::string host, std::string port, std::string target);
+
+		void	SetGenerateIndexBool(bool index);
 		
 		//getters
 		bool						IsAllowedMethod(std::string method);
-		CGIPass						GetCGIPass() const;
-		std::string					GetRoot() const;
-		std::vector<std::string> 	GetIndex() const;
+		// CGIPass						GetCGIPass() const;
+		// std::string					GetRoot() const;
+		// std::vector<std::string> 	GetIndex() const;
 		size_t						GetMaxBodySize() const;
-		std::map<int, std::string>	GetErrorPage() const;
-		bool						GetAutoindex() const;
-		ReturnDir 					GetReturn() const;
-		std::string					GetAlias() const;
+		// std::map<int, std::string>	GetErrorPage() const;
+		// bool						GetAutoindex() const;
+		// ReturnDir 					GetReturn() const;
+		// std::string					GetAlias() const;
+		std::string					GetResolvedPath() const;
+		bool						GetGerenateIndexBool() const;
 
 		std::string					GetResolvedPath() const;
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;
-
 };
 
 
