@@ -1,4 +1,24 @@
 # Header Fields
+### Allow:
+>  An origin server MUST generate an Allow field in a 405 (Method Not Allowed) response and MAY do so in any other response.  An empty Allow field value indicates that the resource allows no methods, which might occur in a 405 response if the resource has been temporarily disabled by configuration.  
+
+> Example of use:  
+>     Allow: GET, HEAD, PUT
+
+Source:
+[Section 7.4.1](https://www.rfc-editor.org/rfc/rfc7231#section-7.4.1)
+<br/><br/>
+
+### Date:
+> Format: Date = day-name "," SP date1 SP time-of-day SP GMT  
+
+> An example is  
+>    	Date: Tue, 15 Nov 1994 08:12:31 GMT.  
+
+Source:
+[Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2)
+<br/><br/>
+
 ### Expect:
 > A server that receives an Expect field-value other than 100-continue MAY respond with a 417 (Expectation Failed) status code to indicate that the unexpected expectation cannot be met.
 
@@ -21,6 +41,14 @@ Source:
 Source:
 [Section 3.1.2.2](https://datatracker.ietf.org/doc/html/rfc7231#section-3.1.2.2)
 <br/><br/>
+
+### Server:
+> The "Server" header field contains information about the software used by the origin server to handle the request, which is often used by clients to help identify the scope of reported interoperability problems, to work around or tailor requests to avoid particular server limitations, and for analytics regarding server or operating system use.  An origin server MAY generate a Server field in its responses.  
+
+Source:
+[Section 7.4.2](https://www.rfc-editor.org/rfc/rfc7231#section-7.4.2)
+<br/><br/>
+
 
 # Method response codes
 ### DELETE:

@@ -48,7 +48,7 @@ class BadRequestException : public http::exception {
 };
 
 // Used for: resource is unable to be accessed.
-// Thrown by FileHandler::GetFileContents.
+// Thrown by FileHandler::GetFile.
 // Should return 403 code.
 class ForbiddenException : public http::exception {
 	public:
@@ -62,7 +62,7 @@ class ForbiddenException : public http::exception {
 };
 
 // Used for: resource doesn't exist.
-// Thrown by FileHandler::GetFileContents.
+// Thrown by FileHandler::GetFile.
 // Should return 404 code.
 class NotFoundException : public http::exception {
 	public:
@@ -163,7 +163,7 @@ class RequestHeaderFieldsTooLargeException : public http::exception {
 };
 
 // Used for: internal processes error.
-// Thrown by:	FileHandler::GetFileContents.
+// Thrown by:	FileHandler::GetFile.
 // Should return 500 code.
 class InternalServerErrorException : public http::exception {
 	public:

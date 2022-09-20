@@ -24,6 +24,7 @@ static std::map<std::string, std::string>	MIMETypes = {
 	{"gz", "application/gzip"},
 	{"gif", "image/gif"},
 	{"htm", "text/html"},
+	{"html", "text/html"},
 	{"ico", "image/vnd.microsoft.icon"},
 	{"ics", "text/calendar"},
 	{"jar", "application/java-archive"},

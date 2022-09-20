@@ -2,6 +2,7 @@
 #define FILE_HANDLER_HPP
 
 #include <iostream>
+#include <cerrno>
 #include <fcntl.h> // open
 
 class FileHandler {
@@ -9,11 +10,11 @@ class FileHandler {
 		FileHandler();
 		~FileHandler();
 
-		std::string	GetFileContents(std::string const& file_path);
-		std::string	GetExtension(std::string const& file_path) const;
+		std::fstream*	GetFile(std::string const& file_path);
+		std::string		GetExtension(std::string const& file_path) const;
 	
 	private:
-		int	SetToNonBlock(int fd);
+		void	GetFileHandlingError(void);
 };
 
 #endif /* FILE_HANDLER_HPP */

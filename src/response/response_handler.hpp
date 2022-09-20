@@ -21,10 +21,26 @@ class ResponseHandler {
 		NginxConfig*	_config;
 		Request*		_request;
 		Response		_response;
-		FileHandler		_file_h;
+		FileHandler		_file_handler;
 
+		// Error page handling
 		std::string FindCustomErrorPage(int error_code);
 		void		HandleCustomError(std::string const& error_page_path);
+
+		// Redirection
+		bool		IsRedirected();
+
+		void		SetStatusLine();
+		// Response header setting
+		void		SetDate();
+		void		SetServer();
+		// void		SetLastModified();
+		void		SetLocation(std::string const& path);
+		void		SetContentType();
+		void		SetContentLength();
+		void		SetConnection();
+		void		SetAllow();
+		std::string	GetAllowedMethodsString();
 };
 
 #endif /* RESPONSE_HANDLER_HPP */

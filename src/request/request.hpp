@@ -55,7 +55,7 @@ class Request : public AHTTPMessage {
 		void				SetTarget(string const& target);
 		void				SetRequestStatus(Status status);
 		void				SetTargetHost(string const& host);
-		void				SetResolvedTargetPath(string const& target_path);
+		// void				SetResolvedTargetPath(string const& target_path);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private variables of Request.

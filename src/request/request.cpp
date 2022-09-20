@@ -78,9 +78,9 @@ void	Request::SetTargetHost(string const& host) {
 	_target.SetHost(host);
 }
 
-void	Request::SetResolvedTargetPath(string const& target_path) {
-	_target.SetPath(target_path);
-}
+// void	Request::SetResolvedTargetPath(string const& target_path) {
+// 	_target.SetPath(target_path);
+// }
 
 // Checks if double CRLF indicating end of header section is found
 // or message stage has been reached.
@@ -97,7 +97,11 @@ bool	Request::CanParse() {
 void	Request::CheckStatus() {
 	if (_parser.cur_state == r_Done)
 		_request_status = Status::Complete;
-	else if (_request_status == Status::Expect && msg_bytes_read > 0)
-		_request_status = Status::Incomplete;
+	else if (_request_status == Status::Expect) {
+		if (msg_bytes_read > 0)
+			_request_status = Status::Incomplete;
+		else
+			SetStatusCode(100);
+	}
 	return ;
 }
