@@ -15,10 +15,12 @@ int	main(int ac, const char **av) {
 		
 		TargetConfig target;
 		TargetConfig target_test;
+		TargetConfig target_test_two;
 		TargetConfig target_cgi_bin;
 		TargetConfig target_cgi_bin_two;
 		target.Setup(&input_file, "localhost", "80", "/");
 		target_test.Setup(&input_file, "localhost", "80", "/test");
+		target_test_two.Setup(&input_file, "localhost", "80", "/test_two");
 		target_cgi_bin.Setup(&input_file, "localhost", "80", "/cgi-bin/");
 		target_cgi_bin_two.Setup(&input_file, "localhost", "80", "/cgi-bin1/");
 	
@@ -42,7 +44,7 @@ int	main(int ac, const char **av) {
 		std::cout << target.GetReturn() << std::endl;
 		std::cout << "cgi_pass: " << target.GetCGIPass() << std::endl;
 		std::cout << "alias: " << target.GetAlias() << std::endl;
-
+		std::cout << "resolved path: " << target.GetResolvedPath() << std::endl;
 
 		std::cout << "\n*****FOR LOCATION: /test ******" << std::endl;
 		std::cout << "location URI: " << target_test.GetLocationUri().GetInputURI() << std::endl;
@@ -62,6 +64,28 @@ int	main(int ac, const char **av) {
 		std::cout << target_test.GetReturn() << std::endl;
 		std::cout << "cgi_pass: " << target_test.GetCGIPass() << std::endl;
 		std::cout << "alias: " << target_test.GetAlias() << std::endl;
+		std::cout << "resolved path: " << target_test.GetResolvedPath() << std::endl;
+
+
+		std::cout << "\n*****FOR LOCATION: /test_two ******" << std::endl;
+		std::cout << "location URI: " << target_test_two.GetLocationUri().GetInputURI() << std::endl;
+		std::cout << "is directory? " << target_test_two.GetLocationUri().IsDir() << std::endl;
+		std::cout << "root: " << target_test_two.GetRoot() << std::endl;
+		std::cout << "index: ";
+		for (size_t i = 0; i < target_test_two.GetIndex().size(); i++)
+   			std::cout << target_test_two.GetIndex().at(i) << ' ';
+		std::cout << std::endl;
+		std::cout << "Get max body size: " << target_test_two.GetMaxBodySize() << std::endl;
+		std::cout << "Print error_page: " << std::endl;
+		target_test_two.PrintErrorPage();
+		std::cout << "Get autoindex: " << std::boolalpha << target_test_two.GetAutoindex() << std::endl;
+		std::cout << std::boolalpha << "Allowed method: GET: " << target_test_two.IsAllowedMethod("GET") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: POST: " << target_test_two.IsAllowedMethod("POST") << std::endl;
+		std::cout << std::boolalpha << "Allowed method: DELETE: " << target_test_two.IsAllowedMethod("DELETE") << std::endl;
+		std::cout << target_test_two.GetReturn() << std::endl;
+		std::cout << "cgi_pass: " << target_test_two.GetCGIPass() << std::endl;
+		std::cout << "alias: " << target_test_two.GetAlias() << std::endl;
+		std::cout << "resolved path: " << target_test_two.GetResolvedPath() << std::endl;
 
 
 		std::cout << "\n*****FOR LOCATION: /cgi-bin ******" << std::endl;
@@ -82,6 +106,7 @@ int	main(int ac, const char **av) {
 		std::cout << target_cgi_bin.GetReturn() << std::endl;
 		std::cout << "cgi_pass: " << target_cgi_bin.GetCGIPass() << std::endl;
 		std::cout << "alias: " << target_cgi_bin.GetAlias() << std::endl;
+		std::cout << "resolved path: " << target_cgi_bin.GetResolvedPath() << std::endl;
 
 
 
@@ -104,6 +129,7 @@ int	main(int ac, const char **av) {
 		std::cout << target_cgi_bin_two.GetReturn() << std::endl;
 		std::cout << "cgi_pass: " << target_cgi_bin_two.GetCGIPass() << std::endl;
 		std::cout << "alias: " << target_cgi_bin_two.GetAlias() << std::endl;
+		std::cout << "resolved path: " << target_cgi_bin_two.GetResolvedPath() << std::endl;
 
 	}
 	catch (const std::exception& e) {
