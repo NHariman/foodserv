@@ -61,6 +61,20 @@ class ForbiddenException : public http::exception {
 		}
 };
 
+// Used for: resource doesn't exist.
+// Thrown by FileHandler::GetFileContents.
+// Should return 404 code.
+class NotFoundException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("404: Not Found");
+		}
+
+		int	which() const throw() {
+			return 404;
+		}
+};
+
 // Used for: request containing message body but no Content-Length header.
 // Thrown by RequestParser::AfterParseCheck.
 // Should return 411 code.
