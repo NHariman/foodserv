@@ -9,12 +9,17 @@ FileHandler::~FileHandler() {}
 std::string FileHandler::GetFileContents(std::string const& file_path) {
     if (!IsValidFile(file_path))
 		throw ForbiddenException();
+
 	int fd = open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)
 		throw ForbiddenException();
 
+	if (SetToNonBlock(fd) == -1)
+		throw InternalServerErrorException();
+
 	std::string file_content;
 	// read into buffer & add to file_content
+
 	close(fd);
 	return file_content;
 }
@@ -26,4 +31,10 @@ std::string FileHandler::GetExtension(std::string const& file_path) const {
 	if (period_pos != string::npos)
 		return file_path.substr(period_pos + 1);
 	return "";
+}
+
+// Sets file status flag to non-blocking so read calls don't hang
+// waiting for the object or its attributes to change.
+int FileHandler::SetToNonBlock(int fd) {
+	return fcntl(fd, F_SETFL, O_NONBLOCK);
 }

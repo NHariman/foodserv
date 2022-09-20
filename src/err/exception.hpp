@@ -148,6 +148,20 @@ class RequestHeaderFieldsTooLargeException : public http::exception {
 		}
 };
 
+// Used for: internal processes error.
+// Thrown by:	FileHandler::GetFileContents.
+// Should return 500 code.
+class InternalServerErrorException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("500: Internal Server Error");
+		}
+
+		int	which() const throw() {
+			return 500;
+		}
+};
+
 // Used for: non-recognized request method or transfer coding.
 // Thrown by:	RequestLineParser::MethodHandler,
 // 				RequestValidator::ValidTransferEncoding.
