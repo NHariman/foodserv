@@ -32,7 +32,9 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 		// unique
 		ServerContext						_server;
 		LocationContext						_location;
-		std::string							_resolved_path;		
+		std::string							_resolved_path;	
+
+		// all have getters	
 */
 
 // grandparent inheritance 
@@ -62,14 +64,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		
 		//getters
 		bool						IsAllowedMethod(std::string method);
-		// CGIPass						GetCGIPass() const;
-		// std::string					GetRoot() const;
-		// std::vector<std::string> 	GetIndex() const;
 		size_t						GetMaxBodySize() const;
-		// std::map<int, std::string>	GetErrorPage() const;
-		// bool						GetAutoindex() const;
-		// ReturnDir 					GetReturn() const;
-		// std::string					GetAlias() const;
 		std::string					GetResolvedPath() const;
 		bool						MustGenerateIndex() const;
 
