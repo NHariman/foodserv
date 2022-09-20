@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../../src/config/nginx_config.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
-#include "../../src/config/server_selection.hpp"
+#include "../../src/resolved_target/server_selection.hpp"
 
 using namespace std;
 

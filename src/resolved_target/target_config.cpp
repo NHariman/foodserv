@@ -35,6 +35,9 @@ void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string p
 	_error_page = SetErrorPage(&_server, &_location);
 	_autoindex = SetAutoindex(&_server, &_location);
 	_return_dir = SetReturn(&_server, &_location);
+
+	ResolvedPath	resolved_path(this, target);
+	_resolved_path = resolved_path.GetResolvedPath();
 }
 
 /// private getters
@@ -78,6 +81,10 @@ ReturnDir							TargetConfig::SetReturn(ServerContext *server, LocationContext *
 	return server->GetReturn();
 }
 
+void		TargetConfig::SetGenerateIndexBool(bool index) {
+	_index_bool = index;
+}
+
 // public getters
 bool							TargetConfig::IsAllowedMethod(std::string method) {
 
@@ -92,46 +99,50 @@ bool							TargetConfig::IsAllowedMethod(std::string method) {
 	return false;
 }
 
-CGIPass						TargetConfig::GetCGIPass() const {
-	return _cgi_pass;
-}
+// CGIPass						TargetConfig::GetCGIPass() const {
+// 	return _cgi_pass;
+// }
 
-std::string					TargetConfig::GetRoot() const {
-	return _root;
-}
+// std::string					TargetConfig::GetRoot() const {
+// 	return _root;
+// }
 
-std::string					TargetConfig::GetAlias() const {
-	return _alias;
-}
+// std::string					TargetConfig::GetAlias() const {
+// 	return _alias;
+// }
 
-std::vector<std::string> 	TargetConfig::GetIndex() const {
-	return _index;
-}
+// std::vector<std::string> 	TargetConfig::GetIndex() const {
+// 	return _index;
+// }
 
 size_t						TargetConfig::GetMaxBodySize() const {
 	return _client_max_body_size;
 }
 
-std::map<int, std::string>		TargetConfig::GetErrorPage() const {
-	return _error_page;
-}
+// std::map<int, std::string>		TargetConfig::GetErrorPage() const {
+// 	return _error_page;
+// }
 
-bool						TargetConfig::GetAutoindex() const {
-	return _autoindex;
-}
+// bool						TargetConfig::GetAutoindex() const {
+// 	return _autoindex;
+// }
 
-ReturnDir 					TargetConfig::GetReturn() const {
-	return _return_dir;
-}
+// ReturnDir 					TargetConfig::GetReturn() const {
+// 	return _return_dir;
+// }
 
-std::string					TargetConfig::GetResolvedPath() const {
+std::string			TargetConfig::GetResolvedPath() const {
 	return _resolved_path;
 }
 
-ServerContext				TargetConfig::GetServer() const {
+ServerContext		TargetConfig::GetServer() const {
 	return _server;
 }
-LocationContext				TargetConfig::GetLocation() const {
+
+LocationContext		TargetConfig::GetLocation() const {
 	return _location;
 }
 
+bool				TargetConfig::GetGenerateIndexBool() const {
+	return _index_bool;
+}	

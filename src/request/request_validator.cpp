@@ -33,7 +33,6 @@ int	RequestValidator::SetupConfig(NginxConfig* config,
 	string	host = request.GetTargetURI().GetHost();
 	string	port = request.GetTargetURI().GetPort();
 	string	target = request.GetTargetURI().GetPath(); // TODO: check if query is needed
-
 	_target_config->Setup(config, host, port, target);
 	return 1;
 }
