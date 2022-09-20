@@ -82,7 +82,7 @@ ReturnDir							TargetConfig::SetReturn(ServerContext *server, LocationContext *
 }
 
 void		TargetConfig::SetGenerateIndexBool(bool index) {
-	_index_bool = index;
+	_generate_index = index;
 }
 
 // public getters
@@ -143,6 +143,6 @@ LocationContext		TargetConfig::GetLocation() const {
 	return _location;
 }
 
-bool				TargetConfig::GetGenerateIndexBool() const {
-	return _index_bool;
+bool				TargetConfig::MustGenerateIndex() const {
+	return _generate_index;
 }	

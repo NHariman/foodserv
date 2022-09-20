@@ -50,7 +50,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		ServerContext						_server;
 		LocationContext						_location;
 		std::string							_resolved_path;
-		bool								_index_bool;
+		bool								_generate_index;
 
 	
 	public:
@@ -71,7 +71,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		// ReturnDir 					GetReturn() const;
 		// std::string					GetAlias() const;
 		std::string					GetResolvedPath() const;
-		bool						GetGenerateIndexBool() const;
+		bool						MustGenerateIndex() const;
 
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;
