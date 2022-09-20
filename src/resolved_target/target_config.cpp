@@ -108,7 +108,7 @@ ReturnDir							TargetConfig::SetReturn(ServerContext *server, LocationContext *
 }
 
 void		TargetConfig::SetGenerateIndexBool(bool index) {
-	_index_bool = index;
+	_generate_index = index;
 }
 
 // public getters
@@ -125,37 +125,9 @@ bool							TargetConfig::IsAllowedMethod(std::string method) {
 	return false;
 }
 
-// CGIPass						TargetConfig::GetCGIPass() const {
-// 	return _cgi_pass;
-// }
-
-// std::string					TargetConfig::GetRoot() const {
-// 	return _root;
-// }
-
-// std::string					TargetConfig::GetAlias() const {
-// 	return _alias;
-// }
-
-// std::vector<std::string> 	TargetConfig::GetIndex() const {
-// 	return _index;
-// }
-
 size_t						TargetConfig::GetMaxBodySize() const {
 	return _client_max_body_size;
 }
-
-// std::map<int, std::string>		TargetConfig::GetErrorPage() const {
-// 	return _error_page;
-// }
-
-// bool						TargetConfig::GetAutoindex() const {
-// 	return _autoindex;
-// }
-
-// ReturnDir 					TargetConfig::GetReturn() const {
-// 	return _return_dir;
-// }
 
 std::string			TargetConfig::GetResolvedPath() const {
 	return _resolved_path;
@@ -169,6 +141,6 @@ LocationContext		TargetConfig::GetLocation() const {
 	return _location;
 }
 
-bool				TargetConfig::GetGerenateIndexBool() const {
-	return _index_bool;
+bool				TargetConfig::MustGenerateIndex() const {
+	return _generate_index;
 }	

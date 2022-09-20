@@ -49,6 +49,7 @@ add_executable(
 		../../src/config/directive_validation/root.cpp
 
     ../../src/resolved_target/server_selection.cpp
+    ../../src/resolved_target/resolved_path.cpp
 		../../src/resolved_target/location_selection.cpp
 		../../src/resolved_target/target_config.cpp
 
