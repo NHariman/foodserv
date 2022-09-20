@@ -66,7 +66,6 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		//getters
 		bool						IsAllowedMethod(std::string method);
 		size_t						GetMaxBodySize() const;
-		std::string					GetResolvedPath() const;
 		bool						MustGenerateIndex() const;
 
 		std::string					GetResolvedPath() const;

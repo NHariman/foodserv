@@ -66,7 +66,7 @@ class CGI {
 	private:
 		CGIPass *_cgi_data;
 		Request *_request;
-		TargetConfig *_target;
+		const TargetConfig *_target;
 		std::vector<std::string> _env;
 		std::vector<std::string> _argv;
 		bool		_valid_file;
@@ -78,8 +78,8 @@ class CGI {
 		void	SetArgv();
 		std::string FindFile();
 		bool		HasExtension(std::string file_name);
-		void	ChildProcess(int *fd, int tmp_fd, CGI cgi);
-		int		ParentProcess(int *fd, int tmp_fd);
+		void	ChildProcess(int *fd, int *tmp_fd);
+		int		ParentProcess(int *fd, int *tmp_fd, int pid);
 
 	public:
 		CGI(){};

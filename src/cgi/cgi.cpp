@@ -44,7 +44,7 @@ void CGI::SetHeaders() {
 	_env.push_back("HTTP_HOST=" + 		_request->GetField("HTTP_HOST"));
 	_env.push_back("HTTP_REFERER=" + 	_request->GetField("HTTP_REFERER"));
 	_env.push_back("HTTP_USER_AGENT=" + _request->GetField("HTTP_USER_AGENT"));
-	_env.push_back("PATH_TRANSLATED=" + _request->GetTargetURI().GetPath());
+	_env.push_back("PATH_TRANSLATED=" + _target->GetResolvedPath());
 	_env.push_back("QUERY_STRING=" + 	_request->GetTargetURI().GetQuery());
 	_env.push_back("REDIRECT_STATUS=" + _request->GetField("REDIRECT_STATUS"));
 	_env.push_back("REMOTE_ADDR=" + 	_request->GetField("REMOTE_ADDR"));
@@ -54,7 +54,7 @@ void CGI::SetHeaders() {
 	_env.push_back("SCRIPT_NAME=" + 	_file_name);
 	_env.push_back("SERVER_NAME=" + 	_request->GetTargetURI().GetHost());
 	_env.push_back("SERVER_PORT=" + 	_request->GetTargetURI().GetPort());
-	_env.push_back("SERVER_PROTOCOL=" + _request->GetVersion());
+	_env.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	_env.push_back("SERVER_SOFTWARE=foodserv");
 }
 
@@ -83,7 +83,7 @@ std::string	CGI::FindFile() {
 	struct dirent *files;
 	std::string		file;
 	if (IsDirectory(_target->GetResolvedPath()) == true) {
-		DIR *dr = opendir(_target->GetResolvedPath());
+		DIR *dr = opendir(_target->GetResolvedPath().c_str());
 		if (dr == NULL) {
 			_valid_file = false;
 			return "";
@@ -113,10 +113,7 @@ void	CGI::SetArgv() {
 			_valid_file = false;
 			return ;
 		}
-		if (IsPath(_cgi_data->GetExecutablePath()) == false)
-			_argv.push_back("./" + _cgi_data->GetExecutablePath());
-		else
-			_argv.push_back(_cgi_data->GetExecutablePath());
+		_argv.push_back(_cgi_data->GetExecutablePath());
 	}
 	else {
 		_argv.push_back(_cgi_data->GetExecutablePath());
@@ -130,7 +127,7 @@ void	CGI::SetArgv() {
 
 
 bool	CGI::setup(Request *request) {
-	_cgi_data = &request->GetTargetConfig()->GetCGIPass();
+	_cgi_data = &request->GetTargetConfig().GetCGIPass();
 	_request = request;
 	_target = &request->GetTargetConfig();
 	_valid_file = false;
@@ -140,35 +137,40 @@ bool	CGI::setup(Request *request) {
 	return (_valid_file);
 }
 
-void	CGI::ChildProcess(int *fd, int tmp_fd) {
+void	CGI::ChildProcess(int *fd, int *tmp_fd) {
 	vtoa env(_env);
 	vtoa argv(_argv);
 
-	dup2(tmp_fd, STDIN_FILENO);
+	dup2(*tmp_fd, STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[0]);
 	close(fd[1]);
-	close(tmp_fd);
+	close(*tmp_fd);
 	execve(_cgi_data->GetExecutablePath().c_str(), argv.GetArray(), env.GetArray());
-	exit(404);
+	exit(501);
 }
 
-int		CGI::ParentProcess(int *fd, int tmp_fd) {
+int		CGI::ParentProcess(int *fd, int *tmp_fd, int pid) {
 	int es = 0;
-	char buffer[1001]
+	char buffer[1001];
+	int status;
 
-	close(tmp_fd);
+	close(*tmp_fd);
 	close(fd[1]);
 	if (waitpid(pid, &status, 0) == -1)
 		throw WaitFailureException();
-	while (read(fd[0], buffer, 1000) != -1) {
-		_content.append(buffer);
-	}
-	tmp_fd = dup(fd[0]);
-	close(fd[0]);
 	if (WIFEXITED(status)) {
 		es = WEXITSTATUS(status);
 	}
+	if (es == 0) {
+		_content.append("HTTP/1.1 200 OK\r\n");
+	}
+	while (read(fd[0], buffer, 1000) != -1) {
+		_content.append(buffer);
+	}
+	*tmp_fd = dup(fd[0]);
+	close(fd[0]);
+
 	return es;
 }
 
@@ -176,7 +178,7 @@ size_t    CGI::execute() {
 
 	int fd[2];
 	int pid;
-	int status;
+	int exit_status;
 	int tmp_fd = dup(STDIN_FILENO);
 	if (pipe(fd) != 0) {
 		throw PipeFailureException();
@@ -186,11 +188,11 @@ size_t    CGI::execute() {
 		throw ForkFailureException();
 	}
 	else if (pid == 0) {
-		ChildProcess(fd, tmp_fd);
+		ChildProcess(fd, &tmp_fd);
 	}
 	else {
-		ParentProcess(fd, tmp_fd);
+		exit_status = ParentProcess(fd, &tmp_fd, pid);
 	}
 	close(tmp_fd);
-	return es;
+	return exit_status;
 }
