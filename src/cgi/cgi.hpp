@@ -13,7 +13,6 @@
 #include "../resolved_target/target_config.hpp"
 #include "../request/request.hpp"
 #include "../utils/utils.hpp"
-#include "vtoa.hpp"
 
 #include <vector>
 
@@ -64,7 +63,7 @@ https://stackoverflow.com/questions/28921089/i-have-written-my-own-http-server-a
 */
 class CGI {
 	private:
-		CGIPass *_cgi_data;
+		CGIPass _cgi_data;
 		Request *_request;
 		const TargetConfig *_target;
 		std::vector<std::string> _env;
@@ -72,6 +71,7 @@ class CGI {
 		bool		_valid_file;
 		std::string	_file_name;
 		std::string _content;
+		std::string _path;
 
 
 		void    SetHeaders();
@@ -80,12 +80,17 @@ class CGI {
 		bool		HasExtension(std::string file_name);
 		void	ChildProcess(int *fd, int *tmp_fd);
 		int		ParentProcess(int *fd, int *tmp_fd, int pid);
+		void to_argv(const char **argv);
+		void to_env(const char **env);
 
 	public:
 		CGI(){};
 		~CGI(){};
 		bool    setup(Request *request); // also probably needs the request class to set ENVs with.
 		size_t    execute();
+		bool		isValidFile() const;
+		std::string	getFileName() const;
+		std::string getContent() const;
 
 		
 };

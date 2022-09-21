@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 #include "../../src/config/nginx_config.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
+#include "../../src/request/request.hpp"
+#include "../../src/cgi/cgi.hpp"
 # include <map>
 #include <string>
+#include <vector>
 
 // Test syntax
 /*
@@ -506,3 +509,14 @@ TEST(NginxConfigTest, invalid) {
 //** MODULE TargetConfig  **//
 //////////////////////////////
 
+
+//////////////////////////////
+//** MODULE CGI  **//
+//////////////////////////////
+
+TEST(CGITesting, valid) {
+	NginxConfig config("../../../config_files/default.conf");
+
+	Request request(&config);
+	request.Parse("GET /cgi-bin/test.py HTTP/1.1\r\nHost: localhost\n\n");
+}
