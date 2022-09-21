@@ -39,17 +39,11 @@ bool	IsPath(std::string path){
 }
 
 void CGI::SetHeaders() {
-	_env.push_back("CONTENT_LENGTH=" + 	_request->GetField("CONTENT_LENGTH"));
-	_env.push_back("CONTENT_TYPE=" + 	_request->GetField("CONTENT_TYPE"));
+	_env.push_back("CONTENT_LENGTH=" + 	_request->GetField("Content-Length"));
+	_env.push_back("CONTENT_TYPE=" + 	_request->GetField("Content-Type"));
 	_env.push_back("DOCUMENT_ROOT=" + 	_request->GetTargetConfig().GetRoot());
-	_env.push_back("HTTP_COOKIE=" + 	_request->GetField("HTTP_COOKIE"));
-	_env.push_back("HTTP_HOST=" + 		_request->GetField("HTTP_HOST"));
-	_env.push_back("HTTP_REFERER=" + 	_request->GetField("HTTP_REFERER"));
-	_env.push_back("HTTP_USER_AGENT=" + _request->GetField("HTTP_USER_AGENT"));
 	_env.push_back("PATH_TRANSLATED=" + _target->GetResolvedPath());
 	_env.push_back("QUERY_STRING=" + 	_request->GetTargetURI().GetQuery());
-	_env.push_back("REDIRECT_STATUS=" + _request->GetField("REDIRECT_STATUS"));
-	_env.push_back("REMOTE_ADDR=" + 	_request->GetField("REMOTE_ADDR"));
 	_env.push_back("REMOTE_HOST=" + 	_request->GetField("HOST"));
 	_env.push_back("REQUEST_METHOD=" + 	_request->GetMethod());
 	_env.push_back("SCRIPT_FILENAME=" + _request->GetTargetURI().GetPath());
@@ -58,7 +52,6 @@ void CGI::SetHeaders() {
 	_env.push_back("SERVER_PORT=" + 	_request->GetTargetURI().GetPort());
 	_env.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	_env.push_back("SERVER_SOFTWARE=foodserv");
-	
 
 }
 
@@ -84,9 +77,6 @@ std::string	CGI::FindFile() {
 	// search for first file with extension
 	// append file name to resolved path
 	// return resolved path file name combo
-	
-
-	
 	struct dirent *files;
 	std::string		file;
 	if (IsDirectory(_path) == true) {
@@ -155,6 +145,8 @@ bool	CGI::setup(Request *request) {
 	SetArgv();
 	if (_valid_file == true)
 		SetHeaders();
+	printVector(_argv);
+	printVector(_env);
 	return (_valid_file);
 }
 
@@ -266,6 +258,12 @@ std::string	CGI::getFileName() const {
 }
 std::string CGI::getContent() const {
 	return _content;
+}
+
+void	printVector(std::vector<std::string> vec) {
+	for (size_t i = 0; i < vec.size(); ++i) {
+		std::cout << vec[i] << std::endl;
+	}
 }
 
 #undef DEBUG

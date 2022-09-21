@@ -61,6 +61,8 @@ https://stackoverflow.com/questions/28921089/i-have-written-my-own-http-server-a
 	- if 2 arguments: use 2nd argument to execute file
 	- if 1 argument: consider it an executable and try to execute it
 */
+void	printVector(std::vector<std::string> vec);
+
 class CGI {
 	private:
 		CGIPass _cgi_data;
