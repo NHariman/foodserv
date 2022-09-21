@@ -1,34 +1,26 @@
 #include "resolved_path.hpp"
 
-#define DEBUG 0
-
 ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _target_config(target_config), _request_uri(target) {
 	_locationblock_uri = _target_config->GetLocationUri().GetUri();
-	if (DEBUG) std::cout << "LOCATION BLOCK URI : " << _locationblock_uri << std::endl;
-	if (DEBUG) std::cout << "REQUEST URI: " << _request_uri << std::endl;
 	_target_config->SetGenerateIndexBool(false);
 
     if (CheckReturn())
 		return ;
 
-	/* checking root and alias goes in an if statement, root will be ignored if alias is set */
-	if (_target_config->GetAlias().empty() == false) {
+	if (_target_config->GetAlias().empty() == false)
 		ReplaceAlias();
-	}
-	else if (_target_config->GetRoot().empty() == false) {
+	else if (_target_config->GetRoot().empty() == false)
 		AppendRoot();
-	}
 
 	if (LocationIsDirectory()) {
-		// target_config.SetGenerateIndexBool(false);
-		if (!_target_config->GetAutoindex())
+		if (_target_config->GetCGIPass().IsSet() == true) {}
+		else if (!_target_config->GetAutoindex())
 			_path = "";
 		else
 			_path = SearchIndexFiles();
 	}
 
 	CleanUpPath();
-
 }
 
 bool	ResolvedPath::CheckReturn() {
@@ -66,11 +58,6 @@ std::string    ResolvedPath::SearchIndexFiles() {
 void    ResolvedPath::ReplaceAlias() {
 	std::string	substr;
 
-	if (DEBUG) std::cout << "in replace alias" << std::endl;
-	if (DEBUG) std::cout << "location uri: " << _locationblock_uri << std::endl;
-	if (DEBUG) std::cout << "request uri: " << _request_uri << std::endl;
-	if (DEBUG) std::cout << "alias: " << _target_config->GetAlias() << std::endl;
-
 	size_t pos = 0;
 	while (pos < _locationblock_uri.size() && _locationblock_uri[pos] == _request_uri[pos])
 		pos++;
@@ -93,4 +80,3 @@ void	ResolvedPath::CleanUpPath() {
 std::string	ResolvedPath::GetResolvedPath() const {
 	return _path;
 }
-
