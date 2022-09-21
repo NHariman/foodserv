@@ -6,7 +6,7 @@
 
 // List of header fields not allowed in chunk trailer as outlined in
 // RFC 7230 Section 4.1.2.
-const vector<string>	ChunkedParser::illegal_fields = {
+const std::vector<std::string>	ChunkedParser::illegal_fields = {
 	"Authorization",
 	"Cache-Control",
 	"Content-Encoding",
@@ -42,9 +42,9 @@ ChunkedParser::~ChunkedParser() {}
 
 // Initializes pointer to Request and 
 // calls on parent class AStateParser::ParseString().
-size_t	ChunkedParser::Parse(Request& request, string const& input) {
+size_t	ChunkedParser::Parse(Request& request, std::string const& input) {
 	_request = &request;
-	if (DEBUG) cout << "\nSTART -- ChunkedParser input: " << input << endl; // DEBUG
+	if (DEBUG) std::cout << "\nSTART -- ChunkedParser input: " << input << std::endl; // DEBUG
 	return ParseString(input);
 }
 
@@ -59,7 +59,7 @@ ChunkState	ChunkedParser::GetNextState(size_t pos) {
 			&ChunkedParser::EndHandler,
 			nullptr
 	};
-	if (DEBUG) cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
+	if (DEBUG) std::cout << "[CP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << std::endl; // DEBUG
 	skip_char = false;
 
 	return (this->*table[cur_state])(input[pos]);
@@ -78,7 +78,7 @@ void	ChunkedParser::AfterParseCheck() {
 // Handles transition on start of parsing and of new lines when
 // chunk data has been fully read.
 ChunkState	ChunkedParser::StartHandler(char c) {
-	if (DEBUG) cout << "[StartHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[StartHandler] at: [" << c << "]\n";
 
 	if (c == '0') {
 		skip_char = true;
@@ -97,7 +97,7 @@ ChunkState	ChunkedParser::StartHandler(char c) {
 // Limit for chunk extension follows 8kb limit of URI & header fields.
 // Limit for chunk size is based on 1,048,576B limit for payload.
 ChunkState	ChunkedParser::SizeHandler(char c) {
-	if (DEBUG) cout << "[SizeHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[SizeHandler] at: [" << c << "]\n";
 
 	// chunk size & chunk extension size check
 	if (buffer.size() > 7)
@@ -131,7 +131,7 @@ ChunkState	ChunkedParser::SizeHandler(char c) {
 // Handles parsing of chunk data, reading octets as data until
 // previously-indicated chunk size has been met.
 ChunkState	ChunkedParser::DataHandler(char c) {
-	if (DEBUG) cout << "[DataHandler] at: [" << c << "] | chunk size: " << _chunk_size << "\n";
+	if (DEBUG) std::cout << "[DataHandler] at: [" << c << "] | chunk size: " << _chunk_size << "\n";
 
 	if (_request->GetMessageBody().size() + _chunk_size > _request->max_body_size)
 		throw PayloadTooLargeException();
@@ -160,7 +160,7 @@ ChunkState	ChunkedParser::DataHandler(char c) {
 // Like SizeHandler, ignores chunk extensions but guards against overly-long
 // chunk extensions.
 ChunkState	ChunkedParser::LastHandler(char c) {
-	if (DEBUG) cout << "[LastHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[LastHandler] at: [" << c << "]\n";
 
 	if (_chunk_ext == true) {
 		if (_chunk_ext_size > MAX_CHUNKEXT_SIZE)
@@ -187,7 +187,7 @@ ChunkState	ChunkedParser::LastHandler(char c) {
 
 // Handles trailer header fields.
 ChunkState	ChunkedParser::TrailerHandler(char c) {
-	if (DEBUG) cout << "[TrailerHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[TrailerHandler] at: [" << c << "]\n";
 
 	switch (c) {
 		case '\r':
@@ -210,7 +210,7 @@ ChunkState	ChunkedParser::TrailerHandler(char c) {
 
 // Handles empty line that must end chunked transfer coding.
 ChunkState	ChunkedParser::EndHandler(char c) {
-	if (DEBUG) cout << "[EndHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[EndHandler] at: [" << c << "]\n";
 	switch (c) {
 		case '\0':
 			skip_char = true;
@@ -254,7 +254,7 @@ ChunkState	ChunkedParser::HandleCRLF(char c, ChunkState next_state, bool skip) {
 void	ChunkedParser::ParseTrailerHeader() {
 	HeaderFieldParser	parser;
 	size_t	field_name_end = buffer.find_first_of(':');
-	string	field_name = buffer.substr(0, field_name_end);
+	std::string	field_name = buffer.substr(0, field_name_end);
 
 	if (find(illegal_fields.begin(), illegal_fields.end(), field_name)
 			== illegal_fields.end())

@@ -7,8 +7,6 @@
 #include "../utils/request_utils.hpp"
 #include "../utils/utils.hpp"
 
-using namespace std;
-
 class Request;
 
 enum	ChunkState {
@@ -23,7 +21,7 @@ enum	ChunkState {
 };
 
 class ChunkedParser : public AStateParser<ChunkState> {
-	static const vector<string> illegal_fields;
+	static const std::vector<std::string> illegal_fields;
 
 	public:
 		// Default constructor
@@ -31,7 +29,7 @@ class ChunkedParser : public AStateParser<ChunkState> {
 		// Destructor
 		~ChunkedParser();
 
-		size_t Parse(Request& request, string const& input);
+		size_t Parse(Request& request, std::string const& input);
 
 	protected:
 		ChunkState	GetNextState(size_t pos) override;

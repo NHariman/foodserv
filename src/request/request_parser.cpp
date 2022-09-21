@@ -19,7 +19,7 @@ RequestParser::~RequestParser() {}
 
 // Casts input buffer into string, resets internal counters,
 // and passes string to AStateParser::ParseString().
-size_t	RequestParser::Parse(Request& request, string const& buffer) {
+size_t	RequestParser::Parse(Request& request, std::string const& buffer) {
 	_request = &request;
 	return ParseString(buffer);
 }
@@ -35,7 +35,7 @@ RequestState	RequestParser::GetNextState(size_t pos) {
 			nullptr
 	};
 	(void)pos;
-	if (DEBUG) cout << "[RP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << endl; // DEBUG
+	if (DEBUG) std::cout << "[RP::GetNextState] pos: " << pos << " state: " << cur_state << " in [pos]: " << input[pos] << std::endl; // DEBUG
 	return (this->*table[cur_state])();
 }
 
@@ -47,7 +47,7 @@ void	RequestParser::CheckInvalidState() const {
 void	RequestParser::IncrementCounter() {}
 
 void	RequestParser::PreParseCheck() {
-	if (DEBUG) cout << "\nRequestParser | preparse " << endl;
+	if (DEBUG) std::cout << "\nRequestParser | preparse " << std::endl;
 }
 
 void	RequestParser::AfterParseCheck() {
@@ -64,13 +64,13 @@ void	RequestParser::AfterParseCheck() {
 
 // Calls on RequestLineParser to parse request line, as delimited by first LF.
 RequestState	RequestParser::RequestLineHandler() {
-	if (DEBUG) cout << "[Request Line Handler] at: [" << input[pos] << "]\n";
+	if (DEBUG) std::cout << "[Request Line Handler] at: [" << input[pos] << "]\n";
 
 	size_t	request_line_end = input.find_first_of('\n');
-	if (request_line_end == string::npos)
+	if (request_line_end == std::string::npos)
 		throw BadRequestException("Request line missing CRLF line break");
 
-	string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
+	std::string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
 	pos += _request_line_parser.Parse(*_request, request_line);
 	// pos += _request_line_parser.Parse(_request->_request_line, request_line);
 	return r_HeaderField;
@@ -78,13 +78,13 @@ RequestState	RequestParser::RequestLineHandler() {
 
 // Calls on HeaderFieldParser to parse header fields.
 RequestState	RequestParser::HeaderFieldHandler() {
-	if (DEBUG) cout << "[Field Handler] at: [" << input[pos] << "]\n";
+	if (DEBUG) std::cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
-	string header_field = input.substr(pos);
-	// cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
+	std::string header_field = input.substr(pos);
+	// std::cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
 	pos += _header_parser.Parse(*_request, header_field);
 	if (_header_parser.IsDone() == true) {
-		if (DEBUG) cout << "--- Header Field Parsing complete. ---\n";
+		if (DEBUG) std::cout << "--- Header Field Parsing complete. ---\n";
 		return r_HeaderDone;
 	}
 	else
@@ -93,7 +93,7 @@ RequestState	RequestParser::HeaderFieldHandler() {
 
 // Validates parsed header fields and checks if message is expected.
 RequestState	RequestParser::HeaderDoneHandler() {
-	if (DEBUG) cout << "[Header Done Handler] at pos " << pos << endl;
+	if (DEBUG) std::cout << "[Header Done Handler] at pos " << pos << std::endl;
 
 	// allocated on stack because we don't need to remember the return
 	RequestValidator	validator(_config, &(_request->_target_config));
@@ -114,10 +114,10 @@ RequestState	RequestParser::HeaderDoneHandler() {
 
 // Called when Content-Length indicates message is expected.
 RequestState	RequestParser::MessageBodyHandler() {
-	if (DEBUG) cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
+	if (DEBUG) std::cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
 	// _request->_msg_body += input.substr(pos, _request->content_length);
-	string	new_message = _request->GetMessageBody()
+	std::string	new_message = _request->GetMessageBody()
 		+ input.substr(pos, _request->GetContentLength());
 	_request->SetMessageBody(new_message);
 
@@ -134,7 +134,7 @@ RequestState	RequestParser::MessageBodyHandler() {
 
 // Called when Transfer-Encoding indicates chunked message is expected.
 RequestState	RequestParser::ChunkedHandler() {
-	if (DEBUG) cout << "[Chunked Handler] at: [" << input[pos]
+	if (DEBUG) std::cout << "[Chunked Handler] at: [" << input[pos]
 		<< "], len of input: " << input.substr(pos).length() << "\n";
 
 	size_t bytes_read = _chunked_parser.Parse(*_request, input.substr(pos));
@@ -142,7 +142,7 @@ RequestState	RequestParser::ChunkedHandler() {
 		_request->msg_bytes_read += bytes_read;
 	pos += bytes_read;
 	if (_chunked_parser.IsDone() == true) {
-		if (DEBUG) cout << "--- Chunked Parsing complete. ---\n";
+		if (DEBUG) std::cout << "--- Chunked Parsing complete. ---\n";
 		HandleEndOfChunkedMessage();
 		return r_Done;
 	}
@@ -160,15 +160,15 @@ void	RequestParser::HandleEndOfChunkedMessage() {
 }
 
 void	RequestParser::DebugPrint() {
-	cout << "Parsed method: " << _request->GetMethod() << endl;
-	cout << "Target input: " << _request->GetTargetURI().GetInputURI() << endl;
-	cout << "Parsed target: " << _request->GetTargetURI().GetURIDebug() << endl;
-	cout << "Parsed version: " << _request->GetHTTPVersion() << endl;
-	cout << "Parsed headers:\n";
-	for (map<string,string>::const_iterator it = _request->GetFields().begin();
+	std::cout << "Parsed method: " << _request->GetMethod() << std::endl;
+	std::cout << "Target input: " << _request->GetTargetURI().GetInputURI() << std::endl;
+	std::cout << "Parsed target: " << _request->GetTargetURI().GetURIDebug() << std::endl;
+	std::cout << "Parsed version: " << _request->GetHTTPVersion() << std::endl;
+	std::cout << "Parsed headers:\n";
+	for (std::map<std::string,std::string>::const_iterator it = _request->GetFields().begin();
 		it != _request->GetFields().end(); it++)
-			cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
-	cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
+			std::cout << "\tfield: [" << it->first << "] | value: [" << it->second << "]\n";
+	std::cout << "Parsed message: [" << _request->GetMessageBody() << "]\n";
 }
 
 #undef DEBUG // REMOVE

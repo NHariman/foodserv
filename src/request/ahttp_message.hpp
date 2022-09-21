@@ -67,7 +67,7 @@ class AHTTPMessage {
 
 		// Inserts new field name + value pair into map or appends new value to
 		// existing field value if field already exists in map.
-		virtual	void	SetHeaderField(string field_name, string field_val) {
+		virtual	void	SetHeaderField(std::string field_name, std::string field_val) {
 			// Normalize field name to lowercase for easy lookup later
 			NormalizeString(tolower, field_name, 0);
 

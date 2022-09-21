@@ -10,7 +10,7 @@ RequestLineParser::~RequestLineParser() {}
 
 // Initializes pointer to RequestLine struct, resets internal counters,
 // and passes input string to parent class AStateParser::ParseString().
-size_t	RequestLineParser::Parse(Request& request, string const& input) {
+size_t	RequestLineParser::Parse(Request& request, std::string const& input) {
 	_request = &request;
 	return ParseString(input);
 }
@@ -56,7 +56,7 @@ RequestLineState	RequestLineParser::StartHandler() {
 // vector of accepted method strings. If it's not in the list, throws NotImplementedException.
 // Otherwise saves string and increments `bytes_read`.
 RequestLineState	RequestLineParser::MethodHandler() {
-	static vector<string>	methods = { "GET", "POST", "DELETE" };
+	static std::vector<std::string>	methods = { "GET", "POST", "DELETE" };
 
 	size_t	method_end = GetEndPos(input, ' ', pos);
 	
@@ -64,7 +64,7 @@ RequestLineState	RequestLineParser::MethodHandler() {
 	if (method_end == pos)
 		throw BadRequestException("Request method missing single space delimiter");
 
-	string	method = input.substr(pos, method_end);
+	std::string	method = input.substr(pos, method_end);
 	if (find(methods.begin(), methods.end(), method) == methods.end())
 		throw NotImplementedException();
 	_request->SetMethod(method);
@@ -88,7 +88,7 @@ RequestLineState	RequestLineParser::TargetHandler() {
 // Checks if HTTP version is valid (only 1.1 is accepted).
 RequestLineState	RequestLineParser::VersionHandler() {
 	size_t	version_end = GetCRLFPos(input, pos);
-	string	version = input.substr(pos, version_end);
+	std::string	version = input.substr(pos, version_end);
 
 	if (version.front() != 'H' || !isdigit(version.back())) {
 		buffer = version;
@@ -115,14 +115,14 @@ RequestLineState	RequestLineParser::VersionEndHandler() {
 // Returns position of `to_find` within string `s` in terms of its distance from
 // `start`, so value can be used immediately with `substr()`, skipping arithmetic.
 // If no such character is found in string, returns `start`;
-size_t	RequestLineParser::GetEndPos(string const& s, char to_find, size_t start) {
+size_t	RequestLineParser::GetEndPos(std::string const& s, char to_find, size_t start) {
 	size_t	end = s.find_first_of(to_find, start);
-	if (end == string::npos || end == start)
+	if (end == std::string::npos || end == start)
 		return start;
 	return end - start;
 }
 
-size_t	RequestLineParser::GetCRLFPos(string const& input, size_t pos) {
+size_t	RequestLineParser::GetCRLFPos(std::string const& input, size_t pos) {
 	size_t	nl_pos = GetEndPos(input, '\n', pos);
 	size_t	cr_pos = GetEndPos(input, '\r', pos);
 

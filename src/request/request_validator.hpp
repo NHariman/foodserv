@@ -8,8 +8,6 @@
 #include "../utils/request_utils.hpp"
 #include "../resolved_target/target_config.hpp"
 
-using namespace std;
-
 class Request;
 class NginxConfig;
 
@@ -39,10 +37,10 @@ class RequestValidator {
 		bool	PostConfigValidate(Request& request);
 		bool	ValidHost(Request& request);
 		bool	ValidExpect(Request& request);
-		bool	ValidContentEncoding(string const& host);
+		bool	ValidContentEncoding(std::string const& host);
 		bool	ValidTransferEncoding(Request& request);
 		bool	ValidContentLength(Request& request);
-		bool	ValidMethod(string const& method);
+		bool	ValidMethod(std::string const& method);
 };
 
 #endif /* REQUEST_VALIDATOR_HPP */

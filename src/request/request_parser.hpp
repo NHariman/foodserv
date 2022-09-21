@@ -8,8 +8,6 @@
 #include "request_line_parser.hpp"
 #include "../err/exception.hpp"
 
-using namespace std;
-
 class Request;
 class NginxConfig;
 
@@ -35,7 +33,7 @@ class RequestParser  : public AStateParser<RequestState> {
 		// Destructor
 		~RequestParser();
 
-		size_t		Parse(Request& request, string const& buffer);
+		size_t		Parse(Request& request, std::string const& buffer);
 
 		// friend class forward declaration allows Request to
 		// access protected `cur_state` attribute.

@@ -23,7 +23,7 @@ HeaderFieldParser::~HeaderFieldParser() {}
 
 // Initializes pointer to Header Fields map and 
 // calls on parent class AStateParser::ParseString().
-size_t	HeaderFieldParser::Parse(Request& request, string const& input) {
+size_t	HeaderFieldParser::Parse(Request& request, std::string const& input) {
 	_request = &request;
 	return ParseString(input);
 }
@@ -52,7 +52,7 @@ void	HeaderFieldParser::CheckInvalidState() const {
 
 // Header field may only start with TChar.
 FieldState	HeaderFieldParser::StartHandler(char c) {
-	if (DEBUG) cout << "[FP StartHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[FP StartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	buffer.clear();
 	switch (c) {
@@ -74,7 +74,7 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // Header field name may only be TChar with no whitespace before the ':'
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
-	if (DEBUG) cout << "[FP NameHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[FP NameHandler] at: [" << c << "]\n";
 
 	if (buffer.size() > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
@@ -95,7 +95,7 @@ FieldState	HeaderFieldParser::NameHandler(char c) {
 
 // Skips whitespace following colon but before value starts.
 FieldState	HeaderFieldParser::ValueStartHandler(char c) {
-	if (DEBUG) cout << "[FP ValueStartHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[FP ValueStartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	if (IsWhitespace(c)) {
 		skip_char = true;
@@ -108,7 +108,7 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 // Accepts VChar or whitespace for field value. If \r found,
 // returns ValueEnd state to check for valid CRLF sequence.
 FieldState	HeaderFieldParser::ValueHandler(char c) {
-	if (DEBUG) cout << "[FP ValueHandler] at: [" << c << "]\n";
+	if (DEBUG) std::cout << "[FP ValueHandler] at: [" << c << "]\n";
 
 	if (buffer.size() > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
@@ -152,12 +152,12 @@ void	HeaderFieldParser::PushFieldName() {
 // Trims trailing whitespace off field value and saves buffer
 // as value of cur_field key in `fields` map that was passed in Parse().
 void	HeaderFieldParser::PushFieldValue() {
-	string::iterator	start = buffer.begin();
-	string::iterator	end = buffer.end() - 1;
+	std::string::iterator	start = buffer.begin();
+	std::string::iterator	end = buffer.end() - 1;
 
 	while (start != end && IsWhitespace(*end))
 		end--;
-	_request->SetHeaderField(_cur_field, string(start, end + 1));
+	_request->SetHeaderField(_cur_field, std::string(start, end + 1));
 	buffer.clear();
 }
 #undef DEBUG // REMOVE

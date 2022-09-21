@@ -7,8 +7,6 @@
 #include "ahttp_message.hpp"
 #include "../resolved_target/target_config.hpp"
 
-using namespace std;
-
 class NginxConfig;
 
 // Inherits the following protected attributes from AHTTPMessage:
@@ -28,7 +26,7 @@ class Request : public AHTTPMessage {
 			Expect
 		};
 
-		typedef std::map<string, string>	FieldsMap;
+		typedef std::map<std::string, std::string>	FieldsMap;
 
 		// Default constructor
 		Request();
@@ -45,17 +43,17 @@ class Request : public AHTTPMessage {
 
 		// Getters
 		TargetConfig const&	GetTargetConfig() const;
-		string const&		GetMethod() const;
-		string const&		GetTargetString() const;
+		std::string const&		GetMethod() const;
+		std::string const&		GetTargetString() const;
 		URI const&			GetTargetURI() const;
 		Status				GetRequestStatus() const;
 
 		// Setters
-		void				SetMethod(string const& method);
-		void				SetTarget(string const& target);
+		void				SetMethod(std::string const& method);
+		void				SetTarget(std::string const& target);
 		void				SetRequestStatus(Status status);
-		void				SetTargetHost(string const& host);
-		// void				SetResolvedTargetPath(string const& target_path);
+		void				SetTargetHost(std::string const& host);
+		// void				SetResolvedTargetPath(std::string const& target_path);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private variables of Request.
@@ -64,9 +62,9 @@ class Request : public AHTTPMessage {
 	private:
 		TargetConfig		_target_config;
 		RequestParser		_parser;
-		string				_method;
+		std::string				_method;
 		URI					_target;
-		string				_buf;
+		std::string				_buf;
 		Status				_request_status;
 
 		bool	CanParse();

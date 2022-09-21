@@ -7,8 +7,6 @@
 #include "../utils/request_utils.hpp"
 #include "../utils/utils.hpp"
 
-using namespace std;
-
 class Request;
 
 enum	FieldState {
@@ -29,7 +27,7 @@ class HeaderFieldParser : public AStateParser<FieldState> {
 		// Destructor
 		~HeaderFieldParser();
 
-		size_t Parse(Request& request, string const& input);
+		size_t Parse(Request& request, std::string const& input);
 
 	protected:
 		FieldState	GetNextState(size_t pos) override;
@@ -37,7 +35,7 @@ class HeaderFieldParser : public AStateParser<FieldState> {
 
 	private:
 		Request*			_request;
-		string				_cur_field;
+		std::string				_cur_field;
 		size_t				_bytes_read;
 
 		FieldState	StartHandler(char c);
