@@ -67,10 +67,10 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		size_t						GetMaxBodySize() const;
 		std::string					GetResolvedPath() const;
 		bool						MustGenerateIndex() const;
+		std::vector<std::string>	GetAllowedMethods() const;
 
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;
 };
-
 
 #endif
