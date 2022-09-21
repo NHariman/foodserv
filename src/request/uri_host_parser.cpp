@@ -15,7 +15,7 @@ URIHostParser::~URIHostParser() {}
 
 // Resets internal counters (in case of repeat calls) and passes
 // input string to AStateParser::ParseString().
-size_t	URIHostParser::Parse(URI& uri, string const& input) {
+size_t	URIHostParser::Parse(URI& uri, std::string const& input) {
 	_groups = 0;
 	_colons = 0;
 	_digits = 0;
@@ -58,7 +58,7 @@ static bool	IsUnreservedSubDelim(char c) {
 }
 
 // if string is only digits, with at least 1 periods, assume it's IPv4
-static bool	IsIPv4Format(string const& s) {
+static bool	IsIPv4Format(std::string const& s) {
 	return (IsValidString(isdigit, s, ".:-") // allows '.' for IPv4 delim & ':' for port
 			&& std::count(s.begin(), s.end(), '.') > 1);
 }
@@ -101,10 +101,10 @@ HostState	URIHostParser::LiteralHandler(size_t pos) {
 	}
 }
 
-static bool	ValidLastBitsIPv4(string const& input, size_t pos) {
+static bool	ValidLastBitsIPv4(std::string const& input, size_t pos) {
 	if (input[pos - 1] == ':' && isdigit(input[pos])) {
 		size_t	end = input.find_first_of(']', pos);
-		string	last_bits = input.substr(pos, end - pos);
+		std::string	last_bits = input.substr(pos, end - pos);
 
 		return (IsIPv4Format(last_bits));
 	}
@@ -134,7 +134,7 @@ static HostState	HandleIPv6Digit(size_t& colons, size_t& digits) {
 }
 
 // Used by IPv6Handler to transform uppercase hex-alpha to lowercase.
-static void	NormalizeIPv6HexDig(string& buffer, char c, bool& skip_char) {
+static void	NormalizeIPv6HexDig(std::string& buffer, char c, bool& skip_char) {
 	if (c >= 'A' && c <= 'Z') {
 		buffer += tolower(c);
 		skip_char = true;
@@ -198,13 +198,13 @@ HostState	URIHostParser::IPvFHandler(size_t pos) {
 
 // Used by IPv4Handler to validate dec-octet group,
 // which has to be within range of 0 to 255.
-static bool	ValidDecOctetGroup(string const& buffer) {
+static bool	ValidDecOctetGroup(std::string const& buffer) {
 	size_t	begin = buffer.find_last_of('.');
 	int		octet;
 
 	// if 1st group
-	if (begin == string::npos) {
-		if (buffer.find(":") != string::npos) { // if part of IPv6 address
+	if (begin == std::string::npos) {
+		if (buffer.find(":") != std::string::npos) { // if part of IPv6 address
 			size_t	start_of_ipv4 = buffer.find_last_of(":") + 1;
 			octet = std::stoi(buffer.substr(start_of_ipv4));
 		}
@@ -222,7 +222,7 @@ static bool	ValidDecOctetGroup(string const& buffer) {
 // Used by IPv4Handler to handle digit input transition.
 // Increments digit count (or resets it with new group).
 static HostState	HandleIPv4Digits(size_t& digits, size_t& groups,
-										string const& buffer) {
+										std::string const& buffer) {
 	// if more than 3 digit group
 	if (digits > 3)
 		return h_Invalid;
@@ -333,7 +333,7 @@ HostState	URIHostParser::PortHandler(size_t pos) {
 
 // Called when ":" signalling port or EOL is found.
 // Pushes buffer to URI::host or port, clears buffer, and return `next_state`.
-HostState	URIHostParser::PushBuffer(string& field, HostState next_state) {
+HostState	URIHostParser::PushBuffer(std::string& field, HostState next_state) {
 	if (!buffer.empty()) {
 		field = buffer;
 		buffer.clear();

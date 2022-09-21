@@ -1,8 +1,6 @@
 #include <cctype> // isalpha, isdigit, toupper
 #include <iostream>
 
-using namespace std;
-
 // Used for validating hexademical digits following '%' inputs indicating
 // percent-encoding.
 bool	IsHexDig(int c) {
@@ -62,10 +60,10 @@ bool	IsWhitespace(int c) {
 // Checks if string `s` is valid according to rules of `validity_checker`
 // function that's passed as argument.
 // Optional argument `allow` allows for certain characters in string.
-bool	IsValidString(int (*validity_checker)(int), string const& s,
-							string const& allow) {
+bool	IsValidString(int (*validity_checker)(int), std::string const& s,
+							std::string const& allow) {
 	for (size_t i = 0; i < s.size(); i++) {
-		if (validity_checker(s[i]) == false && allow.find(s[i]) == string::npos)
+		if (validity_checker(s[i]) == false && allow.find(s[i]) == std::string::npos)
 			return false;
 	}
 	return true;

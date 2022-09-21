@@ -4,7 +4,9 @@
 #include "../uri_host_parser.hpp"
 #include "../../err/exception.hpp"
 
-string	ConstructAndParseURI(string uri_string) {
+using namespace std;
+
+string	ConstructAndParseURI(std::string uri_string) {
 	URIHostParser	parser;
 	URI				uri;
 

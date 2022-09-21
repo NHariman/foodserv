@@ -4,8 +4,6 @@
 #include <iostream>
 #include "../err/exception.hpp"
 
-using namespace std;
-
 // Constructs a URI object composed of: host, path, query.
 // Host and path portion must be parsed in 2 separate calls,
 // as ParseInput only parses either as path or as host (because complete URIs are not )
@@ -26,29 +24,29 @@ class URI {
 		// Copy constructor
 		URI(URI const& other);
 		// String constructor
-		explicit URI(string const& input);
+		explicit URI(std::string const& input);
 		// Assignment operator
 		URI&	operator=(URI const& other);
 		// Overloaded assignment operator taking string
-		URI&	operator=(string const& input);
+		URI&	operator=(std::string const& input);
 		// Destructor
 		~URI();
 
 		// Getters
-		string const&	Get() const;
-		string const&	GetInputURI() const;
-		string const&	GetParsedURI() const;
-		string			GetURIDebug() const;
-		string const&	GetHost() const;
-		string const&	GetPort() const;
-		string			GetHostWithPort() const;
-		string const&	GetPath() const;
-		string const&	GetQuery() const;
+		std::string const&	Get() const;
+		std::string const&	GetInputURI() const;
+		std::string const&	GetParsedURI() const;
+		std::string			GetURIDebug() const;
+		std::string const&	GetHost() const;
+		std::string const&	GetPort() const;
+		std::string			GetHostWithPort() const;
+		std::string const&	GetPath() const;
+		std::string const&	GetQuery() const;
 
 		// Setters
-		void	SetHost(string const& host);
-		void	SetPath(string const& path);
-		void	SetQuery(string const& query);
+		void	SetHost(std::string const& host);
+		void	SetPath(std::string const& path);
+		void	SetQuery(std::string const& query);
 
 		// friend class forward declaration allows parser classes to
 		// access private & protected members of URI.
@@ -56,15 +54,15 @@ class URI {
 		friend class URIHostParser;
 
 	private:
-		string	_uri_input;
-		string	_uri_parsed;
-		string	_host;
-		string	_port;
-		string	_path;
-		string	_query;
+		std::string	_uri_input;
+		std::string	_uri_parsed;
+		std::string	_host;
+		std::string	_port;
+		std::string	_path;
+		std::string	_query;
 
 		void	ParseInput(Part part = Part::Invalid);
-		string	ConstructParsedURI();
+		std::string	ConstructParsedURI();
 };
 
 #endif /* URI_HPP */

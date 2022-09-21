@@ -4,10 +4,12 @@
 #include "../../err/exception.hpp"
 #include "../request.hpp"
 
+using namespace std;
+
 static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/src/request/testing/default.conf");
 
 // Helper function that calls Request::Parse with c-string conversion of passed string.
 static void	ParseChunked(Request& request, string const& req_str) {
@@ -16,7 +18,7 @@ static void	ParseChunked(Request& request, string const& req_str) {
 
 // Helper function used to construct Request objects with passed string
 // containing request message + a standard POST request line. Returns parsed message.
-static string	ConstructAndGetMessage(string const& rest_of_header) {
+static string	ConstructAndGetMessage(std::string const& rest_of_header) {
 	string req_str = POST_Req + rest_of_header;
 	Request request(&config);
 	request.Parse(req_str.c_str());

@@ -6,8 +6,6 @@
 #include "../utils/request_utils.hpp"
 #include "../utils/utils.hpp"
 
-using namespace std;
-
 enum URIState {
 	u_Start = 0,
 	u_Path,
@@ -27,7 +25,7 @@ class RequestTargetParser : public AStateParser<URIState> {
 		// Destructor
 		~RequestTargetParser();
 
-		size_t	Parse(URI& uri, string const& input);
+		size_t	Parse(URI& uri, std::string const& input);
 
 	private:
 		URI			*_uri;
