@@ -28,4 +28,7 @@ bool	IsValidString(int (*validity_checker)(int), std::string const& s,
 // mime_types.cpp
 std::string	GetType(std::string const& extension);
 
+// status_codes.cpp
+std::string GetReasonPhrase(int status_code);
+
 #endif /* UTILS_HPP */
