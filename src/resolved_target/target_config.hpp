@@ -71,6 +71,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		std::string					GetResolvedPath() const;
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;
+		std::vector<std::string>	GetAllowedMethods() const;
 };
 
 

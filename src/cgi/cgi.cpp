@@ -162,9 +162,6 @@ int		CGI::ParentProcess(int *fd, int *tmp_fd, int pid) {
 	if (WIFEXITED(status)) {
 		es = WEXITSTATUS(status);
 	}
-	if (es == 0) {
-		_content.append("HTTP/1.1 200 OK\r\n");
-	}
 	while (read(fd[0], buffer, 1000) != -1) {
 		_content.append(buffer);
 	}
