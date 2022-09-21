@@ -41,7 +41,7 @@ class CGIPass : public std::pair<std::string, std::string> {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Too many Arguments in cgi_pass directive.";
+					return "ERROR! Not enough Arguments in cgi_pass directive.";
 				}
 		};
 		class NotAFileExtensionException : public std::exception

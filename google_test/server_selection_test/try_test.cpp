@@ -18,7 +18,7 @@ void    compareChosenServer(string expect_port, string chosen_port, vector<strin
 }
 
 TEST(ServerSelectionTest, TestConfig1) {
-    NginxConfig	test1("/Users/sannealbreghs/Desktop/foodserv/test_config/conf1.conf");
+    NginxConfig	test1("/Users/sannealbreghs/Desktop/foodserv/config_files/test_config/conf1.conf");
 
     {
         ServerSelection	select("localhost", "80", test1.GetServers());
@@ -94,7 +94,7 @@ TEST(ServerSelectionTest, TestConfig1) {
 }
 
 TEST(ServerSelectionTest, TestConfig2) {
-    NginxConfig	test2("/Users/sannealbreghs/Desktop/foodserv/test_config/conf2.conf");
+    NginxConfig	test2("/Users/sannealbreghs/Desktop/foodserv/config_files/test_config/conf2.conf");
     {
         ServerSelection	select("localhost.com", "80", test2.GetServers());
 
@@ -166,7 +166,7 @@ TEST(ServerSelectionTest, TestConfig2) {
 }
 
 TEST(ServerSelectionTest, TestConfig3) {
-    NginxConfig	test3("/Users/sannealbreghs/Desktop/foodserv/test_config/conf3.conf");
+    NginxConfig	test3("/Users/sannealbreghs/Desktop/foodserv/config_files/test_config/conf3.conf");
 
 	{
 		ServerSelection	select("bad example", "80", test3.GetServers());
@@ -218,7 +218,7 @@ TEST(ServerSelectionTest, TestConfig3) {
 }
 
 TEST(ServerSelectionTest, TestConfig4) {
-	NginxConfig	test4("/Users/sannealbreghs/Desktop/foodserv/test_config/conf4.conf");
+	NginxConfig	test4("/Users/sannealbreghs/Desktop/foodserv/config_files/test_config/conf4.conf");
 
 	{
 		ServerSelection	select("", "", test4.GetServers());

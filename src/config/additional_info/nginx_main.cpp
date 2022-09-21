@@ -38,6 +38,8 @@ int	main(int ac, const char **av) {
 		std::cout << "Print error_page: " << std::endl;
 		target.PrintErrorPage();
 		std::cout << "Get autoindex: " << std::boolalpha << target.GetAutoindex() << std::endl;
+		for (size_t i = 0; i < target.GetAllowedMethods().size(); i++)
+   			std::cout << target.GetAllowedMethods().at(i) << ' ';
 		std::cout << std::boolalpha << "Allowed method: GET: " << target.IsAllowedMethod("GET") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: POST: " << target.IsAllowedMethod("POST") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: DELETE: " << target.IsAllowedMethod("DELETE") << std::endl;
@@ -100,6 +102,12 @@ int	main(int ac, const char **av) {
 		std::cout << "Print error_page: " << std::endl;
 		target_cgi_bin.PrintErrorPage();
 		std::cout << "Get autoindex: " << std::boolalpha << target_cgi_bin.GetAutoindex() << std::endl;
+<<<<<<< HEAD
+=======
+		std::cout << "Print allowed_methods vector: " << std::endl;
+		for (size_t i = 0; i < target_cgi_bin.GetAllowedMethods().size(); i++)
+   			std::cout << target_cgi_bin.GetAllowedMethods().at(i) << ' ';
+>>>>>>> 9027679aaebb809973f841bcd44de52ab4be6b42
 		std::cout << std::boolalpha << "Allowed method: GET: " << target_cgi_bin.IsAllowedMethod("GET") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: POST: " << target_cgi_bin.IsAllowedMethod("POST") << std::endl;
 		std::cout << std::boolalpha << "Allowed method: DELETE: " << target_cgi_bin.IsAllowedMethod("DELETE") << std::endl;

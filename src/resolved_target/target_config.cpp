@@ -125,7 +125,7 @@ bool							TargetConfig::IsAllowedMethod(std::string method) {
 	return false;
 }
 
-std::vector<std::string>		TargetConfig::GetAllowedMethods() const {
+std::vector<std::string>	TargetConfig::GetAllowedMethods() const {
 	return _allowed_methods.GetMethods();
 }
 

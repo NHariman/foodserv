@@ -50,7 +50,8 @@ AllowedMethods::AllowedMethods(std::string str) : _get(false), _post(false), _de
 AllowedMethods::AllowedMethods(AllowedMethods const &obj) : 
 _get(obj._get), 
 _post(obj._post), 
-_delete(obj._delete) {}
+_delete(obj._delete),
+_methods(obj._methods) {}
 
 AllowedMethods&		AllowedMethods::operator=(AllowedMethods const &obj) {
 	if (this == &obj) {
@@ -59,6 +60,7 @@ AllowedMethods&		AllowedMethods::operator=(AllowedMethods const &obj) {
 	_get = obj._get;
 	_post = obj._post;
 	_delete = obj._delete;
+	_methods = obj._methods;
 	return (*this);
 }
 
