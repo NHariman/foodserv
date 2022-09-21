@@ -13,6 +13,7 @@ class KernelEvents {
 		int					_kqueue;
 	
 		void	KqueueInit();
+		void	KeventInit();
 	
 	public:
 		KernelEvents(std::vector<int> listening_sockets);

@@ -10,6 +10,7 @@ KernelEvents::KernelEvents(std::vector<int> listening_sockets) : _listening_sock
 	}
 
 	KqueueInit();
+	KeventInit();
 }
 
 void	KernelEvents::KqueueInit() {
@@ -17,4 +18,9 @@ void	KernelEvents::KqueueInit() {
 	if (_kqueue == -1)
 		throw KqueueCreationException();
 	if (DEBUG) std::cout << "_kqueue: " << _kqueue << std::endl;
+}
+
+/* setting up the structs for all listening sockets */
+void	KernelEvents::KeventInit() {
+
 }
