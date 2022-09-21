@@ -72,5 +72,4 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		LocationContext				GetLocation() const;
 };
 
-
 #endif
