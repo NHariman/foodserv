@@ -1,5 +1,5 @@
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef SOCKET_HPP
+# define SOCKET_HPP
 
 #include "../config/nginx_config.hpp"
 #include "../config/server_context.hpp"
@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-class Server {
+class Socket {
 	private:
 		std::vector<ServerContext>	_server_contexts;
 		std::vector<int>			_listening_sockets;
@@ -20,8 +20,9 @@ class Server {
 		int							CreateSocket(std::string port);
 
 	public:
-		Server(std::vector<ServerContext> servers_contexts);
-		~Server();
+		Socket(std::vector<ServerContext> servers_contexts);
+		std::vector<int>			GetListeningSockets() const;
+		~Socket();
 
 	
 		class SocketCreationException : public std::exception {

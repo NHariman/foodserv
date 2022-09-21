@@ -1,12 +1,12 @@
-#include "server.hpp"
+#include "socket.hpp"
 
 # define DEBUG 1
 
-Server::Server(std::vector<ServerContext> servers) : _server_contexts(servers) {
+Socket::Socket(std::vector<ServerContext> servers) : _server_contexts(servers) {
 	CreateListeningSockets();
 }
 
-void	Server::CreateListeningSockets() {
+void	Socket::CreateListeningSockets() {
 	_ports_to_bind = FindUniquePorts();
 	if (DEBUG) std::cout << "Print Vector of Unique Ports: " << std::endl;
 	for (std::vector<std::string>::iterator it = _ports_to_bind.begin(); it != _ports_to_bind.end(); it++) {
@@ -19,7 +19,7 @@ void	Server::CreateListeningSockets() {
 	}
 }
 
-int	Server::CreateSocket(std::string port) {
+int	Socket::CreateSocket(std::string port) {
 	int		socket_fd;
 	int		yes = 1;
 
@@ -43,7 +43,7 @@ int	Server::CreateSocket(std::string port) {
 	return socket_fd;
 }
 
-std::vector<std::string>	Server::FindUniquePorts() {
+std::vector<std::string>	Socket::FindUniquePorts() {
 	std::vector<std::string>	tmp;
 	if (DEBUG) for (std::vector<ServerContext>::const_iterator it = _server_contexts.begin(); it != _server_contexts.end(); it++) {
 		std::string	port_num = it->GetPortNumber();
@@ -58,7 +58,11 @@ std::vector<std::string>	Server::FindUniquePorts() {
 	return tmp;
 }
 
-Server::~Server() {
+std::vector<int>	Socket::GetListeningSockets() const {
+	return _listening_sockets;
+}
+
+Socket::~Socket() {
 	for (std::vector<int>::iterator it = _listening_sockets.begin(); it != _listening_sockets.end(); it++)
 		close(*it);
 }

@@ -1,0 +1,85 @@
+COMPILE = c++
+
+FLAGS = -Wall -Werror -Wextra -std=c++11
+
+MAIN = main.cpp
+
+OBJDIR = obj
+
+SRC_DIR = src
+
+REQ_DIR = request
+
+CONFIG_DIR = config
+
+SERV_SELECT = resolved_target
+
+UTILS_DIR = utils
+
+SERVER_DIR = server
+
+REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,chunked_parser.cpp \
+											header_field_parser.cpp \
+											request_line_parser.cpp \
+											request.cpp \
+											request_parser.cpp \
+											request_validator.cpp \
+											request_target_parser.cpp \
+											uri_host_parser.cpp \
+											uri.cpp)
+
+CONFIG = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/,	config_interface.cpp \
+												setup.cpp \
+												server_name.cpp \
+												server_context.cpp \
+												listen.cpp \
+												location_context.cpp \
+												nginx_config.cpp \
+												config_utils.cpp \
+												directive_validation/client_max_body_size.cpp \
+												directive_validation/allowed_methods.cpp \
+												directive_validation/autoindex.cpp \
+												directive_validation/error_page.cpp \
+												directive_validation/cgi_pass.cpp \
+												directive_validation/index.cpp \
+												directive_validation/location_uri.cpp \
+												directive_validation/return_dir.cpp \
+												directive_validation/root.cpp)
+
+
+SERVER_SELECTION = 	$(addprefix $(SRC_DIR)/$(SERV_SELECT)/,	server_selection.cpp \
+															location_selection.cpp \
+															resolved_path.cpp \
+															target_config.cpp)
+
+UTILS = $(addprefix $(SRC_DIR)/$(UTILS_DIR)/, 	file_handling.cpp \
+												is_functions.cpp \
+												request_utils.cpp )
+
+SERV = $(addprefix $(SRC_DIR)/$(SERVER_DIR)/,	server.cpp)
+
+
+
+OFILES = $(SERV:.cpp=.o) $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(SERVER_SELECTION:.cpp=.o) $(UTILS:.cpp=.o)
+
+NAME = webserv
+
+all: $(NAME)
+
+$(NAME): $(OFILES) 
+	@$(COMPILE) $(FLAGS) $(OFILES) -o $@ 
+
+%.o: %.cpp
+	$(COMPILE) $(FLAGS) -c $< -o $@
+
+clean:
+	@$(RM) $(OFILES)
+	@rm -rf obj/
+
+fclean: clean
+	@$(RM) $(NAME) 
+
+re: fclean all
+
+test: re
+	./$(NAME)

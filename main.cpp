@@ -6,14 +6,15 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/21 19:17:04 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/21 22:42:15 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "src/config/nginx_config.hpp"
 #include "src/config/setup.hpp"
 #include "src/resolved_target/target_config.hpp"
-#include "src/server/server.hpp"
+#include "src/server/socket.hpp"
+#include "src/server/kernel_events.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
@@ -21,12 +22,10 @@ int	main(int ac, const char **av) {
 	try {
 		// first read in the given configuration file
 		NginxConfig input_file(GetConfigLocation(ac, av));
-		
-		Server		webserver(input_file.GetServers());
+	
+		Socket			webserver(input_file.GetServers());
+		KernelEvents	events_listener(webserver.GetListeningSockets());
 
-		// TO DO
-		// recreate server 
-		// create listening socket vector of all ports defined in nginx config
 		
 		// then start up the webserver 
 		// within the kernel event:
