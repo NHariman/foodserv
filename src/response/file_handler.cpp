@@ -7,11 +7,11 @@ FileHandler::FileHandler() {}
 FileHandler::~FileHandler() {}
 
 // Tries to open the file as a stream.
-std::fstream* FileHandler::GetFile(std::string const& file_path) {
+std::ifstream* FileHandler::GetFile(std::string const& file_path) {
     if (!IsValidFile(file_path))
 		throw GetFileHandlingError();
 
-	std::fstream* file_stream = new std::fstream(file_path);
+	std::ifstream* file_stream = new std::ifstream(file_path);
 	if (!file_stream.is_open() || !file_stream.good()) {
 		throw InternalServerErrorException();
 	}

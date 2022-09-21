@@ -81,7 +81,9 @@ static std::map<std::string, std::string>	MIMETypes = {
 // Used by ResponseHandler to set Content-Type header.
 // Returns empty string if extension is unknown.
 std::string	GetType(std::string const& extension) {
-	// TODO: check if extension empty?
+	if (extension.empty())
+		return "";
+		
 	auto mime_type = MIMETypes.find(extension);
 
 	if (mime_type != MIMETypes.end())

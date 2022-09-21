@@ -23,17 +23,17 @@ class Response : public AHTTPMessage {
 		bool	IsComplete() const;
 
 		// Getters
-		std::fstream*		GetFileStream() const;
+		std::istream*		GetFileStream() const;
 		std::string const&	GetReasonPhrase() const;
 		std::string const&	GetResolvedPath() const;
 
 		// Setters
-		void	SetFileStream(std::fstream* file);
+		void	SetFileStream(std::istream* stream);
 		void	SetReasonPhrase(std::string const& phrase);
 		void	SetResolvedPath(std::string const& path);
 
 	private:
-		std::fstream*	_file;
+		std::istream*	_stream;
 		std::string		_reason_phrase;
 		std::string		_resolved_path;
 		bool			_complete;

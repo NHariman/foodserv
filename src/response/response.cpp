@@ -1,10 +1,13 @@
 #include "response.hpp"
 
 // Default constructor
-Response::Response() : AHTTPMessage(), _file(NULL), _complete(false) {}
+Response::Response() : AHTTPMessage(), _stream(NULL), _complete(false) {}
 
 // Destructor
-Response::~Response() {}
+Response::~Response() {
+	if (_stream != NULL)
+		delete _stream;
+}
 
 
 std::string const& Response::GetReasonPhrase() const {
@@ -15,12 +18,12 @@ void Response::SetReasonPhrase(std::string const& phrase) {
 	_reason_phrase = phrase;
 }
 
-std::fstream* Response::GetFileStream() const {
-	return _file;
+std::istream* Response::GetFileStream() const {
+	return _stream;
 }
 
-void Response::SetFileStream(std::fstream* file) {
-	_file = file;
+void Response::SetFileStream(std::istream* stream) {
+	_stream = stream;
 }
 
 std::string const& Response::GetResolvedPath() const {

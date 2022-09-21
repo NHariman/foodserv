@@ -52,9 +52,9 @@ void ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 	TargetConfig	error_target_config;
 	error_target_config.Setup(_config, host, port, error_page_path);
 
-	std::string	resolved_error_page_path = error_target_config.GetResolvedPath();
+	_response.SetResolvedPath(error_target_config.GetResolvedPath());
 	try {
-		std::fstream* file = _file_handler.GetFile(resolved_error_page_path);
+		std::ifstream* file = _file_handler.GetFile(_response.GetResolvedPath());
 		_response.SetFileStream(file);
 	}
 	catch (http::exception &e) {
@@ -100,11 +100,24 @@ void	ResponseHandler::SetLocation(std::string const& path) {
 }
 
 void	ResponseHandler::SetContentType() {
+	size_t	extension_start = _response.GetResolvedPath().find_last_of(".");
+	std::string	type;
 
+	type = GetType(_response.GetResolvedPath().substr(extension_start + 1));
+	if (type.empty()) // if no extension or unknown extension
+		type = "application/octet-stream";
+
+	_response.SetHeaderField("Content-Type", type);
 }
 
 void	ResponseHandler::SetContentLength() {
-
+	std::istream* file_stream = _response.GetFileStream();
+	if (file_stream != NULL) {
+		file_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
+		streampos	size = file_stream->tellg(); // get position of cursor
+		_response.SetHeaderField("Content-Length", std::to_string(size));
+		file_stream->seekg(0); // restore cursor to beginning
+	}
 }
 
 void	ResponseHandler::SetConnection() {
@@ -119,7 +132,7 @@ void	ResponseHandler::SetAllow() {
 
 std::string	ResponseHandler::GetAllowedMethodsString() {
 	std::vector<std::string> methods_vec = _request->GetTargetConfig().GetAllowedMethods();
-	string	methods_str;
+	std::string	methods_str;
 
 	for (auto it = methods_vec.begin(); it != methods_vec.end(); it++) {
 		if (!methods_str.empty())
