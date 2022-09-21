@@ -99,6 +99,10 @@ bool							TargetConfig::IsAllowedMethod(std::string method) {
 	return false;
 }
 
+std::vector<std::string>	TargetConfig::GetAllowedMethods() const {
+	return _allowed_methods.GetMethods();
+}
+
 size_t						TargetConfig::GetMaxBodySize() const {
 	return _client_max_body_size;
 }

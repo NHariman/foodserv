@@ -10,7 +10,7 @@ CGIPass::CGIPass(std::string input) : _is_set(true) {
 	size_t  arguments = CountArguments(input);
 	if (arguments > 2)
 		throw TooManyArgumentsException();
-	else if (arguments < 2)
+	else if (arguments < 1)
 		throw NotEnoughArgumentsException();
 	for (size_t i = 0; i < input.size(); i++) {
 		start = input.find_first_not_of(" \t\n\v\f\r", i);
