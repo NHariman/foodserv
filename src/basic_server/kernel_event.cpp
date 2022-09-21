@@ -4,6 +4,7 @@
 KernelEvent::KernelEvent(int sock) : _listening_socket(sock) {
     int kq = kqueue();
     struct kevent evSet;
+    
     EV_SET(&evSet, _listening_socket, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
     kevent(kq, &evSet, 1, NULL, 0, NULL);
     run_event_loop(kq, _listening_socket);
