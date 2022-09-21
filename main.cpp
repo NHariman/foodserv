@@ -6,13 +6,14 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/21 11:44:14 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/21 19:17:04 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "src/config/nginx_config.hpp"
 #include "src/config/setup.hpp"
 #include "src/resolved_target/target_config.hpp"
+#include "src/server/server.hpp"
 
 int	main(int ac, const char **av) {
 	(void)ac;
@@ -21,7 +22,7 @@ int	main(int ac, const char **av) {
 		// first read in the given configuration file
 		NginxConfig input_file(GetConfigLocation(ac, av));
 		
-		Server		webserver(&input_file);
+		Server		webserver(input_file.GetServers());
 
 		// TO DO
 		// recreate server 
