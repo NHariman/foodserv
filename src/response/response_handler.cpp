@@ -1,5 +1,4 @@
 #include "response_handler.hpp"
-#include "file_handler.hpp"
 
 // Config file constructor
 ResponseHandler::ResponseHandler(NginxConfig* config)
@@ -16,7 +15,7 @@ void ResponseHandler::HandleError(Request& request) {
 	if (!custom_error_page.empty())
 		return HandleCustomError(custom_error_page);
 	// else
-	// 	return HandleError
+	// 	return HandleDefaultError
 }
 
 void ResponseHandler::HandleExpect(Request& request) {
@@ -27,11 +26,20 @@ void ResponseHandler::HandleRegular(Request& request) {
 	_request = &request;
 
 	_response.SetResolvedPath(_request->GetTargetConfig().GetResolvedPath());
-	if (IsRedirected()) {
-		SetLocation(_response.GetResolvedPath());
-	}
+	if (IsRedirected())
+		return BuildResponse();
 	// check cgi
 	// filehandler executor
+}
+
+bool	ResponseHandler::IsRedirected() {
+	ReturnDir return_dir = _request->GetTargetConfig().GetReturn();
+
+	if (return_dir.IsSet()) {
+		_request->SetStatusCode(return_dir.GetCode());
+		return true;
+	}
+	return false;
 }
 
 std::string ResponseHandler::FindCustomErrorPage(int error_code) {
@@ -63,40 +71,49 @@ void ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 	}
 }
 
-bool	ResponseHandler::IsRedirected() {
-	ReturnDir return_dir = _request->GetTargetConfig().GetReturn();
-
-	if (return_dir.IsSet()) {
-		_request->SetStatusCode(return_dir.GetCode());
-		return true;
-	}
-	return false;
+void	ResponseHandler::BuildResponse() {
+    SetStatusLine();
+	SetHeaders();
+	// setfilestream for message body?
 }
+
 
 void	ResponseHandler::SetStatusLine() {
-	
+	_response.SetHTTPVersion("HTTP/1.1");
+	_response.SetStatusCode(_request->GetStatusCode());
+	_response.SetReasonPhrase(GetReasonPhrase(_response.GetStatusCode()));
 }
 
-void	ResponseHandler::SetServer() {
-	_response.SetHeaderField("Server", "foodserv/1.0");
+void	ResponseHandler::SetHeaders() {
+	SetAllow();
+	SetConnection();
+	SetContentLength();
+	SetContentType();
+	SetDate();
+	SetLocation();
+	SetServer();
 }
 
-void ResponseHandler::SetDate() {
-	char	buf[1000];
-	time_t	now = time(0);
-	struct tm	tm = *gmtime(&now);
-	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", &tm);
-
-	_response.SetHeaderField("Date", std::string(buf));
+// Allow is only set if returning a 405: Method Not Allowed error.
+void	ResponseHandler::SetAllow() {
+	if (_request->GetStatusCode() == 405)
+		_response.SetHeaderField("Allow", GetAllowedMethodsString());
 }
 
-// void	ResponseHandler::SetLastModified() {
+// Connection: close is always sent unless it's a 100: Continue response.
+void	ResponseHandler::SetConnection() {
+	if (_request->GetStatusCode() != 100)
+		_response.SetHeaderField("Connection", "close");
+}
 
-// }
-
-// Only called if request is redirected or a POST request is executed (201 created).
-void	ResponseHandler::SetLocation(std::string const& path) {
-	_response.SetHeaderField("Location", path);
+void	ResponseHandler::SetContentLength() {
+	std::istream* file_stream = _response.GetFileStream();
+	if (file_stream != NULL) {
+		file_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
+		streampos	size = file_stream->tellg(); // get position of cursor
+		_response.SetHeaderField("Content-Length", std::to_string(size));
+		file_stream->seekg(0); // restore cursor to beginning
+	}
 }
 
 void	ResponseHandler::SetContentType() {
@@ -110,26 +127,27 @@ void	ResponseHandler::SetContentType() {
 	_response.SetHeaderField("Content-Type", type);
 }
 
-void	ResponseHandler::SetContentLength() {
-	std::istream* file_stream = _response.GetFileStream();
-	if (file_stream != NULL) {
-		file_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
-		streampos	size = file_stream->tellg(); // get position of cursor
-		_response.SetHeaderField("Content-Length", std::to_string(size));
-		file_stream->seekg(0); // restore cursor to beginning
-	}
+void ResponseHandler::SetDate() {
+	char	buf[1000];
+	time_t	now = time(0);
+	struct tm	tm = *gmtime(&now);
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", &tm);
+
+	_response.SetHeaderField("Date", std::string(buf));
 }
 
-void	ResponseHandler::SetConnection() {
-	if (_request->GetStatusCode() != 100)
-		_response.SetHeaderField("Connection", "close");
+// Location only set if request is redirected or a POST request is successfully executed (201 created).
+void	ResponseHandler::SetLocation() {
+	int status_code = _request->GetStatusCode();
+	if (IsRedirectCode(status_code) || status_code == 201)
+		_response.SetHeaderField("Location", _response.GetResolvedPath());
 }
 
-void	ResponseHandler::SetAllow() {
-	if (_request->GetStatusCode() == 405)
-		_response.SetHeaderField("Allow", GetAllowedMethodsString());
+void	ResponseHandler::SetServer() {
+	_response.SetHeaderField("Server", "foodserv/1.0");
 }
 
+// Used by SetAllow to set header value to comma-separated list of allowed methods.
 std::string	ResponseHandler::GetAllowedMethodsString() {
 	std::vector<std::string> methods_vec = _request->GetTargetConfig().GetAllowedMethods();
 	std::string	methods_str;

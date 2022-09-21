@@ -3,6 +3,7 @@
 
 #include "request.hpp"
 #include "response.hpp"
+#include "file_handler.hpp"
 
 class NginxConfig;
 
@@ -30,12 +31,15 @@ class ResponseHandler {
 		// Redirection
 		bool		IsRedirected();
 
+		// Response setting
+		void		BuildResponse();
 		void		SetStatusLine();
-		// Response header setting
+		void		SetHeaders();
+
+		// Response header setting helpers
 		void		SetDate();
 		void		SetServer();
-		// void		SetLastModified();
-		void		SetLocation(std::string const& path);
+		void		SetLocation();
 		void		SetContentType();
 		void		SetContentLength();
 		void		SetConnection();
