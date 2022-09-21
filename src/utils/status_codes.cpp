@@ -1,5 +1,9 @@
 #include <string>
 
+bool	IsRedirectCode(int status_code) {
+	return (status_code >= 300 && status_code < 400);
+}
+
 std::string GetReasonPhrase(int status_code) {
 	switch (status_code) {
 		// 1xx informational response

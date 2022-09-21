@@ -29,6 +29,7 @@ bool	IsValidString(int (*validity_checker)(int), std::string const& s,
 std::string	GetType(std::string const& extension);
 
 // status_codes.cpp
+bool		IsRedirectCode(int status_code);
 std::string GetReasonPhrase(int status_code);
 
 #endif /* UTILS_HPP */
