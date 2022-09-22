@@ -75,6 +75,21 @@ class NotFoundException : public http::exception {
 		}
 };
 
+// Used for: request method is not allowed according to
+// resource location block in config file.
+// Thrown by RequestValidator::ValidMethod.
+// Should return 405 code.
+class MethodNotAllowedException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("405: Method Not Allowed");
+		}
+
+		int	which() const throw() {
+			return 405;
+		}
+};
+
 // Used for: request containing message body but no Content-Length header.
 // Thrown by RequestParser::AfterParseCheck.
 // Should return 411 code.

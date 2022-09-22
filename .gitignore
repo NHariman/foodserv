@@ -41,3 +41,4 @@ Makefile
 tmp/
 *_tmp.cpp
 *_tmp.hpp
+/build

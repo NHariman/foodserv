@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(gtest_test)
+project(fs_test)
 
 # GoogleTest requires at least C++11
 set(CMAKE_CXX_STANDARD 11)
@@ -16,18 +16,33 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# List all test files you want to compile
-add_executable(
-  try_test # test executable name
-  try_test.cpp
-  factorial.cpp
+set(EXEC fs_test) # test executable name
+
+file(GLOB SRCS CONFIGURE_DEPENDS
+    "*.cpp"
+    "../../src/config/*.cpp"
+    "../../src/config/directive_validation/*.cpp"
+	"../../src/connection/*.cpp"
+	"../../src/err/*.cpp"
+    "../../src/request/*.cpp"
+    "../../src/resolved_target/*.cpp"
+	"../../src/response/*.cpp"
+    "../../src/utils/*.cpp"
 )
+
+add_executable(${EXEC})
+
+target_sources(${EXEC}
+  PRIVATE
+    ${SRCS}
+)
+
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(
-  try_test # test executable name
+  fs_test # test executable name
   gtest_main
 )
 
 # Enables CMake's test runner to discover tests included in binary
 include(GoogleTest)
-gtest_discover_tests(try_test) # test executable name
+gtest_discover_tests(fs_test) # test executable name

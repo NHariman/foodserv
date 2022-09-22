@@ -28,21 +28,31 @@ file(GLOB SRCS CONFIGURE_DEPENDS
     "../../src/resolved_target/*.cpp"
 	"../../src/response/*.cpp"
     "../../src/utils/*.cpp"
+	"../../src/config/*.hpp"
+    "../../src/config/directive_validation/*.hpp"
+	"../../src/connection/*.hpp"
+	"../../src/err/*.hpp"
+    "../../src/request/*.hpp"
+    "../../src/resolved_target/*.hpp"
+	"../../src/response/*.hpp"
+    "../../src/utils/*.hpp"
 )
 
-add_executable(${EXEC})
+add_executable(${EXEC} ${SRCS})
 
 target_sources(${EXEC}
-  PRIVATE
-    ${SRCS}
+	PRIVATE
+	${SRCS}
 )
 
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(
-  fs_test # test executable name
-  gtest_main
+	fs_test # test executable name
+	gtest_main
 )
 
+# target_include_directories(${EXEC} PRIVATE ../../src)
+	
 # Enables CMake's test runner to discover tests included in binary
 include(GoogleTest)
 gtest_discover_tests(fs_test) # test executable name

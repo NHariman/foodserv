@@ -11,9 +11,25 @@
 // Abstract class inherited by Request & Response classes.
 class AHTTPMessage {
 	public:
+		// Member types
 		typedef std::map<std::string, std::string>	FieldsMap;
 
+		// Default constructor
 		AHTTPMessage() : _status_code(0), _content_length(0) {}
+
+		// Assignment operator
+		AHTTPMessage&	operator=(AHTTPMessage const& other) {
+			if (this != &other) {
+				_http_version = other._http_version;
+				_status_code = other._status_code;
+				_message_body = other._message_body;
+				_header_fields = other._header_fields;
+				_content_length = other._content_length;
+			}
+			return *this;
+		}
+		
+		// Destructor
 		virtual	~AHTTPMessage() {}
 
 		// Getters

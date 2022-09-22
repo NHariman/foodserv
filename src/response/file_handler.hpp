@@ -11,6 +11,7 @@ class FileHandler {
 		~FileHandler();
 
 		std::ifstream*	GetFile(std::string const& file_path);
+		std::ifstream*	CreateFile(std::string const& file_path);
 		std::string		GetExtension(std::string const& file_path) const;
 	
 	private:
