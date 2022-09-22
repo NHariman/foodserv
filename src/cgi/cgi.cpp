@@ -64,6 +64,7 @@ std::string CGI::FindFile() {
 			_valid_file = true;
 			break ;
 		}
+		_valid_file = false;
 	}
 	closedir(dr);
 	return (file);
@@ -97,8 +98,9 @@ void		CGI::SetArgv() {
 	if (_CGI.GetLen() > 1) {
 		std::string file;
 
-		if(_TARGET.GetLocationUri().IsDir() == true) {
+		if(_TARGET.GetLocationUri().IsDir() == true && !IsValidDirectory(_request->GetTargetURI().GetParsedURI())) {
 			// if location match is a directory, find file in said directory
+			std::cout << "where am i?" << std::endl;
 			file = FindFile();
 		}
 		else {
@@ -110,7 +112,14 @@ void		CGI::SetArgv() {
 				_valid_file = true;
 			}
 			else {
-				_valid_file = false;
+				if (IsValidFile(_path)) {
+					file = _path;
+					_valid_file = true;
+				}
+				else{
+					file = "not real";
+					_valid_file = false;
+				}
 			}
 		}
 		if (DEBUG) std::cout << "file: " << file << std::endl;
@@ -129,8 +138,10 @@ void 		CGI::SetHeaders() {
 	_env.push_back("PATH_TRANSLATED=" + _TARGET.GetResolvedPath());
 	if (!_request->GetTargetURI().GetQuery().empty())
 		_env.push_back("QUERY_STRING=" + 	_request->GetTargetURI().GetQuery());
-	_env.push_back("REMOTE_HOST=" + 	_request->GetField("HOST"));
-	_env.push_back("REQUEST_METHOD=" + 	_request->GetMethod());
+	if (_request->GetField("HOST").compare(NO_VAL) != 0)
+		_env.push_back("REMOTE_HOST=" + 	_request->GetField("HOST"));
+	if (!_request->GetMethod().empty())
+		_env.push_back("REQUEST_METHOD=" + 	_request->GetMethod());
 	_env.push_back("SCRIPT_FILENAME=" + _request->GetTargetURI().GetPath());
 	_env.push_back("SCRIPT_NAME=" + 	_file_name);
 	_env.push_back("SERVER_NAME=" + 	_request->GetTargetURI().GetHost());
@@ -193,13 +204,15 @@ int			CGI::ParentProcess(int *fd, int pid) {
 	close(fd[1]);
 	while (1) {
 		ssize_t count = read(fd[0], buffer, sizeof(buffer));
-		if (count == -1) {
-			std::cout << "smth bad happened" << std::endl;
-			break ;
-		}
-		else if (count == 0) {
-			std::cout << "EOF detected" << std::endl;
-			break ;
+		if (DEBUG) {
+			if (count == -1) {
+				std::cout << "smth bad happened" << std::endl;
+				break ;
+			}
+			else if (count == 0) {
+				std::cout << "EOF detected" << std::endl;
+				break ;
+			}
 		}
 		std::string buf(buffer);
 		_content = _content + buf;

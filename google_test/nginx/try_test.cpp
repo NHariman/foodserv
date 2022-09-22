@@ -514,9 +514,4 @@ TEST(NginxConfigTest, invalid) {
 //** MODULE CGI  **//
 //////////////////////////////
 
-TEST(CGITesting, valid) {
-	NginxConfig config("../../../config_files/default.conf");
 
-	Request request(&config);
-	request.Parse("GET /cgi-bin/test.py HTTP/1.1\r\nHost: localhost\n\n");
-}

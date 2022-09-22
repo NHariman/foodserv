@@ -78,6 +78,7 @@ clean:
 fclean: clean
 	@$(RM) $(NAME) 
 	@$(RM) -rf google_test/nginx/build
+	@$(RM) -rf src/cgi/cgi_test/build
 	cp Makefile src/config/additional_info/tmp_makefile
 	cp nginx_main.cpp src/config/additional_info/
 	cp cgi_main.cpp src/config/additional_info/

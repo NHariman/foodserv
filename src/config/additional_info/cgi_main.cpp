@@ -19,7 +19,7 @@ int	main(int ac, const char **av) {
 		NginxConfig config("config_files/CGI_test.conf");
 		
 		Request request(&config);
-		request.Parse("GET /cgi-bin/test.cgi HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("GET /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
 		std::cout << "Method: " << request.GetMethod() << std::endl;
 		std::cout << "TargetString: " << request.GetTargetString() << std::endl;
 		
