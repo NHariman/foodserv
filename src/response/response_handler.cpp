@@ -7,6 +7,16 @@ ResponseHandler::ResponseHandler(NginxConfig* config)
 // Destructor
 ResponseHandler::~ResponseHandler() {}
 
+bool	ResponseHandler::Ready() {
+	return _response.IsComplete();
+}
+
+void	ResponseHandler::Send() {
+	std::istream*	to_send = _response.GetCompleteResponse();
+	(void)to_send;
+	// send in loop if too big
+}
+
 void	ResponseHandler::HandleError(Request& request) {
 	_request = &request;
 	int	error_code = request.GetStatusCode();
@@ -15,7 +25,7 @@ void	ResponseHandler::HandleError(Request& request) {
 	if (!custom_error_page.empty())
 		return HandleCustomError(custom_error_page);
 	else
-		return HandleDefaultError();
+		return HandleDefaultError(error_code);
 }
 
 void	ResponseHandler::HandleExpect(Request& request) {
@@ -39,6 +49,10 @@ void	ResponseHandler::HandleRegular(Request& request) {
 	}
 }
 
+Response const&	ResponseHandler::GetResponse() {
+	return _response;
+}
+
 // Checks if request target path was able to be resolved.
 // If so, assigns response path. If not, throws a 404: Not Found.
 // Takes optional path argument for different path than request::resolved_path.
@@ -54,6 +68,8 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 		throw NotFoundException();
 	else
 		_response.SetResolvedPath(resolved_path);
+	
+	std::cout << "path assigned to: " << _response.GetResolvedPath() << std::endl; //DEBUG
 }
 
 std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
@@ -68,25 +84,27 @@ std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
 }
 
 void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
-	std::string	host = _request->GetTargetURI().GetHost();
-	std::string	port = _request->GetTargetURI().GetPort();
-
-	TargetConfig	error_target_config;
-	error_target_config.Setup(_config, host, port, error_page_path);
+	std::string root = _request->GetTargetConfig().GetRoot();
+	std::string resolved_error_path = root + error_page_path;
 
 	try {
-		AssignResponseResolvedPath(error_target_config.GetResolvedPath());
+		// AssignResponseResolvedPath(error_target_config.GetResolvedPath());
+		AssignResponseResolvedPath(resolved_error_path);
 		ExecuteGet(false);
-		BuildResponse();
+		FormResponse();
 	}
 	catch (http::exception &e) {
 		_request->SetStatusCode(e.which());
+		std::cout << e.which() << " error encountered\n";
 		HandleError(*_request);
 	}
 }
 
-void	ResponseHandler::HandleDefaultError() {
-	// _response.SetFileStream(new std::stringstream())
+void	ResponseHandler::HandleDefaultError(int error_code) {
+	std::string error_page_html(GetServerErrorPage(error_code));
+
+	_response.SetFileStream(new std::stringstream(error_page_html));
+	FormResponse();
 }
 
 bool	ResponseHandler::IsRedirected() {
@@ -101,23 +119,29 @@ bool	ResponseHandler::IsRedirected() {
 
 void	ResponseHandler::HandleRedirection() {
 	_response.SetResolvedPath(_request->GetTargetConfig().GetResolvedPath());
-	BuildResponse();
+	FormResponse();
 }
-
 
 // Uses FileHandler to check and open the file as an ifstream.
 // Assumes _response._resolved_path has been set already.
 // Takes optional set_code argument to skip setting status code (e.g. with error pages).
 void	ResponseHandler::ExecuteGet(bool set_code) {
+	std::cout << "Getting file from path: " << _response.GetResolvedPath() << std::endl; //debug
+
 	std::ifstream* file = _file_handler.GetFile(_response.GetResolvedPath());
 	_response.SetFileStream(file);
 	if (set_code)
 		_request->SetStatusCode(200);
+	
+	std::cout << "File stream set\n"; // debug
 }
 
-void	ResponseHandler::BuildResponse() {
+void	ResponseHandler::FormResponse() {
 	SetStatusLine();
 	SetHeaders();
+	_response.SetComplete();
+	
+	std::cout << "Response formed. Final status code: " << _response.GetStatusCode() << std::endl; // debug
 }
 
 void	ResponseHandler::SetStatusLine() {

@@ -1,9 +1,9 @@
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
-#include "nginx_config.hpp"
-#include "request.hpp"
-#include "response_handler.hpp"
+#include "../config/nginx_config.hpp"
+#include "../request/request.hpp"
+#include "../response/response_handler.hpp"
 // #include "response.hpp"
 
 class Connection {
@@ -15,6 +15,8 @@ class Connection {
 
 		void	Receive(char const* buffer);
 		void	Dispatch();
+		// debug
+		Response const& DebugGetResponse();
 
 	private:
 		NginxConfig*	_config;

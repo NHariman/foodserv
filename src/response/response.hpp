@@ -2,8 +2,9 @@
 #define RESPONSE_HPP
 
 #include <iostream>
+#include <fstream> // ifstream
 #include <map>
-#include "ahttp_message.hpp"
+#include "../request/ahttp_message.hpp"
 
 // Inherits the following attributes from AHTTPMessage:
 // 		std::string							_http_version;
@@ -17,6 +18,8 @@ class Response : public AHTTPMessage {
 	public:
 		// Default constructor
 		Response();
+		// Assignment operator
+		// Response&	operator=(Response const& other);
 		// Destructor
 		~Response();
 
@@ -26,11 +29,13 @@ class Response : public AHTTPMessage {
 		std::istream*		GetFileStream() const;
 		std::string const&	GetReasonPhrase() const;
 		std::string const&	GetResolvedPath() const;
+		std::istream*		GetCompleteResponse() const;
 
 		// Setters
 		void	SetFileStream(std::istream* stream);
 		void	SetReasonPhrase(std::string const& phrase);
 		void	SetResolvedPath(std::string const& path);
+		void	SetComplete();
 
 	private:
 		std::istream*	_stream;
