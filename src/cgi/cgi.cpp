@@ -127,7 +127,8 @@ void 		CGI::SetHeaders() {
 		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("Content-Type"));
 	_env.push_back("DOCUMENT_ROOT=" + 	_TARGET.GetRoot());
 	_env.push_back("PATH_TRANSLATED=" + _TARGET.GetResolvedPath());
-	_env.push_back("QUERY_STRING=" + 	_request->GetTargetURI().GetQuery());
+	if (!_request->GetTargetURI().GetQuery().empty())
+		_env.push_back("QUERY_STRING=" + 	_request->GetTargetURI().GetQuery());
 	_env.push_back("REMOTE_HOST=" + 	_request->GetField("HOST"));
 	_env.push_back("REQUEST_METHOD=" + 	_request->GetMethod());
 	_env.push_back("SCRIPT_FILENAME=" + _request->GetTargetURI().GetPath());
@@ -168,7 +169,7 @@ void		CGI::ChildProcess(int *fd) {
 			std::cout << argv[i] << std::endl;
 			i++;
 		}
-
+		i = 0;
 		std::cout << "print char* env:" << std::endl;
 		while (env[i] != NULL) {
 			std::cout << env[i] << std::endl;
@@ -183,6 +184,7 @@ void		CGI::ChildProcess(int *fd) {
 	exit(1);
 
 }
+
 int			CGI::ParentProcess(int *fd, int pid) {
 	int es = 0;
 	char buffer[1001];
@@ -201,9 +203,7 @@ int			CGI::ParentProcess(int *fd, int pid) {
 		}
 		std::string buf(buffer);
 		_content = _content + buf;
-		_content = _content + "stuff";
 		memset(buffer, 0, 1001);
-		if (DEBUG) std::cout << "content in buffer: " << _content << std::endl;
 	}
 	close(fd[0]);
 	if (waitpid(pid, &status, WNOHANG) == -1)
