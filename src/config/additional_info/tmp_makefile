@@ -54,7 +54,8 @@ TARGET = 	$(addprefix $(SRC_DIR)/$(TARGET_DIR)/,	server_selection.cpp \
 
 UTILS = 	$(addprefix $(SRC_DIR)/$(UTILS_DIR)/,	file_handling.cpp \
 													is_functions.cpp \
-													request_utils.cpp)
+													request_utils.cpp \
+													cgi_utils.cpp)
 
 CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, cgi.cpp)
 

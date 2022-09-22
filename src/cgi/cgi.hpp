@@ -13,6 +13,7 @@
 #include "../resolved_target/target_config.hpp"
 #include "../request/request.hpp"
 #include "../utils/utils.hpp"
+#include "../utils/cgi_utils.hpp"
 
 #include <vector>
 
@@ -61,15 +62,18 @@ https://stackoverflow.com/questions/28921089/i-have-written-my-own-http-server-a
 	- if 2 arguments: use 2nd argument to execute file
 	- if 1 argument: consider it an executable and try to execute it
 */
-void	printVector(std::vector<std::string> vec);
+
+
+# define _CGI _request->GetTargetConfig().GetCGIPass()
+# define _TARGET _request->GetTargetConfig()
 
 class CGI {
 	private:
-		CGIPass _cgi_data;
+		PWD		_pwd;
 		Request *_request;
-		const TargetConfig *_target;
 		std::vector<std::string> _env;
 		std::vector<std::string> _argv;
+
 		bool		_valid_file;
 		std::string	_file_name;
 		std::string _content;
@@ -78,15 +82,16 @@ class CGI {
 
 		void    SetHeaders();
 		void	SetArgv();
+		std::string GetExecutablePath();
 		std::string FindFile();
 		bool		HasExtension(std::string file_name);
-		void	ChildProcess(int *fd, int *tmp_fd);
-		int		ParentProcess(int *fd, int *tmp_fd, int pid);
-		void to_argv(const char **argv);
-		void to_env(const char **env);
+		void	ChildProcess(int *fd);
+		int		ParentProcess(int *fd, int pid);
+		void to_argv(char **argv);
+		void to_env(char **env);
 
 	public:
-		CGI(){};
+		CGI();
 		~CGI(){};
 		bool    setup(Request *request); // also probably needs the request class to set ENVs with.
 		size_t    execute();

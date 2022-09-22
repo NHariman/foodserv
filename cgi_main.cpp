@@ -3,6 +3,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
+#include <cstring>
 #include "src/config/nginx_config.hpp"
 #include "src/basic_server/server.hpp"
 #include "src/resolved_target/server_selection.hpp"
@@ -18,7 +19,7 @@ int	main(int ac, const char **av) {
 		NginxConfig config("config_files/CGI_test.conf");
 		
 		Request request(&config);
-		request.Parse("GET /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("GET /cgi-bin/test.cgi HTTP/1.1\r\nHost: localhost\n\n");
 		std::cout << "Method: " << request.GetMethod() << std::endl;
 		std::cout << "TargetString: " << request.GetTargetString() << std::endl;
 		
@@ -27,8 +28,13 @@ int	main(int ac, const char **av) {
 		std::cout << "Get CGI path: " << request.GetTargetConfig().GetCGIPass() << std::endl;
 
 		CGI cgi;
-		std::cout << "cgi setup status: " << std::boolalpha << cgi.setup(&request) << std::endl;
-		std::cout << "CGI execute status: " << std::endl;
+		cgi.setup(&request);
+		int nb = cgi.execute();
+		std::cout << "execute value: " << nb << std::endl;
+		std::cout << "get content? " << std::endl;
+		std::cout << cgi.getContent() << std::endl;
+		// std::cout << "cgi setup status: " << std::boolalpha << cgi.setup(&request) << std::endl;
+		// std::cout << "CGI execute status: " << std::endl;
 		// size_t status = cgi.execute();
 		// std::cout << "status: " << status << std::endl;
 		// std::cout << "Contents? " << std::endl;
