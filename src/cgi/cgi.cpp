@@ -98,7 +98,7 @@ void		CGI::SetArgv() {
 	if (_CGI.GetLen() > 1) {
 		std::string file;
 
-		if(_TARGET.GetLocationUri().IsDir() == true && !IsValidDirectory(_request->GetTargetURI().GetParsedURI())) {
+		if(_TARGET.GetLocationUri().IsDir() == true) {
 			// if location match is a directory, find file in said directory
 			std::cout << "where am i?" << std::endl;
 			file = FindFile();
