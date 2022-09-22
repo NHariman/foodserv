@@ -3,8 +3,8 @@
 
 #include "nginx_config.hpp"
 #include "request.hpp"
-// #include "response.hpp"
 #include "response_handler.hpp"
+// #include "response.hpp"
 
 class Connection {
 	public:

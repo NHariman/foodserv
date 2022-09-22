@@ -24,14 +24,21 @@ class ResponseHandler {
 		Response		_response;
 		FileHandler		_file_handler;
 
+		void		AssignResponseResolvedPath(std::string const& path = std::string());
+
 		// Error page handling
 		std::string FindCustomErrorPage(int error_code);
 		void		HandleCustomError(std::string const& error_page_path);
+		void		HandleDefaultError();
 
 		// Redirection
 		bool		IsRedirected();
+		void		HandleRedirection();
 
-		// Response setting
+		// File handling
+		void		ExecuteGet(bool set_code = true);
+
+		// Response forming
 		void		BuildResponse();
 		void		SetStatusLine();
 		void		SetHeaders();
