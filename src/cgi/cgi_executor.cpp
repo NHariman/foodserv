@@ -13,7 +13,7 @@ void    execute_cgi(Request *request) {
     else {
         request->SetStatusCode(200);
     }
-    // request status is equal to status of cgi.execute?
+    // convert cgi.getcontent() into filestream here?
 
 
 }
