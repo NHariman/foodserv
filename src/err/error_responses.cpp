@@ -49,6 +49,7 @@ STYLE_END CRLF
 "<head><title>307 Temporary Redirect</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>307 Temporary Redirect</h1></center>" CRLF
+"<center><img src=\"https://http.cat/307\"></center>" CRLF
 footer CRLF
 ;
 
@@ -61,6 +62,7 @@ STYLE_END CRLF
 "<head><title>308 Permanent Redirect</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>308 Permanent Redirect</h1></center>" CRLF
+"<center><img src=\"https://http.cat/308\"></center>" CRLF
 footer CRLF
 ;
 
@@ -73,6 +75,7 @@ STYLE_END CRLF
 "<head><title>400 Bad Request</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>400 Bad Request</h1></center>" CRLF
+"<center><img src=\"https://http.cat/309\"></center>" CRLF
 footer CRLF
 ;
 
@@ -85,6 +88,7 @@ STYLE_END CRLF
 "<head><title>401 Authorization Required</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>401 Authorization Required</h1></center>" CRLF
+"<center><img src=\"https://http.cat/401\"></center>" CRLF
 footer CRLF
 ;
 
@@ -97,6 +101,7 @@ STYLE_END CRLF
 "<head><title>402 Payment Required</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>402 Payment Required</h1></center>" CRLF
+"<center><img src=\"https://http.cat/402\"></center>" CRLF
 footer CRLF
 ;
 
@@ -109,6 +114,7 @@ STYLE_END CRLF
 "<head><title>403 Forbidden</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>403 Forbidden</h1></center>" CRLF
+"<center><img src=\"https://http.cat/403\"></center>" CRLF
 footer CRLF
 ;
 
@@ -121,6 +127,7 @@ STYLE_END CRLF
 "<head><title>404 Not Found</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>404 Not Found</h1></center>" CRLF
+"<center><img src=\"https://http.cat/404\"></center>" CRLF
 footer CRLF
 ;
 
@@ -133,6 +140,7 @@ STYLE_END CRLF
 "<head><title>405 Not Allowed</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>405 Not Allowed</h1></center>" CRLF
+"<center><img src=\"https://http.cat/405\"></center>" CRLF
 footer CRLF
 ;
 
@@ -145,6 +153,7 @@ STYLE_END CRLF
 "<head><title>406 Not Acceptable</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>406 Not Acceptable</h1></center>" CRLF
+"<center><img src=\"https://http.cat/406\"></center>" CRLF
 footer CRLF
 ;
 
@@ -157,6 +166,7 @@ STYLE_END CRLF
 "<head><title>408 Request Timeout</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>408 Request Timeout</h1></center>" CRLF
+"<center><img src=\"https://http.cat/408\"></center>" CRLF
 footer CRLF
 ;
 
@@ -169,6 +179,7 @@ STYLE_END CRLF
 "<head><title>409 Conflict</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>409 Conflict</h1></center>" CRLF
+"<center><img src=\"https://http.cat/409\"></center>" CRLF
 footer CRLF
 ;
 
@@ -181,6 +192,7 @@ STYLE_END CRLF
 "<head><title>410 Gone</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>410 Gone</h1></center>" CRLF
+"<center><img src=\"https://http.cat/410\"></center>" CRLF
 footer CRLF
 ;
 
@@ -193,6 +205,7 @@ STYLE_END CRLF
 "<head><title>411 Length Required</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>411 Length Required</h1></center>" CRLF
+"<center><img src=\"https://http.cat/411\"></center>" CRLF
 footer CRLF
 ;
 
@@ -205,6 +218,7 @@ STYLE_END CRLF
 "<head><title>412 Precondition Failed</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>412 Precondition Failed</h1></center>" CRLF
+"<center><img src=\"https://http.cat/412\"></center>" CRLF
 footer CRLF
 ;
 
@@ -217,6 +231,7 @@ STYLE_END CRLF
 "<head><title>413 Payload Too Large</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>413 Payload Too Large</h1></center>" CRLF
+"<center><img src=\"https://http.cat/413\"></center>" CRLF
 footer CRLF
 ;
 
@@ -229,6 +244,7 @@ STYLE_END CRLF
 "<head><title>414 URI Too Long</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>414 URI Too Long</h1></center>" CRLF
+"<center><img src=\"https://http.cat/414\"></center>" CRLF
 footer CRLF
 ;
 
@@ -241,6 +257,7 @@ STYLE_END CRLF
 "<head><title>415 Unsupported Media Type</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>415 Unsupported Media Type</h1></center>" CRLF
+"<center><img src=\"https://http.cat/415\"></center>" CRLF
 footer CRLF
 ;
 
@@ -253,6 +270,7 @@ STYLE_END CRLF
 "<head><title>416 Requested Range Not Satisfiable</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>416 Requested Range Not Satisfiable</h1></center>" CRLF
+"<center><img src=\"https://http.cat/416\"></center>" CRLF
 footer CRLF
 ;
 
@@ -265,6 +283,7 @@ STYLE_END CRLF
 "<head><title>417 Expectation Failed</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>417 Expectation Failed</h1></center>" CRLF
+"<center><img src=\"https://http.cat/417\"></center>" CRLF
 footer CRLF
 ;
 
@@ -277,6 +296,7 @@ STYLE_END CRLF
 "<head><title>421 Misdirected Request</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>421 Misdirected Request</h1></center>" CRLF
+"<center><img src=\"https://http.cat/421\"></center>" CRLF
 footer CRLF
 ;
 
@@ -289,6 +309,7 @@ STYLE_END CRLF
 "<head><title>429 Too Many Requests</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>429 Too Many Requests</h1></center>" CRLF
+"<center><img src=\"https://http.cat/429\"></center>" CRLF
 footer CRLF
 ;
 
@@ -301,6 +322,7 @@ STYLE_END CRLF
 "<head><title>431 Request Header Fields Too Large</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>431 Request Header Fields Too Large</h1></center>" CRLF
+"<center><img src=\"https://http.cat/431\"></center>" CRLF
 footer CRLF
 ;
 
@@ -313,6 +335,7 @@ STYLE_END CRLF
 "<head><title>500 Internal Server Error</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>500 Internal Server Error</h1></center>" CRLF
+"<center><img src=\"https://http.cat/500\"></center>" CRLF
 footer CRLF
 ;
 
@@ -325,6 +348,7 @@ STYLE_END CRLF
 "<head><title>501 Not Implemented</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>501 Not Implemented</h1></center>" CRLF
+"<center><img src=\"https://http.cat/501\"></center>" CRLF
 footer CRLF
 ;
 
@@ -337,6 +361,7 @@ STYLE_END CRLF
 "<head><title>502 Bad Gateway</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>502 Bad Gateway</h1></center>" CRLF
+"<center><img src=\"https://http.cat/502\"></center>" CRLF
 footer CRLF
 ;
 
@@ -349,6 +374,7 @@ STYLE_END CRLF
 "<head><title>503 Service Temporarily Unavailable</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>503 Service Temporarily Unavailable</h1></center>" CRLF
+"<center><img src=\"https://http.cat/503\"></center>" CRLF
 footer CRLF
 ;
 
@@ -361,6 +387,7 @@ STYLE_END CRLF
 "<head><title>504 Gateway Timeout</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>504 Gateway Timeout</h1></center>" CRLF
+"<center><img src=\"https://http.cat/504\"></center>" CRLF
 footer CRLF
 ;
 
@@ -373,6 +400,7 @@ STYLE_END CRLF
 "<head><title>505 HTTP Version Not Supported</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>505 HTTP Version Not Supported</h1></center>" CRLF
+"<center><img src=\"https://http.cat/505\"></center>" CRLF
 footer CRLF
 ;
 
@@ -385,6 +413,7 @@ STYLE_END CRLF
 "<head><title>507 Insufficient Storage</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>507 Insufficient Storage</h1></center>" CRLF
+"<center><img src=\"https://http.cat/507\"></center>" CRLF
 footer CRLF
 ;
 
@@ -397,6 +426,7 @@ STYLE_END CRLF
 "<head><title>Unknown Status Code</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>Unknown Status Code</h1></center>" CRLF
+"<center><img src=\"img/cat_thonk.jpg\"></center>" CRLF
 footer CRLF
 ;
 
