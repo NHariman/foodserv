@@ -43,8 +43,8 @@ class Request : public AHTTPMessage {
 
 		// Getters
 		TargetConfig const&	GetTargetConfig() const;
-		std::string const&		GetMethod() const;
-		std::string const&		GetTargetString() const;
+		std::string const&	GetMethod() const;
+		std::string const&	GetTargetString() const;
 		URI const&			GetTargetURI() const;
 		Status				GetRequestStatus() const;
 
@@ -62,9 +62,9 @@ class Request : public AHTTPMessage {
 	private:
 		TargetConfig		_target_config;
 		RequestParser		_parser;
-		std::string				_method;
+		std::string			_method;
 		URI					_target;
-		std::string				_buf;
+		std::string			_buf;
 		Status				_request_status;
 
 		bool	CanParse();
