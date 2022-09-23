@@ -19,7 +19,7 @@ class Response : public AHTTPMessage {
 		// Default constructor
 		Response();
 		// Assignment operator
-		// Response&	operator=(Response const& other);
+		Response&	operator=(Response const& other);
 		// Destructor
 		~Response();
 
@@ -35,7 +35,7 @@ class Response : public AHTTPMessage {
 		void	SetFileStream(std::istream* stream);
 		void	SetReasonPhrase(std::string const& phrase);
 		void	SetResolvedPath(std::string const& path);
-		void	SetComplete();
+		void	SetComplete(bool value = true);
 
 	private:
 		std::istream*	_stream;

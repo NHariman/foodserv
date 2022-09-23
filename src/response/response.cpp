@@ -3,17 +3,17 @@
 // Default constructor
 Response::Response() : AHTTPMessage(), _stream(NULL), _complete(false) {}
 
-// // Assignment operator
-// Response&	Response::operator=(Response const& other) {
-// 	if (this != &other) {
-// 		_stream = new std::ifstream(other._resolved_path);
-// 		_reason_phrase = other._reason_phrase;
-// 		_resolved_path = other._resolved_path;
-// 		_complete = other._complete;
-// 		AHTTPMessage::operator=(other);
-// 	}
-// 	return *this;
-// }
+// Assignment operator
+Response&	Response::operator=(Response const& other) {
+	if (this != &other) {
+		_stream = new std::ifstream(other._resolved_path);
+		_reason_phrase = other._reason_phrase;
+		_resolved_path = other._resolved_path;
+		_complete = other._complete;
+		AHTTPMessage::operator=(other);
+	}
+	return *this;
+}
 
 // Destructor
 Response::~Response() {
@@ -50,8 +50,9 @@ bool	Response::IsComplete() const {
 	return _complete;
 }
 
-void	Response::SetComplete() {
-	_complete = true;
+// Takes optional argument to toggle bool to something other than true.
+void	Response::SetComplete(bool value) {
+	_complete = value;
 }
 
 std::istream*	Response::GetCompleteResponse() const {
