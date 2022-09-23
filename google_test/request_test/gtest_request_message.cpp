@@ -1,15 +1,15 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "../../err/exception.hpp"
-#include "../request.hpp"
+#include "../../src/err/exception.hpp"
+#include "../../src/request/request.hpp"
 
 using namespace std;
 
 static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/src/request/testing/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
 
 // Helper function that calls Request::Parse with c-string conversion of passed string.
 static void	ParseChunked(Request& request, string const& req_str) {
@@ -171,6 +171,18 @@ TEST(RequestMessageTest, ValidMessageChunkedExt) {
 	message = ConstructAndGetMessage(CHUNKED +
 		"4\r\nBye!\r\n0;ext1=true;ext2\r\n\r\n");
 	EXPECT_EQ(message, "Bye!");
+}
+
+TEST(RequestMessageTest, ValidPOSTRequestQuery) {
+	Request	request(&config);
+	string message = "POST /cgi-bin/form.py HTTP/1.1\nHost: localhost\nContent-Length: 64\n";
+	message += "Content-Type: application/x-www-form-urlencoded\n\n";
+	message += "name=Joe%20User&id=42";
+
+	request.Parse(message.c_str());
+	cout << "request method: " << request.GetMethod() << endl;
+	cout << "request message: " << request.GetMessageBody() << endl;
+	EXPECT_EQ(request.GetQuery(), "name=Joe User&id=42");
 }
 
 TEST(RequestMessageTest, InvalidMessageNormal) {

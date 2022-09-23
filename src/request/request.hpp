@@ -47,6 +47,7 @@ class Request : public AHTTPMessage {
 		std::string const&	GetTargetString() const;
 		URI const&			GetTargetURI() const;
 		Status				GetRequestStatus() const;
+		std::string			GetQuery();
 
 		// Setters
 		void				SetMethod(std::string const& method);

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "../uri.hpp"
-#include "../uri_host_parser.hpp"
-#include "../../err/exception.hpp"
+#include "../../src/request/uri.hpp"
+#include "../../src/request/uri_host_parser.hpp"
+#include "../../src/err/exception.hpp"
 
 using namespace std;
 

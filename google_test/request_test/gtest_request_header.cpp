@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "../../err/exception.hpp"
-#include "../request_validator.hpp"
-#include "../request.hpp"
+#include "../../src/err/exception.hpp"
+#include "../../src/request/request_validator.hpp"
+#include "../../src/request/request.hpp"
 
 using namespace std;
 
@@ -12,7 +12,7 @@ static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
 static string DEL_RL_Host = "DELETE /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/src/request/testing/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
 
 // Helper function used by ValidHeaders test to construct and call
 // RequestValidator on passed request string. Returns result of

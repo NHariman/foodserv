@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "../request.hpp"
-#include "../../err/exception.hpp"
+#include "../../src/request/request.hpp"
+#include "../../src/err/exception.hpp"
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/src/request/testing/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
 
 TEST(RequestLineTest, ParseGet) {
 	Request request(&config);
