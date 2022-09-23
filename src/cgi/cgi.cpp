@@ -95,10 +95,10 @@ void		CGI::SetArgv() {
 	std::string executable_path = GetExecutablePath();
 	_file_name = executable_path;
 	_argv.push_back(executable_path);
-	if (_CGI.GetLen() > 1) {
+	if (_CGI.GetLen() > 1 && _valid_file == true) {
 		std::string file;
 
-		if(_TARGET.GetLocationUri().IsDir() == true) {
+		if(_TARGET.GetLocationUri().IsDir() == true && IsDirectory(_request->GetTargetURI().GetParsedURI()) == true) {
 			// if location match is a directory, find file in said directory
 			std::cout << "where am i?" << std::endl;
 			file = FindFile();
