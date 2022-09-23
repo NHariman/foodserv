@@ -7,12 +7,38 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 		std::string					_cgi_pass;
 		AllowedMethods				_allowed_methods;
         std::string					_root;
+		std::string					_alias;
 		std::vector<std::string>	_index;
 		size_t						_client_max_body_size;
 		std::vector<ErrorPage>		_error_page;
 		bool						_autoindex;
 		ReturnDir					_return_dir;
+
+		// unique
+		ServerContext						_server;
+		LocationContext						_location;
+		std::string							_final_path;	
 */
+
+TargetConfig&	TargetConfig::operator= (TargetConfig const &obj) {
+	if (this == &obj)
+		return *this;
+	_location_uri = obj._location_uri;
+	_cgi_pass = obj._cgi_pass;
+	_allowed_methods = obj._allowed_methods;
+	_root = obj._root;
+	_alias = obj._alias;
+	_index = obj._index;
+	_client_max_body_size = obj._client_max_body_size;
+	_error_page = obj._error_page;
+	_autoindex = obj._autoindex;
+	_return_dir = obj._return_dir;
+
+	_server = obj._server;
+	_location = obj._location;
+	_resolved_path = obj._resolved_path;
+	return (*this);
+}
 
 void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string port, std::string target) {
     ServerSelection server(host, port, config->GetServers());

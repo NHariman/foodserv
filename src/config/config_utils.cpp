@@ -32,7 +32,6 @@ std::string	TrimValue(std::string value){
 }
 
 std::vector<std::string>	ToStringVector(std::string str) {
-	// size_t	i = 0;
 	size_t	start = 0;
 	size_t	end = 0;
 	std::string key;
@@ -87,6 +86,7 @@ bool	IsUri(std::string input) {
 		return true;
 	return false;
 }
+
 bool	IsDirectory(std::string input) {
 	if (input[input.size() - 1] == '/')
 		return true;

@@ -41,4 +41,9 @@ Makefile
 tmp/
 *_tmp.cpp
 *_tmp.hpp
+<<<<<<< HEAD
+
+google_test/*/build/
+=======
 /build
+>>>>>>> cacd09145b69cddd643c14be753b67ea19298dad
