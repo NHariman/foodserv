@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
 #include "../../src/config/nginx_config.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
+#include "../../src/request/request.hpp"
+#include "../../src/cgi/cgi.hpp"
 # include <map>
 #include <string>
+#include <vector>
 
 // Test syntax
 /*
@@ -505,4 +508,10 @@ TEST(NginxConfigTest, invalid) {
 //////////////////////////////
 //** MODULE TargetConfig  **//
 //////////////////////////////
+
+
+//////////////////////////////
+//** MODULE CGI  **//
+//////////////////////////////
+
 

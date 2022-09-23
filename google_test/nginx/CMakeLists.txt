@@ -53,9 +53,12 @@ add_executable(
 		../../src/resolved_target/location_selection.cpp
 		../../src/resolved_target/target_config.cpp
 
+    ../../src/cgi/cgi.cpp
+
     ../../src/utils/file_handling.cpp
     ../../src/utils/is_functions.cpp
     ../../src/utils/request_utils.cpp
+    ../../src/utils/cgi_utils.cpp
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(
