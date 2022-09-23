@@ -36,16 +36,32 @@ std::string EncodePercent(std::string const& s) {
 
 // Used by RequestTargetParser and URIHostParser to decode percent-encoded values.
 std::string	DecodePercent(std::string const& s) {
-	size_t	percent_start = s.size() - 3;
-	std::string	new_s = s.substr(0, percent_start);
-	std::string	hex = s.substr(percent_start + 1, percent_start + 2);
+	std::string	new_s;
 
-	// Check for encoded CR and LF that might be used in response splitting.
-	if (hex == "0D" || hex == "0A")
-		throw BadRequestException("Bad octets found in encoded data");
-	
-	char	c = std::stoi(hex, nullptr, 16);
-	new_s += c;
+	for (auto it = s.begin(); it != s.end(); it++) {
+		if (*it != '%') {
+			new_s += *it;
+			continue;
+		}
+		else {
+			
+		}
+	}
+	size_t pct = s.find_first_of('%');
+	size_t start = 0;
+
+	for (size_t i = s[pct]; i < s.size() ; i++) {
+		new_s += s.substr(start, i);
+		std::string	hex = s.substr(i + 1, i + 2);
+
+		// Check for encoded CR and LF that might be used in response splitting.
+		if (hex == "0D" || hex == "0A")
+			throw BadRequestException("Bad octets found in encoded data");
+		
+		char	c = std::stoi(hex, nullptr, 16);
+		new_s += c;
+		start += 
+	}
 	return new_s;
 } 
 

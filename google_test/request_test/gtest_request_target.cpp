@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "../uri.hpp"
-#include "../request_target_parser.hpp"
-#include "../../err/exception.hpp"
+#include "../../src/request/uri.hpp"
+#include "../../src/request/request_target_parser.hpp"
+#include "../../src/err/exception.hpp"
 
 TEST(RequestTargetTest, ParsePathSimple) {
 	URI	request_uri("/contact_form.php");

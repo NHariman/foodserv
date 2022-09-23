@@ -1,15 +1,15 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "../../err/exception.hpp"
-#include "../request.hpp"
+#include "../../src/err/exception.hpp"
+#include "../../src/request/request.hpp"
 
 using namespace std;
 
 static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/src/request/testing/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
 
 // Helper function that calls Request::Parse with c-string conversion of passed string.
 static void	ParseChunked(Request& request, string const& req_str) {
