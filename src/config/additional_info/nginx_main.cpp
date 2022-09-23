@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -23,7 +24,6 @@ int	main(int ac, const char **av) {
 		target_test_two.Setup(&input_file, "localhost", "80", "/test_two");
 		target_cgi_bin.Setup(&input_file, "localhost", "80", "/cgi-bin/");
 		target_cgi_bin_two.Setup(&input_file, "localhost", "80", "/cgi-bin1/");
-	
 
 		std::cout << "*****FOR LOCATION: / ******" << std::endl;
 
@@ -133,6 +133,7 @@ int	main(int ac, const char **av) {
 		std::cout << "cgi_pass: " << target_cgi_bin_two.GetCGIPass() << std::endl;
 		std::cout << "alias: " << target_cgi_bin_two.GetAlias() << std::endl;
 		std::cout << "resolved path: " << target_cgi_bin_two.GetResolvedPath() << std::endl;
+
 
 	}
 	catch (const std::exception& e) {

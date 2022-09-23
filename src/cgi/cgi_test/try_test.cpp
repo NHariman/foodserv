@@ -33,6 +33,8 @@ TEST(CGITesting, valid) {
 	size_t last_nl = test.getContent().find_last_of('\n');
 	std::string test_content = test.getContent().substr(0, last_nl + 1);
 	EXPECT_EQ(test_content, content);
+
+	EXPECT_EQ(test.getContent(), content);
 }
 }
 TEST(CGITesting, valid2) {
@@ -47,6 +49,7 @@ TEST(CGITesting, valid2) {
 	size_t last_nl = test.getContent().find_last_of('\n');
 	std::string test_content = test.getContent().substr(0, last_nl + 1);
 	EXPECT_EQ(test_content, content);
+	EXPECT_EQ(test.getContent(), content);
 }
 {
 	NginxConfig config("../../../../config_files/cgi_testers/CGI_test.conf");
@@ -61,6 +64,7 @@ TEST(CGITesting, valid2) {
 
 	std::string test_content = test.getContent().substr(0, last_nl + 1);
 	EXPECT_EQ(test_content, test_cgi_content);
+	EXPECT_EQ(test.getContent(), test_cgi_content);
 }
 }
 

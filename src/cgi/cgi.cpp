@@ -1,6 +1,6 @@
 #include "cgi.hpp"
 
-# define DEBUG 1
+# define DEBUG 0
 
 /*
 ** variables in this class:
@@ -99,7 +99,7 @@ void		CGI::SetArgv() {
 		std::string file;
 
 		if(_TARGET.GetLocationUri().IsDir() == true && IsDirectory(_request->GetTargetURI().GetParsedURI()) == true) {
-			// if location match is a directory, find file in said directory
+			// if location match & request target URI is a directory, find file in said directory
 			std::cout << "where am i?" << std::endl;
 			file = FindFile();
 		}
@@ -187,7 +187,6 @@ void		CGI::ChildProcess(int *fd) {
 			i++;
 		}
 	}
-
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[1]);
 	close(fd[0]);
@@ -200,29 +199,22 @@ int			CGI::ParentProcess(int *fd, int pid) {
 	int es = 0;
 	char buffer[1001];
 	int status = 0;
+	ssize_t count = 1;
 
 	close(fd[1]);
-	while (1) {
-		ssize_t count = read(fd[0], buffer, sizeof(buffer));
-		if (DEBUG) {
-			if (count == -1) {
-				std::cout << "smth bad happened" << std::endl;
-				break ;
-			}
-			else if (count == 0) {
-				std::cout << "EOF detected" << std::endl;
-				break ;
-			}
-		}
+	if (waitpid(pid, &status, WNOHANG) == -1)
+		throw WaitFailureException();
+	if (WIFEXITED(status)) {
+		es = WEXITSTATUS(status);
+	}
+	while ((count = read(fd[0], buffer, sizeof(buffer))) > 0) {
 		std::string buf(buffer);
 		_content = _content + buf;
 		memset(buffer, 0, 1001);
 	}
 	close(fd[0]);
-	if (waitpid(pid, &status, WNOHANG) == -1)
-		throw WaitFailureException();
-	if (WIFEXITED(status)) {
-		es = WEXITSTATUS(status);
+	if (count == -1) {
+			throw ReadFailureException();
 	}
 	return es;
 }
