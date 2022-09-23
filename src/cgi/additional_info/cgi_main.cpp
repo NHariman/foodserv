@@ -16,7 +16,8 @@ int	main(int ac, const char **av) {
 	try {
 		(void)ac;
 		(void)av;
-		NginxConfig config("config_files/CGI_test.conf");
+		//NginxConfig config("config_files/CGI_test.conf");
+		NginxConfig config("config_files/cgi_testers/CGI_test.conf");
 		
 		Request request(&config);
 		request.Parse("GET /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");

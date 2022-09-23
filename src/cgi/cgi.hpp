@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <dirent.h>
+#include <string.h>
 
 #include "../config/directive_validation/cgi_pass.hpp"
 #include "../resolved_target/target_config.hpp"
@@ -142,6 +143,20 @@ class WaitFailureException : public std::exception
 			return (_err_string.c_str());
 		}
 		virtual ~WaitFailureException() throw() {}
+};
+
+class ReadFailureException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		ReadFailureException() {
+			_err_string = "ERROR! Failed CGI read.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~ReadFailureException() throw() {}
 };
 
 #endif
