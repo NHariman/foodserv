@@ -11,18 +11,36 @@
 // Abstract class inherited by Request & Response classes.
 class AHTTPMessage {
 	public:
+		// Member types
 		typedef std::map<std::string, std::string>	FieldsMap;
 
-		AHTTPMessage() : _status_code(0) {}
+		// Default constructor
+		AHTTPMessage() : _status_code(0), _content_length(0) {}
+
+		// Assignment operator
+		AHTTPMessage&	operator=(AHTTPMessage const& other) {
+			if (this != &other) {
+				_http_version = other._http_version;
+				_status_code = other._status_code;
+				_message_body = other._message_body;
+				_header_fields = other._header_fields;
+				_content_length = other._content_length;
+			}
+			return *this;
+		}
+		
+		// Destructor
 		virtual	~AHTTPMessage() {}
 
 		// Getters
 		virtual	std::string const&	GetHTTPVersion() const {
 			return _http_version;
 		}
+
 		virtual	std::string const&	GetMessageBody() const {
 			return _message_body;
 		}
+
 		// Retrieves header field value associated with `field_name` parameter.
 		// If no header field with that name is found, returns macro NO_VAL, which
 		// expands to string "NO SUCH HEADER FIELD" (defined above).
@@ -37,26 +55,35 @@ class AHTTPMessage {
 				return NO_VAL;
 			return found->second;
 		}
+
 		virtual	FieldsMap const&	GetFields() const {
 			return _header_fields;
 		}
+
 		virtual	int	GetStatusCode() const {
 			return _status_code;
+		}
+
+		virtual size_t	GetContentLength() const {
+			return _content_length;
 		}
 
 		// Setters
 		virtual	void	SetHTTPVersion(std::string const& version) {
 			_http_version = version;
 		}
+
 		virtual	void	SetStatusCode(int code) {
 			_status_code = code;
 		}
+
 		virtual	void	SetMessageBody(std::string const& message) {
 			_message_body = message;
 		}
+
 		// Inserts new field name + value pair into map or appends new value to
 		// existing field value if field already exists in map.
-		virtual	void	SetHeaderField(string field_name, string field_val) {
+		virtual	void	SetHeaderField(std::string field_name, std::string field_val) {
 			// Normalize field name to lowercase for easy lookup later
 			NormalizeString(tolower, field_name, 0);
 
@@ -67,15 +94,20 @@ class AHTTPMessage {
 			_header_fields.insert(new_field);
 		}
 		
+		virtual void	SetContentLength(size_t content_length) {
+			_content_length = content_length;
+		}
+		
 		virtual	void	RemoveField(std::string const& field_name) {
 			_header_fields.erase(field_name);
 		}
 
 	protected:
 		std::string			_http_version;
-		int					_status_code;
+		int					_status_code; // for error codes
 		std::string			_message_body;
 		FieldsMap			_header_fields;
+		size_t				_content_length; // bytes of payload body
 };
 
 #endif /* AHTTP_MESSAGE_HPP */

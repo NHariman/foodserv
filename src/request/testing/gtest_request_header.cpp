@@ -5,17 +5,19 @@
 #include "../request_validator.hpp"
 #include "../request.hpp"
 
+using namespace std;
+
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
 static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
 static string DEL_RL_Host = "DELETE /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string POST_RL_Host = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/src/request/testing/default.conf");
 
 // Helper function used by ValidHeaders test to construct and call
 // RequestValidator on passed request string. Returns result of
 // RequestValidator::Process().
-static int	ConstructAndProcess(string req_str) {
+static int	ConstructAndProcess(std::string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
 	TargetConfig	target_config;
@@ -45,7 +47,7 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 	EXPECT_EQ(status, hv_MessageExpected);
 }
 
-static Request::Status	ConstructAndGetStatus(string req_str) {
+static Request::Status	ConstructAndGetStatus(std::string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
 

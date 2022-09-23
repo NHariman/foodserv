@@ -6,7 +6,11 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
+<<<<<<< HEAD
 /*   Updated: 2022/09/15 17:16:52 by nhariman      ########   odam.nl         */
+=======
+/*   Updated: 2022/09/18 22:52:51 by salbregh      ########   odam.nl         */
+>>>>>>> cacd09145b69cddd643c14be753b67ea19298dad
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +38,7 @@ int	main(int ac, const char **av) {
 		target_cgi_bin.Setup(&input_file, "localhost", "80", "/cgi-bin/");
 		target_cgi_bin_two.Setup(&input_file, "localhost", "80", "/cgi-bin1/");
 	
+<<<<<<< HEAD
 
 		std::cout << "*****FOR LOCATION: / ******" << std::endl;
 
@@ -116,6 +121,17 @@ int	main(int ac, const char **av) {
 		std::cout << target_cgi_bin_two.GetReturn() << std::endl;
 		std::cout << "cgi_pass: " << target_cgi_bin_two.GetCGIPass() << std::endl;
 		std::cout << "alias: " << target_cgi_bin_two.GetAlias() << std::endl;
+=======
+		// std::cout << std::boolalpha << "Allowed method: GET: " << target.IsAllowedMethod("GET") << std::endl;
+		// std::cout << std::boolalpha << "Allowed method: POST: " << target.IsAllowedMethod("POST") << std::endl;
+		// std::cout << std::boolalpha << "Allowed method: DELETE: " << target.IsAllowedMethod("DELETE") << std::endl;
+		// std::cout << "Get max body size: " << target.GetMaxBodySize() << std::endl;
+		// std::cout << "Get autoindex: " << std::boolalpha << target.GetAutoindex() << std::endl;
+		// std::cout << "Print error_page: " << std::endl;
+		// target.PrintErrorPage();
+
+		std::cout << "PATH: " << target.GetResolvedPath() << std::endl;
+>>>>>>> cacd09145b69cddd643c14be753b67ea19298dad
 
 	}
 	catch (const std::exception& e) {

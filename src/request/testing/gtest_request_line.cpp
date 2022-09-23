@@ -3,7 +3,7 @@
 #include "../request.hpp"
 #include "../../err/exception.hpp"
 
-static NginxConfig config("/Users/mjiam/Desktop/42/webserv/foodserv/src/request/testing/default.conf");
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/src/request/testing/default.conf");
 
 TEST(RequestLineTest, ParseGet) {
 	Request request(&config);

@@ -15,7 +15,7 @@ URI::URI(URI const& other)
 		_query(other._query) {}
 
 // String constructor
-URI::URI(string const& input) : _uri_input(input) {
+URI::URI(std::string const& input) : _uri_input(input) {
 	ParseInput();
 }
 
@@ -35,7 +35,7 @@ URI&	URI::operator=(URI const& other) {
 // Overloaded assignment operator taking a full URI string.
 // Alternative to constructing with string.
 // Clears all fields before parsing new string.
-URI&	URI::operator=(string const& input) {
+URI&	URI::operator=(std::string const& input) {
 	_host.clear();
 	_port.clear();
 	_path.clear();
@@ -50,20 +50,20 @@ URI&	URI::operator=(string const& input) {
 URI::~URI() {}
 
 // Simplified method for retrieving parsed URI string meant for external classes/users.
-string const&	URI::Get() const {
+std::string const&	URI::Get() const {
 	return _uri_parsed;
 }
 
-string const&	URI::GetInputURI() const {
+std::string const&	URI::GetInputURI() const {
 	return _uri_input;
 }
 
-string const&	URI::GetParsedURI() const {
+std::string const&	URI::GetParsedURI() const {
 	return _uri_parsed;
 }
 
-string	URI::GetURIDebug() const {
-	string	uri;
+std::string	URI::GetURIDebug() const {
+	std::string	uri;
 
 	if (!_host.empty())
 		uri += "host: \"" + _host + "\" | ";
@@ -76,44 +76,44 @@ string	URI::GetURIDebug() const {
 	return uri;
 }
 
-string	URI::GetHostWithPort() const {
+std::string	URI::GetHostWithPort() const {
 	if (_port.empty())
 		return _host;
 	else
 		return _host + ":" + _port;
 }
 
-string const&	URI::GetHost() const {
+std::string const&	URI::GetHost() const {
 	return _host;
 }
 
-string const&	URI::GetPort() const {
+std::string const&	URI::GetPort() const {
 	return _port;
 }
 
-string const&	URI::GetPath() const {
+std::string const&	URI::GetPath() const {
 	return _path;
 }
 
 
-string const&	URI::GetQuery() const {
+std::string const&	URI::GetQuery() const {
 	return _query;
 }
 
 // Validates input string using ParseInput, which sets _host and _uri_parsed.
-void	URI::SetHost(string const& host) {
+void	URI::SetHost(std::string const& host) {
 	_uri_input = host;
 	ParseInput(Part::Host);
 }
 
 // Validates input string using ParseInput, which sets _path and _uri_parsed.
-void	URI::SetPath(string const& path) {
+void	URI::SetPath(std::string const& path) {
 	_uri_input = path;
 	ParseInput(Part::Path);
 }
 
 // Warning: assumes query string is correct and does not validate it.
-void	URI::SetQuery(string const& query) {
+void	URI::SetQuery(std::string const& query) {
 	_query = query;
 	_uri_parsed = ConstructParsedURI();
 }
@@ -126,7 +126,7 @@ void	URI::ParseInput(URI::Part part) {
 	size_t	slash_pos = _uri_input.find('/');
 
 	// if no / found, assume it is host string
-	if (part == Part::Host || slash_pos == string::npos) {
+	if (part == Part::Host || slash_pos == std::string::npos) {
 		URIHostParser	parser;
 		parser.Parse(*this, _uri_input);
 	}
@@ -140,8 +140,8 @@ void	URI::ParseInput(URI::Part part) {
 	_uri_parsed = ConstructParsedURI();
 }
 
-string	URI::ConstructParsedURI() {
-	string	uri;
+std::string	URI::ConstructParsedURI() {
+	std::string	uri;
 
 	if (!_host.empty())
 		uri += GetHostWithPort();

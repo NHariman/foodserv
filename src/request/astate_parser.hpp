@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 // An abstract class template that defines the state parsing algorithm
 // as a template method, complete with hooks and abstract methods to be
 // implemented by the subclasses.
@@ -25,7 +23,7 @@ class AStateParser {
 
 		// Template method
 		// Takes string to parse and returns bytes read.
-		size_t	ParseString(string const& input_string) {
+		size_t	ParseString(std::string const& input_string) {
 			InitParser(input_string); // reset counters for repeat calls
 			PreParseCheck();
 			while (NotDone(pos)) {
@@ -47,8 +45,8 @@ class AStateParser {
 		State	start_state;
 		State	end_state;
 		State	cur_state;
-		string	buffer; // for keeping track of parsed input
-		string	input; // saving original input
+		std::string	buffer; // for keeping track of parsed input
+		std::string	input; // saving original input
 		size_t	pos; // n. of bytes read
 		bool	skip_char; // for skipping pushing whitespace/EOL to buffer
 
@@ -58,7 +56,7 @@ class AStateParser {
 
 		// Concrete methods that can be overridden if custom looping behaviour
 		// is needed.
-		virtual void	InitParser(string const& input_string) {
+		virtual void	InitParser(std::string const& input_string) {
 			input = input_string;
 			skip_char = false;
 			pos = 0;

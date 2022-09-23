@@ -1,0 +1,5 @@
+if(EXISTS "/Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build/try_test[1]_tests.cmake")
+  include("/Users/sannealbreghs/Desktop/foodserv/google_test/listen_test/build/try_test[1]_tests.cmake")
+else()
+  add_test(try_test_NOT_BUILT try_test_NOT_BUILT)
+endif()

@@ -47,6 +47,49 @@ class BadRequestException : public http::exception {
 		std::string	_error_str;
 };
 
+// Used for: resource is unable to be accessed.
+// Thrown by FileHandler::GetFile.
+// Should return 403 code.
+class ForbiddenException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("403: Forbidden");
+		}
+
+		int	which() const throw() {
+			return 403;
+		}
+};
+
+// Used for: resource doesn't exist.
+// Thrown by FileHandler::GetFile.
+// Should return 404 code.
+class NotFoundException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("404: Not Found");
+		}
+
+		int	which() const throw() {
+			return 404;
+		}
+};
+
+// Used for: request method is not allowed according to
+// resource location block in config file.
+// Thrown by RequestValidator::ValidMethod.
+// Should return 405 code.
+class MethodNotAllowedException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("405: Method Not Allowed");
+		}
+
+		int	which() const throw() {
+			return 405;
+		}
+};
+
 // Used for: request containing message body but no Content-Length header.
 // Thrown by RequestParser::AfterParseCheck.
 // Should return 411 code.
@@ -131,6 +174,20 @@ class RequestHeaderFieldsTooLargeException : public http::exception {
 
 		int	which() const throw() {
 			return 431;
+		}
+};
+
+// Used for: internal processes error.
+// Thrown by:	FileHandler::GetFile.
+// Should return 500 code.
+class InternalServerErrorException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("500: Internal Server Error");
+		}
+
+		int	which() const throw() {
+			return 500;
 		}
 };
 

@@ -1,8 +1,10 @@
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
-#include "nginx_config.hpp"
-#include "request.hpp"
+#include "../config/nginx_config.hpp"
+#include "../request/request.hpp"
+#include "../response/response_handler.hpp"
+// #include "response.hpp"
 
 class Connection {
 	public:
@@ -13,17 +15,15 @@ class Connection {
 
 		void	Receive(char const* buffer);
 		void	Dispatch();
+		// debug
+		Response const& DebugGetResponse();
 
 	private:
 		NginxConfig*	_config;
 		Request			_request;
-		Response		_response;
+		ResponseHandler	_response_handler;
 		int				_fd; // TODO: change to specific socket/connection_fd
 		bool			_close_connection;
-
-		void	HandleError();
-		void	HandleExpect();
-		void	HandleResponse();
 };
 
 #endif /* CONNECTION_HPP */
