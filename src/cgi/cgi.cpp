@@ -100,7 +100,6 @@ void		CGI::SetArgv() {
 
 		if(_TARGET.GetLocationUri().IsDir() == true && IsDirectory(_request->GetTargetURI().GetParsedURI()) == true) {
 			// if location match & request target URI is a directory, find file in said directory
-			std::cout << "where am i?" << std::endl;
 			file = FindFile();
 		}
 		else {
@@ -130,10 +129,10 @@ void		CGI::SetArgv() {
 }
 
 void 		CGI::SetHeaders() {
-	if (_request->GetField("Content-Length").compare(NO_VAL) != 0)
-		_env.push_back("CONTENT_LENGTH=" + 	_request->GetField("Content-Length"));
+	if (_request->GetField("CONTENT_LENGTH").compare(NO_VAL) != 0)
+		_env.push_back("CONTENT_LENGTH=" + 	_request->GetField("CONTENT_LENGTH"));
 	if (_request->GetField("Content-Type").compare(NO_VAL) != 0)
-		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("Content-Type"));
+		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("ONTENT_TYPE"));
 	_env.push_back("DOCUMENT_ROOT=" + 	_TARGET.GetRoot());
 	_env.push_back("PATH_TRANSLATED=" + _TARGET.GetResolvedPath());
 	if (!_request->GetTargetURI().GetQuery().empty())
@@ -202,12 +201,15 @@ int			CGI::ParentProcess(int *fd, int pid) {
 	ssize_t count = 1;
 
 	close(fd[1]);
+	memset(buffer, 0, 1001);
 	if (waitpid(pid, &status, WNOHANG) == -1)
 		throw WaitFailureException();
 	if (WIFEXITED(status)) {
 		es = WEXITSTATUS(status);
 	}
-	while ((count = read(fd[0], buffer, sizeof(buffer))) > 0) {
+	while ((count = read(fd[0], buffer, 1000)) > 0) {
+		if (count == 0)
+			break ;
 		std::string buf(buffer);
 		_content = _content + buf;
 		memset(buffer, 0, 1001);
