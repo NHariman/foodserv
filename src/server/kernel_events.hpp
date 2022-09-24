@@ -8,15 +8,25 @@
 // #include <sys/types.h>
 #include <sys/event.h>
 // #include <sys/time.h>
+#include <utility>
 
 class KernelEvents {
 	private:
 		std::vector<int>	_listening_sockets;
 		int					_kqueue;
+
+		std::map<int, Connection*>	_connection_map;
 	
 		void	KqueueInit();
 		void	KeventInit();
 		void	KernelEventLoop();
+		bool	InListeningSockets(int fd) const;
+		int		AcceptNewConnection(int fd);
+		void	AddToConnectionMap(int fd);
+
+		// remove afterwards
+		void 	serveHTML(int s);
+		void	recv_msg(int s);
 	
 	public:
 		KernelEvents(std::vector<int> listening_sockets);
@@ -33,6 +43,13 @@ class KernelEvents {
 		public:
 			const char *what() const throw() {
 				return "ERROR! kevent call failed.";
+			}
+	};
+
+	class SocketCreationException : public std::exception {
+		public:
+			const char *what() const throw() {
+				return "ERROR! Failed to create socket.";
 			}
 	};
 };
