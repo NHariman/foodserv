@@ -6,7 +6,6 @@ Request::Request()
 	:	AHTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
-		content_length(-1),
 		max_body_size(1048576),
 		_request_status(Status::Incomplete) {}
 
@@ -15,7 +14,6 @@ Request::Request(NginxConfig* config)
 	:	AHTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
-		content_length(-1),
 		max_body_size(1048576),
 		_parser(config),
 		_request_status(Status::Incomplete) {}
@@ -26,7 +24,7 @@ Request::~Request() {}
 // Buffers the input string until either end of header section
 // or start of message is reached.
 size_t	Request::Parse(char const* buffer) {
-	string buf(buffer);
+	std::string buf(buffer);
 
 	_buf += buf;
 	if (CanParse()) {
@@ -38,7 +36,6 @@ size_t	Request::Parse(char const* buffer) {
 		catch (http::exception &e) {
 			SetStatusCode(e.which());
 			_request_status = Status::Bad;
-			throw;
 		}
 	}
 	return bytes_read;
@@ -48,11 +45,11 @@ TargetConfig const&	Request::GetTargetConfig() const {
 	return _target_config;
 }
 
-string const&	Request::GetMethod() const {
+std::string const&	Request::GetMethod() const {
 	return _method;
 }
 
-string const&	Request::GetTargetString() const {
+std::string const&	Request::GetTargetString() const {
 	return _target.Get();
 }
 
@@ -64,7 +61,7 @@ Request::Status	Request::GetRequestStatus() const {
 	return _request_status;
 }
 
-void	Request::SetMethod(string const& method) {
+void	Request::SetMethod(std::string const& method) {
 	_method = method;
 }
 
@@ -72,23 +69,23 @@ void	Request::SetRequestStatus(Status status) {
 	_request_status = status;
 }
 
-void	Request::SetTarget(string const& target) {
+void	Request::SetTarget(std::string const& target) {
 	_target = target;
 }
 
-void	Request::SetTargetHost(string const& host) {
+void	Request::SetTargetHost(std::string const& host) {
 	_target.SetHost(host);
 }
 
-void	Request::SetResolvedTargetPath(string const& target_path) {
-	_target.SetPath(target_path);
-}
+// void	Request::SetResolvedTargetPath(std::string const& target_path) {
+// 	_target.SetPath(target_path);
+// }
 
 // Checks if double CRLF indicating end of header section is found
 // or message stage has been reached.
 bool	Request::CanParse() {
-	return (_buf.find("\n\r\n") != string::npos
-			|| _buf.find("\n\n") != string::npos
+	return (_buf.find("\n\r\n") != std::string::npos
+			|| _buf.find("\n\n") != std::string::npos
 			|| _parser.cur_state == r_Chunked
 			|| _parser.cur_state == r_MsgBody);
 }
@@ -99,7 +96,11 @@ bool	Request::CanParse() {
 void	Request::CheckStatus() {
 	if (_parser.cur_state == r_Done)
 		_request_status = Status::Complete;
-	else if (_request_status == Status::Expect && msg_bytes_read > 0)
-		_request_status = Status::Incomplete;
+	else if (_request_status == Status::Expect) {
+		if (msg_bytes_read > 0)
+			_request_status = Status::Incomplete;
+		else
+			SetStatusCode(100);
+	}
 	return ;
 }

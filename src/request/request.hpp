@@ -5,10 +5,7 @@
 #include <string>
 #include "request_parser.hpp"
 #include "ahttp_message.hpp"
-#include "../config/nginx_config.hpp"
 #include "../resolved_target/target_config.hpp"
-
-using namespace std;
 
 class NginxConfig;
 
@@ -17,6 +14,7 @@ class NginxConfig;
 // 		int									_status_code;
 // 		std::string							_message_body;
 // 		std::map<std::string, std::string>	_header_fields;
+// 		size_t								_content_length;
 // Along with their respective getters & setters.
 
 class Request : public AHTTPMessage {
@@ -28,7 +26,7 @@ class Request : public AHTTPMessage {
 			Expect
 		};
 
-		typedef std::map<string, string>	FieldsMap;
+		typedef std::map<std::string, std::string>	FieldsMap;
 
 		// Default constructor
 		Request();
@@ -39,24 +37,23 @@ class Request : public AHTTPMessage {
 
 		size_t	bytes_read; // bytes read of request input
 		size_t	msg_bytes_read; // bytes read of payload body
-		ssize_t	content_length; // bytes of payload body, signed so can be initialized to -1
 		size_t	max_body_size;
 
 		size_t				Parse(char const* buffer);
 
 		// Getters
 		TargetConfig const&	GetTargetConfig() const;
-		string const&		GetMethod() const;
-		string const&		GetTargetString() const;
+		std::string const&		GetMethod() const;
+		std::string const&		GetTargetString() const;
 		URI const&			GetTargetURI() const;
 		Status				GetRequestStatus() const;
 
 		// Setters
-		void				SetMethod(string const& method);
-		void				SetTarget(string const& target);
+		void				SetMethod(std::string const& method);
+		void				SetTarget(std::string const& target);
 		void				SetRequestStatus(Status status);
-		void				SetTargetHost(string const& host);
-		void				SetResolvedTargetPath(string const& target_path);
+		void				SetTargetHost(std::string const& host);
+		// void				SetResolvedTargetPath(std::string const& target_path);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private variables of Request.
@@ -65,9 +62,9 @@ class Request : public AHTTPMessage {
 	private:
 		TargetConfig		_target_config;
 		RequestParser		_parser;
-		string				_method;
+		std::string				_method;
 		URI					_target;
-		string				_buf;
+		std::string				_buf;
 		Status				_request_status;
 
 		bool	CanParse();

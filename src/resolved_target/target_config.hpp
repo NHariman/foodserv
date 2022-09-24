@@ -57,7 +57,8 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 	
 	public:
 		TargetConfig(){};
-		virtual ~TargetConfig() {};
+		virtual ~TargetConfig(){};
+		TargetConfig&	operator= (TargetConfig const &obj);
 		void	Setup(NginxConfig *config, std::string host, std::string port, std::string target);
 
 		void	SetGenerateIndexBool(bool index);
@@ -67,6 +68,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		size_t						GetMaxBodySize() const;
 		std::string					GetResolvedPath() const;
 		bool						MustGenerateIndex() const;
+		std::vector<std::string>	GetAllowedMethods() const;
 
 		ServerContext				GetServer() const;
 		LocationContext				GetLocation() const;

@@ -63,6 +63,7 @@ std::vector<int>	Socket::GetListeningSockets() const {
 }
 
 Socket::~Socket() {
+	// Closing all listening sockets
 	for (std::vector<int>::iterator it = _listening_sockets.begin(); it != _listening_sockets.end(); it++)
 		close(*it);
 }

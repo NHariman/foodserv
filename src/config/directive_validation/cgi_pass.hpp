@@ -9,6 +9,7 @@
 class CGIPass : public std::pair<std::string, std::string> {
 	private:
         bool        						_is_set;
+		size_t								_len;
 		std::string							_file_extension;
 		std::string							_executable_path;
 
@@ -20,6 +21,7 @@ class CGIPass : public std::pair<std::string, std::string> {
         CGIPass& operator=(const CGIPass &obj);
 		std::string		GetFileExtension() const;
 		std::string		GetExecutablePath() const;
+		size_t			GetLen() const;
         bool            IsSet() const;
 		class MissingArgumentsException : public std::exception
 		{
@@ -39,7 +41,7 @@ class CGIPass : public std::pair<std::string, std::string> {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Too many Arguments in cgi_pass directive.";
+					return "ERROR! Not enough Arguments in cgi_pass directive.";
 				}
 		};
 		class NotAFileExtensionException : public std::exception

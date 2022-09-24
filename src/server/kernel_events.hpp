@@ -1,6 +1,8 @@
 #ifndef KERNEL_EVENTS_HPP
 # define KERNEL_EVENTS_HPP
 
+#include "../connection/connection.hpp"
+
 #include <vector>
 #include <iostream>
 // #include <sys/types.h>
@@ -14,6 +16,7 @@ class KernelEvents {
 	
 		void	KqueueInit();
 		void	KeventInit();
+		void	KernelEventLoop();
 	
 	public:
 		KernelEvents(std::vector<int> listening_sockets);
@@ -24,6 +27,13 @@ class KernelEvents {
 		const char *what() const throw() {
 			return "ERROR! Failed to create kqueue.";
 		}
+	};
+	
+	class KeventErrorException : public std::exception {
+		public:
+			const char *what() const throw() {
+				return "ERROR! kevent call failed.";
+			}
 	};
 };
 

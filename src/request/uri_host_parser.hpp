@@ -7,8 +7,6 @@
 #include "../utils/request_utils.hpp"
 #include "../utils/utils.hpp"
 
-using namespace std;
-
 class URI;
 
 enum HostState {
@@ -37,7 +35,7 @@ class URIHostParser : public AStateParser<HostState> {
 		// Destructor
 		~URIHostParser();
 
-		size_t	Parse(URI& uri, string const& input);
+		size_t	Parse(URI& uri, std::string const& input);
 
 	private:
 		URI		*_uri;
@@ -56,7 +54,7 @@ class URIHostParser : public AStateParser<HostState> {
 		HostState	RegNamePctHandler(size_t pos);
 		HostState	RegNamePctDoneHandler(size_t pos);
 		HostState	PortHandler(size_t pos);
-		HostState	PushBuffer(string& field, HostState next_state);
+		HostState	PushBuffer(std::string& field, HostState next_state);
 
 	protected:
 		HostState	GetNextState(size_t pos) override;

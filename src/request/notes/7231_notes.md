@@ -1,4 +1,37 @@
 # Header Fields
+### Allow:
+>  An origin server MUST generate an Allow field in a 405 (Method Not Allowed) response and MAY do so in any other response.  An empty Allow field value indicates that the resource allows no methods, which might occur in a 405 response if the resource has been temporarily disabled by configuration.  
+
+> Example of use:  
+>     Allow: GET, HEAD, PUT
+
+Source:
+[Section 7.4.1](https://www.rfc-editor.org/rfc/rfc7231#section-7.4.1)
+<br/><br/>
+
+### Content-Type:
+> A sender that generates a message containing a payload body SHOULD generate a Content-Type header field in that message unless the intended media type of the enclosed representation is unknown to the sender.  If a Content-Type header field is not present, the recipient MAY either assume a media type of "application/octet-stream" ([RFC2046], Section 4.5.1) or examine the data to determine its type.  
+
+Source:
+[Section 3.1.1.5](https://www.rfc-editor.org/rfc/rfc7231.html#section-3.1.1.5)
+
+> text/html has no required parameters, only optional parameter of charset.  
+
+Source:
+[IANA Media Type specification](https://www.iana.org/assignments/media-types/text/html)
+<br/><br/>
+
+### Date:
+> Format: Date = day-name "," SP date1 SP time-of-day SP GMT  
+	An example is  
+    	Date: Tue, 15 Nov 1994 08:12:31 GMT.  
+
+> An origin server MUST NOT send a Date header field if it does not have a clock capable of providing a reasonable approximation of the current instance in Coordinated Universal Time.  An origin server MAY send a Date header field if the response is in the 1xx (Informational) or 5xx (Server Error) class of status codes.  An origin server MUST send a Date header field in all other cases.
+
+Source:
+[Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2)
+<br/><br/>
+
 ### Expect:
 > A server that receives an Expect field-value other than 100-continue MAY respond with a 417 (Expectation Failed) status code to indicate that the unexpected expectation cannot be met.
 
@@ -15,12 +48,22 @@ Source:
 [Section 5.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-5.1.1)
 <br/><br/>
 
-### Content-Encoding:
+### Server:
+> The "Server" header field contains information about the software used by the origin server to handle the request, which is often used by clients to help identify the scope of reported interoperability problems, to work around or tailor requests to avoid particular server limitations, and for analytics regarding server or operating system use.  An origin server MAY generate a Server field in its responses.  
+
+Source:
+[Section 7.4.2](https://www.rfc-editor.org/rfc/rfc7231#section-7.4.2)
+<br/><br/>
+
+
+# Responses
+### Unacceptable Content-Encoding:
 >  An origin server MAY respond with a status code of 415 (Unsupported Media Type) if a representation in the request message has a content coding that is not acceptable.  
 
 Source:
 [Section 3.1.2.2](https://datatracker.ietf.org/doc/html/rfc7231#section-3.1.2.2)
 <br/><br/>
+
 
 # Method response codes
 ### DELETE:

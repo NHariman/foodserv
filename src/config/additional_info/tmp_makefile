@@ -2,7 +2,7 @@ COMPILE = c++
 
 FLAGS = -Wall -Werror -Wextra -std=c++11
 
-MAIN = nginx_main.cpp
+MAIN = cgi_main.cpp
 
 OBJDIR = obj
 
@@ -12,15 +12,19 @@ REQ_DIR = request
 
 CONFIG_DIR = config
 
-SERV_SELECT = server_selection
+TARGET_DIR = resolved_target
 
-REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,	request_utils.cpp \
-											chunked_parser.cpp \
+UTILS_DIR = utils
+
+CGI_DIR = cgi
+
+REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,	chunked_parser.cpp \
 											header_field_parser.cpp \
 											request_line_parser.cpp \
 											request.cpp \
 											request_parser.cpp \
 											request_target_parser.cpp \
+											request_validator.cpp \
 											uri_host_parser.cpp \
 											uri.cpp)
 
@@ -43,12 +47,19 @@ CONFIG = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/,	config_interface.cpp \
 												directive_validation/root.cpp)
 
 
-SERVER_SELECTION = 	$(addprefix $(SRC_DIR)/$(SERV_SELECT)/,	server_selection.cpp \
+TARGET = 	$(addprefix $(SRC_DIR)/$(TARGET_DIR)/,	server_selection.cpp \
+													resolved_path.cpp \
 															location_selection.cpp \
 															target_config.cpp)
 
+UTILS = 	$(addprefix $(SRC_DIR)/$(UTILS_DIR)/,	file_handling.cpp \
+													is_functions.cpp \
+													request_utils.cpp \
+													cgi_utils.cpp)
 
-OFILES = $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(SERVER_SELECTION:.cpp=.o)
+CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, cgi.cpp)
+
+OFILES = $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(TARGET:.cpp=.o) $(UTILS:.cpp=.o) $(CGI:.cpp=.o)
 
 NAME = webserv
 
@@ -66,6 +77,11 @@ clean:
 
 fclean: clean
 	@$(RM) $(NAME) 
+	@$(RM) -rf google_test/nginx/build
+	@$(RM) -rf src/cgi/cgi_test/build
+	cp Makefile src/config/additional_info/tmp_makefile
+	cp nginx_main.cpp src/config/additional_info/
+	cp cgi_main.cpp src/config/additional_info/
 
 re: fclean all
 

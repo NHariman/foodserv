@@ -2,18 +2,13 @@
 #define REQUEST_PARSER_HPP
 
 #include <string>
-#include "chunked_parser.hpp"
-#include "../err/exception.hpp"
-#include "header_field_parser.hpp"
-#include "request_validator.hpp"
 #include "astate_parser.hpp"
+#include "chunked_parser.hpp"
+#include "header_field_parser.hpp"
 #include "request_line_parser.hpp"
-// #include "../utils/request_utils.hpp"
-
-using namespace std;
+#include "../err/exception.hpp"
 
 class Request;
-class RequestValidator;
 class NginxConfig;
 
 enum RequestState {
@@ -38,7 +33,7 @@ class RequestParser  : public AStateParser<RequestState> {
 		// Destructor
 		~RequestParser();
 
-		size_t		Parse(Request& request, string const& buffer);
+		size_t		Parse(Request& request, std::string const& buffer);
 
 		// friend class forward declaration allows Request to
 		// access protected `cur_state` attribute.

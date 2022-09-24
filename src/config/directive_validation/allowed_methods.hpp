@@ -17,6 +17,7 @@ class AllowedMethods {
 		bool						_get;
 		bool						_post;
 		bool						_delete;
+		std::vector<std::string>	_methods;
 
 		void	ValidateMethods();
 
@@ -30,6 +31,7 @@ class AllowedMethods {
 		bool	GetGET() const;
 		bool	GetPOST() const;
 		bool	GetDELETE() const;
+		std::vector<std::string>	GetMethods() const;
 		class BadMethodException : public std::exception
 		{
 			public:

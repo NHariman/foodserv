@@ -4,12 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "../err/exception.hpp"
 #include "astate_parser.hpp"
 #include "uri.hpp"
+#include "../err/exception.hpp"
 #include "../utils/utils.hpp"
-
-// struct RequestLine;
 
 class Request;
 
@@ -33,7 +31,7 @@ class RequestLineParser : public AStateParser<RequestLineState> {
 		// Destructor
 		~RequestLineParser();
 
-		size_t	Parse(Request& request, string const& input);
+		size_t	Parse(Request& request, std::string const& input);
 
 	protected:
 		RequestLineState	GetNextState(size_t pos) override;
@@ -50,8 +48,8 @@ class RequestLineParser : public AStateParser<RequestLineState> {
 		RequestLineState	VersionHandler();
 		RequestLineState	VersionEndHandler();
 		
-		size_t	GetEndPos(string const& s, char to_find, size_t start);
-		size_t	GetCRLFPos(string const& input, size_t pos);
+		size_t	GetEndPos(std::string const& s, char to_find, size_t start);
+		size_t	GetCRLFPos(std::string const& input, size_t pos);
 };
 
 #endif /* REQUEST_LINE_PARSER_HPP */

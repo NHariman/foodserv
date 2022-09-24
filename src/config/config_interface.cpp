@@ -83,12 +83,9 @@ std::map<int, std::string>		ConfigValues::GetErrorPage() const {
 }
 
 void							ConfigValues::PrintErrorPage() const {
-	// if (_error_page.size() != 0) {
-		// std::cout << "komt hier";
-		for(std::map<int, std::string>::const_iterator it = _error_page.begin();
+	for(std::map<int, std::string>::const_iterator it = _error_page.begin();
 		it != _error_page.end(); ++it){
-			std::cout << "komt hier";
 		std::cout << it->first << " " << it->second << "\n";
-		}
-	// }
+	}
+
 }

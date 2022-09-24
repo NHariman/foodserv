@@ -2,18 +2,14 @@
 #define REQUEST_VALIDATOR_HPP
 
 #include <map>
-#include <string>
-#include "../err/exception.hpp"
+#include <string> // stoull
 #include "uri.hpp"
+#include "../err/exception.hpp"
 #include "../utils/request_utils.hpp"
-#include "../config/nginx_config.hpp"
 #include "../resolved_target/target_config.hpp"
-
-using namespace std;
 
 class Request;
 class NginxConfig;
-class TargetConfig;
 
 enum HeaderStatus {
 	hv_Bad = -1,
@@ -41,10 +37,10 @@ class RequestValidator {
 		bool	PostConfigValidate(Request& request);
 		bool	ValidHost(Request& request);
 		bool	ValidExpect(Request& request);
-		bool	ValidContentEncoding(string const& host);
+		bool	ValidContentEncoding(std::string const& host);
 		bool	ValidTransferEncoding(Request& request);
 		bool	ValidContentLength(Request& request);
-		bool	ValidMethod(string const& method);
+		bool	ValidMethod(std::string const& method);
 };
 
 #endif /* REQUEST_VALIDATOR_HPP */
