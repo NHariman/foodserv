@@ -10,6 +10,7 @@
 #include <sys/event.h>
 // #include <sys/time.h>
 #include <utility>
+#include <unistd.h>
 
 class KernelEvents {
 	private:
@@ -25,6 +26,7 @@ class KernelEvents {
 		bool	InListeningSockets(int fd) const;
 		int		AcceptNewConnection(int fd);
 		void	AddToConnectionMap(int fd);
+		void	RemoveFromConnectionMap(int fd);
 
 		// remove afterwards
 		void 	serveHTML(int s);

@@ -39,7 +39,6 @@ void	KernelEvents::KeventInit() {
 		EV_SET(&kev_monitor, _listening_sockets[i], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
 		if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 			throw KeventErrorException();
-		// else if ()
 	}
 }
 
@@ -53,27 +52,41 @@ void	KernelEvents::KernelEventLoop() {
 		if (new_events == -1)
 			throw KeventErrorException();
 		
+		// _connection_map has all the client connections
+		// _listening_socket has all the socket fildes for the ports
 		for (int i = 0; i < new_events; i++) {
 			// within the new events there are multiple options
 			// 1. the incoming event is a new connection on one of the listening sockets
-			// 2. if a read event is ready on an exsiting client
-			// 3. when an event is ready to write
-			int	event_fd = kev_trigger.ident;
-			std::cout << "event: " << event_fd << std::endl;
+			// 2. end of file, client can disconnect
+			// 3. error with the triggered event
+			// 4. an existing client is ready to read
+			// 5. an existing client is ready to write
+			if (DEBUG) std::cout << "socket fd triggered: " << kev_trigger.ident << std::endl;
 
 			// 1.
-			if (InListeningSockets(event_fd)) {
-				std::cout << " IN IF" ;
+			if (InListeningSockets(kev_trigger.ident)) {
+				if (DEBUG) std::cout << "Socket fd is in the list of listening sockets.\nWe can accept this client." << std::endl;
 				// accept the incoming connection
-				int client_fd = AcceptNewConnection(event_fd);
+				int client_fd = AcceptNewConnection(kev_trigger.ident);
 				AddToConnectionMap(client_fd);
 			}
+			else if (kev_trigger.flags & EV_EOF) {
+				// disconnect client
+				std::cout << "In EV_EOF with: " << kev_trigger.ident << std::endl;
+				//close connection
+				RemoveFromConnectionMap(kev_trigger.ident);
+			}
+			else if (kev_trigger.flags & EV_ERROR) {
+				std::cout << "ERROR IN KEVENT" << std::endl;
+			}
 			else if (kev_trigger.filter == EVFILT_READ) {
-				recv_msg(event_fd);
+				std::cout << "its ready to read" << std::endl;
+				// handle read client -> send _sockqueue and the kev_trigger.ident
+				recv_msg(kev_trigger.ident);
 			}
 			else if (kev_trigger.filter == EVFILT_WRITE) {
 				std::cout << "its ready to write" << std::endl;
-				recv_msg(event_fd);
+				// recv_msg(event_fd);
 			}
 		}
 	}
@@ -86,7 +99,7 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	// but then the new request (connection class)
 	std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
 	if (it != _connection_map.end())
-		std::cout << "TO DO: DELETE CONNECTION" << std::endl;
+		_connection_map.erase(it);
 		// delete the connection
 
 	// add the client
@@ -113,6 +126,16 @@ int		KernelEvents::AcceptNewConnection(int fd) {
 	if (client_fd == -1)
 		throw SocketCreationException();
 	return client_fd;
+}
+
+void	KernelEvents::RemoveFromConnectionMap(int fd) {
+	std::map<int, Connection*>::iterator it = _connection_map.find(fd);
+	if (it != _connection_map.end())
+		_connection_map.erase(it);
+	else {
+		std::cout << "connectin not in map" << std::endl;
+	}
+	close(fd);
 }
 
 bool	KernelEvents::InListeningSockets(int fd) const {
