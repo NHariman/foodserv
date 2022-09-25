@@ -2,12 +2,15 @@
 
 # define DEBUG 1
 
-KernelEvents::KernelEvents(std::vector<int> listening_sockets) : _listening_sockets(listening_sockets) {
+KernelEvents::KernelEvents(NginxConfig *config_file, std::vector<int> listening_sockets)
+	: _config_file(config_file), _listening_sockets(listening_sockets) {
 	if (DEBUG)
 		std::cout << "Printing the listening socket fds." << std::endl;
 	for (std::vector<int>::iterator it = _listening_sockets.begin(); it != _listening_sockets.end(); it++) {
 		if (DEBUG) std::cout << *it << std::endl;
 	}
+
+	(void)_config_file;
 
 	KqueueInit();
 	KeventInit();

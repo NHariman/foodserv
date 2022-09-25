@@ -24,7 +24,7 @@ int	main(int ac, const char **av) {
 		NginxConfig input_file(GetConfigLocation(ac, av));
 	
 		Socket			webserver(input_file.GetServers());
-		KernelEvents	events_listener(webserver.GetListeningSockets());
+		KernelEvents	events_listener(&input_file, webserver.GetListeningSockets());
 
 		
 		// then start up the webserver 

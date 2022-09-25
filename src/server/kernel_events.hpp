@@ -2,6 +2,7 @@
 # define KERNEL_EVENTS_HPP
 
 #include "../connection/connection.hpp"
+#include "../config/nginx_config.hpp"
 
 #include <vector>
 #include <iostream>
@@ -12,6 +13,7 @@
 
 class KernelEvents {
 	private:
+		NginxConfig			*_config_file;
 		std::vector<int>	_listening_sockets;
 		int					_kqueue;
 
@@ -29,8 +31,7 @@ class KernelEvents {
 		void	recv_msg(int s);
 	
 	public:
-		KernelEvents(std::vector<int> listening_sockets);
-
+		KernelEvents(NginxConfig *nginx_config, std::vector<int> listening_sockets);
 
 	class KqueueCreationException : public std::exception {
 	public:
