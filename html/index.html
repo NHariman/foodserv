@@ -6,10 +6,11 @@
   box-sizing: border-box;
 }
 
+
+/* padding: 10px; */
 body {
   font-family: verdana;
   font-size: 0.875em;
-  padding: 10px;
   text-align: center;
   background: #ebeced;
 }
@@ -58,20 +59,20 @@ body {
 .leftcolumn{
 	float: left;
   width: 10%;
-  padding: 10%;
+  padding: 15%;
 }
 
 /* Create two unequal columns that floats next to each other */
 /* Left column */
 .middlecolumn {   
   float: left;
-  width: 55%;
+  width: 35%;
 }
 
 /* Right column */
 .rightcolumn {
   float: left;
-  width: 25%;
+  width: 15%;
   background-color: #f1f1f1;
   padding-left: 20px;
 }
@@ -97,7 +98,13 @@ body {
   clear: both;
 }
 
-
+#wrapper {
+    max-width: 200px; /* max-width doesn't behave correctly in legacy IE */
+    margin: 0 auto;
+}
+#wrapper img{
+    width:100%;       /* the image will now scale down as its parent gets smaller */
+}
 
 /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 800px) {
@@ -121,14 +128,14 @@ body {
 
 <div class="header">
   <h1>Coffee & Beans</h1>
-  <p>Resize the browser window to see the effect.</p>
+  <p>Cats and Food for every occassion</p>
 </div>
 
 <div class="topnav">
-  <a href="#">Link</a>
-  <a href="#">Link</a>
-  <a href="#">Link</a>
-  <a href="#" style="float:right">Link</a>
+  <a href="otherpage.html" target="_blank">other page</a>
+  <a href="../cgi-bin/test.py" target="_blank">cgi?</a>
+  <a href="error/custom_error_test.html" target="_blank">custom error page</a>
+  <a href="https://profile.intra.42.fr/" style="float:right" target="_blank">intra</a>
 </div>
 
 <div class="row">
@@ -137,7 +144,7 @@ body {
     <div class="card">
       <h2>TITLE HEADING</h2>
       <h5>Title description, Dec 7, 2017</h5>
-	  <img src="../img/beans_flip_gif.gif" style="text-align: center;">
+	      <img src="../img/beans_flip_gif.gif">
       <p>Some text..</p>
       <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
     </div>
