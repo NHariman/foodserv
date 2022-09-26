@@ -307,7 +307,7 @@ HostState	URIHostParser::RegNamePctHandler(size_t pos) {
 // Handles transition after a valid %HH sequence.
 HostState	URIHostParser::RegNamePctDoneHandler(size_t pos) {
 	NormalizeString(toupper, buffer, buffer.size() - 2);
-	buffer = DecodePercent(buffer);
+	buffer = DecodePercent(buffer, buffer.size() - 3);
 	switch (input[pos]) {
 		case '\0':
 			return PushBuffer(_uri->_host, h_Done);
