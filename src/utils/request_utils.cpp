@@ -34,6 +34,7 @@ std::string EncodePercent(std::string const& s) {
     return escaped.str();
 }
 
+<<<<<<< HEAD
 // Used by RequestTargetParser and URIHostParser.
 // Loops through string `s` and converts any percent-encoded values (starting with %).
 // Takes optional `start` parameter for position of %.
@@ -57,6 +58,35 @@ std::string	DecodePercent(std::string const& s, size_t start) {
 		}
 		else
 			new_s += *it;
+=======
+// Used by RequestTargetParser and URIHostParser to decode percent-encoded values.
+std::string	DecodePercent(std::string const& s) {
+	std::string	new_s;
+
+	for (auto it = s.begin(); it != s.end(); it++) {
+		if (*it != '%') {
+			new_s += *it;
+			continue;
+		}
+		else {
+			
+		}
+	}
+	size_t pct = s.find_first_of('%');
+	size_t start = 0;
+
+	for (size_t i = s[pct]; i < s.size() ; i++) {
+		new_s += s.substr(start, i);
+		std::string	hex = s.substr(i + 1, i + 2);
+
+		// Check for encoded CR and LF that might be used in response splitting.
+		if (hex == "0D" || hex == "0A")
+			throw BadRequestException("Bad octets found in encoded data");
+		
+		char	c = std::stoi(hex, nullptr, 16);
+		new_s += c;
+		start += 
+>>>>>>> d2e359518e359dd79f2f7c2916bfdb022c30ce51
 	}
 	return new_s;
 } 
