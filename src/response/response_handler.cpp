@@ -2,7 +2,9 @@
 
 // Config file constructor
 ResponseHandler::ResponseHandler(NginxConfig* config)
-	:	_config(config), _request(NULL) {}
+	:	_config(config), _request(NULL) {
+		(void)_config;
+	}
 
 // Destructor
 ResponseHandler::~ResponseHandler() {}

@@ -1,4 +1,5 @@
 #include "kernel_event.hpp"
+#include "socket.hpp"
 
 KernelEvent::KernelEvent(int sock) : _listening_socket(sock) {
     int kq = kqueue();

@@ -27,6 +27,7 @@ class KernelEvents {
 		int		AcceptNewConnection(int fd);
 		void	AddToConnectionMap(int fd);
 		void	RemoveFromConnectionMap(int fd);
+		void	PrintConnectionMap() const;
 
 		// remove afterwards
 		void 	serveHTML(int s);

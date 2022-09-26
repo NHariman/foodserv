@@ -72,22 +72,21 @@ void	KernelEvents::KernelEventLoop() {
 			}
 			else if (kev_trigger.flags & EV_EOF) {
 				// disconnect client
-				std::cout << "In EV_EOF with: " << kev_trigger.ident << std::endl;
-				//close connection
+				if (DEBUG) std::cout << "In EV_EOF with: " << kev_trigger.ident << std::endl;
 				RemoveFromConnectionMap(kev_trigger.ident);
 			}
 			else if (kev_trigger.flags & EV_ERROR) {
-				std::cout << "ERROR IN KEVENT" << std::endl;
+				if (DEBUG) std::cout << "ERROR IN KEVENT" << std::endl;
 			}
 			else if (kev_trigger.filter == EVFILT_READ) {
-				std::cout << "its ready to read" << std::endl;
-				// handle read client -> send _sockqueue and the kev_trigger.ident
+				if (DEBUG) std::cout << "its ready to read" << std::endl;
 				recv_msg(kev_trigger.ident);
+				// recv_msg(kev_trigger.ident);
 			}
 			else if (kev_trigger.filter == EVFILT_WRITE) {
-				std::cout << "its ready to write" << std::endl;
-				// recv_msg(event_fd);
+				if (DEBUG) std::cout << "its ready to write" << std::endl;
 			}
+			PrintConnectionMap();
 		}
 	}
 }
@@ -98,12 +97,15 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	// we can delete the complete connection, make a new one with the same fd
 	// but then the new request (connection class)
 	std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
-	if (it != _connection_map.end())
+	if (it != _connection_map.end()) {
+		delete it->second;
 		_connection_map.erase(it);
+	}
 		// delete the connection
+	// and delete new Connection blabla
 
 	// add the client
-	Connection*		new_conn = NULL;
+	Connection		*new_conn = new Connection(client_fd, _config_file);
 	_connection_map.insert(std::make_pair(client_fd, new_conn));
 
 	// this new client now needs to be added to the kqueue
@@ -114,7 +116,7 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	EV_SET(&kev_monitor, client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 		throw KeventErrorException();
-	serveHTML(client_fd); // DELETE
+	// serveHTML(client_fd);
 }
 
 int		KernelEvents::AcceptNewConnection(int fd) {
@@ -130,10 +132,9 @@ int		KernelEvents::AcceptNewConnection(int fd) {
 
 void	KernelEvents::RemoveFromConnectionMap(int fd) {
 	std::map<int, Connection*>::iterator it = _connection_map.find(fd);
-	if (it != _connection_map.end())
+	if (it != _connection_map.end()) {
+		delete it->second;
 		_connection_map.erase(it);
-	else {
-		std::cout << "connectin not in map" << std::endl;
 	}
 	close(fd);
 }
@@ -146,10 +147,15 @@ bool	KernelEvents::InListeningSockets(int fd) const {
 	return false;
 }
 
+void	KernelEvents::PrintConnectionMap() const {
+	std::cout << "Connections fildes in the map: " << std::endl;
+	for (std::map<int, Connection*>::const_iterator it = _connection_map.begin(); it != _connection_map.end(); it++)
+		std::cout << "client fd: " << it->first << std::endl;
+}
+
 // just for check
 void KernelEvents::serveHTML(int s) {
-    std::cout<<"HIERIN";
-    const char *file_path = "../../HTML/index.html";
+    const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/idex.html";
 
     char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
                     "Connection: close\r\n"
@@ -180,9 +186,21 @@ void KernelEvents::serveHTML(int s) {
 }
 
 void KernelEvents::recv_msg(int s) {
-    char buf[100000];
+    char buf[1000];
     int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
-    buf[bytes_read] = 0;
-    // printf("client message #%d:\n %s", getClientPos(s), buf);
+	if (bytes_read != -1) {
+	    buf[bytes_read] = 0;
+		std::cout << "number of bytes read: " << bytes_read << std::endl;
+		std::cout << "*************CLIENT REQUEST*************" << std::endl;
+		std::cout << buf << std::endl;
+		std::cout << "*************CLIENT REQUEST*************" << std::endl;
+		// printf("client message #%d:\n %s", getClientPos(s), buf);
+	}
+	// dispatch corresponding client_fd match
+	for (std::map<int, Connection*>::const_iterator it = _connection_map.begin(); it != _connection_map.end(); it++)
+		if (it->first == s) {
+			std::cout << "client: " << it->first << std::endl;
+			it->second->Receive(buf);
+		}
     fflush(stdout);
 }

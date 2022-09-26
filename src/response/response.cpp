@@ -56,4 +56,5 @@ void	Response::SetComplete() {
 
 std::istream*	Response::GetCompleteResponse() const {
 	// create new stream pointer object of status line + file
+	return NULL;
 }

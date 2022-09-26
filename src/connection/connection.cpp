@@ -6,10 +6,15 @@ Connection::Connection(int fd, NginxConfig* config)
 		_request(config),
 		_response_handler(config),
 		_fd(fd),
-		_close_connection(false) {}
+		_close_connection(false) {
+			(void)_fd;
+			(void)_config;
+			(void)_close_connection;
+		}
 
 // Destructor
-Connection::~Connection() {}
+Connection::~Connection() {
+}
 
 void	Connection::Receive(char const* buffer) {
 	_request.Parse(buffer);
