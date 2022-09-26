@@ -32,6 +32,7 @@ class KernelEvents {
 		// remove afterwards
 		void 	serveHTML(int s);
 		void	recv_msg(int s);
+		void	write_msg(int s);
 	
 	public:
 		KernelEvents(NginxConfig *nginx_config, std::vector<int> listening_sockets);

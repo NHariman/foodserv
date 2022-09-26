@@ -85,6 +85,7 @@ void	KernelEvents::KernelEventLoop() {
 			}
 			else if (kev_trigger.filter == EVFILT_WRITE) {
 				if (DEBUG) std::cout << "its ready to write" << std::endl;
+				write_msg(kev_trigger.ident);
 			}
 			PrintConnectionMap();
 		}
@@ -155,7 +156,7 @@ void	KernelEvents::PrintConnectionMap() const {
 
 // just for check
 void KernelEvents::serveHTML(int s) {
-    const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/idex.html";
+    const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html";
 
     char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
                     "Connection: close\r\n"
@@ -197,11 +198,35 @@ void KernelEvents::recv_msg(int s) {
 		// printf("client message #%d:\n %s", getClientPos(s), buf);
 	}
 	// dispatch corresponding client_fd match
-	for (std::map<int, Connection*>::const_iterator it = _connection_map.begin(); it != _connection_map.end(); it++)
+	for (std::map<int, Connection*>::const_iterator it = _connection_map.begin(); it != _connection_map.end(); it++) {
 		if (it->first == s) {
 			std::cout << "client: " << it->first << std::endl;
 			it->second->Receive(buf);
 			// after this state its ready to write?
 		}
+	}
+	// check this
+	struct kevent	kev_monitor;
+	EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
+		throw KeventErrorException();
     fflush(stdout);
+}
+
+void	KernelEvents::write_msg(int s) {
+	std::cout << "IN WRITE" << std::endl;
+	for (std::map<int, Connection*>::const_iterator it = _connection_map.begin(); it != _connection_map.end(); it++) {
+		if (it->first == s) {
+			std::cout << "client: " << it->first << std::endl;
+			// it->second->Dispatch();
+			serveHTML(s);
+			// after this state its ready to write?
+			// remove this write connection
+			struct kevent kev;
+			// EV_SET(&kev, s, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+			// kevent(_kqueue, &kev, 1, NULL, 0, NULL);
+			EV_SET(&kev, s, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+			kevent(_kqueue, &kev, 1, NULL, 0, NULL);
+		}
+	}
 }
