@@ -26,15 +26,9 @@ void	KernelEvents::KqueueInit() {
 
 /* setting up the structs for all listening sockets */
 void	KernelEvents::KeventInit() {
-	// create 2 kevent structs
-	// 1 struct to register events we want to monitor
-	// 1 struct for events to be triggered
+	// create a kernel event for all the sockets we want to monitor
 	struct kevent	kev_monitor;
-	// struct kevent	kev_trigger;
 
-	// this is where we initialize our interest for the read events
-	// and register this in our kqueue
-	// for every listening socket
 	for (size_t i = 0; i < _listening_sockets.size(); i++) {
 		EV_SET(&kev_monitor, _listening_sockets[i], EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
 		if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
@@ -215,18 +209,19 @@ void KernelEvents::recv_msg(int s) {
 
 void	KernelEvents::write_msg(int s) {
 	std::cout << "IN WRITE" << std::endl;
-	for (std::map<int, Connection*>::const_iterator it = _connection_map.begin(); it != _connection_map.end(); it++) {
-		if (it->first == s) {
-			std::cout << "client: " << it->first << std::endl;
-			// it->second->Dispatch();
-			serveHTML(s);
-			// after this state its ready to write?
-			// remove this write connection
-			struct kevent kev;
-			// EV_SET(&kev, s, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-			// kevent(_kqueue, &kev, 1, NULL, 0, NULL);
-			EV_SET(&kev, s, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-			kevent(_kqueue, &kev, 1, NULL, 0, NULL);
-		}
+	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
+	if (it != _connection_map.end()) {
+		std::cout << "client: " << it->first << std::endl;
+		// it->second->Dispatch();
+		serveHTML(s);
+		// after this state its ready to write?
+		// remove this write connection
+		struct kevent kev;
+		EV_SET(&kev, s, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+		kevent(_kqueue, &kev, 1, NULL, 0, NULL);
+		EV_SET(&kev, s, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+		kevent(_kqueue, &kev, 1, NULL, 0, NULL);
+		delete it->second;
+		_connection_map.erase(it);
 	}
 }
