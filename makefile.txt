@@ -18,6 +18,10 @@ UTILS_DIR = utils
 
 SERVER_DIR = server
 
+CON_DIR = connection
+
+RESPONSE_DIR = response
+
 REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,chunked_parser.cpp \
 											header_field_parser.cpp \
 											request_line_parser.cpp \
@@ -54,13 +58,22 @@ SERVER_SELECTION = 	$(addprefix $(SRC_DIR)/$(SERV_SELECT)/,	server_selection.cpp
 
 UTILS = $(addprefix $(SRC_DIR)/$(UTILS_DIR)/, 	file_handling.cpp \
 												is_functions.cpp \
-												request_utils.cpp )
+												request_utils.cpp \
+												mime_types.cpp \
+												status_codes.cpp)
 
-SERV = $(addprefix $(SRC_DIR)/$(SERVER_DIR)/,	server.cpp)
+SERV = $(addprefix $(SRC_DIR)/$(SERVER_DIR)/,	socket.cpp \
+												kernel_events.cpp)
 
+CON = $(addprefix $(SRC_DIR)/$(CON_DIR)/,		connection.cpp)
 
+RESPONSE = $(addprefix $(SRC_DIR)/$(RESPONSE_DIR)/,	file_handler.cpp \
+													response_handler.cpp \
+													response.cpp)
 
-OFILES = $(SERV:.cpp=.o) $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(SERVER_SELECTION:.cpp=.o) $(UTILS:.cpp=.o)
+ERROR = $(addprefix $(SRC_DIR)/err/,		error_responses.cpp)
+
+OFILES = $(SERV:.cpp=.o) $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(SERVER_SELECTION:.cpp=.o) $(UTILS:.cpp=.o) $(CON:.cpp=.o) $(RESPONSE:.cpp=.o) $(ERROR:.cpp=.o)
 
 NAME = webserv
 

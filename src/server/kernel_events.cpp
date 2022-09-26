@@ -39,6 +39,7 @@ void	KernelEvents::KeventInit() {
 void	KernelEvents::KernelEventLoop() {
 	int				new_events = 0;
 	struct kevent	kev_trigger;
+
 	// now we need to use our kevent, to listen for events to be triggered
 	// we add them to the triggered event list: kev_trigger
 	while (true) {
@@ -183,22 +184,19 @@ void KernelEvents::serveHTML(int s) {
 void KernelEvents::recv_msg(int s) {
     char buf[1000];
     int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
-	if (bytes_read != -1) {
+	if (bytes_read > 0) {
 	    buf[bytes_read] = 0;
-		std::cout << "number of bytes read: " << bytes_read << std::endl;
 		std::cout << "*************CLIENT REQUEST*************" << std::endl;
 		std::cout << buf << std::endl;
 		std::cout << "*************CLIENT REQUEST*************" << std::endl;
 		// printf("client message #%d:\n %s", getClientPos(s), buf);
 	}
-	// dispatch corresponding client_fd match
-	for (std::map<int, Connection*>::const_iterator it = _connection_map.begin(); it != _connection_map.end(); it++) {
-		if (it->first == s) {
-			std::cout << "client: " << it->first << std::endl;
-			it->second->Receive(buf);
-			// after this state its ready to write?
-		}
+	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
+	if (it != _connection_map.end()) {
+		std::cout << "client: " << it->first << std::endl;
+		it->second->Receive(buf);
 	}
+
 	// check this
 	struct kevent	kev_monitor;
 	EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
@@ -207,6 +205,7 @@ void KernelEvents::recv_msg(int s) {
     fflush(stdout);
 }
 
+
 void	KernelEvents::write_msg(int s) {
 	std::cout << "IN WRITE" << std::endl;
 	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
@@ -214,11 +213,10 @@ void	KernelEvents::write_msg(int s) {
 		std::cout << "client: " << it->first << std::endl;
 		// it->second->Dispatch();
 		serveHTML(s);
+		// it->second->Dispatch();
 		// after this state its ready to write?
 		// remove this write connection
 		struct kevent kev;
-		EV_SET(&kev, s, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-		kevent(_kqueue, &kev, 1, NULL, 0, NULL);
 		EV_SET(&kev, s, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 		kevent(_kqueue, &kev, 1, NULL, 0, NULL);
 		delete it->second;
