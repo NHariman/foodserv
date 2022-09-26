@@ -201,6 +201,7 @@ void KernelEvents::recv_msg(int s) {
 		if (it->first == s) {
 			std::cout << "client: " << it->first << std::endl;
 			it->second->Receive(buf);
+			// after this state its ready to write?
 		}
     fflush(stdout);
 }
