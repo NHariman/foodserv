@@ -15,8 +15,8 @@ bool	ResponseHandler::Ready() {
 
 void	ResponseHandler::Send() {
 	std::istream*	to_send = _response.GetCompleteResponse();
-	(void)to_send;
-	// send in loop if too big
+	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+
 	if (_request->GetStatusCode() == 100)
 		_response.SetComplete(false);
 }
@@ -35,6 +35,7 @@ void	ResponseHandler::HandleError(Request& request) {
 void	ResponseHandler::HandleExpect(Request& request) {
 	_request = &request;
 
+	if (DEBUG) std::cout << "HandleExpect\n";
 	FormResponse();
 }
 
@@ -108,8 +109,9 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 
 void	ResponseHandler::HandleDefaultError(int error_code) {
 	std::string error_page_html(GetServerErrorPage(error_code));
+	std::istream* stream = CreateStreamFromString(error_page_html);
 
-	_response.SetFileStream(new std::stringstream(error_page_html));
+	_response.SetBodyStream(stream);
 	_response.SetHeaderField("Content-Type", "text/html");
 	FormResponse();
 }
@@ -135,8 +137,8 @@ void	ResponseHandler::HandleRedirection() {
 void	ResponseHandler::ExecuteGet(bool set_code) {
 	if (DEBUG) std::cout << "Getting file from path: " << _response.GetResolvedPath() << std::endl;
 
-	std::ifstream* file = _file_handler.GetFile(_response.GetResolvedPath());
-	_response.SetFileStream(file);
+	std::istream* file = _file_handler.GetFile(_response.GetResolvedPath());
+	_response.SetBodyStream(file);
 	if (set_code)
 		_request->SetStatusCode(200);
 	

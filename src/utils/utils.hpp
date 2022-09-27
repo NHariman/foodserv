@@ -11,6 +11,8 @@
 // file_handling.cpp
 bool	IsValidFile(std::string const& path);
 bool	IsValidDirectory(std::string const& path);
+std::istream*	CreateStreamFromString(std::string const& string_buffer);
+std::istream*	CreateStreamFromPath(std::string const& file_path);
 
 // is_functions.cpp
 bool	IsHexDig(int c);
