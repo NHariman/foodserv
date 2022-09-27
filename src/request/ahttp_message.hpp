@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include "../utils/case_insensitive_less.hpp"
 #include "../utils/request_utils.hpp"
 
 // returned by GetField when no field by the passed name is found.
@@ -12,7 +13,10 @@
 class AHTTPMessage {
 	public:
 		// Member types
-		typedef std::map<std::string, std::string>	FieldsMap;
+		// Uses custom case-insensitive comparison function for searching
+		// header fields map.
+		typedef std::map<std::string, std::string, case_insensitive_less>
+			FieldsMap;
 
 		// Default constructor
 		AHTTPMessage() : _status_code(0), _content_length(0) {}
@@ -47,9 +51,6 @@ class AHTTPMessage {
 		// Example use:
 		//		[ChildClass].GetField("host")
 		virtual	std::string	GetField(std::string field_name) const {
-			// Normalizes field name to lowercase for case-insensitive searching
-			NormalizeString(tolower, field_name, 0);
-
 			FieldsMap::const_iterator	found = _header_fields.find(field_name);
 			if (found == _header_fields.end())
 				return NO_VAL;
@@ -84,9 +85,6 @@ class AHTTPMessage {
 		// Inserts new field name + value pair into map or appends new value to
 		// existing field value if field already exists in map.
 		virtual	void	SetHeaderField(std::string field_name, std::string field_val) {
-			// Normalize field name to lowercase for easy lookup later
-			NormalizeString(tolower, field_name, 0);
-
 			if (_header_fields.find(field_name) != _header_fields.end()) { // if header field exists
 				field_val = _header_fields[field_name] + ", " + field_val;
 			}

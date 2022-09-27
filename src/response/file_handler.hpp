@@ -2,7 +2,6 @@
 #define FILE_HANDLER_HPP
 
 #include <iostream>
-#include <fstream> // ifstream
 #include <cerrno> // erno
 
 class FileHandler {
@@ -10,8 +9,8 @@ class FileHandler {
 		FileHandler();
 		~FileHandler();
 
-		std::ifstream*	GetFile(std::string const& file_path);
-		std::ifstream*	CreateFile(std::string const& file_path);
+		std::istream*	GetFile(std::string const& file_path);
+		std::istream*	CreateFile(std::string const& file_path);
 		std::string		GetExtension(std::string const& file_path) const;
 	
 	private:

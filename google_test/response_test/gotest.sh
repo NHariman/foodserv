@@ -19,10 +19,10 @@ choose_test () {
 	printf "${RESET}\n\n"
 	case $choice in
 		1)
-			cp -r html build/ && cd build && ctest
+			cp -r assets build/ && cd build && ctest
 			;;
 		2)
-			cp -r html build/ && cd build && ./$bin_name ${DEFAULT_CONF}
+			cp -r assets build/ && cd build && ./$bin_name ${DEFAULT_CONF}
 			;;
 		*) # any other input
 			exit 0
