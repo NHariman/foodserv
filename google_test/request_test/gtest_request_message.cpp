@@ -12,8 +12,16 @@ static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
 
 // Helper function that calls Request::Parse with c-string conversion of passed string.
-static void	ParseChunked(Request& request, string const& req_str) {
+void	ParseChunked(Request& request, string const& req_str) {
 	request.Parse(req_str.c_str());
+}
+
+// Helper function used to construct Request objects with passed request string.
+// Returns status code of request.
+int	ConstructAndGetStatus(std::string const& req_str) {
+	Request request(&config);
+	request.Parse(req_str.c_str());
+	return request.GetStatusCode();
 }
 
 // Helper function used to construct Request objects with passed string
@@ -180,123 +188,106 @@ TEST(RequestMessageTest, ValidPOSTRequestQuery) {
 	message += "name=Joe%20User&id=42";
 
 	request.Parse(message.c_str());
-	cout << "request method: " << request.GetMethod() << endl;
-	cout << "request message: " << request.GetMessageBody() << endl;
 	EXPECT_EQ(request.GetQuery(), "name=Joe User&id=42");
 }
 
 TEST(RequestMessageTest, InvalidMessageNormal) {
 	// message without Content-Length
-	EXPECT_THROW({
-		string req_str = POST_Req + "\r\nHello World!";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, LengthRequiredException);
+	int status = ConstructAndGetStatus(POST_Req + "\r\nHello World!");
+	EXPECT_EQ(status, 411); // Length Required error
+
 	// TODO: add incomplete message check when connection is closed but content-length
 	// not reached
 }
 
 TEST(RequestMessageTest, InvalidMessageChunked) {
 	// invalid line ending
-	EXPECT_THROW({
-		string req_str = POST_Req + CHUNKED + "0\r\r\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	string req_str = POST_Req + CHUNKED + "0\r\r\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
 	// missing last chunk
-	EXPECT_THROW({
-		string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n\r\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n\r\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
 	// chunk size string exceeding 7 octet length limit.
-	EXPECT_THROW({
-		string req_str = POST_Req + CHUNKED + "10485760\r\n0\r\n\r\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, PayloadTooLargeException);
+	req_str = POST_Req + CHUNKED + "10485760\r\n0\r\n\r\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 413); // Payload Too Large error
+
 	// chunk size exceeding default 1,048,576B payload limit.
 	// NOTE: doesn't work if config max client body size is specified higher.
-	EXPECT_THROW({
-		string req_str = POST_Req + CHUNKED + "1048577\r\n0\r\n\r\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, PayloadTooLargeException);
+	req_str = POST_Req + CHUNKED + "1048577\r\n0\r\n\r\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 413); // Payload Too Large error
+
 	// chunk extension exceeding 8192B limit
-	EXPECT_THROW({
-		string ext(8193, 'a');
-		string req_str = POST_Req + CHUNKED + "0;" + ext + "\r\n\r\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, PayloadTooLargeException);
+	string ext(8193, 'a');
+	req_str = POST_Req + CHUNKED + "0;" + ext + "\r\n\r\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 413); // Payload Too Large error
+
 	// // missing last CRLF
-	// EXPECT_THROW({
-	// 	string req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n0\r\n";
-	// 	Request request(&config);
-	// 	request.Parse(req_str.c_str());
-	// }, BadRequestException);
-	// EXPECT_THROW({
-	// 	string req_str = POST_Req + CHUNKED + "0\r\n";
-	// 	Request request(&config);
-	// 	request.Parse(req_str.c_str());
-	// }, BadRequestException);	// TODO: test once closed connection and incomplete request can be detected
+	// req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n0\r\n";
+	// status = ConstructAndGetStatus(req_str);
+	// EXPECT_EQ(status, 400); // Bad Request error
+
+	// req_str = POST_Req + CHUNKED + "0\r\n";
+	// status = ConstructAndGetStatus(req_str);
+	// EXPECT_EQ(status, 400); // Bad Request error;	// TODO: test once closed connection and incomplete request can be detected
 }
 
 TEST(RequestMessageTest, InvalidMessageChunkedSplit) {
 	// invalid line endings
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r");
-		ParseChunked(request, "\r\nBye!\r\n0\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r\nBye!\r");
-		ParseChunked(request, "\r\n0\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r\nBye!\r\n0\r");
-		ParseChunked(request, "\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r\n");
-		ParseChunked(request, "Bye!\r\r\n0\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "4\r\n");
-		ParseChunked(request, "Bye!\r\n0\r\r\n");
-	}, BadRequestException);
+	Request request1(&config);
+	ParseChunked(request1, POST_Req + CHUNKED + "4\r");
+	ParseChunked(request1, "\r\nBye!\r\n0\r\n\r\n");
+	EXPECT_EQ(request1.GetStatusCode(), 400); // Bad Request error
+
+	Request request2(&config);
+	ParseChunked(request2, POST_Req + CHUNKED + "4\r\nBye!\r");
+	ParseChunked(request2, "\r\n0\r\n\r\n");
+	EXPECT_EQ(request2.GetStatusCode(), 400); // Bad Request error
+
+	Request request3(&config);
+	ParseChunked(request3, POST_Req + CHUNKED + "4\r\nBye!\r\n0\r");
+	ParseChunked(request3, "\r\n\r\n");
+	EXPECT_EQ(request3.GetStatusCode(), 400); // Bad Request error
+
+	Request request4(&config);
+	ParseChunked(request4, POST_Req + CHUNKED + "4\r\n");
+	ParseChunked(request4, "Bye!\r\r\n0\r\n\r\n");
+	EXPECT_EQ(request4.GetStatusCode(), 400); // Bad Request error
+
+	Request request5(&config);
+	ParseChunked(request5, POST_Req + CHUNKED + "4\r\n");
+	ParseChunked(request5, "Bye!\r\n0\r\r\n");
+	EXPECT_EQ(request5.GetStatusCode(), 400); // Bad Request error
 }
 
 TEST(RequestMessageTest, InvalidChunkedTrailers) {
 	// illegal trailer header fields
-	EXPECT_THROW({
-		string req_str = POST_Req + CHUNKED + "0\r\nHost: example.com\r\n\r\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
-	EXPECT_THROW({
-		string req_str = POST_Req + CHUNKED + "0\r\nExpect: 100-continue\r\n\r\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	string req_str = POST_Req + CHUNKED + "0\r\nHost: example.com\r\n\r\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = POST_Req + CHUNKED + "0\r\nExpect: 100-continue\r\n\r\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
 }
 
 TEST(RequestMessageTest, InvalidChunkedTrailersSplit) {
 	// bad CRLF
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "0\r\n");
-		ParseChunked(request, "Accept: text/html\r");
-		ParseChunked(request, "\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + CHUNKED + "0\r\n");
-		ParseChunked(request, "Accept: text/html\r\nPrefer: return=representation\r");
-		ParseChunked(request, "\r\n\r\n");
-	}, BadRequestException);
+	Request request1(&config);
+	ParseChunked(request1, POST_Req + CHUNKED + "0\r\n");
+	ParseChunked(request1, "Accept: text/html\r");
+	ParseChunked(request1, "\r\n\r\n");
+	EXPECT_EQ(request1.GetStatusCode(), 400); // Bad Request error
+
+	Request request2(&config);
+	ParseChunked(request2, POST_Req + CHUNKED + "0\r\n");
+	ParseChunked(request2, "Accept: text/html\r\nPrefer: return=representation\r");
+	ParseChunked(request2, "\r\n\r\n");
+	EXPECT_EQ(request2.GetStatusCode(), 400); // Bad Request error
 }

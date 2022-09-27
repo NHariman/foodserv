@@ -7,6 +7,9 @@
 
 using namespace std;
 
+// defined in gtest_request_message.cpp
+int	ConstructAndGetStatus(std::string const& req_str);
+
 static string GET_RL = "GET /hello.txt HTTP/1.1\r\n";
 static string GET_RL_Host = "GET /hello.txt HTTP/1.1\r\nHost: localhost\r\n";
 static string DEL_RL_Host = "DELETE /hello HTTP/1.1\r\nHost: localhost\r\n";
@@ -47,7 +50,7 @@ TEST(RequestHeaderValidatorTest, ValidHeaders) {
 	EXPECT_EQ(status, hv_MessageExpected);
 }
 
-static Request::Status	ConstructAndGetStatus(std::string req_str) {
+static Request::Status	ConstructAndGetRequestStatus(std::string req_str) {
 	Request request(&config);
 	request.Parse(req_str.c_str());
 
@@ -58,157 +61,134 @@ TEST(RequestHeaderValidatorTest, ValidExpect) {
 	Request::Status status;
 	string expect_rq = POST_RL_Host + "Expect: 100-continue\n";
 	
-	status = ConstructAndGetStatus(expect_rq + "\r\n");
+	status = ConstructAndGetRequestStatus(expect_rq + "\r\n");
 	EXPECT_EQ(status, Request::Status::Complete);
 
-	status = ConstructAndGetStatus(expect_rq + "Content-Length: 5\n\n");
+	status = ConstructAndGetRequestStatus(expect_rq + "Content-Length: 5\n\n");
 	EXPECT_EQ(status, Request::Status::Expect);
 
-	status = ConstructAndGetStatus(expect_rq + "Content-Length: 5\n\nHello");
+	status = ConstructAndGetRequestStatus(expect_rq + "Content-Length: 5\n\nHello");
 	EXPECT_EQ(status, Request::Status::Complete);
 
-	status = ConstructAndGetStatus(expect_rq + "Content-Length: 5\n\nHel");
+	status = ConstructAndGetRequestStatus(expect_rq + "Content-Length: 5\n\nHel");
 	EXPECT_EQ(status, Request::Status::Incomplete);
 
-	status = ConstructAndGetStatus(expect_rq + "Transfer-Encoding: chunked\n\n");
+	status = ConstructAndGetRequestStatus(expect_rq + "Transfer-Encoding: chunked\n\n");
 	EXPECT_EQ(status, Request::Status::Expect);
 
-	status = ConstructAndGetStatus(expect_rq + "Transfer-Encoding: chunked\n\n0");
+	status = ConstructAndGetRequestStatus(expect_rq + "Transfer-Encoding: chunked\n\n0");
 	EXPECT_EQ(status, Request::Status::Incomplete);
 
-	status = ConstructAndGetStatus(expect_rq + "Transfer-Encoding: chunked\n\n0\n\n");
+	status = ConstructAndGetRequestStatus(expect_rq + "Transfer-Encoding: chunked\n\n0\n\n");
 	EXPECT_EQ(status, Request::Status::Complete);
 }
 
 TEST(RequestHeaderValidatorTest, InvalidHost) {
 	// multiple Hosts
-	EXPECT_THROW({
-		string req_str = GET_RL + "Host: localhost, www.example.net\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	string req_str = GET_RL + "Host: localhost, www.example.net\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
 	// missing Host
-	EXPECT_THROW({
-		string req_str = GET_RL + "Expect: 100-continue\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
-	EXPECT_THROW({
-		string req_str = GET_RL + "Host: \n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = GET_RL + "Expect: 100-continue\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = GET_RL + "Host: \n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
 	// bad Host path
-	EXPECT_THROW({
-		string req_str = GET_RL + "Host: /example.com\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = GET_RL + "Host: /example.com\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
 }
 
 TEST(RequestHeaderValidatorTest, InvalidExpect) {
-	EXPECT_THROW({
-		string req_str = GET_RL_Host + "Expect: 101-continue\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, ExpectationFailedTypeException);
+	string req_str = GET_RL_Host + "Expect: 101-continue\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 417); // Expectation Failed error
 }
 
 TEST(RequestHeaderValidatorTest, InvalidContentEncoding) {
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Encoding: gzip\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, UnsupportedMediaTypeException);
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Encoding: \n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, UnsupportedMediaTypeException);
+	string req_str = POST_RL_Host + "Content-Encoding: gzip\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 415); // Unsupported Media Type error
+
+
+	req_str = POST_RL_Host + "Content-Encoding: \n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 415); // Unsupported Media Type error
 }
 
 TEST(RequestHeaderValidatorTest, InvalidTransferEncoding) {
 	// not-implemented transfer encoding format
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Transfer-Encoding: compress\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, NotImplementedException);
+	string req_str = POST_RL_Host + "Transfer-Encoding: compress\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 501); // Not Implemented error
+
 	// not-implemented transfer encoding format
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Transfer-Encoding: compress, chunked\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, NotImplementedException);
+	req_str = POST_RL_Host + "Transfer-Encoding: compress, chunked\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 501); // Not Implemented error
+
 	// T-E definition for not-allowed method
-	EXPECT_THROW({
-		string req_str = GET_RL_Host + "Transfer-Encoding: chunked\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = GET_RL_Host + "Transfer-Encoding: chunked\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
 	// Content-Length also defined
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
 }
 
 TEST(RequestHeaderValidatorTest, InvalidContentLength) {
 	// C-L definition for not-allowed method
-	EXPECT_THROW({
-		string req_str = GET_RL_Host + "Content-Length: 42\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	string req_str = GET_RL_Host + "Content-Length: 42\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
 	// invalid value (lower limit)
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Length: -42\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = POST_RL_Host + "Content-Length: -42\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
 	// invalid value (upper limit)
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Length: 104857600\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, PayloadTooLargeException);
+	req_str = POST_RL_Host + "Content-Length: 104857600\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 413); // Payload Too Large error
+	
 	// invalid value
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Length: 42a\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = POST_RL_Host + "Content-Length: 42a\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
 	// multiple different values
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Length: 42, 53\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = POST_RL_Host + "Content-Length: 42, 53\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
 	// multiple identical values
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Content-Length: 42, 42\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = POST_RL_Host + "Content-Length: 42, 42\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
 	// Transfer-Encoding also defined
-	EXPECT_THROW({
-		string req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	req_str = POST_RL_Host + "Transfer-Encoding: chunked\nContent-Length: 42\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
 }
 
 // reliant on specific default.conf file used at top.
 TEST(RequestHeaderValidatorTest, InvalidMethod) {
-	EXPECT_THROW({
-		string req_str = "DELETE /hello.txt HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
-	EXPECT_THROW({
-		string req_str = "POST /nonexist HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
-		Request request(&config);
-		request.Parse(req_str.c_str());
-	}, BadRequestException);
+	string req_str = "DELETE /hello.txt HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 405); // Method Not Allowed error
+	
+	req_str = "POST /nonexist HTTP/1.1\nHost: localhost\nContent-Length: 0\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 405); // Method Not Allowed error
+	
 }

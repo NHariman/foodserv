@@ -5,7 +5,11 @@
 
 using namespace std;
 
+// defined in gtest_request_message.cpp
+int	ConstructAndGetStatus(std::string const& req_str);
+
 static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
+
 
 TEST(RequestFieldParserTest, ParseSingleField) {
 	Request request(&config);
@@ -58,38 +62,35 @@ TEST(RequestFieldParserTest, ParseFieldwithOWS) {
 }
 
 TEST(RequestFieldParserTest, InvalidFields) {
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\nHost: www.example.c\vom\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\nHost: www.example.\fcom\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\nHo st: localhost\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\nHost : localhost\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\nHost: localhost\v\n\n");
-	}, BadRequestException);
+	string req_str = "GET /hello.txt HTTP/1.1\nHost: www.example.c\vom\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = "GET /hello.txt HTTP/1.1\nHost: www.example.\fcom\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
+	req_str = "GET /hello.txt HTTP/1.1\nHo st: localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = "GET /hello.txt HTTP/1.1\nHost : localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
+	req_str = "GET /hello.txt HTTP/1.1\nHost: localhost\v\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
 }
 
 TEST(RequestFieldParserTest, InvalidFieldSize) {
 	string long_str(8193, 'a');
-	EXPECT_THROW({
-		Request request(&config);
-		string	req_str = "GET /hello.txt HTTP/1.1\nH" + long_str + ": www.example.com\n\n";
-		request.Parse(req_str.c_str());
-	}, RequestHeaderFieldsTooLargeException);
-	EXPECT_THROW({
-		Request request(&config);
-		string	req_str = "GET /hello.txt HTTP/1.1\nHost:" + long_str + "\n\n";
-		request.Parse(req_str.c_str());
-	}, RequestHeaderFieldsTooLargeException);
+
+	string	req_str = "GET /hello.txt HTTP/1.1\nH" + long_str + ": www.example.com\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 431); // Request Header Fields Too Large error
+
+	req_str = "GET /hello.txt HTTP/1.1\nHost:" + long_str + "\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 431); // Request Header Fields Too Large error
 }

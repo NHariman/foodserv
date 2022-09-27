@@ -3,6 +3,11 @@
 #include "../../src/request/request.hpp"
 #include "../../src/err/exception.hpp"
 
+using namespace std;
+
+// defined in gtest_request_message.cpp
+int	ConstructAndGetStatus(std::string const& req_str);
+
 static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
 
 TEST(RequestLineTest, ParseGet) {
@@ -22,46 +27,45 @@ TEST(RequestLineTest, ParseGetCRLF) {
 }
 
 TEST(RequestLineTest, InvalidSpaces) {
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET  /hello.txt HTTP/1.1\nHost: localhost\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt  HTTP/1.1\nHost: localhost\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1 \nHost: localhost\n\n");
-	}, BadRequestException);
+	string req_str = "GET  /hello.txt HTTP/1.1\nHost: localhost\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+	
+	req_str = "GET /hello.txt  HTTP/1.1\nHost: localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = "GET /hello.txt HTTP/1.1 \nHost: localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
 }
 
 TEST(RequestLineTest, InvalidDelimiter) {
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt\tHTTP/1.1\nHost: localhost\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\n\rHost: localhost\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\t\nHost: localhost\n\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.1\r\tHost: localhost\n\n");
-	}, BadRequestException);
+	string req_str = "GET /hello.txt\tHTTP/1.1\nHost: localhost\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = "GET /hello.txt HTTP/1.1\n\rHost: localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = "GET /hello.txt HTTP/1.1\t\nHost: localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
+	req_str = "GET /hello.txt HTTP/1.1\r\tHost: localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 400); // Bad Request error
+
 }
 
 TEST(RequestLineTest, InvalidMethodHTTPVer) {
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("CONNECT /hello.txt HTTP/1.1\nHost: localhost\n\n");
-	}, NotImplementedException);
-	EXPECT_THROW({
-		Request request(&config);
-		request.Parse("GET /hello.txt HTTP/1.0\nHost: localhost\n\n");
-	}, HTTPVersionNotSupportedException);
+	string req_str = "CONNECT /hello.txt HTTP/1.1\nHost: localhost\n\n";
+	int status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 501); // Not Implemented error
+	
+	req_str = "GET /hello.txt HTTP/1.0\nHost: localhost\n\n";
+	status = ConstructAndGetStatus(req_str);
+	EXPECT_EQ(status, 505); // HTTP Version Not Supported error
 }

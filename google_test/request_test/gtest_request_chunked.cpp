@@ -6,15 +6,13 @@
 
 using namespace std;
 
+// defined in gtest_request_message.cpp
+void	ParseChunked(Request& request, string const& req_str);
+
 static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
 static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
-
-// Helper function that calls Request::Parse with c-string conversion of passed string.
-static void	ParseChunked(Request& request, string const& req_str) {
-	request.Parse(req_str.c_str());
-}
 
 TEST(RequestChunkedTest, ValidSplitHeaders) {
 	Request request(&config);
@@ -76,25 +74,24 @@ TEST(RequestChunkedTest, ValidSplitHeadersCRLF) {
 }
 
 TEST(RequestChunkedTest, InvalidCRLF) {
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, "GET /hello HTTP/1.1\r");
-		ParseChunked(request, "\r\nHost: localhost\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req + "Transfer-Encoding: chunked\r\n\r");
-		ParseChunked(request, "\r\n0\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request, POST_Req);
-		ParseChunked(request, "Transfer-Encoding: chunked\r\n\r");
-		ParseChunked(request, "\r\n0\r\n\r\n");
-	}, BadRequestException);
-	EXPECT_THROW({
-		Request request(&config);
-		ParseChunked(request,  "GET /hello HTTP/1.1\r\nHost: localhost\r\nAccept: text/html\r");
-		ParseChunked(request, "\r\n\r\n");
-	}, BadRequestException);
+	Request request1(&config);
+	ParseChunked(request1, "GET /hello HTTP/1.1\r");
+	ParseChunked(request1, "\r\nHost: localhost\r\n\r\n");
+	EXPECT_EQ(request1.GetStatusCode(), 400); // Bad Request error
+
+	Request request2(&config);
+	ParseChunked(request2, POST_Req + "Transfer-Encoding: chunked\r\n\r");
+	ParseChunked(request2, "\r\n0\r\n\r\n");
+	EXPECT_EQ(request2.GetStatusCode(), 400); // Bad Request error
+
+	Request request3(&config);
+	ParseChunked(request3, POST_Req);
+	ParseChunked(request3, "Transfer-Encoding: chunked\r\n\r");
+	ParseChunked(request3, "\r\n0\r\n\r\n");
+	EXPECT_EQ(request3.GetStatusCode(), 400); // Bad Request error
+
+	Request request4(&config);
+	ParseChunked(request4,  "GET /hello HTTP/1.1\r\nHost: localhost\r\nAccept: text/html\r");
+	ParseChunked(request4, "\r\n\r\n");
+	EXPECT_EQ(request4.GetStatusCode(), 400); // Bad Request error
 }
