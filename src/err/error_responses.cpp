@@ -406,11 +406,11 @@ footer CRLF
 
 
 static char foodserv_http_error_507_page[] =
+"<html><head>" CRLF
 STYLE_START CRLF
 IMG_CSS CRLF
 STYLE_END CRLF
-"<html>" CRLF
-"<head><title>507 Insufficient Storage</title></head>" CRLF
+"<title>507 Insufficient Storage</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>507 Insufficient Storage</h1></center>" CRLF
 "<center><img src=\"https://http.cat/507\"></center>" CRLF
@@ -419,10 +419,10 @@ footer CRLF
 
 
 static char foodserv_http_error_unknown_page[] =
+"<html>" CRLF
 STYLE_START CRLF
 IMG_CSS CRLF
 STYLE_END CRLF
-"<html>" CRLF
 "<head><title>Unknown Status Code</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>Unknown Status Code</h1></center>" CRLF
