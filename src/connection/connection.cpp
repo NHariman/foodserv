@@ -15,7 +15,7 @@ void	Connection::Receive(char const* buffer) {
 	_request.Parse(buffer);
 
 	Request::Status	status = _request.GetRequestStatus();
-	std::cout << "Connection::Receive: request status_code: " << _request.GetStatusCode() << std::endl;
+	// std::cout << "Connection::Receive: request status_code: " << _request.GetStatusCode() << std::endl;
 	switch(status) {
 		case Request::Status::Incomplete:
 			break;

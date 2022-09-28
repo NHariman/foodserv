@@ -139,7 +139,7 @@ URIState		RequestTargetParser::PercentDoneHandler(char uri_char) {
 	if (DEBUG) std::cout << "[PercentDoneHandler] at: [" << uri_char << "]\n";
 
 	NormalizeString(toupper, buffer, buffer.size() - 2);
-	buffer = DecodePercent(buffer);
+	buffer = DecodePercent(buffer, buffer.size() - 3);
 	switch (uri_char) {
 		case '\0':
 			return PushBuffertoField(u_Done);

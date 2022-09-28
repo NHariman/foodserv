@@ -4,9 +4,9 @@
 #include <iostream>
 #include <fstream> // ifstream
 #include <map>
-#include "../request/ahttp_message.hpp"
+#include "../request/http_message.hpp"
 
-// Inherits the following attributes from AHTTPMessage:
+// Inherits the following attributes from HTTPMessage:
 // 		std::string							_http_version;
 // 		int									_status_code;
 // 		std::string							_message_body;
@@ -14,12 +14,12 @@
 // 		size_t								_content_length;
 // Along with their respective getters & setters.
 
-class Response : public AHTTPMessage {
+class Response : public HTTPMessage {
 	public:
 		// Default constructor
 		Response();
 		// Assignment operator
-		// Response&	operator=(Response const& other);
+		Response&	operator=(Response const& other);
 		// Destructor
 		~Response();
 
@@ -29,16 +29,18 @@ class Response : public AHTTPMessage {
 		std::istream*		GetFileStream() const;
 		std::string const&	GetReasonPhrase() const;
 		std::string const&	GetResolvedPath() const;
-		std::istream*		GetCompleteResponse() const;
+		std::string			GetFieldsAsString() const;
+		std::istream*		GetCompleteResponse();
 
 		// Setters
-		void	SetFileStream(std::istream* stream);
+		void	SetBodyStream(std::istream* stream);
 		void	SetReasonPhrase(std::string const& phrase);
 		void	SetResolvedPath(std::string const& path);
-		void	SetComplete();
+		void	SetComplete(bool value = true);
 
 	private:
-		std::istream*	_stream;
+		std::istream*	_body_stream;
+		std::istream*	_send_stream;
 		std::string		_reason_phrase;
 		std::string		_resolved_path;
 		bool			_complete;
