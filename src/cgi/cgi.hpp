@@ -79,6 +79,7 @@ class CGI {
 		std::string	_file_name;
 		std::string _content;
 		std::string _path;
+		size_t		_status_code;
 
 
 		void    SetHeaders();
@@ -92,6 +93,7 @@ class CGI {
 		void to_env(char **env);
 		void	RetrieveContent(int *fd_read);
 		void		WriteToPipe(int fd);
+		bool	IsExecutable(std::string path);
 
 	public:
 		CGI();

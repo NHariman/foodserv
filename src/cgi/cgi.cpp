@@ -1,7 +1,7 @@
 #include "cgi.hpp"
 
-# define DEBUG 1
-# define POST_TEST 1
+# define DEBUG 0
+# define POST_TEST 0
 
 # define POST_STRING "python=yes"
 
@@ -91,12 +91,23 @@ std::string CGI::GetExecutablePath() {
 	return (executable_path);
 }
 
+bool	CGI::IsExecutable(std::string path) {
+	if (!access(path.c_str(), X_OK)) {
+		_status_code = 403;
+		_valid_file = false;
+		return false;
+	}
+	return true;
+}
+
 // identifies where the CGI is located and builds an absolute path towards it
 // behaviour changes depending on locationURI (directory or not) and amount of arguments
 // in the cgi_pass directive.
 void		CGI::SetArgv() {
 	std::string executable_path = GetExecutablePath();
 	_file_name = executable_path;
+	if (IsExecutable(_file_name) == false)
+		return ;
 	_argv.push_back(executable_path);
 	if (_CGI.GetLen() > 1 && _valid_file == true) {
 		std::string file;
@@ -119,13 +130,16 @@ void		CGI::SetArgv() {
 					_valid_file = true;
 				}
 				else{
-					file = "not real";
+					if (DEBUG) file = "not real";
 					_valid_file = false;
 				}
 			}
 		}
 		if (DEBUG) std::cout << "file: " << file << std::endl;
 		_file_name = file;
+		if (IsExecutable(_file_name) == false) {
+			return ;
+		}
 		_argv.push_back(file);
 	}
 	if (DEBUG) std::cout << "valid file check: " << std::boolalpha << _valid_file << std::endl;

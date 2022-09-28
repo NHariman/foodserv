@@ -17,6 +17,7 @@ void	printVector(std::vector<std::string> vec);
 std::string GetPWD();
 bool        IsAbsolutePath(std::string path);
 std::string MakeAbsolutePath(std::string executable, std::string path);
+bool	IsExecutable(std::string path);
 
 
 class PWD {
