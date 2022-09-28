@@ -26,7 +26,7 @@ class Response : public HTTPMessage {
 		bool	IsComplete() const;
 
 		// Getters
-		std::istream*		GetFileStream() const;
+		std::istream*		GetBodyStream() const;
 		std::string const&	GetReasonPhrase() const;
 		std::string const&	GetResolvedPath() const;
 		std::string			GetFieldsAsString() const;

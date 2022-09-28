@@ -29,34 +29,35 @@ class ResponseHandler {
 		Response		_response;
 		FileHandler		_file_handler;
 
-		void		AssignResponseResolvedPath(std::string const& path = std::string());
+		void				AssignResponseResolvedPath(std::string const& path = std::string());
 
 		// Error page handling
-		std::string FindCustomErrorPage(int error_code);
-		void		HandleCustomError(std::string const& error_page_path);
-		void		HandleDefaultError(int error_code);
+		std::string 		FindCustomErrorPage(int error_code);
+		void				HandleCustomError(std::string const& error_page_path);
+		void				HandleDefaultError(int error_code);
 
 		// Redirection
-		bool		IsRedirected();
-		void		HandleRedirection();
+		bool				IsRedirected();
+		void				HandleRedirection();
 
 		// File handling
-		void		ExecuteGet(bool set_code = true);
+		void				HandleMethod();
+		FileHandler::Method	DetermineMethod();
 
 		// Response forming
-		void		FormResponse();
-		void		SetStatusLine();
-		void		SetHeaders();
+		void				FormResponse();
+		void				SetStatusLine();
+		void				SetHeaders();
 
 		// Response header setting helpers
-		void		SetDate();
-		void		SetServer();
-		void		SetLocation();
-		void		SetContentType();
-		void		SetContentLength();
-		void		SetConnection();
-		void		SetAllow();
-		std::string	GetAllowedMethodsString();
+		void				SetDate();
+		void				SetServer();
+		void				SetLocation();
+		void				SetContentType();
+		void				SetContentLength();
+		void				SetConnection();
+		void				SetAllow();
+		std::string			GetAllowedMethodsString();
 };
 
 #endif /* RESPONSE_HANDLER_HPP */
