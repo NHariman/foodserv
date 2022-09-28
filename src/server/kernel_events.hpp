@@ -22,13 +22,11 @@ class KernelEvents {
 	
 		void	KqueueInit();
 		void	KeventInit();
-		void	KernelEventLoop();
 		bool	InListeningSockets(int fd) const;
 		int		AcceptNewConnection(int fd);
 		void	AddToConnectionMap(int fd);
 		void	RemoveFromConnectionMap(int fd);
 		void	PrintConnectionMap() const;
-
 		// remove afterwards
 		void 	serveHTML(int s);
 		void	recv_msg(int s);
@@ -36,6 +34,7 @@ class KernelEvents {
 	
 	public:
 		KernelEvents(NginxConfig *nginx_config, std::vector<int> listening_sockets);
+		void	KernelEventLoop();
 
 	class KqueueCreationException : public std::exception {
 	public:

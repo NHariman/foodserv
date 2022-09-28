@@ -5,29 +5,18 @@
 
 KernelEvents::KernelEvents(NginxConfig *config_file, std::vector<int> listening_sockets)
 	: _config_file(config_file), _listening_sockets(listening_sockets) {
-	if (DEBUG)
-		std::cout << "Printing the listening socket fds." << std::endl;
-	for (std::vector<int>::iterator it = _listening_sockets.begin(); it != _listening_sockets.end(); it++) {
-		if (DEBUG) std::cout << *it << std::endl;
-	}
-
-	(void)_config_file;
-
 	KqueueInit();
 	KeventInit();
-	KernelEventLoop();
 }
 
 void	KernelEvents::KqueueInit() {
 	_kqueue = kqueue();
 	if (_kqueue == -1)
 		throw KqueueCreationException();
-	if (DEBUG) std::cout << "_kqueue: " << _kqueue << std::endl;
 }
 
 /* setting up the structs for all listening sockets */
 void	KernelEvents::KeventInit() {
-	// create a kernel event for all the sockets we want to monitor
 	struct kevent	kev_monitor;
 
 	for (size_t i = 0; i < _listening_sockets.size(); i++) {
@@ -51,7 +40,7 @@ void	KernelEvents::KernelEventLoop() {
 		
 		// _connection_map has all the client connections
 		// _listening_socket has all the socket fildes for the ports
-		// for (int i = 0; i < new_events; i++) {
+		for (int i = 0; i < new_events; i++) {
 			// within the new events there are multiple options
 			// 1. the incoming event is a new connection on one of the listening sockets
 			// 2. end of file, client can disconnect
@@ -86,11 +75,8 @@ void	KernelEvents::KernelEventLoop() {
 				if (DEBUG) std::cout << "its ready to write" << std::endl;
 				write_msg(kev_trigger.ident);
 			}
-			else {
-				std::cout << "GOES IN NONE OF THE STATEMENTS" << std::endl;
-			}
 			PrintConnectionMap();
-		// }
+		}
 	}
 }
 
@@ -135,7 +121,6 @@ int		KernelEvents::AcceptNewConnection(int fd) {
 }
 
 void	KernelEvents::RemoveFromConnectionMap(int fd) {
-	std::cout << "Client to close: " << fd << std::endl;
 	std::map<int, Connection*>::iterator it = _connection_map.find(fd);
 	if (it != _connection_map.end()) {
 		delete it->second;
@@ -158,7 +143,7 @@ void	KernelEvents::PrintConnectionMap() const {
 		std::cout << "client fd: " << it->first << std::endl;
 }
 
-// just for check
+// this needs to be changed for dispatch
 void KernelEvents::serveHTML(int s) {
     // const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html";
 	const char *file_path = "/Users/salbregh/Desktop/foodserv/HTML/index.html";
@@ -192,52 +177,37 @@ void KernelEvents::serveHTML(int s) {
 }
 
 void KernelEvents::recv_msg(int s) {
-	std::map<int, Connection*>::iterator it = _connection_map.find(s);
-	// if the socket is NOT a client socket ID
-	// i dont know what to do with this yet, is this cgi?
-	if (it == _connection_map.end()) {
-		std::cout << "IN HERE WITH NON CLIENT : " << s << std::endl;
+	char buf[1000];
+	int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
+	if (bytes_read > 0) {
+		buf[bytes_read] = 0;
+		std::cout << "*************CLIENT REQUEST*************" << std::endl;
+		std::cout << buf << std::endl;
+		std::cout << "*************CLIENT REQUEST*************" << std::endl;
+	}
+	std::map<int, Connection*>::const_iterator it2 = _connection_map.find(s);
+	if (it2 != _connection_map.end()) {
+		std::cout << "client: " << it2->first << std::endl;
+		it2->second->Receive(buf);
 	}
 
-	else {
-		char buf[1000];
-		int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
-		if (bytes_read > 0) {
-			buf[bytes_read] = 0;
-			std::cout << "*************CLIENT REQUEST*************" << std::endl;
-			std::cout << buf << std::endl;
-			std::cout << "*************CLIENT REQUEST*************" << std::endl;
-		}
-		std::map<int, Connection*>::const_iterator it2 = _connection_map.find(s);
-		if (it2 != _connection_map.end()) {
-			std::cout << "client: " << it2->first << std::endl;
-			it2->second->Receive(buf);
-		}
-
-		// register a write event for this event
-		struct kevent	kev_monitor;
-		EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
-		if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
-			throw KeventErrorException();
-	}
+	// register a write event for this event
+	struct kevent	kev_monitor;
+	EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
+		throw KeventErrorException();
 }
 
 
 void	KernelEvents::write_msg(int s) {
-	std::cout << "IN WRITE" << std::endl;
 	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
 	if (it != _connection_map.end()) {
 		std::cout << "client: " << it->first << std::endl;
 		// it->second->Dispatch();
 		serveHTML(s);
-		// it->second->Dispatch();
-		// after this state its ready to write?
-		// remove this write connection
-		// struct kevent kev;
-		// EV_SET(&kev, s, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-		// kevent(_kqueue, &kev, 1, NULL, 0, NULL);
-		close(s);
-		delete it->second;
-		_connection_map.erase(it);
+		RemoveFromConnectionMap(s);
+		// close(s);
+		// delete it->second;
+		// _connection_map.erase(it);
 	}
 }

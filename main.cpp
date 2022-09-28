@@ -6,7 +6,7 @@
 /*   By: nhariman <nhariman@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/06/27 14:43:07 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/09/21 22:42:15 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/09/28 15:06:36 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,11 @@ int	main(int ac, const char **av) {
 		// first read in the given configuration file
 		NginxConfig input_file(GetConfigLocation(ac, av));
 	
-		Socket			webserver(input_file.GetServers());
-		KernelEvents	events_listener(&input_file, webserver.GetListeningSockets());
+		Socket			listening_sockets(input_file.GetServers());
+		KernelEvents	webserver(&input_file, listening_sockets.GetListeningSockets());
+		
+
+		webserver.KernelEventLoop();
 
 		
 		// then start up the webserver 
