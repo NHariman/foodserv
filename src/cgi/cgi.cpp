@@ -2,8 +2,8 @@
 
 #include <fcntl.h>
 
-# define DEBUG 0
-# define POST_TEST 0
+# define DEBUG 1
+# define POST_TEST 1
 
 # define POST_STRING "python=yes"
 
@@ -23,7 +23,7 @@
 
 CGI::CGI() : _pwd(), _valid_file(false), _status_code(0) {};
 
-bool		CGI::FileNameCompare(std::string file_one, std::string file_two) {
+bool		CGI::FileLocationCompare(std::string file_one, std::string file_two) {
 	if (DEBUG) std::cout << "file one: " << file_one << std::endl;
 	if (DEBUG) std::cout << "file two: " << file_two << std::endl;
 	size_t i = file_one.size() - 1;
@@ -42,6 +42,30 @@ bool		CGI::FileNameCompare(std::string file_one, std::string file_two) {
 		return true;
 	return false;
 }
+
+bool		CGI::FileNameCompare(std::string file_one, std::string file_two) {
+	if (DEBUG) std::cout << "file one: " << file_one << std::endl;
+	if (DEBUG) std::cout << "file two: " << file_two << std::endl;
+	size_t i = file_one.size() - 1;
+	size_t j = file_two.size() - 1;
+
+	while (i > 0 && j > 0) {
+		if (file_one[i] == file_two[j] && file_one[i] != '/') {
+			i--;
+			j--;
+		}
+		else if (file_one[i] == file_two[j] && file_one[i] == '/')
+			return true;
+		else {
+			return false;
+		}
+	}
+	if (i == j)
+		return true;
+	return false;
+}
+
+
 
 // the most important function, returns true if setup was a success and false if it was a failure
 // set argv handles the file sorting and such
@@ -107,7 +131,7 @@ std::string CGI::FindFile() {
 }
 
 bool	CGI::ValidScript(std::string executable_path) {
-	if (_CGI.GetLen() == 1 && IsDirectory(_path) == false && IsValidFile(_path) == true && FileNameCompare(_path, executable_path) == false) {
+	if (_CGI.GetLen() == 1 && IsDirectory(_path) == false && IsValidFile(_path) == true && FileLocationCompare(_path, executable_path) == false) {
 		_status_code = 405;
 		throw MethodNotAllowedException();
 		return false;
@@ -125,6 +149,8 @@ std::string CGI::SetExecutablePath() {
 		if (DEBUG) std::cout << "excecutable path 1: " << executable_path << std::endl;
 	}
 	else if (!IsAbsolutePath(_CGI.GetExecutablePath()) && !IsDirectory(_path)) {
+		if (FileNameCompare(_path, _CGI.GetExecutablePath()) == false)
+			throw MethodNotAllowedException();
 		executable_path = _path;
 		if (DEBUG) std::cout << "excecutable path 2: " << _path << std::endl;
 	}

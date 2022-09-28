@@ -17,12 +17,12 @@ int	main(int ac, const char **av) {
 		(void)ac;
 		(void)av;
 		//NginxConfig config("config_files/CGI_test.conf");
-		NginxConfig config("config_files/cgi_testers/2_arg_cgi_no_exist.conf");
-		// NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
+		// NginxConfig config("config_files/cgi_testers/2_arg_cgi_no_exist.conf");
+		NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
 		
 		Request request(&config);
-		request.Parse("GET /cgi-bin/test.py HTTP/1.1\r\nHost: localhost\n\n");
-		// request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		// request.Parse("GET /cgi-bin/test.py HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
 		std::cout << "Method: " << request.GetMethod() << std::endl;
 		std::cout << "TargetString: " << request.GetTargetString() << std::endl;
 		

@@ -95,6 +95,7 @@ class CGI {
 		void		WriteToPipe(int fd);
 		bool	IsExecutable(std::string path);
 		void	SetExecStatusCode(int exit_code);
+		bool		FileLocationCompare(std::string file_one, std::string file_two);
 		bool		FileNameCompare(std::string file_one, std::string file_two);
 		bool		ValidScript(std::string executable_path);
 		bool	ValidateExtension(std::string *file);
