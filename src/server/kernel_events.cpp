@@ -34,7 +34,6 @@ void	KernelEvents::KernelEventLoop() {
 	// we add them to the triggered event list: kev_trigger
 	while (true) {
 		new_events = kevent(_kqueue, NULL, 0, &kev_trigger, 1, NULL);
-		std::cout << "new events: " << new_events << std::endl;
 		if (new_events == -1)
 			throw KeventErrorException();
 		
