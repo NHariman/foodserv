@@ -17,6 +17,7 @@ static string GetFileContent(string const& file_path) {
 	if (ret < 0)
 		cerr << "Unable to read from file\n";
 	buf[ret] = '\0';
+	close(fd);
 	return string(buf);
 }
 
@@ -39,31 +40,31 @@ TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	EXPECT_EQ(response.GetField("Content-Length"), NO_VAL);
 
 
-	connection.Receive(message_body.c_str());
-	Response	response2;
-	response2 = connection.DebugGetResponse();
-	EXPECT_EQ(response.GetStatusCode(), 201);
-	EXPECT_EQ(response.GetReasonPhrase(), "Created");
-	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
-	EXPECT_EQ(response.GetField("Connection"), "close");
-	EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
-	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
+	// connection.Receive(message_body.c_str());
+	// Response	response2;
+	// response2 = connection.DebugGetResponse();
+	// EXPECT_EQ(response.GetStatusCode(), 201);
+	// EXPECT_EQ(response.GetReasonPhrase(), "Created");
+	// EXPECT_EQ(response.GetField("Allow"), NO_VAL);
+	// EXPECT_EQ(response.GetField("Connection"), "close");
+	// EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
+	// EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
 }
 
-TEST(ResponseExpectTest, ExpectWithNoMessage) {
-	Connection connection(42, &config);
+// TEST(ResponseExpectTest, ExpectWithNoMessage) {
+// 	Connection connection(42, &config);
 
-	string req_str = "POST /hello/upload/new.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n\n";
-	connection.Receive(req_str.c_str());
+// 	string req_str = "POST /hello/upload/new.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n\n";
+// 	connection.Receive(req_str.c_str());
 	
-	Response const&	response = connection.DebugGetResponse();
-	EXPECT_EQ(response.GetStatusCode(), 201);
-	EXPECT_EQ(response.GetReasonPhrase(), "Created");
-	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
-	EXPECT_EQ(response.GetField("Connection"), "close");
-	EXPECT_EQ(response.GetField("Content-Type"),"text/plain");
-	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
-}
+// 	Response const&	response = connection.DebugGetResponse();
+// 	EXPECT_EQ(response.GetStatusCode(), 201);
+// 	EXPECT_EQ(response.GetReasonPhrase(), "Created");
+// 	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
+// 	EXPECT_EQ(response.GetField("Connection"), "close");
+// 	EXPECT_EQ(response.GetField("Content-Type"),"text/plain");
+// 	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
+// }
 
 TEST(ResponseExpectTest, ExpectCompleteBadRequest) {
 	Connection connection(42, &config);

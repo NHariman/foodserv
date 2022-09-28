@@ -5,12 +5,12 @@
 
 using namespace std;
 
-#define custom_err_page_path "/Users/mjiam/Desktop/42_projects/webserv/foodserv/html/error/custom_error_test.html"
+#define CUSTOM_ERR_PATH "/Users/mjiam/Desktop/42_projects/webserv/foodserv/html/error/custom_error_test.html"
 
 static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
 
 // Helper function for getting HTML file length for comparison.
-static std::string	GetHTMLPageSize(string const& html_file_path) {
+std::string	GetHTMLPageSize(string const& html_file_path) {
 	std::ifstream file_stream(html_file_path);
 	file_stream.seekg(0, std::ios_base::end); // move cursor to end of stream
 	std::streampos	size = file_stream.tellg(); // get position of cursor
@@ -19,7 +19,7 @@ static std::string	GetHTMLPageSize(string const& html_file_path) {
 }
 
 // Helper function for getting HTML string (i.e. default errors) length for comparison.
-static std::string	GetHTMLStringSize(char const* html_string) {
+std::string	GetHTMLStringSize(char const* html_string) {
 	size_t size = string(html_string).size();
 	return std::to_string(size);
 }
@@ -55,7 +55,7 @@ TEST(ResponseErrorTest, CustomError405) {
 	EXPECT_EQ(response.GetField("Connection"), "close");
 	EXPECT_EQ(response.GetField("Content-Type"), "text/html");
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
-	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize(custom_err_page_path));
+	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize(CUSTOM_ERR_PATH));
 }
 
 // 405 error test with disallowed method.

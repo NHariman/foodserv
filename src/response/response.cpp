@@ -33,7 +33,7 @@ void	Response::SetReasonPhrase(std::string const& phrase) {
 	_reason_phrase = phrase;
 }
 
-std::istream*	Response::GetFileStream() const {
+std::istream*	Response::GetBodyStream() const {
 	return _body_stream;
 }
 
