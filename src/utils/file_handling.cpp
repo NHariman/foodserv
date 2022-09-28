@@ -1,8 +1,9 @@
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/stat.h> // stat
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string> // to_string
 
 bool	IsValidFile(std::string const& path) {
 	struct stat sb;
@@ -20,6 +21,19 @@ bool	IsValidDirectory(std::string const& path) {
 			return true;
 	}
 	return false;
+}
+
+std::string	GetLastModified(std::string const& path) {
+	struct stat sb;
+
+	if (stat(path.c_str(), &sb) != 0)
+		return "";
+
+	char	buf[100];
+	struct tm	tm = *gmtime(&sb.st_mtime);
+	strftime(buf, sizeof(buf), "%d-%b-%Y %H:%M", &tm);
+
+	return std::string(buf);
 }
 
 // Takes a string to open as a stringstream object (which inherits from iostream),
