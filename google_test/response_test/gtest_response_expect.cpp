@@ -24,8 +24,8 @@ static string GetFileContent(string const& file_path) {
 TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	Connection connection(42, &config);
 
-	string req_str = "POST /hello/upload/new.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n";
-	string message_body = GetFileContent("assets/new.txt");
+	string req_str = "POST /hello/upload/hello.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n";
+	string message_body = GetFileContent("assets/hello.txt");
 	req_str += "Content-Length: " + to_string(message_body.size()) + "\n\n";
 
 	connection.Receive(req_str.c_str());
