@@ -137,9 +137,6 @@ void		CGI::SetArgv() {
 		}
 		if (DEBUG) std::cout << "file: " << file << std::endl;
 		_file_name = file;
-		if (IsExecutable(_file_name) == false) {
-			return ;
-		}
 		_argv.push_back(file);
 	}
 	if (DEBUG) std::cout << "valid file check: " << std::boolalpha << _valid_file << std::endl;
