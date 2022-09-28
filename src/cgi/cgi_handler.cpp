@@ -2,35 +2,16 @@
 
 CGIHandler::CGIHandler() : _cgi(CGI()) {}
 
-CGIHandler::CGIHandler(Request *request) : _cgi(CGI()) {
+size_t 		CGIHandler::execute(Request *request, Response *response) {
 	if (_cgi.setup(request) == false) {
-		request->SetStatusCode(501);
-		return ;
+		response->SetStatusCode(_cgi.GetStatusCode());
+		return _cgi.GetStatusCode();
 	}
-	if (_cgi.execute() > 0) {
-		request->SetStatusCode(501);
-	}
-	else {
-		request->SetStatusCode(200);
-	}
+	_cgi.execute();
+	response->SetStatusCode(_cgi.GetStatusCode());
+	return _cgi.GetStatusCode();
 }
 
 std::string	CGIHandler::GetContent() const {
 	return _cgi.getContent();
-}
-
-void    execute_cgi(Request *request) {
-	CGI cgi;
-
-	if (cgi.setup(request) == false) {
-		request->SetStatusCode(501);
-		return ;
-	}
-	if (cgi.execute() > 0) {
-		request->SetStatusCode(501);
-	}
-	else {
-		request->SetStatusCode(200);
-	}
-	// convert cgi.getcontent() into filestream here?
 }

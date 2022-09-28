@@ -206,6 +206,20 @@ class NotImplementedException : public http::exception {
 		}
 };
 
+// Used for: the server, while acting as a gateway or proxy, received an invalid response from the upstream server.
+// thrown by CGI::SetExecStatusCode
+// should return 502 code.
+class BadGatewayException : public http::exception {
+	public:
+		virtual const char* what() const throw() {
+			return ("502: Bad Gateway");
+		}
+
+		int	which() const throw() {
+			return 502;
+		}
+};
+
 // Used for: when request states something other than HTTP/1.1.
 // Thrown by RequestLineParser::VersionHandler.
 // Should return 505 code.

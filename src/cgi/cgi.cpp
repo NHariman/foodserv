@@ -1,5 +1,7 @@
 #include "cgi.hpp"
 
+#include <fcntl.h>
+
 # define DEBUG 0
 # define POST_TEST 0
 
@@ -19,7 +21,27 @@
 */
 
 
-CGI::CGI() : _pwd(), _valid_file(false) {};
+CGI::CGI() : _pwd(), _valid_file(false), _status_code(0) {};
+
+bool		CGI::FileNameCompare(std::string file_one, std::string file_two) {
+	if (DEBUG) std::cout << "file one: " << file_one << std::endl;
+	if (DEBUG) std::cout << "file two: " << file_two << std::endl;
+	size_t i = file_one.size() - 1;
+	size_t j = file_two.size() - 1;
+
+	while (i > 0 && j > 0) {
+		if (file_one[i] == file_two[j]) {
+			i--;
+			j--;
+		}
+		else {
+			return false;
+		}
+	}
+	if (i == j)
+		return true;
+	return false;
+}
 
 // the most important function, returns true if setup was a success and false if it was a failure
 // set argv handles the file sorting and such
@@ -27,11 +49,15 @@ bool		CGI::setup(Request *request) {
 	_request = request;
 	_path = _pwd.GetCwd() + _TARGET.GetResolvedPath();
 	if (DEBUG) std::cout << "path: " << _path << std::endl;
+	if (DEBUG) std::cout << "CGI: " << _CGI << std::endl;
 	SetArgv();
-	if (_valid_file == true)
+	if (_valid_file == true) {
 		SetHeaders();
+		_status_code = 0;
+	}
 	if (DEBUG) printVector(_argv);
 	if (DEBUG) printVector(_env);
+	if (DEBUG) std::cout << "_valid_file " << std::boolalpha << _valid_file << std::endl;
 	return (_valid_file);
 }
 
@@ -39,13 +65,17 @@ bool		CGI::HasExtension(std::string file_name) {
 	size_t i = file_name.size() - 1;
 	size_t j = _CGI.GetFileExtension().size() - 1;
 
+	if (DEBUG) std::cout << "file_name in HasExtension: " << file_name << std::endl;
+	if (DEBUG) std::cout << "extension in HasExtension: " << _CGI.GetFileExtension() << std::endl;
 	while (j > 0 && i > 0) {
 		if (file_name[i] == _CGI.GetFileExtension().at(j)) {
 			j--;
 			i--;
 		}
-		else
-			break ;
+		else {
+			if (DEBUG) std::cout << "concluded false" << std::endl;
+			return false;
+		}
 	}
 	if (j == 0)
 		return true;
@@ -57,58 +87,117 @@ std::string CGI::FindFile() {
 	std::string file;
 	DIR *dr = opendir(_path.c_str());
 	if (dr == NULL) {
-		_valid_file = false;
-		return "";
+		throw NotFoundException();
 	}
 	while ((directory = readdir(dr)) != NULL) {
 		if (HasExtension(directory->d_name)) {
 			_file_name = directory->d_name;
 			file = _path + directory->d_name;
 			_valid_file = true;
+			_status_code = 200;
 			break ;
 		}
+		_status_code = 404;
 		_valid_file = false;
 	}
 	closedir(dr);
+	if (_status_code == 404)
+		throw NotFoundException();
 	return (file);
 }
 
-std::string CGI::GetExecutablePath() {
+bool	CGI::ValidScript(std::string executable_path) {
+	if (_CGI.GetLen() == 1 && IsDirectory(_path) == false && IsValidFile(_path) == true && FileNameCompare(_path, executable_path) == false) {
+		_status_code = 405;
+		throw MethodNotAllowedException();
+		return false;
+	}
+	else
+		_valid_file = true;
+	return true;
+}
+
+std::string CGI::SetExecutablePath() {
 	std::string executable_path;
 
 	if (!IsAbsolutePath(_CGI.GetExecutablePath()) && _TARGET.GetLocationUri().IsDir() == true && IsDirectory(_request->GetTargetURI().GetParsedURI()) == true) {
 		executable_path = MakeAbsolutePath(_CGI.GetExecutablePath(), _path);
+		if (DEBUG) std::cout << "excecutable path 1: " << executable_path << std::endl;
 	}
-	else if (!IsAbsolutePath(_CGI.GetExecutablePath())) {
+	else if (!IsAbsolutePath(_CGI.GetExecutablePath()) && !IsDirectory(_path)) {
 		executable_path = _path;
+		if (DEBUG) std::cout << "excecutable path 2: " << _path << std::endl;
 	}
 	else {
 		executable_path = _CGI.GetExecutablePath();
+		if (DEBUG) std::cout << "excecutable path 3" << std::endl;
 	}
-	if (IsValidFile(executable_path) || IsValidDirectory(executable_path))
+	if (((IsValidFile(executable_path) || IsValidDirectory(executable_path))) && ValidScript(executable_path) == true)
 		_valid_file = true;
+	else
+		throw NotFoundException();
 	if (DEBUG) std::cout << "executable_path: " << executable_path << std::endl;
+	if (DEBUG) std::cout << std::boolalpha << _valid_file << std::endl;
+	// int fd;
+	// if ((fd = open(executable_path.c_str(), O_RDONLY)) < 0)
+	// 	std::cout << "Bad" << std::endl;
 	return (executable_path);
 }
 
 bool	CGI::IsExecutable(std::string path) {
-	if (!access(path.c_str(), X_OK)) {
+	if (IsValidFile(path) == false && IsValidDirectory(path) == false) {
+		_status_code = 404;
+		throw NotFoundException();
+		return false;
+	}
+	if (access(path.c_str(), X_OK) && _CGI.GetLen() == 1) {
 		_status_code = 403;
-		_valid_file = false;
+		throw ForbiddenException();
 		return false;
 	}
 	return true;
+}
+
+bool	CGI::ValidateExtension(std::string *file) {
+	// assumes the locationURI is the cgi file
+	// checks if extension of the location URI matches
+	// the allowed cgi_pass extension
+	if (DEBUG) std::cout << "_path in Validate Extension: " << _path << std::endl;
+	if (HasExtension(_path) == true) {
+		*file = _path;
+		_valid_file = true;
+		std::cout << "hasextension has been validated" << std::endl;
+		return true;
+	}
+	else {
+		std::cout << "bad?" << std::endl;
+		return false;
+	}
+	// else {
+	// 			if (IsValidFile(_path)) {
+	// 				*file = _path;
+	// 				_valid_file = true;
+	// 				std::cout << "_path is valid: " << _path << std::endl;
+	// 			}
+	// 			else{
+	// 				if (DEBUG) *file = "not real";
+	// 				throw NotFoundException();
+	// 			}
+	// }
 }
 
 // identifies where the CGI is located and builds an absolute path towards it
 // behaviour changes depending on locationURI (directory or not) and amount of arguments
 // in the cgi_pass directive.
 void		CGI::SetArgv() {
-	std::string executable_path = GetExecutablePath();
+	std::string executable_path = SetExecutablePath();
 	_file_name = executable_path;
 	if (IsExecutable(_file_name) == false)
 		return ;
 	_argv.push_back(executable_path);
+	if (_CGI.GetLen() == 1 && IsDirectory(_request->GetTargetURI().GetParsedURI()) == false && FileNameCompare(_request->GetTargetURI().GetParsedURI(), executable_path) == false) {
+		throw MethodNotAllowedException();
+	}
 	if (_CGI.GetLen() > 1 && _valid_file == true) {
 		std::string file;
 
@@ -117,23 +206,9 @@ void		CGI::SetArgv() {
 			file = FindFile();
 		}
 		else {
-			// assumes the locationURI is the cgi file
-			// checks if extension of the location URI matches
-			// the allowed cgi_pass extension
-			if (HasExtension(_path) == true) {
-				file = _path;
-				_valid_file = true;
-			}
-			else {
-				if (IsValidFile(_path)) {
-					file = _path;
-					_valid_file = true;
-				}
-				else{
-					if (DEBUG) file = "not real";
-					_valid_file = false;
-				}
-			}
+			if (DEBUG) std::cout << "validate extension" << std::endl;
+			if (ValidateExtension(&file) == false)
+				throw MethodNotAllowedException();
 		}
 		if (DEBUG) std::cout << "file: " << file << std::endl;
 		_file_name = file;
@@ -194,20 +269,21 @@ void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 	memset(env, 0, 15);
 	to_argv(argv);
 	to_env(env);
-	if (DEBUG) {
-		std::cout << "print char* argv:" << std::endl;
-		int i = 0;
-		while (argv[i] != NULL) {
-			std::cout << argv[i] << std::endl;
-			i++;
-		}
-		i = 0;
-		std::cout << "print char* env:" << std::endl;
-		while (env[i] != NULL) {
-			std::cout << env[i] << std::endl;
-			i++;
-		}
-	}
+
+	// if (DEBUG) {
+	// 	std::cout << "print char* argv:" << std::endl;
+	// 	int i = 0;
+	// 	while (argv[i] != NULL) {
+	// 		std::cout << argv[i] << std::endl;
+	// 		i++;
+	// 	}
+	// 	i = 0;
+	// 	std::cout << "print char* env:" << std::endl;
+	// 	while (env[i] != NULL) {
+	// 		std::cout << env[i] << std::endl;
+	// 		i++;
+	// 	}
+	// }
 	
 	if (_request->GetMethod().compare("POST") == 0) { // for POST
 		dup2(fd_write[0], STDIN_FILENO);
@@ -271,7 +347,12 @@ int			CGI::ParentProcess(int *fd_read, int *fd_write, int pid) {
 }
 
 
-
+void	CGI::SetExecStatusCode(int exit_code) {
+	if (exit_code > 0 || exit_code < 0)
+		throw BadGatewayException();
+	else
+		_status_code = 200;
+}
 
 size_t		CGI::execute() {
 	int fd_write[2];
@@ -293,14 +374,15 @@ size_t		CGI::execute() {
 	}
 	else {
 		exit_code = ParentProcess(fd_read, fd_write, pid);
+		SetExecStatusCode(exit_code);
 	}
-	return exit_code;
+	return _status_code;
 }
 
-
-bool		CGI::isValidFile() const {
-	return _valid_file;
+size_t		CGI::GetStatusCode() const {
+	return _status_code;
 }
+
 std::string	CGI::getFileName() const {
 	return _file_name;
 }

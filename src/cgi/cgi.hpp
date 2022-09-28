@@ -84,7 +84,7 @@ class CGI {
 
 		void    SetHeaders();
 		void	SetArgv();
-		std::string GetExecutablePath();
+		std::string SetExecutablePath();
 		std::string FindFile();
 		bool		HasExtension(std::string file_name);
 		void	ChildProcess(int *fd_read, int *fd_write);
@@ -94,15 +94,19 @@ class CGI {
 		void	RetrieveContent(int *fd_read);
 		void		WriteToPipe(int fd);
 		bool	IsExecutable(std::string path);
+		void	SetExecStatusCode(int exit_code);
+		bool		FileNameCompare(std::string file_one, std::string file_two);
+		bool		ValidScript(std::string executable_path);
+		bool	ValidateExtension(std::string *file);
 
 	public:
 		CGI();
 		~CGI(){};
 		bool    setup(Request *request); // also probably needs the request class to set ENVs with.
 		size_t    execute();
-		bool		isValidFile() const;
 		std::string	getFileName() const;
 		std::string getContent() const;
+		size_t		GetStatusCode() const;
 
 		
 };

@@ -1,6 +1,5 @@
 #!/usr/bin/perl
 
-print "hello";
 read (STDIN, $buffer, $ENV{'CONTENT_LENGTH'});
 @pairs = split(/&/, $buffer);
 foreach $pair (@pairs) 

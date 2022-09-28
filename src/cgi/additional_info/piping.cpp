@@ -1,4 +1,4 @@
-int fd_write[2];
+    int fd_write[2];
     int fd_read[2];
     pid_t pid;
     char line[MAXLINE];

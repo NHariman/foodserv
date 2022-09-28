@@ -2,6 +2,7 @@
 # define CGI_HANDLER_HPP
 
 #include "cgi.hpp"
+#include "../response/response.hpp"
 
 class CGIHandler {
     private:
@@ -9,9 +10,9 @@ class CGIHandler {
         size_t  _status_code;
     public:
         CGIHandler();
-        CGIHandler(Request *request);
         ~CGIHandler(){};
+        size_t  execute(Request *request, Response *response);
         std::string GetContent() const;
-}
+};
 
 #endif

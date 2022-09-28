@@ -20,12 +20,7 @@ bool	IsAbsolutePath(std::string path) {
 	return false;
 }
 
-bool	IsExecutable(std::string path) {
-	if (!access(path.c_str(), X_OK)) {
-		return false;
-	}
-	return true;
-}
+
 
 std::string MakeAbsolutePath(std::string executable, std::string path) {
 	std::string new_path;
