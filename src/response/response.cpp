@@ -69,7 +69,7 @@ std::string	Response::GetFieldsAsString() const {
 
 // Creates a stringstream object with append mode so output operations write
 // to the end of stream.
-// Combines response status line and file stream into a single stream for sending.
+// Combines response status line and body stream into a single stream for sending.
 std::istream*	Response::GetCompleteResponse() {
 	std::iostream* complete_stream = new std::stringstream(std::ios_base::app
 		| std::ios_base::in | std::ios_base::out);
