@@ -3,7 +3,7 @@
 
 // Default constructor // TODO: Review use/removal
 Request::Request()
-	:	AHTTPMessage(),
+	:	HTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
 		max_body_size(1048576),
@@ -11,7 +11,7 @@ Request::Request()
 
 // Config file constructor
 Request::Request(NginxConfig* config)
-	:	AHTTPMessage(),
+	:	HTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
 		max_body_size(1048576),

@@ -1,5 +1,5 @@
-#ifndef AHTTP_MESSAGE_HPP
-#define AHTTP_MESSAGE_HPP
+#ifndef HTTP_MESSAGE_HPP
+#define HTTP_MESSAGE_HPP
 
 #include <iostream>
 #include <map>
@@ -9,8 +9,8 @@
 // returned by GetField when no field by the passed name is found.
 #define NO_VAL "NO SUCH HEADER FIELD"
 
-// Abstract class inherited by Request & Response classes.
-class AHTTPMessage {
+// Super class inherited by Request & Response classes.
+class HTTPMessage {
 	public:
 		// Member types
 		// Uses custom case-insensitive comparison function for searching
@@ -19,10 +19,10 @@ class AHTTPMessage {
 			FieldsMap;
 
 		// Default constructor
-		AHTTPMessage() : _status_code(0), _content_length(0) {}
+		HTTPMessage() : _status_code(0), _content_length(0) {}
 
 		// Assignment operator
-		AHTTPMessage&	operator=(AHTTPMessage const& other) {
+		HTTPMessage&	operator=(HTTPMessage const& other) {
 			if (this != &other) {
 				_http_version = other._http_version;
 				_status_code = other._status_code;
@@ -34,7 +34,7 @@ class AHTTPMessage {
 		}
 		
 		// Destructor
-		virtual	~AHTTPMessage() {}
+		virtual	~HTTPMessage() {}
 
 		// Getters
 		virtual	std::string const&	GetHTTPVersion() const {

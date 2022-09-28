@@ -7,7 +7,7 @@
 #include "../utils/request_utils.hpp"
 #include "../utils/utils.hpp"
 
-class Request;
+class HTTPMessage;
 
 enum	FieldState {
 	f_Start = 0,
@@ -27,15 +27,15 @@ class HeaderFieldParser : public AStateParser<FieldState> {
 		// Destructor
 		~HeaderFieldParser();
 
-		size_t Parse(Request& request, std::string const& input);
+		size_t Parse(HTTPMessage& message, std::string const& input);
 
 	protected:
 		FieldState	GetNextState(size_t pos) override;
 		void		CheckInvalidState() const override;
 
 	private:
-		Request*			_request;
-		std::string				_cur_field;
+		HTTPMessage*		_message; // can be request or response object
+		std::string			_cur_field;
 		size_t				_bytes_read;
 
 		FieldState	StartHandler(char c);

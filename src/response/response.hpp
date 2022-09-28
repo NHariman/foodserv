@@ -4,9 +4,9 @@
 #include <iostream>
 #include <fstream> // ifstream
 #include <map>
-#include "../request/ahttp_message.hpp"
+#include "../request/http_message.hpp"
 
-// Inherits the following attributes from AHTTPMessage:
+// Inherits the following attributes from HTTPMessage:
 // 		std::string							_http_version;
 // 		int									_status_code;
 // 		std::string							_message_body;
@@ -14,7 +14,7 @@
 // 		size_t								_content_length;
 // Along with their respective getters & setters.
 
-class Response : public AHTTPMessage {
+class Response : public HTTPMessage {
 	public:
 		// Default constructor
 		Response();

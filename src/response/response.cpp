@@ -1,7 +1,7 @@
 #include "response.hpp"
 
 // Default constructor
-Response::Response() : AHTTPMessage(), _body_stream(NULL), _send_stream(NULL), _complete(false) {}
+Response::Response() : HTTPMessage(), _body_stream(NULL), _send_stream(NULL), _complete(false) {}
 
 // Assignment operator
 Response&	Response::operator=(Response const& other) {
@@ -11,7 +11,7 @@ Response&	Response::operator=(Response const& other) {
 		_reason_phrase = other._reason_phrase;
 		_resolved_path = other._resolved_path;
 		_complete = other._complete;
-		AHTTPMessage::operator=(other);
+		HTTPMessage::operator=(other);
 	}
 	return *this;
 }
