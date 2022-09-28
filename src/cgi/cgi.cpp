@@ -1,6 +1,9 @@
 #include "cgi.hpp"
 
-# define DEBUG 0
+# define DEBUG 1
+# define POST_TEST 1
+
+# define POST_STRING "python=yes"
 
 /*
 ** variables in this class:
@@ -73,7 +76,7 @@ std::string CGI::FindFile() {
 std::string CGI::GetExecutablePath() {
 	std::string executable_path;
 
-	if (!IsAbsolutePath(_CGI.GetExecutablePath()) && _TARGET.GetLocationUri().IsDir() == true) {
+	if (!IsAbsolutePath(_CGI.GetExecutablePath()) && _TARGET.GetLocationUri().IsDir() == true && IsDirectory(_request->GetTargetURI().GetParsedURI()) == true) {
 		executable_path = MakeAbsolutePath(_CGI.GetExecutablePath(), _path);
 	}
 	else if (!IsAbsolutePath(_CGI.GetExecutablePath())) {
@@ -129,19 +132,28 @@ void		CGI::SetArgv() {
 }
 
 void 		CGI::SetHeaders() {
-	if (_request->GetField("CONTENT_LENGTH").compare(NO_VAL) != 0)
-		_env.push_back("CONTENT_LENGTH=" + 	_request->GetField("CONTENT_LENGTH"));
+
+	if (POST_TEST == 1) {
+			std::string str(POST_STRING);
+			_env.push_back("CONTENT_LENGTH=" + std::to_string(str.size()));
+	}
+	else if (!_request->GetTargetURI().GetQuery().empty() && !_request->GetMethod().compare("POST")) {
+			_env.push_back("CONTENT_LENGTH=" + std::to_string(_request->GetTargetURI().GetQuery().size()));
+	}
 	if (_request->GetField("Content-Type").compare(NO_VAL) != 0)
-		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("ONTENT_TYPE"));
+		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("CONTENT_TYPE"));
 	_env.push_back("DOCUMENT_ROOT=" + 	_TARGET.GetRoot());
-	_env.push_back("PATH_TRANSLATED=" + _TARGET.GetResolvedPath());
-	if (!_request->GetTargetURI().GetQuery().empty())
+	if (_CGI.GetLen() == 1)
+		_env.push_back("PATH_INFO=" + _argv[0]);
+	else
+		_env.push_back("PATH_INFO=" + _argv[1]);
+	if (!_request->GetTargetURI().GetQuery().empty() && _request->GetMethod().compare("GET") == 0)
 		_env.push_back("QUERY_STRING=" + 	_request->GetTargetURI().GetQuery());
 	if (_request->GetField("HOST").compare(NO_VAL) != 0)
 		_env.push_back("REMOTE_HOST=" + 	_request->GetField("HOST"));
 	if (!_request->GetMethod().empty())
 		_env.push_back("REQUEST_METHOD=" + 	_request->GetMethod());
-	_env.push_back("SCRIPT_FILENAME=" + _request->GetTargetURI().GetPath());
+	_env.push_back("SCRIPT_FILENAME=" + _file_name);
 	_env.push_back("SCRIPT_NAME=" + 	_file_name);
 	_env.push_back("SERVER_NAME=" + 	_request->GetTargetURI().GetHost());
 	_env.push_back("SERVER_PORT=" + 	_request->GetTargetURI().GetPort()); // ask sanne for fix?
@@ -164,14 +176,13 @@ void 		CGI::to_env(char **env){
 }
 
 // set processes
-void		CGI::ChildProcess(int *fd) {
+void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 	char * argv[3];
-	char* env[20];
+	char* env[15];
 	memset(argv, 0, 3);
-	memset(env, 0, 20);
+	memset(env, 0, 15);
 	to_argv(argv);
 	to_env(env);
-
 	if (DEBUG) {
 		std::cout << "print char* argv:" << std::endl;
 		int i = 0;
@@ -186,38 +197,65 @@ void		CGI::ChildProcess(int *fd) {
 			i++;
 		}
 	}
-	dup2(fd[1], STDOUT_FILENO);
-	close(fd[1]);
-	close(fd[0]);
+	
+	if (_request->GetMethod().compare("POST") == 0) { // for POST
+		dup2(fd_write[0], STDIN_FILENO);
+	}
+	if (fd_read[1] != STDOUT_FILENO) {
+		dup2(fd_read[1], STDOUT_FILENO);
+	}
+	if (_request->GetMethod().compare("POST") == 0) // POST
+		close(fd_write[1]);
+	close(fd_read[0]);
 	execve(argv[0], argv, env);
 	exit(1);
 
 }
 
-int			CGI::ParentProcess(int *fd, int pid) {
-	int es = 0;
+void		CGI::RetrieveContent(int *fd_read){
+ 
+	int count;
 	char buffer[1001];
-	int status = 0;
-	ssize_t count = 1;
-
-	close(fd[1]);
-	memset(buffer, 0, 1001);
-	if (waitpid(pid, &status, WNOHANG) == -1)
-		throw WaitFailureException();
-	if (WIFEXITED(status)) {
-		es = WEXITSTATUS(status);
-	}
-	while ((count = read(fd[0], buffer, 1000)) > 0) {
+	if (memset(buffer, 0, 1001) == NULL)
+		MemsetFailureException();
+	while ((count = read(fd_read[0], buffer, 1000)) > 0) {
 		if (count == 0)
 			break ;
 		std::string buf(buffer);
 		_content = _content + buf;
 		memset(buffer, 0, 1001);
 	}
-	close(fd[0]);
 	if (count == -1) {
+			close (fd_read[0]);
 			throw ReadFailureException();
 	}
+	return ;
+}
+
+void		CGI::WriteToPipe(int fd) {
+	if (POST_TEST == 0)
+		write(fd, _request->GetTargetURI().GetQuery().c_str(), _request->GetTargetURI().GetQuery().size());
+	else {
+		std::string str(POST_STRING);
+		write(fd, str.c_str(), str.size());
+	}
+}
+
+int			CGI::ParentProcess(int *fd_read, int *fd_write, int pid) {
+	int es = 0;
+	int status = 0;
+
+	if (_request->GetMethod().compare("POST") == 0)
+		close(fd_write[0]);
+	close(fd_read[1]);
+	if (_request->GetMethod().compare("POST") == 0)
+		WriteToPipe(fd_write[1]);
+	if (waitpid(pid, &status, WNOHANG) == -1)
+		throw WaitFailureException();
+	if (WIFEXITED(status)) {
+		es = WEXITSTATUS(status);
+	}
+	RetrieveContent(fd_read);
 	return es;
 }
 
@@ -225,20 +263,25 @@ int			CGI::ParentProcess(int *fd, int pid) {
 
 
 size_t		CGI::execute() {
-	int fd[2];
+	int fd_write[2];
+	int fd_read[2];
 	int pid;
 	int exit_code = 0;
 
-	if (pipe(fd) < 0)
+	if (pipe(fd_read) < 0 || pipe(fd_write) < 0)
 		throw PipeFailureException();
+	if (_request->GetMethod().compare("POST") != 0) {
+		close (fd_write[0]);
+		close(fd_write[1]);
+	}
 	pid = fork();
 	if (pid < 0)
 		throw ForkFailureException();
 	else if (pid == 0) {
-		ChildProcess(fd);
+		ChildProcess(fd_read, fd_write);
 	}
 	else {
-		exit_code = ParentProcess(fd, pid);
+		exit_code = ParentProcess(fd_read, fd_write, pid);
 	}
 	return exit_code;
 }
@@ -255,3 +298,4 @@ std::string CGI::getContent() const {
 }
 
 #undef DEBUG
+#undef POST_TEST

@@ -17,10 +17,10 @@ int	main(int ac, const char **av) {
 		(void)ac;
 		(void)av;
 		//NginxConfig config("config_files/CGI_test.conf");
-		NginxConfig config("config_files/cgi_testers/CGI_test.conf");
+		NginxConfig config("config_files/cgi_testers/CGI_GET.conf");
 		
 		Request request(&config);
-		request.Parse("GET /cgi-bin/simple.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("GET /cgi-bin/get_query.pl?q=music&l=Web HTTP/1.1\r\nHost: localhost\n\n");
 		std::cout << "Method: " << request.GetMethod() << std::endl;
 		std::cout << "TargetString: " << request.GetTargetString() << std::endl;
 		

@@ -5,6 +5,7 @@
 #include <iostream>
 #include "../config_utils.hpp"
 #include "../../request/uri.hpp"
+#include "../../utils/cgi_utils.hpp"
 
 class CGIPass : public std::pair<std::string, std::string> {
 	private:
@@ -56,6 +57,19 @@ class CGIPass : public std::pair<std::string, std::string> {
 					return (_err_msg.c_str());
 				}
                 virtual ~NotAFileExtensionException() throw() {}
+		};
+		class NotAPathException : public std::exception
+		{
+			private:
+				std::string _err_msg;
+			public:
+				NotAPathException(std::string _executable_path) {
+					_err_msg = "ERROR! cgi_pass directive failure: " + _executable_path + " is not a file path (path must be a relative path or absolute path)";
+				}
+				const char *what() const throw() {
+					return (_err_msg.c_str());
+				}
+                virtual ~NotAPathException() throw() {}
 		};
 };
 

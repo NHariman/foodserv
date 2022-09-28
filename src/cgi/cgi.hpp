@@ -86,10 +86,12 @@ class CGI {
 		std::string GetExecutablePath();
 		std::string FindFile();
 		bool		HasExtension(std::string file_name);
-		void	ChildProcess(int *fd);
-		int		ParentProcess(int *fd, int pid);
+		void	ChildProcess(int *fd_read, int *fd_write);
+		int		ParentProcess(int *fd_read, int *fd_write, int pid);
 		void to_argv(char **argv);
 		void to_env(char **env);
+		void	RetrieveContent(int *fd_read);
+		void		WriteToPipe(int fd);
 
 	public:
 		CGI();
@@ -143,6 +145,37 @@ class WaitFailureException : public std::exception
 			return (_err_string.c_str());
 		}
 		virtual ~WaitFailureException() throw() {}
+};
+
+class DupFailureException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		DupFailureException() {
+			_err_string = "ERROR! Failed CGI dup2.";
+		}
+		DupFailureException(std::string fd) {
+			_err_string = "ERROR! Failed CGI dup2 at fd: " + fd;
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~DupFailureException() throw() {}
+};
+
+class MemsetFailureException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		MemsetFailureException() {
+			_err_string = "ERROR! Failed CGI memset.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~MemsetFailureException() throw() {}
 };
 
 class ReadFailureException : public std::exception
