@@ -3,14 +3,14 @@
 <head>
   <link rel="stylesheet" href="css/food.css">
   <link rel="icon" href="data:,">
-<title>Food Server - breakfast 🍞</title>
+<title>food server - CGI GET</title>
 </head>
 <body>
 
-<div class="header"></div>
- <div class="header-text"><h1>Food Server</h1>
-  <p>Breakfast Area</p>
-</div> 
+  <div class="header"></div>
+  <div class="header-text"><h1>Food Server</h1>
+   <p>Serving Up Food Recommendations - CGI GET</p>
+ </div> 
 
 <div class="topnav">
   <a href="index.html">index</a>
@@ -27,33 +27,30 @@
 	<div class="leftcolumn"></div>
   <div class="middlecolumn">
     <div class="card">
-      <p><h2>Eggs, toast, meat and fruit</h2>
-        <h5>Some meat dish</h5></p>
-	      <img src="https://preview.redd.it/xur1tyl69vs01.jpg?auto=webp&s=1b20523a88759b20dc09795100cd95c3d0e59248">
-      <p>Simple breakfast!
-      </p>
+        <b> Search Your Query:</b><br>
+        <FORM action="../../cgi-bin/get_query.pl" method = "GET">
+        <input type="text" name="q" size="20" maxlength="120" placeholder="write here"> 
+        <input type="submit" value="Search"><br>
+        <input type="radio" name="l" value="Web" checked>Web
+        <input type="radio" name="l" value="India">IND
+        </FORM>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      
     </div>
-    <div class="card">
-      <p><h2>Bagels</h2>
-      <h5>Man I love bagels</h5></p>
-      <img src="http://surfstrengthcoach.com/wp-content/uploads/2011/03/breakfast.jpg">
-      <p>🥯</p>
-    </div>
-
-    <div class="card">
-      <p><h2>Traditional English Breakfast</h2>
-      <h5>English, Very filling and heavy</h5></p>
-      <img src="https://s.inyourpocket.com/gallery/brighton/2019/12/shutterstock-1567433683.jpg">
-      <p>This is an English Breakfast... thats all I got.</p>
-    </div>
-
-    <div class="card">
-      <p><h2>oatmeal</h2>
-      <h5>sticky</h5></p>
-      <img src="https://deliciously.fit/wp-content/uploads/2015/04/overnight-protein-oats-deliciously-FIT.jpg">
-      <p>It is sweet.</p>
-    </div>
-
   </div>
   <div class="rightcolumn">
     <div class="card">
