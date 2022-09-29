@@ -17,7 +17,8 @@ bool	ResponseHandler::Ready() {
 void	ResponseHandler::Send() {
 	std::istream*	to_send = _response.GetCompleteResponse();
 
-	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+	// if (DEBUG) 
+	std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
 
 	if (_request->GetStatusCode() == 100)
 		_response.SetComplete(false);
@@ -116,9 +117,9 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 
 void	ResponseHandler::HandleDefaultError(int error_code) {
 	std::string error_page_html(GetServerErrorPage(error_code));
-	std::istream* stream = CreateStreamFromString(error_page_html);
+	std::istream* body_stream = CreateStreamFromString(error_page_html);
 
-	_response.SetBodyStream(stream);
+	_response.SetBodyStream(body_stream);
 	_response.SetHeaderField("Content-Type", "text/html");
 	FormResponse();
 }
@@ -127,7 +128,7 @@ bool	ResponseHandler::IsRedirected() {
 	ReturnDir return_dir = _request->GetTargetConfig().GetReturn();
 
 	if (return_dir.IsSet()) {
-		_request->SetStatusCode(return_dir.GetCode());
+		_response.SetStatusCode(return_dir.GetCode());
 		return true;
 	}
 	return false;
@@ -141,8 +142,8 @@ void	ResponseHandler::HandleRedirection() {
 // Assumes _response._resolved_path has been set already.
 void	ResponseHandler::HandleMethod() {
 	FileHandler::Method method = DetermineMethod();
-	std::istream* file = _file_handler.ExecuteMethod(_response, method);
-	_response.SetBodyStream(file);
+	std::istream* body_stream = _file_handler.ExecuteMethod(_response, method);
+	_response.SetBodyStream(body_stream);
 }
 
 FileHandler::Method ResponseHandler::DetermineMethod() {
