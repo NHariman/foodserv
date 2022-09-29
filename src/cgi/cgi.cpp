@@ -2,8 +2,8 @@
 
 #include <fcntl.h>
 
-# define DEBUG 1
-# define POST_TEST 1
+# define DEBUG 0
+# define POST_TEST 0
 
 # define POST_STRING "python=yes"
 
@@ -192,11 +192,11 @@ bool	CGI::ValidateExtension(std::string *file) {
 	if (HasExtension(_path) == true) {
 		*file = _path;
 		_valid_file = true;
-		std::cout << "hasextension has been validated" << std::endl;
+		if (DEBUG) std::cout << "hasextension has been validated" << std::endl;
 		return true;
 	}
 	else {
-		std::cout << "bad?" << std::endl;
+		if (DEBUG) std::cout << "bad?" << std::endl;
 		return false;
 	}
 	// else {
