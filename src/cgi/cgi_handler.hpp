@@ -11,7 +11,7 @@ class CGIHandler {
     public:
         CGIHandler();
         ~CGIHandler(){};
-        size_t  execute(Request *request, Response *response);
+        void  execute(Request *request, Response *response);
         std::string GetContent() const;
 };
 

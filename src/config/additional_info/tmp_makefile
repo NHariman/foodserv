@@ -57,7 +57,11 @@ UTILS = 	$(addprefix $(SRC_DIR)/$(UTILS_DIR)/,	file_handling.cpp \
 													request_utils.cpp \
 													cgi_utils.cpp)
 
-CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, cgi.cpp)
+CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, cgi.cpp \
+											cgi_argv_envp.cpp \
+											cgi_file_validation.cpp \
+											cgi_parent_child.cpp \
+											cgi_pathfinder.cpp)
 
 OFILES = $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(TARGET:.cpp=.o) $(UTILS:.cpp=.o) $(CGI:.cpp=.o)
 

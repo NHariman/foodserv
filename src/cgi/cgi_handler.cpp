@@ -2,14 +2,14 @@
 
 CGIHandler::CGIHandler() : _cgi(CGI()) {}
 
-size_t 		CGIHandler::execute(Request *request, Response *response) {
-	if (_cgi.setup(request) == false) {
-		response->SetStatusCode(_cgi.GetStatusCode());
-		return _cgi.GetStatusCode();
-	}
+void 		CGIHandler::execute(Request *request, Response *response) {
+	_cgi.setup(request);
 	_cgi.execute();
-	response->SetStatusCode(_cgi.GetStatusCode());
-	return _cgi.GetStatusCode();
+	// use HeaderFieldParser to get the header, save the amounts parsed
+	// trim the body down to only contain body content
+	// convert body to std::istream
+	// send std::istream of body back to michelle
+	// set response status code
 }
 
 std::string	CGIHandler::GetContent() const {
