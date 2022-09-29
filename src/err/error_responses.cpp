@@ -154,6 +154,7 @@ footer CRLF
 
 static char foodserv_http_error_405_page[] =
 "<html>" CRLF
+<<<<<<< HEAD
 STYLE_START CRLF
 KEYFRAME_SPIN CRLF
 SPIN_DIV CRLF
@@ -163,6 +164,11 @@ STYLE_END CRLF
 "<body>" CRLF
 "<center><h1>405 Not Allowed</h1></center><hr>" CRLF
 "<center><img src=\"https://http.cat/405\"></center>" CRLF
+=======
+"<head><title>405 Method Not Allowed</title></head>" CRLF
+"<body>" CRLF
+"<center><h1>405 Method Not Allowed</h1></center>" CRLF
+>>>>>>> 70128c3dd8bf1949b35de6d6496cbfb699a11580
 footer CRLF
 ;
 

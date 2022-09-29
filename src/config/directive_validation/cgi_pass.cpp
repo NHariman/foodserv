@@ -16,6 +16,8 @@ CGIPass::CGIPass(std::string input) : _is_set(true) {
 		start = input.find_first_not_of(" \t\n\v\f\r");
 		end = input.find_first_of(" \t\n\v\f\r", start);
 		_executable_path = input.substr(start, end - start);
+		if (IsPath(_executable_path) == false)
+			throw NotAPathException(_executable_path);
 	}
 	else {
 		for (size_t i = 0; i < input.size(); i++) {
@@ -33,6 +35,8 @@ CGIPass::CGIPass(std::string input) : _is_set(true) {
 			}
 			else if (set == 1) {
 				_executable_path = input.substr(start, end - start);
+				if (IsPath(_executable_path) == false)
+					throw NotAPathException(_executable_path);
 				set++;
 				return ;
 			}

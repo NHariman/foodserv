@@ -2,21 +2,17 @@ COMPILE = c++
 
 FLAGS = -Wall -Werror -Wextra -std=c++11
 
-MAIN = cgi_main.cpp
+MAIN = cgihandler_main.cpp
 
+#directories
 OBJDIR = obj
-
 SRC_DIR = src
-
 REQ_DIR = request
-
 CONFIG_DIR = config
-
 TARGET_DIR = resolved_target
-
 UTILS_DIR = utils
-
 CGI_DIR = cgi
+RESP_DIR = response
 
 REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,	chunked_parser.cpp \
 											header_field_parser.cpp \
@@ -57,7 +53,16 @@ UTILS = 	$(addprefix $(SRC_DIR)/$(UTILS_DIR)/,	file_handling.cpp \
 													request_utils.cpp \
 													cgi_utils.cpp)
 
-CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, cgi.cpp)
+CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, cgi.cpp \
+											cgi_argv_envp.cpp \
+											cgi_file_validation.cpp \
+											cgi_parent_child.cpp \
+											cgi_pathfinder.cpp \
+											cgi_handler.cpp)
+
+RESPONSE = $(addprefix $(SRC_DIR)/$(RESP_DIR)/, file_handler.cpp \
+												response_handler.cpp \
+												response.cpp)
 
 OFILES = $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(TARGET:.cpp=.o) $(UTILS:.cpp=.o) $(CGI:.cpp=.o)
 
@@ -80,8 +85,6 @@ fclean: clean
 	@$(RM) -rf google_test/nginx/build
 	@$(RM) -rf src/cgi/cgi_test/build
 	cp Makefile src/config/additional_info/tmp_makefile
-	cp nginx_main.cpp src/config/additional_info/
-	cp cgi_main.cpp src/config/additional_info/
 
 re: fclean all
 

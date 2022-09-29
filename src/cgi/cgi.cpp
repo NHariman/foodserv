@@ -1,6 +1,9 @@
 #include "cgi.hpp"
 
 # define DEBUG 0
+# define POST_TEST 0
+
+# define POST_STRING "python=yes"
 
 /*
 ** variables in this class:
@@ -16,7 +19,7 @@
 */
 
 
-CGI::CGI() : _pwd(), _valid_file(false) {};
+CGI::CGI() : _pwd(), _valid_file(false), _status_code(0) {};
 
 // the most important function, returns true if setup was a success and false if it was a failure
 // set argv handles the file sorting and such
@@ -24,229 +27,54 @@ bool		CGI::setup(Request *request) {
 	_request = request;
 	_path = _pwd.GetCwd() + _TARGET.GetResolvedPath();
 	if (DEBUG) std::cout << "path: " << _path << std::endl;
+	if (DEBUG) std::cout << "CGI: " << _CGI << std::endl;
 	SetArgv();
-	if (_valid_file == true)
+	if (_valid_file == true) {
 		SetHeaders();
+		_status_code = 0;
+	}
 	if (DEBUG) printVector(_argv);
 	if (DEBUG) printVector(_env);
+	if (DEBUG) std::cout << "_valid_file " << std::boolalpha << _valid_file << std::endl;
 	return (_valid_file);
 }
 
-bool		CGI::HasExtension(std::string file_name) {
-	size_t i = file_name.size() - 1;
-	size_t j = _CGI.GetFileExtension().size() - 1;
-
-	while (j > 0 && i > 0) {
-		if (file_name[i] == _CGI.GetFileExtension().at(j)) {
-			j--;
-			i--;
-		}
-		else
-			break ;
-	}
-	if (j == 0)
-		return true;
-	return false;
-}
-
-std::string CGI::FindFile() {
-	struct dirent *directory;
-	std::string file;
-	DIR *dr = opendir(_path.c_str());
-	if (dr == NULL) {
-		_valid_file = false;
-		return "";
-	}
-	while ((directory = readdir(dr)) != NULL) {
-		if (HasExtension(directory->d_name)) {
-			_file_name = directory->d_name;
-			file = _path + directory->d_name;
-			_valid_file = true;
-			break ;
-		}
-		_valid_file = false;
-	}
-	closedir(dr);
-	return (file);
-}
-
-std::string CGI::GetExecutablePath() {
-	std::string executable_path;
-
-	if (!IsAbsolutePath(_CGI.GetExecutablePath()) && _TARGET.GetLocationUri().IsDir() == true) {
-		executable_path = MakeAbsolutePath(_CGI.GetExecutablePath(), _path);
-	}
-	else if (!IsAbsolutePath(_CGI.GetExecutablePath())) {
-		executable_path = _path;
-	}
-	else {
-		executable_path = _CGI.GetExecutablePath();
-	}
-	if (IsValidFile(executable_path) || IsValidDirectory(executable_path))
-		_valid_file = true;
-	if (DEBUG) std::cout << "executable_path: " << executable_path << std::endl;
-	return (executable_path);
-}
-
-// identifies where the CGI is located and builds an absolute path towards it
-// behaviour changes depending on locationURI (directory or not) and amount of arguments
-// in the cgi_pass directive.
-void		CGI::SetArgv() {
-	std::string executable_path = GetExecutablePath();
-	_file_name = executable_path;
-	_argv.push_back(executable_path);
-	if (_CGI.GetLen() > 1 && _valid_file == true) {
-		std::string file;
-
-		if(_TARGET.GetLocationUri().IsDir() == true && IsDirectory(_request->GetTargetURI().GetParsedURI()) == true) {
-			// if location match & request target URI is a directory, find file in said directory
-			file = FindFile();
-		}
-		else {
-			// assumes the locationURI is the cgi file
-			// checks if extension of the location URI matches
-			// the allowed cgi_pass extension
-			if (HasExtension(_path) == true) {
-				file = _path;
-				_valid_file = true;
-			}
-			else {
-				if (IsValidFile(_path)) {
-					file = _path;
-					_valid_file = true;
-				}
-				else{
-					file = "not real";
-					_valid_file = false;
-				}
-			}
-		}
-		if (DEBUG) std::cout << "file: " << file << std::endl;
-		_file_name = file;
-		_argv.push_back(file);
-	}
-	if (DEBUG) std::cout << "valid file check: " << std::boolalpha << _valid_file << std::endl;
-}
-
-void 		CGI::SetHeaders() {
-	if (_request->GetField("CONTENT_LENGTH").compare(NO_VAL) != 0)
-		_env.push_back("CONTENT_LENGTH=" + 	_request->GetField("CONTENT_LENGTH"));
-	if (_request->GetField("Content-Type").compare(NO_VAL) != 0)
-		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("ONTENT_TYPE"));
-	_env.push_back("DOCUMENT_ROOT=" + 	_TARGET.GetRoot());
-	_env.push_back("PATH_TRANSLATED=" + _TARGET.GetResolvedPath());
-	if (!_request->GetTargetURI().GetQuery().empty())
-		_env.push_back("QUERY_STRING=" + 	_request->GetTargetURI().GetQuery());
-	if (_request->GetField("HOST").compare(NO_VAL) != 0)
-		_env.push_back("REMOTE_HOST=" + 	_request->GetField("HOST"));
-	if (!_request->GetMethod().empty())
-		_env.push_back("REQUEST_METHOD=" + 	_request->GetMethod());
-	_env.push_back("SCRIPT_FILENAME=" + _request->GetTargetURI().GetPath());
-	_env.push_back("SCRIPT_NAME=" + 	_file_name);
-	_env.push_back("SERVER_NAME=" + 	_request->GetTargetURI().GetHost());
-	_env.push_back("SERVER_PORT=" + 	_request->GetTargetURI().GetPort()); // ask sanne for fix?
-	_env.push_back("SERVER_PROTOCOL=HTTP/1.1");
-	_env.push_back("SERVER_SOFTWARE=foodserv");
-}
-
-void 		CGI::to_argv(char **argv){
-	argv[0] = strdup(_argv[0].c_str());
-	if (_CGI.GetLen() == 2)
-		argv[1] = strdup(_argv[1].c_str());
+void	CGI::SetExecStatusCode(int exit_code) {
+	if (exit_code > 0 || exit_code < 0)
+		throw BadGatewayException();
 	else
-		argv[1] = NULL;
-	argv[2] = NULL;
+		_status_code = 200;
 }
-void 		CGI::to_env(char **env){
-	for (size_t i = 0; i < _env.size(); ++i) {
-		env[i] = strdup(_env[i].c_str());
-	}
-}
-
-// set processes
-void		CGI::ChildProcess(int *fd) {
-	char * argv[3];
-	char* env[20];
-	memset(argv, 0, 3);
-	memset(env, 0, 20);
-	to_argv(argv);
-	to_env(env);
-
-	if (DEBUG) {
-		std::cout << "print char* argv:" << std::endl;
-		int i = 0;
-		while (argv[i] != NULL) {
-			std::cout << argv[i] << std::endl;
-			i++;
-		}
-		i = 0;
-		std::cout << "print char* env:" << std::endl;
-		while (env[i] != NULL) {
-			std::cout << env[i] << std::endl;
-			i++;
-		}
-	}
-	dup2(fd[1], STDOUT_FILENO);
-	close(fd[1]);
-	close(fd[0]);
-	execve(argv[0], argv, env);
-	exit(1);
-
-}
-
-int			CGI::ParentProcess(int *fd, int pid) {
-	int es = 0;
-	char buffer[1001];
-	int status = 0;
-	ssize_t count = 1;
-
-	close(fd[1]);
-	memset(buffer, 0, 1001);
-	if (waitpid(pid, &status, WNOHANG) == -1)
-		throw WaitFailureException();
-	if (WIFEXITED(status)) {
-		es = WEXITSTATUS(status);
-	}
-	while ((count = read(fd[0], buffer, 1000)) > 0) {
-		if (count == 0)
-			break ;
-		std::string buf(buffer);
-		_content = _content + buf;
-		memset(buffer, 0, 1001);
-	}
-	close(fd[0]);
-	if (count == -1) {
-			throw ReadFailureException();
-	}
-	return es;
-}
-
-
-
 
 size_t		CGI::execute() {
-	int fd[2];
+	int fd_write[2];
+	int fd_read[2];
 	int pid;
 	int exit_code = 0;
 
-	if (pipe(fd) < 0)
+	if (pipe(fd_read) < 0 || pipe(fd_write) < 0)
 		throw PipeFailureException();
+	if (_request->GetMethod().compare("POST") != 0) {
+		close (fd_write[0]);
+		close(fd_write[1]);
+	}
 	pid = fork();
 	if (pid < 0)
 		throw ForkFailureException();
 	else if (pid == 0) {
-		ChildProcess(fd);
+		ChildProcess(fd_read, fd_write);
 	}
 	else {
-		exit_code = ParentProcess(fd, pid);
+		exit_code = ParentProcess(fd_read, fd_write, pid);
+		SetExecStatusCode(exit_code);
 	}
-	return exit_code;
+	return _status_code;
 }
 
-
-bool		CGI::isValidFile() const {
-	return _valid_file;
+size_t		CGI::GetStatusCode() const {
+	return _status_code;
 }
+
 std::string	CGI::getFileName() const {
 	return _file_name;
 }
@@ -255,3 +83,4 @@ std::string CGI::getContent() const {
 }
 
 #undef DEBUG
+#undef POST_TEST

@@ -15,6 +15,7 @@
 #include "../request/request.hpp"
 #include "../utils/utils.hpp"
 #include "../utils/cgi_utils.hpp"
+#include "../err/c_exceptions.hpp"
 
 #include <vector>
 
@@ -79,84 +80,48 @@ class CGI {
 		std::string	_file_name;
 		std::string _content;
 		std::string _path;
+		size_t		_status_code;
 
+		// in cgi.cpp
+		void	SetExecStatusCode(int exit_code);
 
+		// in cgi_argv_env.cpp
 		void    SetHeaders();
 		void	SetArgv();
-		std::string GetExecutablePath();
+		void 	to_argv(char **argv);
+		void 	to_env(char **env);
+
+		// in cgi_pathfinder.cpp
+		std::string SetExecutablePath();
 		std::string FindFile();
+		void		SetCGIOneArgument();
+		void		SetCGITwoArguments();
+
+		// in cgi_parent_child.cpp
+		void	ChildProcess(int *fd_read, int *fd_write);
+		int		ParentProcess(int *fd_read, int *fd_write, int pid);
+		void	WriteToPipe(int fd);
+		void	RetrieveContent(int *fd_read);
+
+		// in cgi_validation.cpp
+		bool		FileLocationCompare(std::string file_one, std::string file_two);
+		bool		FileNameCompare(std::string file_one, std::string file_two);
+		bool		ValidateExtension(std::string *file);
 		bool		HasExtension(std::string file_name);
-		void	ChildProcess(int *fd);
-		int		ParentProcess(int *fd, int pid);
-		void to_argv(char **argv);
-		void to_env(char **env);
+		bool		ValidScript(std::string executable_path);
+		bool		IsExecutable(std::string path);
+		bool		IsValidPath(std::string executable_path);
 
 	public:
 		CGI();
 		~CGI(){};
-		bool    setup(Request *request); // also probably needs the request class to set ENVs with.
-		size_t    execute();
-		bool		isValidFile() const;
+		// in cgi.cpp
+		bool    	setup(Request *request); // also probably needs the request class to set ENVs with.
+		size_t    	execute();
 		std::string	getFileName() const;
 		std::string getContent() const;
+		size_t		GetStatusCode() const;
 
-		
-};
-
-class PipeFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		PipeFailureException() {
-			_err_string = "ERROR! Failed to create CGI pipe.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~PipeFailureException() throw() {}
-};
-
-class ForkFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		ForkFailureException() {
-			_err_string = "ERROR! Failed to create CGI fork.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~ForkFailureException() throw() {}
-};
-
-class WaitFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		WaitFailureException() {
-			_err_string = "ERROR! Failed CGI waitpid.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~WaitFailureException() throw() {}
-};
-
-class ReadFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		ReadFailureException() {
-			_err_string = "ERROR! Failed CGI read.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~ReadFailureException() throw() {}
 };
 
 #endif
