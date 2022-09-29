@@ -8,10 +8,10 @@ using namespace std;
 
 static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
 
-static string GetFileContent(string const& file_path) {
+string GetFileContent(string const& file_path) {
 	int fd = open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)
-		cerr << "Unable to open new.txt\n";
+		cerr << "Unable to open " << file_path << "\n";
 	char buf[1082];
 	int ret = read(fd, buf, 1082);
 	if (ret < 0)
@@ -24,7 +24,7 @@ static string GetFileContent(string const& file_path) {
 TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	Connection connection(42, &config);
 
-	string req_str = "POST /hello/upload/hello.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n";
+	string req_str = "POST /hello/upload/new1.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n";
 	string message_body = GetFileContent("assets/hello.txt");
 	req_str += "Content-Length: " + to_string(message_body.size()) + "\n\n";
 
@@ -48,13 +48,13 @@ TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	// EXPECT_EQ(response.GetField("Allow"), NO_VAL);
 	// EXPECT_EQ(response.GetField("Connection"), "close");
 	// EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
-	// EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
+	// EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new1.txt");
 }
 
 // TEST(ResponseExpectTest, ExpectWithNoMessage) {
 // 	Connection connection(42, &config);
 
-// 	string req_str = "POST /hello/upload/new.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n\n";
+// 	string req_str = "POST /hello/upload/new2.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n\n";
 // 	connection.Receive(req_str.c_str());
 	
 // 	Response const&	response = connection.DebugGetResponse();
@@ -63,7 +63,7 @@ TEST(ResponseExpectTest, ExpectWithMessageBody) {
 // 	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
 // 	EXPECT_EQ(response.GetField("Connection"), "close");
 // 	EXPECT_EQ(response.GetField("Content-Type"),"text/plain");
-// 	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
+// 	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new2.txt");
 // }
 
 TEST(ResponseExpectTest, ExpectCompleteBadRequest) {

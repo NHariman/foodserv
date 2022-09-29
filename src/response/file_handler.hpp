@@ -18,7 +18,6 @@ class FileHandler {
 		~FileHandler();
 
 		std::istream*	GetFile(std::string const& file_path);
-		std::istream*	CreateFile(std::string const& file_path);
 		std::string		GetExtension(std::string const& file_path) const;
 		std::istream*	ExecuteMethod(Response& response, Method method);
 	
@@ -26,10 +25,11 @@ class FileHandler {
 		void			GetFileHandlingError(void);
 		std::istream*	ExecuteGet(Response& response, bool error_page = false);
 		std::istream*	ExecuteGetGeneratedIndex(Response& response);
-		std::string		GetTargetDir(std::string const& dir_path);
+		std::string		GetSubDirForIndex(std::string const& dir_path);
 		std::string		FormatLine(struct dirent* dir_entry, std::string const& path);
-		std::istream*	ExecutePost(std::string const& file_path);
-		std::istream*	ExecuteDelete(std::string const& file_path);
+		std::istream*	ExecutePost(Response& response);
+		bool			ValidSubDirectory(std::string const& file_path);
+		std::istream*	ExecuteDelete(Response& response);
 };
 
 #endif /* FILE_HANDLER_HPP */
