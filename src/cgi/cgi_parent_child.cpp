@@ -8,7 +8,7 @@
 # define POST_STRING "python=yes"
 
 
-// set processes
+// child process executes the cgi
 void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 	char * argv[3];
 	char* env[15];
@@ -16,21 +16,6 @@ void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 	memset(env, 0, 15);
 	to_argv(argv);
 	to_env(env);
-
-	// if (DEBUG) {
-	// 	std::cout << "print char* argv:" << std::endl;
-	// 	int i = 0;
-	// 	while (argv[i] != NULL) {
-	// 		std::cout << argv[i] << std::endl;
-	// 		i++;
-	// 	}
-	// 	i = 0;
-	// 	std::cout << "print char* env:" << std::endl;
-	// 	while (env[i] != NULL) {
-	// 		std::cout << env[i] << std::endl;
-	// 		i++;
-	// 	}
-	// }
 	
 	if (_request->GetMethod().compare("POST") == 0) { // for POST
 		dup2(fd_write[0], STDIN_FILENO);
@@ -45,15 +30,21 @@ void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 	exit(1);
 }
 
+// FOR POST
+// writes query to stdin of the child process
 void		CGI::WriteToPipe(int fd) {
+	ssize_t status;
 	if (POST_TEST == 0)
-		write(fd, _request->GetTargetURI().GetQuery().c_str(), _request->GetTargetURI().GetQuery().size());
+		status = write(fd, _request->GetTargetURI().GetQuery().c_str(), _request->GetTargetURI().GetQuery().size());
 	else {
 		std::string str(POST_STRING);
-		write(fd, str.c_str(), str.size());
+		status = write(fd, str.c_str(), str.size());
 	}
+	if (status == -1)
+		throw WriteFailureException();
 }
 
+// retrieves the content in the stdout of the child
 void		CGI::RetrieveContent(int *fd_read){
  
 	int count;
@@ -74,6 +65,9 @@ void		CGI::RetrieveContent(int *fd_read){
 	return ;
 }
 
+// parent process reads the stdout of the child process and saves its content
+// and in the event of a POST request, also writes to the stdin of the child process
+// for the CGI to use
 int			CGI::ParentProcess(int *fd_read, int *fd_write, int pid) {
 	int es = 0;
 	int status = 0;
@@ -89,6 +83,7 @@ int			CGI::ParentProcess(int *fd_read, int *fd_write, int pid) {
 		es = WEXITSTATUS(status);
 	}
 	RetrieveContent(fd_read);
+    close (fd_read[0]);
 	return es;
 }
 

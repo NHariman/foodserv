@@ -47,37 +47,6 @@ void		CGI::SetArgv() {
 		SetCGITwoArguments();
 }
 
-/*
-void		CGI::SetArgv() {
-	std::string executable_path = SetExecutablePath();
-	_file_name = executable_path;
-	if (IsExecutable(_file_name) == false)
-		return ;
-	_argv.push_back(executable_path);
-	if (_CGI.GetLen() == 1 && IsDirectory(_request->GetTargetURI().GetParsedURI()) == false && FileNameCompare(_request->GetTargetURI().GetParsedURI(), executable_path) == false) {
-		throw MethodNotAllowedException();
-	}
-	if (_CGI.GetLen() > 1 && _valid_file == true) {
-		std::string file;
-
-		if(_TARGET.GetLocationUri().IsDir() == true && IsDirectory(_request->GetTargetURI().GetParsedURI()) == true) {
-			// if location match & request target URI is a directory, find file in said directory
-			file = FindFile();
-		}
-		else {
-			if (DEBUG) std::cout << "validate extension" << std::endl;
-			if (ValidateExtension(&file) == false)
-				throw MethodNotAllowedException();
-		}
-		if (DEBUG) std::cout << "file: " << file << std::endl;
-		_file_name = file;
-		_argv.push_back(file);
-	}
-	if (DEBUG) std::cout << "valid file check: " << std::boolalpha << _valid_file << std::endl;
-}
-
-*/
-
 void 		CGI::to_argv(char **argv){
 	argv[0] = strdup(_argv[0].c_str());
 	if (_CGI.GetLen() == 2)

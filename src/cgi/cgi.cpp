@@ -1,7 +1,5 @@
 #include "cgi.hpp"
 
-#include <fcntl.h>
-
 # define DEBUG 0
 # define POST_TEST 0
 

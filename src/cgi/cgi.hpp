@@ -15,6 +15,7 @@
 #include "../request/request.hpp"
 #include "../utils/utils.hpp"
 #include "../utils/cgi_utils.hpp"
+#include "../err/c_exceptions.hpp"
 
 #include <vector>
 
@@ -99,7 +100,7 @@ class CGI {
 		// in cgi_parent_child.cpp
 		void	ChildProcess(int *fd_read, int *fd_write);
 		int		ParentProcess(int *fd_read, int *fd_write, int pid);
-		void		WriteToPipe(int fd);
+		void	WriteToPipe(int fd);
 		void	RetrieveContent(int *fd_read);
 
 		// in cgi_validation.cpp
@@ -115,100 +116,12 @@ class CGI {
 		CGI();
 		~CGI(){};
 		// in cgi.cpp
-		bool    setup(Request *request); // also probably needs the request class to set ENVs with.
-		size_t    execute();
+		bool    	setup(Request *request); // also probably needs the request class to set ENVs with.
+		size_t    	execute();
 		std::string	getFileName() const;
 		std::string getContent() const;
 		size_t		GetStatusCode() const;
 
-		
-};
-
-class PipeFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		PipeFailureException() {
-			_err_string = "ERROR! Failed to create CGI pipe.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~PipeFailureException() throw() {}
-};
-
-class ForkFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		ForkFailureException() {
-			_err_string = "ERROR! Failed to create CGI fork.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~ForkFailureException() throw() {}
-};
-
-class WaitFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		WaitFailureException() {
-			_err_string = "ERROR! Failed CGI waitpid.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~WaitFailureException() throw() {}
-};
-
-class DupFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		DupFailureException() {
-			_err_string = "ERROR! Failed CGI dup2.";
-		}
-		DupFailureException(std::string fd) {
-			_err_string = "ERROR! Failed CGI dup2 at fd: " + fd;
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~DupFailureException() throw() {}
-};
-
-class MemsetFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		MemsetFailureException() {
-			_err_string = "ERROR! Failed CGI memset.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~MemsetFailureException() throw() {}
-};
-
-class ReadFailureException : public std::exception
-{
-	private:
-		std::string		_err_string;
-	public:
-		ReadFailureException() {
-			_err_string = "ERROR! Failed CGI read.";
-		}
-		const char *what() const throw() {
-			return (_err_string.c_str());
-		}
-		virtual ~ReadFailureException() throw() {}
 };
 
 #endif

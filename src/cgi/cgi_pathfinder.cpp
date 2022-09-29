@@ -2,6 +2,8 @@
 
 #define DEBUG 0
 
+// searches directory for file with the right extension and returns it
+// otherwise throws file not found
 std::string CGI::FindFile() {
 	struct dirent *directory;
 	std::string file;
@@ -30,8 +32,6 @@ std::string CGI::FindFile() {
 // make the absolute path
 // check if resolved path is a directory or a file
 // if file, check if resolved path filename matches cgi executable path
-
-
 void		CGI::SetCGIOneArgument() {
 	_file_name = SetExecutablePath();
 	if (IsDirectory(_request->GetTargetURI().GetParsedURI()) == false && FileNameCompare(_request->GetTargetURI().GetParsedURI(), _file_name) == false) {
@@ -40,6 +40,10 @@ void		CGI::SetCGIOneArgument() {
 	_argv.push_back(_file_name);
 }
 
+// cgi_pass directive provides a cgi extension and an executable to execute it with
+// first bit is the same
+// second bit finds either the first cgi file
+// OR compares the extension with the requested file
 void	CGI::SetCGITwoArguments() {
 	std::string first_arg;
 	std::string second_arg;
@@ -59,7 +63,7 @@ void	CGI::SetCGITwoArguments() {
 
 }
 
-
+// sets executable path based on request, location target and if the executable path is absolute or relative
 std::string CGI::SetExecutablePath() {
 	std::string executable_path;
 
