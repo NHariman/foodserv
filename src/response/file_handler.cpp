@@ -1,12 +1,11 @@
 #include <algorithm> // count
 #include <cerrno> // erno
 #include <dirent.h> // DIR, dirent
-#include <sys/types.h> 
 #include "file_handler.hpp"
 #include "../utils/utils.hpp"
 #include "../err/exception.hpp"
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 FileHandler::FileHandler() {}
 
@@ -50,7 +49,7 @@ std::istream*	FileHandler::ExecuteMethod(Response& response, Method method) {
 		case Method::GetGeneratedIndex:
 			return ExecuteGetGeneratedIndex(response);
 		case Method::Post:
-			return NULL;
+			return ExecutePost(response);
 		case Method::Delete:
 			return NULL;
 		default:
@@ -80,7 +79,7 @@ std::istream*	FileHandler::ExecuteGetGeneratedIndex(Response& response) {
 	if (dir_path == NULL)
 		throw InternalServerErrorException();
 
-	std::string index_of = "Index of " + GetTargetDir(response.GetResolvedPath());
+	std::string index_of = "Index of " + GetSubDirForIndex(resolved_path);
 	std::string	index = "<html>\r\n<head><title>" + index_of + "</title></head>\r\n"
 		+ "<body>\r\n<h1>" + index_of + "</h1><hr>\r\n";
 
@@ -96,15 +95,19 @@ std::istream*	FileHandler::ExecuteGetGeneratedIndex(Response& response) {
 	return stream;
 }
 
-// Gets directory path without host section.
-std::string	FileHandler::GetTargetDir(std::string const& dir_path) {
-	if (DEBUG) std::cout << "GetTargetDir\n";
+// Gets subdirectory path for index page.
+std::string	FileHandler::GetSubDirForIndex(std::string const& dir_path) {
+	if (DEBUG) std::cout << "GetSubDirForIndex\n";
 
-	size_t slash = dir_path.find_first_of("/");
-	if (slash == std::string::npos)
+	size_t slash_first = dir_path.find_first_of("/");
+	size_t slash_last = dir_path.find_last_of("/");
+	if (slash_first == std::string::npos)
 		throw InternalServerErrorException();
 	
-	return dir_path.substr(slash);
+	if (slash_first == slash_last)
+		return dir_path.substr(slash_first);
+	else
+		return dir_path.substr(slash_first, slash_last - slash_first + 1);
 }
 
 // Formats readdir returns into html.
@@ -130,7 +133,63 @@ std::string	FileHandler::FormatLine(struct dirent* dir_entry, std::string const&
 	return line;
 }
 
-// if POST, validate info and create file. File stream/message should have success/failure message.
+std::string	StripLeadingSlash(std::string const& file_path) {
+	if (file_path[0] == '/'){
+		std::cout << "Stripped path: " << file_path.substr(1) << std::endl;
+		return file_path.substr(1);
+	}
+	else
+		return file_path;
+}
 
+// if POST, validate info and create file. File stream/message should have success/failure message.
+std::istream*	FileHandler::ExecutePost(Response& response) {
+	std::cout << "Executing Post on file: " << response.GetResolvedPath() << "\n";
+	bool created = false;
+	std::string	file_path = StripLeadingSlash(response.GetResolvedPath());
+
+	if (!ValidSubDirectory(file_path))
+		throw ForbiddenException();
+
+	// check if file does not exist yet
+	if (!IsValidFile(file_path) && errno == ENOENT) {
+		if (CreateFile(file_path) < 0)
+			GetFileHandlingError();
+		else
+			created = true;
+	}
+	std::cout << "created file at: " << file_path << std::endl;
+
+	// insert request body into file
+	std::fstream* file = dynamic_cast<std::fstream*>(CreateStreamFromPath(file_path));
+	std::cout << "file size: " << file->gcount() << std::endl;
+	// std::cout << "body: " << response.GetMessageBody() << std::endl;
+	*file << response.GetMessageBody();
+	if (created) {
+		response.SetStatusCode(201);
+		return CreateStreamFromString("File successfully created\n");
+	}
+	else {
+		response.SetStatusCode(200);
+		return NULL;
+	}
+}
+
+// Grabs directory part of file path.
+std::string	GetDirectoryPath(std::string const& file_path) {
+	size_t slash_last = file_path.find_last_of("/");
+	if (slash_last == std::string::npos)
+		return "./";
+	return file_path.substr(0, slash_last + 1);
+}
+
+// Checks if directory path of request target is valid.
+bool	FileHandler::ValidSubDirectory(std::string const& file_path) {
+	std::string dir_path = GetDirectoryPath(file_path);
+	if (dir_path == "/")
+		return true;
+	else
+		return IsValidDirectory(dir_path);
+}
 
 #undef DEBUG // REMOVE

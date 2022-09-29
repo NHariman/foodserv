@@ -20,9 +20,9 @@ Request
 |
 v
 Response processing
-|	1. Error? serve error page
+|	1. Error? serve default or custom error page
 |	2. Expect? serve 100 (Continue)
-|	3. Complete?
+|	3. Regular?
 |		- Resolve request target path
 |			- string TargetConfig::GetResolvedPath(string target)
 |				- if redirect (return): use string ReturnDir::GetUrl() to get final path
@@ -42,6 +42,9 @@ Response processing
 |		2. File handling based on method
 |			- GET: get file or index (generate one first if TargetConfig::MustGenerateIndex is true)
 |			- POST: 
+|				- does directory exist? if no, 403.
+|				- does file exist? overwrite and return 200.
+|				- create file and return 201 with Location header.
 |			- DELETE: delete file if present
 |
 v

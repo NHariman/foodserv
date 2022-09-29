@@ -1,3 +1,4 @@
+#include <fcntl.h> // creat
 #include <sys/types.h>
 #include <sys/stat.h> // stat
 #include <iostream>
@@ -21,6 +22,15 @@ bool	IsValidDirectory(std::string const& path) {
 			return true;
 	}
 	return false;
+}
+
+int CreateFile(std::string const& file_path) {
+	// equivalent to open with O_CREAT | O_WRONLY | O_TRUNC,
+	// with user read/write and group/other read permissions.
+    int fd = creat(file_path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH); 
+	if (fd < 0)
+		return -1;
+	return 0;
 }
 
 std::string	GetLastModified(std::string const& path) {
@@ -47,7 +57,7 @@ std::istream*	CreateStreamFromString(std::string const& string_buffer) {
 // and returns a pointer to the heap-allocated object.
 // Returns NULL if file opening fails.
 std::istream*	CreateStreamFromPath(std::string const& file_path) {
-	std::ifstream* stream = new std::ifstream(file_path);
+	std::fstream* stream = new std::fstream(file_path);
 	if (!stream->is_open() || !stream->good())
 		return NULL;
 	return stream;
