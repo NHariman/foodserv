@@ -34,4 +34,19 @@ std::string	GetType(std::string const& extension);
 bool		IsRedirectCode(int status_code);
 std::string GetReasonPhrase(int status_code);
 
+// error classes if stream creation fails
+class CreateStreamFailureException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		CreateStreamFailureException(std::string type) {
+			_err_string = "ERROR! Failed failed to convert " + type + " to stream.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~CreateStreamFailureException() throw() {}
+};
+
 #endif /* UTILS_HPP */
