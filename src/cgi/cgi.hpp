@@ -79,26 +79,35 @@ class CGI {
 		std::string	_file_name;
 		std::string _content;
 		std::string _path;
+		size_t		_status_code;
 
 
 		void    SetHeaders();
 		void	SetArgv();
-		std::string GetExecutablePath();
+		std::string SetExecutablePath();
 		std::string FindFile();
 		bool		HasExtension(std::string file_name);
-		void	ChildProcess(int *fd);
-		int		ParentProcess(int *fd, int pid);
+		void	ChildProcess(int *fd_read, int *fd_write);
+		int		ParentProcess(int *fd_read, int *fd_write, int pid);
 		void to_argv(char **argv);
 		void to_env(char **env);
+		void	RetrieveContent(int *fd_read);
+		void		WriteToPipe(int fd);
+		bool	IsExecutable(std::string path);
+		void	SetExecStatusCode(int exit_code);
+		bool		FileLocationCompare(std::string file_one, std::string file_two);
+		bool		FileNameCompare(std::string file_one, std::string file_two);
+		bool		ValidScript(std::string executable_path);
+		bool	ValidateExtension(std::string *file);
 
 	public:
 		CGI();
 		~CGI(){};
 		bool    setup(Request *request); // also probably needs the request class to set ENVs with.
 		size_t    execute();
-		bool		isValidFile() const;
 		std::string	getFileName() const;
 		std::string getContent() const;
+		size_t		GetStatusCode() const;
 
 		
 };
@@ -143,6 +152,37 @@ class WaitFailureException : public std::exception
 			return (_err_string.c_str());
 		}
 		virtual ~WaitFailureException() throw() {}
+};
+
+class DupFailureException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		DupFailureException() {
+			_err_string = "ERROR! Failed CGI dup2.";
+		}
+		DupFailureException(std::string fd) {
+			_err_string = "ERROR! Failed CGI dup2 at fd: " + fd;
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~DupFailureException() throw() {}
+};
+
+class MemsetFailureException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		MemsetFailureException() {
+			_err_string = "ERROR! Failed CGI memset.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~MemsetFailureException() throw() {}
 };
 
 class ReadFailureException : public std::exception
