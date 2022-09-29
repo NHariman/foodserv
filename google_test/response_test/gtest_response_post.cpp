@@ -48,7 +48,7 @@ TEST(ResponsePostTest, PostNonExistantFile) {
 	EXPECT_EQ(response.GetField("Connection"), "close");
 	EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
 	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new3.txt");
-	EXPECT_EQ(response.GetField("Content-Length"), "27");
+	EXPECT_EQ(response.GetField("Content-Length"), "26");
 }
 
 TEST(ResponsePostTest, PostNonExistantEmptyFile) {
@@ -64,7 +64,7 @@ TEST(ResponsePostTest, PostNonExistantEmptyFile) {
 	EXPECT_EQ(response.GetField("Connection"), "close");
 	EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
 	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new4.txt");
-	EXPECT_EQ(response.GetField("Content-Length"), "27");
+	EXPECT_EQ(response.GetField("Content-Length"), "26");
 }
 
 TEST(ResponsePostTest, PostExistingFileNonExistantSubdir) {
