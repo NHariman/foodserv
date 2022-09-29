@@ -1,0 +1,9 @@
+@import "basic_css.css";
+
+#wrapper {
+    max-width: 200px; /* max-width doesn't behave correctly in legacy IE */
+    margin: 0 auto;
+}
+#wrapper img{
+    width:100%;       /* the image will now scale down as its parent gets smaller */
+}
