@@ -41,6 +41,8 @@ add_executable(
     ../../src/config/location_context_verification.cpp
     ../../src/config/location_context_setters.cpp
 		nginx_config.cpp 
+    ../../src/config/nginx_config_file_handler.cpp
+    ../../src/config/nginx_config_get_servers.cpp
 		../../src/config/directive_validation/client_max_body_size.cpp 
 		../../src/config/directive_validation/allowed_methods.cpp 
 		../../src/config/directive_validation/autoindex.cpp 

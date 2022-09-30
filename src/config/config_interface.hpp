@@ -43,7 +43,7 @@ class ConfigValues {
 	   virtual ~ConfigValues(){};
 
     public:
-	   	void							AddToErrorPageMap(std::map<int, std::string> *map, std::string input);
+	   	void								AddToErrorPageMap(std::map<int, std::string> *map, std::string input);
        //getters
        virtual std::string					GetRoot() const;
        virtual std::vector<std::string>	    GetIndex() const;

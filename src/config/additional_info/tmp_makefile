@@ -36,12 +36,15 @@ CONFIG = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/,	config_interface.cpp \
 												location_context.cpp \
 												location_context_setters.cpp \
 												location_context_verification.cpp \
-												nginx_config.cpp)
+												nginx_config.cpp \
+												nginx_config_get_servers.cpp \
+												nginx_config_file_handler.cpp)
 
 CONFIG_VAL = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/$(DIR_VAL)/,	client_max_body_size.cpp \
 															allowed_methods.cpp \
 															autoindex.cpp \
 															cgi_pass.cpp \
+															cgi_pass_parser.cpp \
 															index.cpp \
 															location_uri.cpp \
 															return_dir.cpp \

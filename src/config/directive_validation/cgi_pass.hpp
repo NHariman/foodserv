@@ -14,6 +14,11 @@ class CGIPass : public std::pair<std::string, std::string> {
 		std::string							_file_extension;
 		std::string							_executable_path;
 
+		void	OneArgument(std::string input);
+		void    TwoArguments(std::string input);
+		void    SetExtension(std::string input);
+		void    SetExecutableTwoArg(std::string input);
+
 	public:
 		CGIPass();
 		CGIPass(std::string input);

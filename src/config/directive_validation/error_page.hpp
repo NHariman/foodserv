@@ -16,8 +16,6 @@
 # include <iostream>
 # include "../../utils/config_utils.hpp"
 
-void	AddToErrorPageMap(std::map<int, std::string> *map, std::string input);
-
 class ErrorPage {
 
 	public:
