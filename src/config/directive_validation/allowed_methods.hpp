@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
-#include "../config_utils.hpp"
+#include "../../utils/config_utils.hpp"
 
 # define GET 0
 # define POST 1

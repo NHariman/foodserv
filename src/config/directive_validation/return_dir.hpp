@@ -6,7 +6,7 @@
 
 #include <string>
 #include <iostream>
-#include "../config_utils.hpp"
+#include "../../utils/config_utils.hpp"
 
 class ReturnDir {
     private:
