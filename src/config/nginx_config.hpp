@@ -8,17 +8,6 @@
 #include <utility>
 #include "server_context.hpp"
 
-// Coplien form:
-
-// class A final
-// {
-//    public:
-//       A ();
-//       A (const A &a);
-//       ~A ();
-//       A & operator = (const A &a);
-// };
-
 class NginxConfig {
 	private:
 		std::string					_config_file;
@@ -29,6 +18,8 @@ class NginxConfig {
 		void		CheckBrackets();
 		void		FindServerContexts();
 		void		LoadConfigFile(std::ifstream&	configuration_file);
+		void		SetServerContext(size_t *i);
+		void        MoveIntoServerBlock(size_t *start_pos);
 
 	public:
 		// coplien form
@@ -41,7 +32,6 @@ class NginxConfig {
 		std::string					GetConfigFile() const;
 		size_t						GetServerContextAmount() const;
 		std::vector<ServerContext>	GetServers() const;
-
 
 		size_t						GetMaxBodySize(std::string host, std::string target) const;
 		bool						IsAllowedMethod(std::string host, std::string target, std::string method) const;

@@ -14,6 +14,7 @@ UTILS_DIR = utils
 CGI_DIR = cgi
 RESP_DIR = response
 ERR_DIR = err
+DIR_VAL = directive_validation
 
 REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,	chunked_parser.cpp \
 											header_field_parser.cpp \
@@ -29,24 +30,31 @@ CONFIG = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/,	config_interface.cpp \
 												setup.cpp \
 												server_name.cpp \
 												server_context.cpp \
+												server_context_setters.cpp \
+												server_context_verification.cpp \
 												listen.cpp \
 												location_context.cpp \
+												location_context_setters.cpp \
+												location_context_verification.cpp \
 												nginx_config.cpp \
-												directive_validation/client_max_body_size.cpp \
-												directive_validation/allowed_methods.cpp \
-												directive_validation/autoindex.cpp \
-												directive_validation/error_page.cpp \
-												directive_validation/cgi_pass.cpp \
-												directive_validation/index.cpp \
-												directive_validation/location_uri.cpp \
-												directive_validation/return_dir.cpp \
-												directive_validation/root.cpp)
+												nginx_config_get_servers.cpp \
+												nginx_config_file_handler.cpp)
+
+CONFIG_VAL = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/$(DIR_VAL)/,	client_max_body_size.cpp \
+															allowed_methods.cpp \
+															autoindex.cpp \
+															cgi_pass.cpp \
+															cgi_pass_parser.cpp \
+															index.cpp \
+															location_uri.cpp \
+															return_dir.cpp \
+															root.cpp)
 
 
 TARGET = 	$(addprefix $(SRC_DIR)/$(TARGET_DIR)/,	server_selection.cpp \
 													resolved_path.cpp \
-															location_selection.cpp \
-															target_config.cpp)
+													location_selection.cpp \
+													target_config.cpp)
 
 UTILS = 	$(addprefix $(SRC_DIR)/$(UTILS_DIR)/,	file_handling.cpp \
 													is_functions.cpp \
@@ -56,7 +64,7 @@ UTILS = 	$(addprefix $(SRC_DIR)/$(UTILS_DIR)/,	file_handling.cpp \
 													status_codes.cpp\
 													mime_types.cpp)
 
-CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, cgi.cpp \
+CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, 	cgi.cpp \
 											cgi_argv_envp.cpp \
 											cgi_file_validation.cpp \
 											cgi_parent_child.cpp \
@@ -70,6 +78,7 @@ RESPONSE = $(addprefix $(SRC_DIR)/$(RESP_DIR)/, file_handler.cpp \
 ERROR = $(addprefix $(SRC_DIR)/$(ERR_DIR)/,	error_responses.cpp)
 
 OFILES =	$(CONFIG:.cpp=.o) \
+			$(CONFIG_VAL:.cpp=.o) \
 			$(MAIN:.cpp=.o) \
 			$(REQUEST:.cpp=.o) \
 			$(TARGET:.cpp=.o) \

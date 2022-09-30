@@ -2,16 +2,6 @@
 
 #define DEBUG 0
 
-int		IsValidHTTPMethod(std::string method) {
-	const std::string	methods[] = {"GET", "POST", "DELETE"};
-	int is_method = std::find(methods, methods + 3, method) - methods;
-	if (DEBUG) std::cout << "method: " << method << std::endl;
-	if (is_method < 0 || is_method > 2)
-		throw AllowedMethods::BadMethodException();
-	return (is_method);
-}
-
-
 AllowedMethods::AllowedMethods() : _get(false), _post(false), _delete(false) {}
 
 AllowedMethods::AllowedMethods(std::string str) : _get(false), _post(false), _delete(false) {
@@ -29,22 +19,7 @@ AllowedMethods::AllowedMethods(std::string str) : _get(false), _post(false), _de
 			std::cerr << _methods.at(i) << std::endl;
 		}
 	}
-	for (size_t i = 0; i < _methods.size(); i++) {
-		if (_methods.at(i).empty())
-			break ;
-		if (DEBUG) std::cerr << "constuctor method found: " << _methods.at(i) << std::endl;
-		switch (IsValidHTTPMethod(_methods.at(i))) {
-			case 0:
-				_get = true;
-				break ;
-			case 1:
-				_post = true;
-				break ;
-			case 2:
-				_delete = true;
-				break ;
-		}
-	}
+	ValidateMethods();
 }
 
 AllowedMethods::AllowedMethods(AllowedMethods const &obj) : 
@@ -77,6 +52,25 @@ bool	AllowedMethods::GetDELETE() const {
 
 std::vector<std::string>	AllowedMethods::GetMethods() const {
 	return _methods;
+}
+
+void		AllowedMethods::ValidateMethods() {
+	for (size_t i = 0; i < _methods.size(); i++) {
+		if (_methods.at(i).empty())
+			break ;
+		if (DEBUG) std::cerr << "constuctor method found: " << _methods.at(i) << std::endl;
+		switch (IsValidHTTPMethod(_methods.at(i))) {
+			case 0:
+				_get = true;
+				break ;
+			case 1:
+				_post = true;
+				break ;
+			case 2:
+				_delete = true;
+				break ;
+		}
+	}
 }
 
 #undef DEBUG

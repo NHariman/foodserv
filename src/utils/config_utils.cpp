@@ -1,4 +1,5 @@
 #include "config_utils.hpp"
+#include "../config/directive_validation/directive_validation.hpp"
 #include <iostream>
 
 size_t		ft_atosize_t(std::string value)
@@ -98,6 +99,14 @@ bool IsValidHTTPCode(size_t code) {
 	if (code < 100 || code > 599)
 		return false;
 	return true;
+}
+
+int		IsValidHTTPMethod(std::string method) {
+	const std::string	methods[] = {"GET", "POST", "DELETE"};
+	int is_method = std::find(methods, methods + 3, method) - methods;
+	if (is_method < 0 || is_method > 2)
+		throw AllowedMethods::BadMethodException();
+	return (is_method);
 }
 
 bool HasContent(char end_char, size_t key_end, size_t value_end, std::string config) {

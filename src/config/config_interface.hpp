@@ -28,12 +28,22 @@ class ConfigValues {
 	   virtual void                     GetDirectiveValuePairs(size_t *start_position, std::string config_file){ static_cast<void>(start_position); static_cast<void>(config_file); throw MethodNotSetException("GetDirectiveValuePairs(size_t*, std::string)");}
        virtual void                     SetValue(int directive, std::string value) = 0;
        virtual void                     CheckListVerification() = 0;
+
+	   	// setters
+		void							SetRoot(std::string trimmed_value);
+		void							SetIndex(std::string trimmed_value);
+		void							SetCMBS(std::string trimmed_value);
+		void							SetErrorPage(std::string trimmed_value);
+		void							SetAutoindexDir(std::string trimmed_value);
+		void							SetReturn(std::string trimmed_value);
+
 	   ConfigValues();
 	   ConfigValues(const ConfigValues& obj);
 	   ConfigValues&	operator=(const ConfigValues& obj);
 	   virtual ~ConfigValues(){};
 
     public:
+	   	void								AddToErrorPageMap(std::map<int, std::string> *map, std::string input);
        //getters
        virtual std::string					GetRoot() const;
        virtual std::vector<std::string>	    GetIndex() const;
@@ -46,6 +56,8 @@ class ConfigValues {
 
 	   // checks if a directive has been set
        virtual bool							IsSet(std::string directive) = 0;
+
+
 
 		// method not set exception
 		class MethodNotSetException : public std::exception
