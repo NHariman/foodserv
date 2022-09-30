@@ -25,6 +25,16 @@ Response::~Response() {
 		delete _send_stream;
 }
 
+bool	Response::IsComplete() const {
+	return _complete;
+}
+
+void Response::Reset() {
+    _complete = false;
+	_status_code = 0;
+	_message_body.clear();
+	_header_fields.clear();
+}
 
 std::string const&	Response::GetReasonPhrase() const {
 	return _reason_phrase;
@@ -56,10 +66,6 @@ std::string const&	Response::GetResolvedPath() const {
 
 void	Response::SetResolvedPath(std::string const& path) {
 	_resolved_path = path;
-}
-
-bool	Response::IsComplete() const {
-	return _complete;
 }
 
 // Takes optional argument to toggle bool to something other than true.

@@ -1,11 +1,10 @@
-#include <algorithm> // count
 #include <cerrno> // erno
 #include <dirent.h> // DIR, dirent
 #include "file_handler.hpp"
 #include "../utils/utils.hpp"
 #include "../err/exception.hpp"
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 FileHandler::FileHandler() {}
 
@@ -110,10 +109,8 @@ std::string	FileHandler::GetSubDirForIndex(std::string const& dir_path) {
 		return dir_path.substr(slash_first, slash_last - slash_first + 1);
 }
 
-// Formats readdir returns into html.
+// Formats readdir return into html.
 std::string	FileHandler::FormatLine(struct dirent* dir_entry, std::string const& path) {
-	if (DEBUG) std::cout << "FormatLine\n";
-	
 	std::string	file_name(dir_entry->d_name);
 
 	// skip prev directory link for security
@@ -133,20 +130,11 @@ std::string	FileHandler::FormatLine(struct dirent* dir_entry, std::string const&
 	return line;
 }
 
-std::string	StripLeadingSlash(std::string const& file_path) {
-	if (file_path[0] == '/'){
-		std::cout << "Stripped path: " << file_path.substr(1) << std::endl;
-		return file_path.substr(1);
-	}
-	else
-		return file_path;
-}
-
 // if POST, validate info and create file. File stream/message should have success/failure message.
 std::istream*	FileHandler::ExecutePost(Response& response) {
-	std::cout << "Executing Post on file: " << response.GetResolvedPath() << "\n";
+	if (DEBUG) std::cout << "Executing Post on file: " << response.GetResolvedPath() << "\n";
+	
 	bool created = false;
-	// std::string	file_path = StripLeadingSlash(response.GetResolvedPath());
 	std::string	file_path = response.GetResolvedPath();
 
 	if (!ValidSubDirectory(file_path))
@@ -154,18 +142,18 @@ std::istream*	FileHandler::ExecutePost(Response& response) {
 
 	// check if file does not exist yet
 	if (!IsValidFile(file_path) && errno == ENOENT) {
-		if (CreateFile(file_path) < 0)
+		if (CreateFile(file_path, true) < 0)
 			GetFileHandlingError();
-		else
-			created = true;
+		created = true;
 	}
-	std::cout << "created file at: " << file_path << std::endl;
 
 	// insert request body into file
-	std::fstream* file = dynamic_cast<std::fstream*>(CreateStreamFromPath(file_path));
-	// std::cout << "body: " << response.GetMessageBody() << std::endl;
-	*file << response.GetMessageBody();
-	std::cout << "file size: " << file->gcount() << std::endl;
+	std::fstream file(file_path.c_str(), std::ios_base::app
+		| std::ios_base::in | std::ios_base::out);
+	if (!file.is_open() || !file.good())
+		throw InternalServerErrorException();
+	file << response.GetMessageBody();
+
 	if (created) {
 		response.SetStatusCode(201);
 		return CreateStreamFromString("File successfully created\n");

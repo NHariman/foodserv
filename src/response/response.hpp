@@ -24,6 +24,7 @@ class Response : public HTTPMessage {
 		~Response();
 
 		bool	IsComplete() const;
+		void	Reset();
 
 		// Getters
 		std::istream*		GetBodyStream() const;

@@ -1,10 +1,10 @@
 #include <fcntl.h> // creat
-#include <sys/types.h>
 #include <sys/stat.h> // stat
 #include <iostream>
-#include <fstream>
-#include <sstream>
+#include <fstream> // fstream
+#include <sstream> // stringstream
 #include <string> // to_string
+#include <unistd.h> // close
 
 bool	IsValidFile(std::string const& path) {
 	struct stat sb;
@@ -24,13 +24,17 @@ bool	IsValidDirectory(std::string const& path) {
 	return false;
 }
 
-int CreateFile(std::string const& file_path) {
+// Creates a file. Optional argument `close_after` defaults to false.
+// If set to true, closes file fd before returning.
+int CreateFile(std::string const& file_path, bool close_after) {
 	// equivalent to open with O_CREAT | O_WRONLY | O_TRUNC,
 	// with user read/write and group/other read permissions.
     int fd = creat(file_path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH); 
 	if (fd < 0)
 		return -1;
-	return 0;
+	if (close_after)
+		close(fd);
+	return fd;
 }
 
 std::string	GetLastModified(std::string const& path) {

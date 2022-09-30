@@ -1,6 +1,7 @@
 #ifndef RESPONSE_HANDLER_HPP
 #define RESPONSE_HANDLER_HPP
 
+#include <memory> // unique_ptr
 #include "response.hpp"
 #include "file_handler.hpp"
 #include "../err/error_responses.hpp"
@@ -10,6 +11,8 @@ class NginxConfig;
 
 class ResponseHandler {
 	public:
+		typedef std::unique_ptr<Response>	ResponsePtr;
+
 		// Config file constructor
 		explicit ResponseHandler(NginxConfig* config);
 		// Destructor
@@ -17,6 +20,7 @@ class ResponseHandler {
 
 		bool	Ready();
 		void	Send();
+		bool	IsDone() const;
 		void	HandleError(Request& request);
 		void	HandleExpect(Request& request);
 		void	HandleRegular(Request& request);
@@ -26,8 +30,9 @@ class ResponseHandler {
 	private:
 		NginxConfig*	_config;
 		Request*		_request;
-		Response		_response;
+		ResponsePtr		_response;
 		FileHandler		_file_handler;
+		bool			_is_done;
 
 		void				AssignResponseResolvedPath(std::string const& path = std::string());
 
