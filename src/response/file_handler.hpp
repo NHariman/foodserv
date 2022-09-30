@@ -29,6 +29,8 @@ class FileHandler {
 		std::string		FormatLine(struct dirent* dir_entry, std::string const& path);
 		std::istream*	ExecutePost(Response& response);
 		bool			ValidSubDirectory(std::string const& file_path);
+		bool			CreateFileIfNeeded(std::string const& file_path);
+		void			WriteToFile(std::string const& file_path, std::string const& content);
 		std::istream*	ExecuteDelete(Response& response);
 };
 

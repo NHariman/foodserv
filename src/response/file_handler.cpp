@@ -82,16 +82,16 @@ std::istream*	FileHandler::ExecuteGetGeneratedIndex(Response& response) {
 	std::string	index = "<html>\r\n<head><title>" + index_of + "</title></head>\r\n"
 		+ "<body>\r\n<h1>" + index_of + "</h1><hr>\r\n";
 
-	while ((dir_entry = readdir(dir_path)) != NULL)
+	while ((dir_entry = readdir(dir_path)) != NULL) {
 		index += FormatLine(dir_entry, resolved_path);
+	}
+
 	index += "<hr>\r\n</body>\r\n</html>";
 	closedir(dir_path);
-	// std::cout<< index << std::endl; // REMOVE
-	std::istream* stream = CreateStreamFromString(index);
 
 	response.SetStatusCode(200);
 	response.SetHeaderField("Content-Type", "text/html");
-	return stream;
+	return CreateStreamFromString(index);
 }
 
 // Gets subdirectory path for index page.
@@ -130,29 +130,18 @@ std::string	FileHandler::FormatLine(struct dirent* dir_entry, std::string const&
 	return line;
 }
 
-// if POST, validate info and create file. File stream/message should have success/failure message.
+// Creates file if it does not exist yet. 
+// If it does, append request message to file.
 std::istream*	FileHandler::ExecutePost(Response& response) {
 	if (DEBUG) std::cout << "Executing Post on file: " << response.GetResolvedPath() << "\n";
 	
-	bool created = false;
 	std::string	file_path = response.GetResolvedPath();
 
 	if (!ValidSubDirectory(file_path))
 		throw ForbiddenException();
-
-	// check if file does not exist yet
-	if (!IsValidFile(file_path) && errno == ENOENT) {
-		if (CreateFile(file_path, true) < 0)
-			GetFileHandlingError();
-		created = true;
-	}
-
-	// insert request body into file
-	std::fstream file(file_path.c_str(), std::ios_base::app
-		| std::ios_base::in | std::ios_base::out);
-	if (!file.is_open() || !file.good())
-		throw InternalServerErrorException();
-	file << response.GetMessageBody();
+	
+	bool created = CreateFileIfNeeded(file_path);
+	WriteToFile(file_path, response.GetMessageBody());
 
 	if (created) {
 		response.SetStatusCode(201);
@@ -179,6 +168,28 @@ bool	FileHandler::ValidSubDirectory(std::string const& file_path) {
 		return true;
 	else
 		return IsValidDirectory(dir_path);
+}
+
+// Opens file as an fstream object in io and append mode.
+// Appends message content into file.
+void	FileHandler::WriteToFile(std::string const& file_path,
+									std::string const& content) {
+	std::fstream file(file_path.c_str(), std::ios_base::app
+		| std::ios_base::in | std::ios_base::out);
+	if (!file.is_open() || !file.good())
+		throw InternalServerErrorException();
+
+	file << content;
+}
+
+// Check if file does not exist yet. If so, creates file.
+bool	FileHandler::CreateFileIfNeeded(std::string const& file_path) {
+	if (!IsValidFile(file_path) && errno == ENOENT) {
+		if (CreateFile(file_path, true) < 0)
+			GetFileHandlingError();
+		return true;
+	}
+	return false;
 }
 
 #undef DEBUG // REMOVE

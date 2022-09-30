@@ -217,7 +217,7 @@ void	ResponseHandler::SetConnection() {
 void	ResponseHandler::SetContentLength() {
 	std::istream* body_stream = _response->GetBodyStream();
 	if (body_stream != NULL
-		&& _response->GetField("Content-Length") == NO_VAL) {
+			&& _response->GetField("Content-Length") == NO_VAL) {
 		body_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
 		std::streampos	size = body_stream->tellg(); // get position of cursor
 		_response->SetHeaderField("Content-Length", std::to_string(size));
@@ -228,7 +228,7 @@ void	ResponseHandler::SetContentLength() {
 void	ResponseHandler::SetContentType() {
 	// check if there is payload & type not already set
 	if (_response->GetBodyStream() != NULL
-		&& _response->GetField("Content-Type") == NO_VAL) {
+			&& _response->GetField("Content-Type") == NO_VAL) {
 		size_t	extension_start = _response->GetResolvedPath().find_last_of(".");
 		std::string	type;
 

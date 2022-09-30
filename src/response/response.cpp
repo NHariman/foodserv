@@ -29,13 +29,6 @@ bool	Response::IsComplete() const {
 	return _complete;
 }
 
-void Response::Reset() {
-    _complete = false;
-	_status_code = 0;
-	_message_body.clear();
-	_header_fields.clear();
-}
-
 std::string const&	Response::GetReasonPhrase() const {
 	return _reason_phrase;
 }

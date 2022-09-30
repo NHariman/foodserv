@@ -43,7 +43,7 @@ Response processing
 |			- GET: get file or index (generate one first if TargetConfig::MustGenerateIndex is true)
 |			- POST: 
 |				- does directory exist? if no, 403.
-|				- does file exist? overwrite and return 200.
+|				- does file exist? append message body to file and return 200.
 |				- create file and return 201 with Location header.
 |			- DELETE: delete file if present
 |
