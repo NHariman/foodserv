@@ -6,25 +6,33 @@
 
 using namespace std;
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
+// defined in gtest_response_post.cpp
+std::streampos	GetFileContentCount(string const& file_path);
 
-static string GetFileContent(string const& file_path) {
+static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
+static string FILE_TO_SEND = "assets/public/hello.txt";
+
+string GetFileContent(string const& file_path) {
 	int fd = open(file_path.c_str(), O_RDONLY);
 	if (fd < 0)
-		cerr << "Unable to open new.txt\n";
+		cerr << "Unable to open " << file_path << "\n";
 	char buf[1082];
 	int ret = read(fd, buf, 1082);
 	if (ret < 0)
 		cerr << "Unable to read from file\n";
 	buf[ret] = '\0';
+	close(fd);
 	return string(buf);
 }
 
 TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	Connection connection(42, &config);
+	string req_dir = "/hello/";
+	string alias_dir = "assets/";
+	string req_target = "upload/hello2.txt";
 
-	string req_str = "POST /hello/upload/new.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n";
-	string message_body = GetFileContent("assets/new.txt");
+	string req_str = "POST " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n";
+	string message_body = GetFileContent(FILE_TO_SEND);
 	req_str += "Content-Length: " + to_string(message_body.size()) + "\n\n";
 
 	connection.Receive(req_str.c_str());
@@ -38,7 +46,7 @@ TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), NO_VAL);
 
-
+	// sending file
 	connection.Receive(message_body.c_str());
 	Response	response2;
 	response2 = connection.DebugGetResponse();
@@ -47,13 +55,16 @@ TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
 	EXPECT_EQ(response.GetField("Connection"), "close");
 	EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
-	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
+	EXPECT_EQ(response.GetField("Location"), "localhost" + req_dir + req_target);
 }
 
 TEST(ResponseExpectTest, ExpectWithNoMessage) {
 	Connection connection(42, &config);
+	string req_dir = "/hello/";
+	string alias_dir = "assets/";
+	string req_target = "upload/empty.txt";
 
-	string req_str = "POST /hello/upload/new.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n\n";
+	string req_str = "POST " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n\n";
 	connection.Receive(req_str.c_str());
 	
 	Response const&	response = connection.DebugGetResponse();
@@ -62,7 +73,11 @@ TEST(ResponseExpectTest, ExpectWithNoMessage) {
 	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
 	EXPECT_EQ(response.GetField("Connection"), "close");
 	EXPECT_EQ(response.GetField("Content-Type"),"text/plain");
-	EXPECT_EQ(response.GetField("Location"), "localhost/hello/upload/new.txt");
+	EXPECT_EQ(response.GetField("Location"), "localhost" + req_dir + req_target);
+	EXPECT_EQ(response.GetField("Content-Length"), "26");
+
+	std::streampos count = GetFileContentCount(alias_dir + req_target);
+	EXPECT_EQ(count, 0);
 }
 
 TEST(ResponseExpectTest, ExpectCompleteBadRequest) {

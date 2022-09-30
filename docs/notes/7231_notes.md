@@ -74,7 +74,14 @@ Source:
 <br/><br/>
 
 ### POST:
+> POST is used for the following functions (among others):  
+	- [...]  
+	- Creating a new resource that has yet to be identified by the origin server;  
+	- Appending data to a resource's existing representation(s).  
+
 > If one or more resources has been created on the origin server as a result of successfully processing a POST request, the origin server SHOULD send a 201 (Created) response containing a Location header field that provides an identifier for the primary resource created (Section 7.1.2) and a representation that describes the status of the request while referring to the new resource(s).   
+
+> If the result of processing a POST would be equivalent to a representation of an existing resource, an origin server MAY redirect the user agent to that resource by sending a 303 (See Other) response with the existing resource's identifier in the Location field.  This has the benefits of providing the user agent a resource identifier and transferring the representation via a method more amenable to shared caching, though at the cost of an extra request if the user agent does not already have the representation cached.
 
 Source:
 [Section 4.3.3](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.3)

@@ -1,27 +1,41 @@
 #include "response_handler.hpp"
+#include "../utils/config_utils.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
 
 // Config file constructor
 ResponseHandler::ResponseHandler(NginxConfig* config)
-	:	_config(config), _request(NULL) {}
+		:	_config(config), _request(NULL), _is_done(false) {
+	_response = ResponsePtr(new Response);
+}
 
 // Destructor
 ResponseHandler::~ResponseHandler() {}
 
 bool	ResponseHandler::Ready() {
-	return _response.IsComplete();
+	return _response->IsComplete();
 }
 
 void	ResponseHandler::Send() {
-	std::istream*	to_send = _response.GetCompleteResponse();
-	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+	std::istream*	to_send = _response->GetCompleteResponse();
 
-	if (_request->GetStatusCode() == 100)
-		_response.SetComplete(false);
+	// if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+
+	// if an Expect request was processed, a 2nd final response still has to be
+	// served once the message body is received.
+	if (_response->GetStatusCode() == 100)
+		_response = ResponsePtr(new Response); // create fresh Response object
+	else
+		_is_done = true;
+}
+
+bool	ResponseHandler::IsDone() const {
+	return _is_done;
 }
 
 void	ResponseHandler::HandleError(Request& request) {
+	if (DEBUG) std::cout << "HandleError\n";
+
 	_request = &request;
 	int	error_code = request.GetStatusCode();
 	
@@ -40,6 +54,8 @@ void	ResponseHandler::HandleExpect(Request& request) {
 }
 
 void	ResponseHandler::HandleRegular(Request& request) {
+	if (DEBUG) std::cout << "HandleRegular\n";
+
 	_request = &request;
 
 	if (IsRedirected())
@@ -47,9 +63,8 @@ void	ResponseHandler::HandleRegular(Request& request) {
 	try {
 		AssignResponseResolvedPath();
 		// check cgi
-		// filehandler executor
-		// if GET index, check if must generate index file
-		// if POST, validate info and create file. File stream/message should have success/failure message.
+		HandleMethod();
+		FormResponse();
 	}
 	catch (http::exception &e) {
 		_request->SetStatusCode(e.which());
@@ -58,7 +73,7 @@ void	ResponseHandler::HandleRegular(Request& request) {
 }
 
 Response const&	ResponseHandler::GetResponse() {
-	return _response;
+	return *_response;
 }
 
 // Checks if request target path was able to be resolved.
@@ -74,10 +89,12 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 
 	if (resolved_path.empty())
 		throw NotFoundException();
+	else if (IsDirectory(resolved_path) && !IsValidDirectory(resolved_path))
+		throw ForbiddenException();
 	else
-		_response.SetResolvedPath(resolved_path);
-	
-	if (DEBUG) std::cout << "path assigned to: " << _response.GetResolvedPath() << std::endl;
+		_response->SetResolvedPath(resolved_path);
+	_response->SetRequestTarget(_request->GetTargetString());
+	if (DEBUG) std::cout << "path assigned to: " << _response->GetResolvedPath() << std::endl;
 }
 
 std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
@@ -97,7 +114,7 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 
 	try {
 		AssignResponseResolvedPath(resolved_error_path);
-		ExecuteGet(false);
+		HandleMethod();
 		FormResponse();
 	}
 	catch (http::exception &e) {
@@ -109,10 +126,10 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 
 void	ResponseHandler::HandleDefaultError(int error_code) {
 	std::string error_page_html(GetServerErrorPage(error_code));
-	std::istream* stream = CreateStreamFromString(error_page_html);
+	std::istream* body_stream = CreateStreamFromString(error_page_html);
 
-	_response.SetBodyStream(stream);
-	_response.SetHeaderField("Content-Type", "text/html");
+	_response->SetBodyStream(body_stream);
+	_response->SetHeaderField("Content-Type", "text/html");
 	FormResponse();
 }
 
@@ -120,44 +137,59 @@ bool	ResponseHandler::IsRedirected() {
 	ReturnDir return_dir = _request->GetTargetConfig().GetReturn();
 
 	if (return_dir.IsSet()) {
-		_request->SetStatusCode(return_dir.GetCode());
+		_response->SetStatusCode(return_dir.GetCode());
 		return true;
 	}
 	return false;
 }
 
 void	ResponseHandler::HandleRedirection() {
-	_response.SetResolvedPath(_request->GetTargetConfig().GetResolvedPath());
+	_response->SetResolvedPath(_request->GetTargetConfig().GetResolvedPath());
 	FormResponse();
 }
 
-// Uses FileHandler to check and open the file as an ifstream.
-// Assumes _response._resolved_path has been set already.
-// Takes optional set_code argument to skip setting status code (e.g. with error pages).
-void	ResponseHandler::ExecuteGet(bool set_code) {
-	if (DEBUG) std::cout << "Getting file from path: " << _response.GetResolvedPath() << std::endl;
+// Assumes _response->_resolved_path has been set already.
+void	ResponseHandler::HandleMethod() {
+	FileHandler::Method method = DetermineMethod();
+	std::istream* body_stream = _file_handler.ExecuteMethod(*_response, method);
+	_response->SetBodyStream(body_stream);
+}
 
-	std::istream* file = _file_handler.GetFile(_response.GetResolvedPath());
-	_response.SetBodyStream(file);
-	if (set_code)
-		_request->SetStatusCode(200);
-	
-	if (DEBUG) std::cout << "File stream set\n";
+FileHandler::Method ResponseHandler::DetermineMethod() {
+	if (_request->GetStatusCode() > 399) // error status
+		return FileHandler::Method::GetError;
+	else if (_request->GetTargetConfig().MustGenerateIndex() == true) {
+		return FileHandler::Method::GetGeneratedIndex;
+	}
+	else {
+		std::string method = _request->GetMethod();
+		if (method == "GET")
+			return FileHandler::Method::Get;
+		else if (method == "POST") {
+			_response->SetMessageBody(_request->GetMessageBody());
+			return FileHandler::Method::Post;
+		}
+		else if (method == "DELETE")
+			return FileHandler::Method::Delete;
+		else
+			throw InternalServerErrorException();
+	}
 }
 
 void	ResponseHandler::FormResponse() {
 	SetStatusLine();
-	if (_request->GetStatusCode() != 100)
+	if (_response->GetStatusCode() != 100)
 		SetHeaders();
-	_response.SetComplete();
-	
-	if (DEBUG) std::cout << "Response formed. Final status code: " << _response.GetStatusCode() << std::endl;
+	_response->SetComplete();
+
+	if (DEBUG) std::cout << "Response formed. Final status code: " << _response->GetStatusCode() << std::endl;
 }
 
 void	ResponseHandler::SetStatusLine() {
-	_response.SetHTTPVersion("HTTP/1.1");
-	_response.SetStatusCode(_request->GetStatusCode());
-	_response.SetReasonPhrase(GetReasonPhrase(_response.GetStatusCode()));
+	_response->SetHTTPVersion("HTTP/1.1");
+	if (_response->GetStatusCode() == 0)
+		_response->SetStatusCode(_request->GetStatusCode());
+	_response->SetReasonPhrase(GetReasonPhrase(_response->GetStatusCode()));
 }
 
 void	ResponseHandler::SetHeaders() {
@@ -172,58 +204,60 @@ void	ResponseHandler::SetHeaders() {
 
 // Allow is only set if returning a 405: Method Not Allowed error.
 void	ResponseHandler::SetAllow() {
-	if (_request->GetStatusCode() == 405)
-		_response.SetHeaderField("Allow", GetAllowedMethodsString());
+	if (_response->GetStatusCode() == 405)
+		_response->SetHeaderField("Allow", GetAllowedMethodsString());
 }
 
 // Connection: close is always sent unless it's a 100: Continue response.
 void	ResponseHandler::SetConnection() {
-	_response.SetHeaderField("Connection", "close");
+	_response->SetHeaderField("Connection", "close");
 }
 
 void	ResponseHandler::SetContentLength() {
-	std::istream* file_stream = _response.GetFileStream();
-	if (file_stream != NULL) {
-		file_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
-		std::streampos	size = file_stream->tellg(); // get position of cursor
-		_response.SetHeaderField("Content-Length", std::to_string(size));
-		file_stream->seekg(0); // restore cursor to beginning
+	std::istream* body_stream = _response->GetBodyStream();
+	if (body_stream != NULL
+			&& _response->GetField("Content-Length") == NO_VAL) {
+		body_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
+		std::streampos	size = body_stream->tellg(); // get position of cursor
+		_response->SetHeaderField("Content-Length", std::to_string(size));
+		body_stream->seekg(0); // restore cursor to beginning
 	}
 }
 
 void	ResponseHandler::SetContentType() {
 	// check if there is payload & type not already set
-	if (_response.GetFileStream() != NULL
-		&& _response.GetField("Content-Type") == NO_VAL) {
-		size_t	extension_start = _response.GetResolvedPath().find_last_of(".");
+	if (_response->GetBodyStream() != NULL
+			&& _response->GetField("Content-Type") == NO_VAL) {
+		size_t	extension_start = _response->GetResolvedPath().find_last_of(".");
 		std::string	type;
 
-		type = GetType(_response.GetResolvedPath().substr(extension_start + 1));
+		type = GetType(_response->GetResolvedPath().substr(extension_start + 1));
 		if (type.empty()) // if no extension or unknown extension
 			type = "application/octet-stream";
-
-		_response.SetHeaderField("Content-Type", type);
+		_response->SetHeaderField("Content-Type", type);
 	}
 }
 
 void	ResponseHandler::SetDate() {
-	char	buf[1000];
+	char	buf[100];
 	time_t	now = time(0);
 	struct tm	tm = *gmtime(&now);
 	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", &tm);
 
-	_response.SetHeaderField("Date", std::string(buf));
+	_response->SetHeaderField("Date", std::string(buf));
 }
 
 // Location only set if request is redirected or a POST request is successfully executed (201 created).
 void	ResponseHandler::SetLocation() {
-	int status_code = _request->GetStatusCode();
-	if (IsRedirectCode(status_code) || status_code == 201)
-		_response.SetHeaderField("Location", _response.GetResolvedPath());
+	int status_code = _response->GetStatusCode();
+	if (IsRedirectCode(status_code))
+		_response->SetHeaderField("Location", _response->GetResolvedPath());
+	else if (status_code == 201)
+		_response->SetHeaderField("Location", _request->GetTargetString());
 }
 
 void	ResponseHandler::SetServer() {
-	_response.SetHeaderField("Server", "foodserv/1.0");
+	_response->SetHeaderField("Server", "foodserv/1.0");
 }
 
 // Used by SetAllow to set header value to comma-separated list of allowed methods.

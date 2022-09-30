@@ -9,6 +9,7 @@ Response&	Response::operator=(Response const& other) {
 		_body_stream = new std::ifstream(other._resolved_path);
 		_send_stream = other._send_stream;
 		_reason_phrase = other._reason_phrase;
+		_request_target	= other._request_target;
 		_resolved_path = other._resolved_path;
 		_complete = other._complete;
 		HTTPMessage::operator=(other);
@@ -24,6 +25,9 @@ Response::~Response() {
 		delete _send_stream;
 }
 
+bool	Response::IsComplete() const {
+	return _complete;
+}
 
 std::string const&	Response::GetReasonPhrase() const {
 	return _reason_phrase;
@@ -33,12 +37,20 @@ void	Response::SetReasonPhrase(std::string const& phrase) {
 	_reason_phrase = phrase;
 }
 
-std::istream*	Response::GetFileStream() const {
+std::istream*	Response::GetBodyStream() const {
 	return _body_stream;
 }
 
 void	Response::SetBodyStream(std::istream* stream) {
 	_body_stream = stream;
+}
+
+std::string const&	Response::GetRequestTarget() const {
+	return _request_target;
+}
+
+void	Response::SetRequestTarget(std::string const& path) {
+	_request_target = path;
 }
 
 std::string const&	Response::GetResolvedPath() const {
@@ -47,10 +59,6 @@ std::string const&	Response::GetResolvedPath() const {
 
 void	Response::SetResolvedPath(std::string const& path) {
 	_resolved_path = path;
-}
-
-bool	Response::IsComplete() const {
-	return _complete;
 }
 
 // Takes optional argument to toggle bool to something other than true.
@@ -69,7 +77,7 @@ std::string	Response::GetFieldsAsString() const {
 
 // Creates a stringstream object with append mode so output operations write
 // to the end of stream.
-// Combines response status line and file stream into a single stream for sending.
+// Combines response status line and body stream into a single stream for sending.
 std::istream*	Response::GetCompleteResponse() {
 	std::iostream* complete_stream = new std::stringstream(std::ios_base::app
 		| std::ios_base::in | std::ios_base::out);

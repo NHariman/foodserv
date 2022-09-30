@@ -31,6 +31,9 @@ void	Connection::Receive(char const* buffer) {
 void	Connection::Dispatch() {
 	if (_response_handler.Ready())
 		_response_handler.Send();
+
+	if (_response_handler.IsDone())
+		_close_connection = true;
 }
 
 Response const& Connection::DebugGetResponse() {
