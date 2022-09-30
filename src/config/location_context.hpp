@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include "config_utils.hpp"
+#include "../utils/config_utils.hpp"
 #include "config_interface.hpp"
 #include "directive_validation/directive_validation.hpp"
 
