@@ -17,7 +17,7 @@
 #include "location_context.hpp"
 #include "server_name.hpp"
 #include "directive_validation/directive_validation.hpp"
-#include "config_utils.hpp"
+#include "../utils/config_utils.hpp"
 #include "config_interface.hpp"
 #include "listen.hpp"
 #include <vector>

@@ -2,7 +2,7 @@
 # define ROOT_HPP
 
 #include <string>
-#include "../config_utils.hpp"
+#include "../../utils/config_utils.hpp"
 
 class Root {
     private:
