@@ -84,7 +84,7 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 		throw ForbiddenException();
 	else
 		_response.SetResolvedPath(resolved_path);
-	
+	_response.SetRequestTarget(_request->GetTargetString());
 	if (DEBUG) std::cout << "path assigned to: " << _response.GetResolvedPath() << std::endl;
 }
 
@@ -219,14 +219,12 @@ void	ResponseHandler::SetContentType() {
 	// check if there is payload & type not already set
 	if (_response.GetBodyStream() != NULL
 		&& _response.GetField("Content-Type") == NO_VAL) {
-		std::cout << "Setting Content-Type | path: " << _response.GetResolvedPath() << "\n";
 		size_t	extension_start = _response.GetResolvedPath().find_last_of(".");
 		std::string	type;
 
 		type = GetType(_response.GetResolvedPath().substr(extension_start + 1));
 		if (type.empty()) // if no extension or unknown extension
 			type = "application/octet-stream";
-		std::cout << "Type detected: " << type << std::endl;
 		_response.SetHeaderField("Content-Type", type);
 	}
 }
@@ -243,8 +241,10 @@ void	ResponseHandler::SetDate() {
 // Location only set if request is redirected or a POST request is successfully executed (201 created).
 void	ResponseHandler::SetLocation() {
 	int status_code = _response.GetStatusCode();
-	if (IsRedirectCode(status_code) || status_code == 201)
+	if (IsRedirectCode(status_code))
 		_response.SetHeaderField("Location", _response.GetResolvedPath());
+	else if (status_code == 201)
+		_response.SetHeaderField("Location", _request->GetTargetString());
 }
 
 void	ResponseHandler::SetServer() {

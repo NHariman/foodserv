@@ -9,6 +9,7 @@ Response&	Response::operator=(Response const& other) {
 		_body_stream = new std::ifstream(other._resolved_path);
 		_send_stream = other._send_stream;
 		_reason_phrase = other._reason_phrase;
+		_request_target	= other._request_target;
 		_resolved_path = other._resolved_path;
 		_complete = other._complete;
 		HTTPMessage::operator=(other);
@@ -39,6 +40,14 @@ std::istream*	Response::GetBodyStream() const {
 
 void	Response::SetBodyStream(std::istream* stream) {
 	_body_stream = stream;
+}
+
+std::string const&	Response::GetRequestTarget() const {
+	return _request_target;
+}
+
+void	Response::SetRequestTarget(std::string const& path) {
+	_request_target = path;
 }
 
 std::string const&	Response::GetResolvedPath() const {

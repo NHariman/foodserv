@@ -146,7 +146,8 @@ std::string	StripLeadingSlash(std::string const& file_path) {
 std::istream*	FileHandler::ExecutePost(Response& response) {
 	std::cout << "Executing Post on file: " << response.GetResolvedPath() << "\n";
 	bool created = false;
-	std::string	file_path = StripLeadingSlash(response.GetResolvedPath());
+	// std::string	file_path = StripLeadingSlash(response.GetResolvedPath());
+	std::string	file_path = response.GetResolvedPath();
 
 	if (!ValidSubDirectory(file_path))
 		throw ForbiddenException();
@@ -162,9 +163,9 @@ std::istream*	FileHandler::ExecutePost(Response& response) {
 
 	// insert request body into file
 	std::fstream* file = dynamic_cast<std::fstream*>(CreateStreamFromPath(file_path));
-	std::cout << "file size: " << file->gcount() << std::endl;
 	// std::cout << "body: " << response.GetMessageBody() << std::endl;
 	*file << response.GetMessageBody();
+	std::cout << "file size: " << file->gcount() << std::endl;
 	if (created) {
 		response.SetStatusCode(201);
 		return CreateStreamFromString("File successfully created\n");
