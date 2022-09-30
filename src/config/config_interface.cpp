@@ -82,10 +82,70 @@ std::map<int, std::string>		ConfigValues::GetErrorPage() const {
     return _error_page;
 }
 
-void							ConfigValues::PrintErrorPage() const {
+void    ConfigValues::SetRoot(std::string trimmed_value) {
+	bool_root = true;
+	Root	root_value(trimmed_value);
+	_root = trimmed_value;
+}
+
+void    ConfigValues::SetIndex(std::string trimmed_value) {
+	bool_index = true;
+	Index	index_value(trimmed_value);
+	_index = index_value.GetIndex();
+}
+
+void    ConfigValues::SetCMBS(std::string trimmed_value) {
+	bool_client_max_body_size = true;
+	ClientMaxBodySize	cmbs_value(trimmed_value);
+	_client_max_body_size = cmbs_value.GetValue();
+}
+
+void    ConfigValues::SetErrorPage(std::string trimmed_value) {
+	bool_error_page = true;
+	AddToErrorPageMap(&_error_page, trimmed_value);
+}
+
+void    ConfigValues::SetAutoindexDir(std::string trimmed_value) {
+	bool_autoindex = true;
+	_autoindex = SetAutoindex(trimmed_value);
+}
+
+void    ConfigValues::SetReturn(std::string trimmed_value) {
+	bool_return_dir = true;
+	ReturnDir		return_dir_value(trimmed_value);
+	_return_dir = return_dir_value;
+}
+
+void	ConfigValues::AddToErrorPageMap(std::map<int, std::string> *map, std::string input) {
+	int code;
+
+	if (input.compare("") == 0)
+		throw ErrorPage::MissingArgumentsException();
+
+	std::vector<std::string> items = ToStringVector(input);
+
+	std::string uri = items[items.size() - 1];
+	if (IsUri(uri) == false)
+		throw ErrorPage::BadErrorURIException();
+	for (size_t i = 0; i < (items.size() - 1); ++i) {
+		if (IsNumber(items[i]) == true) {
+			code = std::atoi(items[i].c_str());
+			if (code < 300 || code > 599)
+				throw ErrorPage::BadErrorCodeException();
+			std::map<int,std::string>::iterator it = map->find(code);
+			if (it == map->end())
+				map->insert(std::pair<int, std::string> (code, uri));
+			else
+				throw ErrorPage::DuplicateErrorCodeException();
+		}
+		else
+			throw ErrorPage::InvalidCodeInputException();
+	}
+}
+
+void	ConfigValues::PrintErrorPage() const {
 	for(std::map<int, std::string>::const_iterator it = _error_page.begin();
 		it != _error_page.end(); ++it){
 		std::cout << it->first << " " << it->second << "\n";
 	}
-
 }

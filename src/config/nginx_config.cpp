@@ -5,7 +5,6 @@
 
 #define DEBUG 0
 
-
 // Constructor that takes a file and removes all comments and empty lines
 // and saves the string to a variable for passing to the ServerContext parser.
 // a newline per getline read is added in to avoid cases where for example:

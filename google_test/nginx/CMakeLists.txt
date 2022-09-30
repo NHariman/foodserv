@@ -33,15 +33,17 @@ add_executable(
     ../../src/config/config_interface.cpp 
 		../../src/config/setup.cpp 
 		../../src/config/server_name.cpp 
-		../../src/config/server_context.cpp 
+		../../src/config/server_context.cpp
+    ../../src/config/server_context_verification.cpp
+    ../../src/config/server_context_setters.cpp
 		../../src/config/listen.cpp 
 		../../src/config/location_context.cpp 
+    ../../src/config/location_context_verification.cpp
+    ../../src/config/location_context_setters.cpp
 		nginx_config.cpp 
-		../../src/config/config_utils.cpp 
 		../../src/config/directive_validation/client_max_body_size.cpp 
 		../../src/config/directive_validation/allowed_methods.cpp 
 		../../src/config/directive_validation/autoindex.cpp 
-		../../src/config/directive_validation/error_page.cpp 
 		../../src/config/directive_validation/cgi_pass.cpp 
 		../../src/config/directive_validation/index.cpp 
 		../../src/config/directive_validation/location_uri.cpp 
@@ -54,11 +56,16 @@ add_executable(
 		../../src/resolved_target/target_config.cpp
 
     ../../src/cgi/cgi.cpp
+    ../../src/cgi/cgi_argv_envp.cpp 
+    ../../src/cgi/cgi_file_validation.cpp 
+    ../../src/cgi/cgi_parent_child.cpp 
+    ../../src/cgi/cgi_pathfinder.cpp
 
     ../../src/utils/file_handling.cpp
     ../../src/utils/is_functions.cpp
     ../../src/utils/request_utils.cpp
     ../../src/utils/cgi_utils.cpp
+		../../src/utils/config_utils.cpp 
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(

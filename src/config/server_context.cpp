@@ -1,18 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   server_context.cpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/07/05 18:21:31 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/17 17:09:10 by nhariman      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "server_context.hpp"
-# include <algorithm>
-# include "directive_validation/directive_validation.hpp"
 
 #define DEBUG 0
 
@@ -54,26 +40,7 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
     if (this == &obj) {
         return (*this);
 	}
-    amount_location_context = obj.amount_location_context;
-	bool_listen = obj.bool_listen;
-	bool_server_name = obj.bool_server_name;
-	bool_root = obj.bool_return_dir;
-	bool_index = obj.bool_index;
-	bool_client_max_body_size = obj.bool_client_max_body_size;
-	bool_error_page = obj.bool_error_page;
-	bool_autoindex = obj.bool_autoindex;
-	bool_return_dir = obj.bool_return_dir;
-	_location_contexts = obj._location_contexts;
-	_listen = obj._listen;
-	_server_name = obj._server_name;
-	_root = obj._root;
-	_index = obj._index;
-	_client_max_body_size = obj._client_max_body_size;
-	_error_page = obj._error_page;
-	_autoindex = obj._autoindex;
-	_return_dir = obj._return_dir;
-	_server_nb = obj._server_nb;
-
+	CopyValues(obj);
 	return (*this);
 }
 
@@ -87,155 +54,54 @@ void		ServerContext::InitChecklist() {
 	bool_error_page = false;
 }
 
-// compares found directive with possible directive values and either returns the number in the list
-// or throws an error because a bad directive has been found
-int			ServerContext::IsDirective(std::string directive){
-	const std::string	directives[] = {"location", "listen", "server_name", "root", "index", "client_max_body_size", "error_page", "autoindex", "return"};
-	
-	int	is_directive = std::find(directives, directives + 9, directive) - directives;
-	if (is_directive < 0 || is_directive > 8)
-		throw InvalidDirectiveException(directive, _server_nb);
-	else
-		return (is_directive);
-}
-
 // sets the value in the right directive within the server class based off the IsDirective return value
 void				ServerContext::SetValue(int directive, std::string value){
 	std::string		trimmed_value;
 
 	if (value.compare("") == 0)
 		throw BadInputException(_server_nb);
-
 	trimmed_value = TrimValue(value);
 	if (DEBUG) std::cerr << "server context:\ndirective: " << directive << "\nvalue: " << trimmed_value << std::endl;
-
-
 	if (directive == 0) {
-		amount_location_context++;
-		LocationContext	location(trimmed_value);
-		for (size_t i = 0 ; i < _location_contexts.size(); ++i){
-			if (_location_contexts[i].GetLocationUri().GetUri().compare(location.GetLocationUri().GetUri()) == 0)
-			throw DuplicateLocationUriException(_server_nb, _location_contexts[i].GetLocationUri().GetUri());
-		}
-		_location_contexts.push_back(location);
+		SetLocation(trimmed_value);
 	}
 	else {
 		switch(directive) {
 			case 1: {
-				if (bool_listen == true)
-					throw MultipleListensException(_server_nb);
-				bool_listen = true;
-				Listen	listen_port_ip(trimmed_value);
-				// break ;
-				_listen.first = listen_port_ip.getIpNumber();
-				_listen.second = listen_port_ip.getPortNumber();
-				break ;
+				return SetListen(trimmed_value);
 			}
 			case 2: {
-				// TODO: still check these
-				if (bool_server_name == true)
-					throw MultipleServerNameException(_server_nb);
-				bool_server_name = true;
-				ServerName	server_name(trimmed_value);
-				_server_name = server_name.GetServerNames();
-				break ;
+				return SetServerName(trimmed_value);
 			}
 			case 3: {
 				if (bool_root == true)
 					throw MultipleRootException(_server_nb);
-				bool_root = true;
-				Root	root_value(trimmed_value);
-				_root = trimmed_value; // create a root class and use the GetRoot() function in there to paste root here if valid
-				break ;
+				return SetRoot(trimmed_value);
 			}
 			case 4:{
 				if (bool_index == true)
 					throw MultipleIndexException(_server_nb);
-				bool_index = true;
-				Index	index_value(trimmed_value);
-				_index = index_value.GetIndex(); // create an index class and use the GetIndex() function in there to paste index here if valid
-				break ;
+				return SetIndex(trimmed_value);
 			}
 			case 5:{
 				if (bool_client_max_body_size == true)
 					throw MultipleClientMaxBodySizeException(_server_nb);
-				bool_client_max_body_size = true;
-				ClientMaxBodySize	cmbs_value(trimmed_value);
-				_client_max_body_size = cmbs_value.GetValue();
-				break ;
+				return SetCMBS(trimmed_value);
 			}
 			case 6:{
-				bool_error_page = true;
-				AddToErrorPageMap(&_error_page, trimmed_value);
-				// ErrorPage	error_page_value(trimmed_value);
-				// _error_page.push_back(error_page_value);
-				break ;
+				return SetErrorPage(trimmed_value);
 			}
 			case 7: {
 				if (bool_autoindex == true)
 					throw MultipleAutoindexException(_server_nb);
-				bool_autoindex = true;
-				_autoindex = SetAutoindex(trimmed_value);
-				break ;
+				return SetAutoindexDir(trimmed_value);
 			}
             case 8: {
 				if (bool_return_dir == true)
 					throw MultipleReturnException(_server_nb);
-				bool_return_dir = true;
-				ReturnDir		return_dir_value(trimmed_value);
-				_return_dir = return_dir_value;
-				break ;
+				return SetReturn(trimmed_value);
 			}
 		}
-	}
-	return ;
-}
-
-bool					ServerContext::HasDefaultLocation(std::vector<LocationContext> locations) {
-	std::string target = "/";
-	for (size_t loc = 0 ; loc < locations.size() ; loc++) {
-		if (target.compare(locations.at(loc).GetLocationUri().GetUri()) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-// checks if the necessary blocks have been set and otherwise prints a warning
-// if something MUST be set, we should throw an exception
-void			ServerContext::CheckListVerification(){
-	if (amount_location_context == 0 || HasDefaultLocation(_location_contexts) == false) {
-		LocationContext default_location;
-		amount_location_context++;
-		_location_contexts.push_back(default_location);
-		if (DEBUG) std::cerr << "added default location \"/\"" << std::endl;
-	}
-	if (bool_listen == false) {
-		_listen.first = "80"; // changed to string
-		_listen.second = "0"; // changed to string
-	}
-	if (bool_server_name == false) {
-		if (DEBUG) _server_name.push_back("localhost");
-	}
-	if (bool_root == false) {
-		_root = "/var/www/html";
-	}
-	if (bool_index == false) {
-		Index	input_value("index.php index.html index.htm index.nginx-debian.html");
-		_index = input_value.GetIndex();
-	}
-	if (bool_client_max_body_size == false) {
-		_client_max_body_size = 1;
-	}
-	if (bool_error_page == false) {
-		bool_error_page = false;
-	}
-	if (bool_autoindex == false) {
-		_autoindex = false;
-	}
-	if (bool_return_dir == false) {
-		ReturnDir value;
-		_return_dir = value;
 	}
 }
 
@@ -268,7 +134,7 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 	size_t				key_start = 0;
 	size_t				key_end = 0;
 	size_t				value_end = 0;
-	int					ret;
+	int					directive;
 
 	while (config_file[i] != '}') {
 		key_start = config_file.find_first_not_of(" \t\n\v\f\r", i);
@@ -277,18 +143,12 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 			break ;
 		}
 		key_end = config_file.find_first_of(" \t\n\v\f\r", key_start);
-		ret = IsDirective(config_file.substr(key_start, key_end - key_start));
-		if (ret == 0) {
-			value_end = FindLocationContextEnd(config_file, key_end);
-			if (!HasContent('{', key_end, value_end, config_file) || !HasContent('}', key_end, value_end, config_file) || !HasContent('\n', key_end, value_end, config_file))
-				throw BadInputException(_server_nb);
-			SetValue(ret, config_file.substr(key_end, value_end - key_end + 1));
+		directive = IsDirective(config_file.substr(key_start, key_end - key_start));
+		if (directive == 0) {
+			FindLocationContext(directive, config_file, &value_end, key_end);
 		}
 		else {
-			value_end = config_file.find_first_of(';', key_end);
-			if (!HasContent(';', key_end, value_end, config_file) || !HasContent('\n', key_end, value_end, config_file))
-				throw BadInputException(_server_nb);
-			SetValue(ret, config_file.substr(key_end, value_end - key_end));
+			FindValue(directive, config_file, &value_end, key_end);
 		}
 		if (value_end != std::string::npos)
 			i = value_end + 1;
@@ -296,35 +156,7 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 	*start_position = i;
 }
 
-// check if is set
-bool						ServerContext::IsSet(std::string directive) {
-	const std::string	directives[] = {"location_context", "listen", "server_name", "root", "index", "client_max_body_size", "error_page", "autoindex", "return"};
 
-	int	is_directive = std::find(directives, directives + 9, directive) - directives;
-	if (is_directive < 0 || is_directive > 8)
-		throw InvalidDirectiveSetCheckException(_server_nb, directive);
-	switch (is_directive) {
-		case 0:
-			return amount_location_context;
-		case 1:
-			return bool_listen;
-		case 2:
-			return bool_server_name;
-		case 3:
-			return bool_root;
-		case 4:
-			return bool_index;
-		case 5:
-			return bool_client_max_body_size;
-		case 6:
-			return bool_error_page;
-		case 7:
-			return bool_autoindex;
-		case 8:
-			return bool_return_dir;
-	}
-	throw InvalidDirectiveException(directive, _server_nb);
-}
 
 //getters
 std::vector<LocationContext>		ServerContext::GetLocationContexts() const {
