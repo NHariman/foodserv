@@ -1,5 +1,5 @@
 #include "response_handler.hpp"
-#include "../config/config_utils.hpp"
+#include "../utils/config_utils.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
 
@@ -19,8 +19,7 @@ bool	ResponseHandler::Ready() {
 void	ResponseHandler::Send() {
 	std::istream*	to_send = _response->GetCompleteResponse();
 
-	// if (DEBUG) 
-	std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+	// if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
 
 	// if an Expect request was processed, a 2nd final response still has to be
 	// served once the message body is received.
