@@ -47,6 +47,7 @@ add_executable(
 		../../src/config/directive_validation/allowed_methods.cpp 
 		../../src/config/directive_validation/autoindex.cpp 
 		../../src/config/directive_validation/cgi_pass.cpp 
+    ../../src/config/directive_validation/cgi_pass_parser.cpp 
 		../../src/config/directive_validation/index.cpp 
 		../../src/config/directive_validation/location_uri.cpp 
 		../../src/config/directive_validation/return_dir.cpp 
