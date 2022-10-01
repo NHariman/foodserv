@@ -4,12 +4,12 @@
 #include <map>
 #include <string>
 #include "request_parser.hpp"
-#include "ahttp_message.hpp"
+#include "http_message.hpp"
 #include "../resolved_target/target_config.hpp"
 
 class NginxConfig;
 
-// Inherits the following protected attributes from AHTTPMessage:
+// Inherits the following protected attributes from HTTPMessage:
 // 		std::string							_http_version;
 // 		int									_status_code;
 // 		std::string							_message_body;
@@ -17,7 +17,7 @@ class NginxConfig;
 // 		size_t								_content_length;
 // Along with their respective getters & setters.
 
-class Request : public AHTTPMessage {
+class Request : public HTTPMessage {
 	public:
 		enum class Status {
 			Bad = -1,
@@ -43,10 +43,11 @@ class Request : public AHTTPMessage {
 
 		// Getters
 		TargetConfig const&	GetTargetConfig() const;
-		std::string const&		GetMethod() const;
-		std::string const&		GetTargetString() const;
+		std::string const&	GetMethod() const;
+		std::string const&	GetTargetString() const;
 		URI const&			GetTargetURI() const;
 		Status				GetRequestStatus() const;
+		std::string			GetQuery();
 
 		// Setters
 		void				SetMethod(std::string const& method);
@@ -62,9 +63,9 @@ class Request : public AHTTPMessage {
 	private:
 		TargetConfig		_target_config;
 		RequestParser		_parser;
-		std::string				_method;
+		std::string			_method;
 		URI					_target;
-		std::string				_buf;
+		std::string			_buf;
 		Status				_request_status;
 
 		bool	CanParse();

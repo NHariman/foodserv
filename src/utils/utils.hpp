@@ -11,6 +11,10 @@
 // file_handling.cpp
 bool	IsValidFile(std::string const& path);
 bool	IsValidDirectory(std::string const& path);
+int 	CreateFile(std::string const& file_path, bool close_after = false);
+std::string		GetLastModified(std::string const& path);
+std::istream*	CreateStreamFromString(std::string const& string_buffer);
+std::istream*	CreateStreamFromPath(std::string const& file_path);
 
 // is_functions.cpp
 bool	IsHexDig(int c);
@@ -31,5 +35,20 @@ std::string	GetType(std::string const& extension);
 // status_codes.cpp
 bool		IsRedirectCode(int status_code);
 std::string GetReasonPhrase(int status_code);
+
+// error classes if stream creation fails
+class CreateStreamFailureException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		CreateStreamFailureException(std::string type) {
+			_err_string = "ERROR! Failed failed to convert " + type + " to stream.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~CreateStreamFailureException() throw() {}
+};
 
 #endif /* UTILS_HPP */

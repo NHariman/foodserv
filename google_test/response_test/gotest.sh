@@ -19,10 +19,10 @@ choose_test () {
 	printf "${RESET}\n\n"
 	case $choice in
 		1)
-			cp -r html build/ && cd build && ctest
+			cp -r assets build/ && cd build && ctest
 			;;
 		2)
-			cp -r html build/ && cd build && ./$bin_name ${DEFAULT_CONF}
+			cp -r assets build/ && cd build && ./$bin_name ${DEFAULT_CONF}
 			;;
 		*) # any other input
 			exit 0
@@ -36,4 +36,5 @@ cmake --build build | tee -a build_out # output cmake build to stdout & also fil
 # grab last line starting with [100%] and greps only the binary name
 bin_name=$(grep -E '^\[100%\]' build_out | tail -n 1 | grep -oE '[^ ]+$')
 rm build_out
+rm -rf build/assets/
 choose_test "$1"

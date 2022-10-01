@@ -1,41 +1,53 @@
 #include "return_dir.hpp"
-#include "../config_utils.hpp"
+#include "../../utils/config_utils.hpp"
 
 ReturnDir::ReturnDir() : _is_set(false) {}
 
-ReturnDir::ReturnDir(std::string input) : _is_set(true) {
+void	ReturnDir::SetReturnCode(std::string key) {
+	_code = ft_atosize_t(key);
+	if (!IsValidReturnCode(_code))
+			throw InvalidReturnCodeException(key);
+}
+
+void	ReturnDir::SetVariables(std::string key, size_t *set) {
+	if (IsNumber(key) == false && *set == 0)
+		throw InvalidReturnCodeException(key);
+	if (*set == 0) {
+		SetReturnCode(key);
+		*set = *set + 1;
+	}
+	else if (*set > 1)
+		throw InvalidAmountOfArgumentsException();
+	else{
+		_url = key;
+		*set = *set + 1;
+	}
+}
+
+void	ReturnDir::FillReturn(std::string input) {
 	size_t	i = 0;
 	size_t	start = 0;
 	size_t	end = 0;
 	std::string key;
 	size_t	set = 0;
 
-	if (input.compare("") == 0)
-		throw MissingArgumentsException();
 	while (input[i]){
 		start = input.find_first_not_of(" \t\n\v\f\r", i);
 		if (start == std::string::npos)
 			break ;
 		end = input.find_first_of(" \t\n\v\f\r", start);
 		key = input.substr(start, end - start);
-		if (IsNumber(key) == false && set == 0)
-			throw InvalidReturnCodeException(key);
-		if (set == 0) {
-			_code = ft_atosize_t(key);
-			if (!IsValidReturnCode(_code))
-				throw InvalidReturnCodeException(key);
-			set++;
-		}
-		else if (set > 1)
-			throw InvalidAmountOfArgumentsException();
-		else{
-			_url = key;
-			set++;
-		}
+		SetVariables(key, &set);
 		if (end == std::string::npos)
 			break ;
 		i = end;
 	}
+}
+
+ReturnDir::ReturnDir(std::string input) : _is_set(true) {
+	if (input.compare("") == 0)
+		throw MissingArgumentsException();
+	FillReturn(input);
 }
 
 ReturnDir::ReturnDir(ReturnDir const &obj) :

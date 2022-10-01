@@ -3,7 +3,7 @@
 
 // Default constructor // TODO: Review use/removal
 Request::Request()
-	:	AHTTPMessage(),
+	:	HTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
 		max_body_size(1048576),
@@ -11,7 +11,7 @@ Request::Request()
 
 // Config file constructor
 Request::Request(NginxConfig* config)
-	:	AHTTPMessage(),
+	:	HTTPMessage(),
 		bytes_read(0),
 		msg_bytes_read(0),
 		max_body_size(1048576),
@@ -59,6 +59,17 @@ URI const&	Request::GetTargetURI() const{
 
 Request::Status	Request::GetRequestStatus() const {
 	return _request_status;
+}
+
+std::string	Request::GetQuery() {
+	if (_method == "GET")
+		return _target.GetQuery();
+	else if (_method == "POST") {
+		_message_body = DecodePercent(_message_body);
+		return _message_body;
+	}
+	else
+		return "";
 }
 
 void	Request::SetMethod(std::string const& method) {

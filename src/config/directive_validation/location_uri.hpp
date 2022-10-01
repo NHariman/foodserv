@@ -12,7 +12,7 @@
 
 #include <string>
 #include <iostream>
-#include "../config_utils.hpp"
+#include "../../utils/config_utils.hpp"
 #include "../../request/uri.hpp"
 
 class LocationUri {

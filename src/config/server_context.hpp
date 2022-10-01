@@ -13,11 +13,12 @@
 #ifndef SERVER_CONTEXT_HPP
 # define SERVER_CONTEXT_HPP
 #include <iostream>
+#include <algorithm>
 #include <map>
 #include "location_context.hpp"
 #include "server_name.hpp"
 #include "directive_validation/directive_validation.hpp"
-#include "config_utils.hpp"
+#include "../utils/config_utils.hpp"
 #include "config_interface.hpp"
 #include "listen.hpp"
 #include <vector>
@@ -36,15 +37,24 @@ class ServerContext : public ConfigValues {
 		std::pair<std::string, std::string>	_listen;
 		std::vector<std::string>			_server_name;
 
+		void					InitChecklist() override;
 		size_t					FindLocationContextEnd(std::string config_file, size_t start);
 		//overridden base class functions
 		void					GetDirectiveValuePairs(size_t *start_position, std::string config_file) override; // in this case i do not use override as i want to use it differently.
-		void					CheckListVerification() override;
-		void					SetValue(int directive, std::string value) override;
-		int						IsDirective(std::string directive) override;
-		void					InitChecklist() override;
 		
+		// verification: in server_context_verification
+		void					CheckListVerification() override;
 		bool					HasDefaultLocation(std::vector<LocationContext> locations);
+		int						IsDirective(std::string directive) override;
+		int         			GetDirective(std::string directive);
+		// setters
+		void					FindLocationContext(int directive, std::string config_file, size_t *value_end, size_t key_end);
+		void					FindValue(int directive, std::string config_file, size_t *value_end, size_t key_end);
+		void					SetValue(int directive, std::string value) override;
+		void					SetLocation(std::string trimmed_value);
+		void					SetListen(std::string trimmed_value);
+		void					SetServerName(std::string trimmed_value);
+		void					CopyValues(const ServerContext& obj);
 
 	public:
 		ServerContext();

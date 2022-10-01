@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "../../src/config/nginx_config.hpp"
+#include "../../src/config/config_interface.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
 #include "../../src/request/request.hpp"
 #include "../../src/cgi/cgi.hpp"
@@ -125,87 +126,101 @@ TEST(AutoIndexTest, invalidInput) {
 
 TEST(ErrorPageTest, ValidInput) {
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_NO_THROW({
-		AddToErrorPageMap(&map, "500 502 503 504 /50x.html");
+		server.AddToErrorPageMap(&map, "500 502 503 504 /50x.html");
 	});}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_NO_THROW({
-		AddToErrorPageMap(&map, "404             /404.html");
+		server.AddToErrorPageMap(&map, "404             /404.html");
 	});}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_NO_THROW({
-		AddToErrorPageMap(&map, "404 /404.html");
+		server.AddToErrorPageMap(&map, "404 /404.html");
 	});}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_NO_THROW({
-		AddToErrorPageMap(&map, "500 502 503 504 404 403 402 405 /50x.html");
+		server.AddToErrorPageMap(&map, "500 502 503 504 404 403 402 405 /50x.html");
 	});}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_NO_THROW({
-		AddToErrorPageMap(&map, "500 502 503 504 /50x.html");
-		AddToErrorPageMap(&map, "404 /404.html");
+		server.AddToErrorPageMap(&map, "500 502 503 504 /50x.html");
+		server.AddToErrorPageMap(&map, "404 /404.html");
 	});}
 }
 
 TEST(ErrorPageTest, InvalidInput) {
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-		AddToErrorPageMap(&map, "500 502 503 404 /50x.html");
-		AddToErrorPageMap(&map, "404 /404.html");	
+		server.AddToErrorPageMap(&map, "500 502 503 404 /50x.html");
+		server.AddToErrorPageMap(&map, "404 /404.html");	
 		}, ErrorPage::DuplicateErrorCodeException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "404 /404.html 404");
+			server.AddToErrorPageMap(&map, "404 /404.html 404");
 			}, ErrorPage::BadErrorURIException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "404 /404.html 404");
+			server.AddToErrorPageMap(&map, "404 /404.html 404");
 			}, ErrorPage::BadErrorURIException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "404 404.html /stuff.html");
+			server.AddToErrorPageMap(&map, "404 404.html /stuff.html");
 			}, ErrorPage::InvalidCodeInputException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "404 abc /404.html");
+			server.AddToErrorPageMap(&map, "404 abc /404.html");
 			}, ErrorPage::InvalidCodeInputException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "404d 404 /404.html");
+			server.AddToErrorPageMap(&map, "404d 404 /404.html");
 			}, ErrorPage::InvalidCodeInputException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "404 404.html");
+			server.AddToErrorPageMap(&map, "404 404.html");
 			}, ErrorPage::BadErrorURIException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "404 /404.html /404.html");
+			server.AddToErrorPageMap(&map, "404 /404.html /404.html");
 			}, ErrorPage::InvalidCodeInputException);
 	}
 	{
+		ServerContext server;
 		std::map<int, std::string> map;
 		EXPECT_THROW({
-			AddToErrorPageMap(&map, "");
+			server.AddToErrorPageMap(&map, "");
 		}, ErrorPage::MissingArgumentsException);
 	}
 	
@@ -349,7 +364,7 @@ TEST(cgipassTest, InvalidInput) {
 
 TEST(cgipassTest, ValidInput){
 	EXPECT_NO_THROW({
-		CGIPass test(".py link_here");
+		CGIPass test(".py executable/link");
 	});
 	EXPECT_NO_THROW({
 		CGIPass test("./py");

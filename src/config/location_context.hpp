@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include "config_utils.hpp"
+#include "../utils/config_utils.hpp"
 #include "config_interface.hpp"
 #include "directive_validation/directive_validation.hpp"
 
@@ -28,6 +28,17 @@ class LocationContext : virtual public ConfigValues {
 		void						CheckListVerification() override;
 		virtual void				InitChecklist() override;
 
+
+		// setters
+		size_t                        FindURI(int directive, std::string data, size_t key_start, size_t key_end);
+		size_t                        FindValue(int directive, std::string data, size_t key_end);
+		void						SetAllowedMethods(std::string value);
+		void						SetAlias(std::string value);
+		void						SetCGI(std::string value);
+		void                        SetURI(std::string value);
+
+		void                		CopyValues(LocationContext const& location_context);
+
 	public:
 		LocationContext();
 		LocationContext(std::string data);
@@ -42,6 +53,8 @@ class LocationContext : virtual public ConfigValues {
 		CGIPass						GetCGIPass() const;
 		AllowedMethods				GetAllowedMethods() const;
 		std::string					GetAlias() const;
+		int							GetDirective(std::string directive);
+
 
 		
 		class MultipleCGIPassException : public std::exception

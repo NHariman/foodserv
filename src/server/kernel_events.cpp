@@ -145,7 +145,7 @@ void	KernelEvents::PrintConnectionMap() const {
 // this needs to be changed for dispatch
 void KernelEvents::serveHTML(int s) {
     // const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html";
-	const char *file_path = "/Users/salbregh/Desktop/foodserv/HTML/index.html";
+	const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html";
 
     char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
                     "Connection: close\r\n"
@@ -204,9 +204,15 @@ void	KernelEvents::write_msg(int s) {
 		std::cout << "client: " << it->first << std::endl;
 		// it->second->Dispatch();
 		serveHTML(s);
+
 		RemoveFromConnectionMap(s);
 		// close(s);
 		// delete it->second;
 		// _connection_map.erase(it);
+
+		// struct kevent	kev_monitor;
+		// EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+		// if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
+		// 	throw KeventErrorException();
 	}
 }

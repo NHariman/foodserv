@@ -6,7 +6,7 @@
 
 #include <string>
 #include <iostream>
-#include "../config_utils.hpp"
+#include "../../utils/config_utils.hpp"
 
 class ReturnDir {
     private:
@@ -14,6 +14,9 @@ class ReturnDir {
         int _code;
         std::string _url;
 		bool IsValidReturnCode(size_t code);
+		void FillReturn(std::string input);
+		void	SetReturnCode(std::string key);
+		void	SetVariables(std::string key, size_t *set);
     public:
         ReturnDir();
         ReturnDir(std::string input);

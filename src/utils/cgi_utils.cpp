@@ -20,6 +20,8 @@ bool	IsAbsolutePath(std::string path) {
 	return false;
 }
 
+
+
 std::string MakeAbsolutePath(std::string executable, std::string path) {
 	std::string new_path;
 	if (executable[0] == '.' && executable[1] == '/') {

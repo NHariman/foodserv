@@ -1,5 +1,5 @@
 #include "header_field_parser.hpp"
-#include "request.hpp"
+#include "http_message.hpp"
 #define DEBUG 0 // TODO: REMOVE
 /*
 	Transition table for header field parsing
@@ -16,15 +16,15 @@
 
 // Default constructor
 HeaderFieldParser::HeaderFieldParser()
-	: AStateParser(f_Start, f_Done), _request(NULL), _bytes_read(0) {}
+	: AStateParser(f_Start, f_Done), _message(NULL), _bytes_read(0) {}
 
 // Destructor
 HeaderFieldParser::~HeaderFieldParser() {}
 
 // Initializes pointer to Header Fields map and 
 // calls on parent class AStateParser::ParseString().
-size_t	HeaderFieldParser::Parse(Request& request, std::string const& input) {
-	_request = &request;
+size_t	HeaderFieldParser::Parse(HTTPMessage& message, std::string const& input) {
+	_message = &message;
 	return ParseString(input);
 }
 
@@ -157,7 +157,7 @@ void	HeaderFieldParser::PushFieldValue() {
 
 	while (start != end && IsWhitespace(*end))
 		end--;
-	_request->SetHeaderField(_cur_field, std::string(start, end + 1));
+	_message->SetHeaderField(_cur_field, std::string(start, end + 1));
 	buffer.clear();
 }
 #undef DEBUG // REMOVE

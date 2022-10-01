@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "../config_utils.hpp"
+#include "../../utils/config_utils.hpp"
 
 class Index {
     private:
