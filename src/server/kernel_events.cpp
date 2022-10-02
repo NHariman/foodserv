@@ -152,8 +152,12 @@ void KernelEvents::serveHTML(int s) {
                     "Content-type: text/html\r\n"
                     "\r\n";
 
+
+
     std::string		text;
     std::ifstream	read_file(file_path);
+
+	// if (DEBUG) std::cout << "ResponseHandler:Send:\n" << read_file.rdbuf() << std::endl;
 
     std::vector<char>	buf_vector;
 
@@ -190,11 +194,17 @@ void KernelEvents::recv_msg(int s) {
 		it2->second->Receive(buf);
 	}
 
+
 	// register a write event for this event
 	struct kevent	kev_monitor;
 	EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 		throw KeventErrorException();
+
+	// // remove the read event from this event?
+	// EV_SET(&kev_monitor, s, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+	// if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
+	// 	throw KeventErrorException();
 }
 
 
@@ -210,8 +220,9 @@ void	KernelEvents::write_msg(int s) {
 		// delete it->second;
 		// _connection_map.erase(it);
 
+
 		// struct kevent	kev_monitor;
-		// EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+		// EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_EOF, 0, 0, NULL);
 		// if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 		// 	throw KeventErrorException();
 	}
