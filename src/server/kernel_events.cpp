@@ -1,12 +1,15 @@
 #include "kernel_events.hpp"
 
-# define DEBUG 1
+# define DEBUG 0
 # define MAX_EVENTS 20
+
+#include "../request/request.hpp"
+#include "../resolved_target/target_config.hpp"
 
 KernelEvents::KernelEvents(NginxConfig *config_file, std::vector<int> listening_sockets)
 	: _config_file(config_file), _listening_sockets(listening_sockets) {
 	KqueueInit();
-	KeventInit();
+	KeventInitListeningSockets();
 }
 
 void	KernelEvents::KqueueInit() {
@@ -15,8 +18,7 @@ void	KernelEvents::KqueueInit() {
 		throw KqueueCreationException();
 }
 
-/* setting up the structs for all listening sockets */
-void	KernelEvents::KeventInit() {
+void	KernelEvents::KeventInitListeningSockets() {
 	struct kevent	kev_monitor;
 
 	for (size_t i = 0; i < _listening_sockets.size(); i++) {
@@ -40,41 +42,24 @@ void	KernelEvents::KernelEventLoop() {
 		// _connection_map has all the client connections
 		// _listening_socket has all the socket fildes for the ports
 		for (int i = 0; i < new_events; i++) {
-			// within the new events there are multiple options
-			// 1. the incoming event is a new connection on one of the listening sockets
-			// 2. end of file, client can disconnect
-			// 3. error with the triggered event
-			// 4. an existing client is ready to read
-			// 5. an existing client is ready to write
 			if (DEBUG) std::cout << "socket fd triggered: " << kev_trigger.ident << std::endl;
-
-			// error occured when processing an event, reason of error is set in kev_trigger.data
-			if (kev_trigger.flags & EV_ERROR) {
-				if (DEBUG) std::cout << "ERROR IN KEVENT:" << kev_trigger.data << std::endl;
-			}
-			// 1.
+			if (kev_trigger.flags & EV_ERROR)
+				throw KeventErrorException();
 			else if (kev_trigger.flags & EV_EOF) {
-				// disconnect client
 				if (DEBUG) std::cout << "In EV_EOF with: " << kev_trigger.ident << std::endl;
 				RemoveFromConnectionMap(kev_trigger.ident);
 			}
 			else if (InListeningSockets(kev_trigger.ident)) {
 				if (DEBUG) std::cout << "Socket fd is in the list of listening sockets.\nWe can accept this client." << std::endl;
-				// accept the incoming connection
 				int client_fd = AcceptNewConnection(kev_trigger.ident);
 				AddToConnectionMap(client_fd);
 			}
-			else if (kev_trigger.filter == EVFILT_READ) {
-				if (DEBUG) std::cout << "its ready to read" << std::endl;
-				std::cout << "Set in data of read: " << kev_trigger.data << std::endl; 
+			else if (kev_trigger.filter == EVFILT_READ)
 				recv_msg(kev_trigger.ident);
-				// recv_msg(kev_trigger.ident);
-			}
-			else if (kev_trigger.filter == EVFILT_WRITE) {
-				if (DEBUG) std::cout << "its ready to write" << std::endl;
+			else if (kev_trigger.filter == EVFILT_WRITE)
 				write_msg(kev_trigger.ident);
-			}
-			PrintConnectionMap();
+
+			if (DEBUG) PrintConnectionMap();
 		}
 	}
 }
@@ -85,11 +70,11 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	// we can delete the complete connection, make a new one with the same fd
 	// but then the new request (connection class)
 
-	std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
-	if (it != _connection_map.end()) {
-		delete it->second;
-		_connection_map.erase(it);
-	}
+	// std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
+	// if (it != _connection_map.end()) {
+	// 	delete it->second;
+	// 	_connection_map.erase(it);
+	// }
 		// delete the connection
 	// and delete new Connection blabla
 
@@ -105,7 +90,6 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	EV_SET(&kev_monitor, client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL); // add EV_ENABLE or no
 	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 		throw KeventErrorException();
-	// serveHTML(client_fd);
 }
 
 int		KernelEvents::AcceptNewConnection(int fd) {
@@ -143,21 +127,20 @@ void	KernelEvents::PrintConnectionMap() const {
 }
 
 // this needs to be changed for dispatch
-void KernelEvents::serveHTML(int s) {
-    // const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html";
-	const char *file_path = "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html";
-
+void KernelEvents::serveHTML(int s, std::string file_path) {
     char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
                     "Connection: close\r\n"
                     "Content-type: text/html\r\n"
                     "\r\n";
 
+	file_path = file_path.substr(9);
 
+	TargetConfig	*target = new TargetConfig();
+	target->Setup(_config_file, "localhost", "80", file_path);
+	std::string final_path = target->GetResolvedPath();
 
     std::string		text;
-    std::ifstream	read_file(file_path);
-
-	// if (DEBUG) std::cout << "ResponseHandler:Send:\n" << read_file.rdbuf() << std::endl;
+    std::ifstream	read_file(final_path.c_str());
 
     std::vector<char>	buf_vector;
 
@@ -179,6 +162,7 @@ void KernelEvents::serveHTML(int s) {
     read_file.close();
 }
 
+// this needs to be changed for receive
 void KernelEvents::recv_msg(int s) {
 	char buf[1000];
 	int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
@@ -190,40 +174,23 @@ void KernelEvents::recv_msg(int s) {
 	}
 	std::map<int, Connection*>::const_iterator it2 = _connection_map.find(s);
 	if (it2 != _connection_map.end()) {
-		std::cout << "client: " << it2->first << std::endl;
 		it2->second->Receive(buf);
 	}
 
 
 	// register a write event for this event
 	struct kevent	kev_monitor;
-	EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+	EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, NULL);
 	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 		throw KeventErrorException();
-
-	// // remove the read event from this event?
-	// EV_SET(&kev_monitor, s, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-	// if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
-	// 	throw KeventErrorException();
 }
-
 
 void	KernelEvents::write_msg(int s) {
 	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
 	if (it != _connection_map.end()) {
-		std::cout << "client: " << it->first << std::endl;
 		// it->second->Dispatch();
-		serveHTML(s);
-
+		serveHTML(s, it->second->GetRequestPath());
 		RemoveFromConnectionMap(s);
-		// close(s);
-		// delete it->second;
-		// _connection_map.erase(it);
-
-
-		// struct kevent	kev_monitor;
-		// EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_EOF, 0, 0, NULL);
-		// if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
-		// 	throw KeventErrorException();
 	}
 }
+

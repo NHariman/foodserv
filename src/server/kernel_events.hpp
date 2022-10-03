@@ -1,7 +1,7 @@
 #ifndef KERNEL_EVENTS_HPP
 # define KERNEL_EVENTS_HPP
 
-#include "../connection/connection.hpp"
+#include "../connection/connection_test.hpp"
 #include "../config/nginx_config.hpp"
 
 #include <vector>
@@ -21,14 +21,14 @@ class KernelEvents {
 		std::map<int, Connection*>	_connection_map;
 	
 		void	KqueueInit();
-		void	KeventInit();
+		void	KeventInitListeningSockets();
 		bool	InListeningSockets(int fd) const;
 		int		AcceptNewConnection(int fd);
 		void	AddToConnectionMap(int fd);
 		void	RemoveFromConnectionMap(int fd);
 		void	PrintConnectionMap() const;
 		// remove afterwards
-		void 	serveHTML(int s);
+		void 	serveHTML(int s, std::string path);
 		void	recv_msg(int s);
 		void	write_msg(int s);
 	
