@@ -12,6 +12,8 @@
 #include "src/request/request.hpp"
 #include "src/cgi/cgi.hpp"
 
+/* this is a quick test main for cgi, put in main directory before use */
+
 int	main(int ac, const char **av) {
 	try {
 		(void)ac;
