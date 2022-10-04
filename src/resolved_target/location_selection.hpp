@@ -5,13 +5,6 @@
 #include "../config/server_context.hpp"
 #include "../config/directive_validation/location_uri.hpp"
 
-/*
-    // ServerSelection selected_servercontext(host, port, config);
-   	// LocationSeleccion location(selected_servercontext, std::string request_uri)
-	return -> een string met pull uri path
-
-*/
-
 class LocationSelection {
 	private:
 		const std::string				_request_uri;
@@ -31,9 +24,6 @@ class LocationSelection {
 		void			GetLongestMatch();
 		
 		void	PrintLocationContext(std::vector<LocationContext> location_context) const;
-
-
-
 };
 
 #endif
