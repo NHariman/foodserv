@@ -93,7 +93,7 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	// first we need to prep a kevent struct to note what events we
 	// are interested in, then we need to add this event to the kqueue.
 	struct kevent	kev_monitor;
-	EV_SET(&kev_monitor, client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL); // add EV_ENABLE or no
+	EV_SET(&kev_monitor, client_fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL); // add EV_ENABLE or no
 	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 		throw KeventErrorException();
 }
@@ -145,6 +145,8 @@ void KernelEvents::serveHTML(int s, std::string file_path) {
 	target->Setup(_config_file, "localhost", "80", file_path);
 	std::string final_path = target->GetResolvedPath();
 
+	std::cout << "file : " << final_path << std::endl;
+
     std::string		text;
     std::ifstream	read_file(final_path.c_str());
 
@@ -174,9 +176,9 @@ void KernelEvents::recv_msg(int s) {
 	int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
 	if (bytes_read > 0) {
 		buf[bytes_read] = 0;
-		std::cout << "*************CLIENT REQUEST*************" << std::endl;
+		std::cout << std::endl << "*************CLIENT REQUEST*************" << std::endl;
 		std::cout << buf << std::endl;
-		std::cout << "*************CLIENT REQUEST*************" << std::endl;
+		std::cout << "*************CLIENT REQUEST*************" << std::endl << std::endl;
 	}
 	std::map<int, Connection*>::const_iterator it2 = _connection_map.find(s);
 	if (it2 != _connection_map.end()) {
