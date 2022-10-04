@@ -43,6 +43,10 @@ class ResponseHandler {
 		bool				IsRedirected();
 		void				HandleRedirection();
 
+		// CGI
+		bool				IsHandledByCGI();
+		void				HandleCGI();
+
 		// File handling
 		void				HandleMethod();
 		FileHandler::Method	DetermineMethod();

@@ -1,4 +1,5 @@
 #include "response_handler.hpp"
+#include "../cgi/cgi_handler.hpp"
 #include "../utils/config_utils.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
@@ -19,7 +20,7 @@ bool	ResponseHandler::Ready() {
 void	ResponseHandler::Send() {
 	std::istream*	to_send = _response->GetCompleteResponse();
 
-	// if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
 
 	// if an Expect request was processed, a 2nd final response still has to be
 	// served once the message body is received.
@@ -63,7 +64,10 @@ void	ResponseHandler::HandleRegular(Request& request) {
 	try {
 		AssignResponseResolvedPath();
 		// check cgi
-		HandleMethod();
+		if (IsHandledByCGI())
+			HandleCGI();
+		else
+			HandleMethod();
 		FormResponse();
 	}
 	catch (http::exception &e) {
@@ -146,6 +150,15 @@ bool	ResponseHandler::IsRedirected() {
 void	ResponseHandler::HandleRedirection() {
 	_response->SetResolvedPath(_request->GetTargetConfig().GetResolvedPath());
 	FormResponse();
+}
+
+bool	ResponseHandler::IsHandledByCGI() {
+	return _request->GetTargetConfig().GetCGIPass().IsSet();
+}
+
+void	ResponseHandler::HandleCGI() {
+	CGIHandler	cgi_handler;
+	std::istream* body_stream = cgi_handler.Execute(_request, &(*_response));
 }
 
 // Assumes _response->_resolved_path has been set already.

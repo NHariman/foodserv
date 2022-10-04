@@ -88,8 +88,8 @@ class CGI {
 		// in cgi_argv_env.cpp
 		void    SetHeaders();
 		void	SetArgv();
-		void 	to_argv(char **argv);
-		void 	to_env(char **env);
+		void 	ToArgv(char **argv);
+		void 	ToEnv(char **env);
 
 		// in cgi_pathfinder.cpp
 		std::string SetExecutablePath();
@@ -116,10 +116,10 @@ class CGI {
 		CGI();
 		~CGI(){};
 		// in cgi.cpp
-		bool    	setup(Request *request); // also probably needs the request class to set ENVs with.
-		size_t    	execute();
-		std::string	getFileName() const;
-		std::string getContent() const;
+		bool    	Setup(Request *request); // also probably needs the request class to set ENVs with.
+		size_t    	Execute();
+		std::string	GetFileName() const;
+		std::string GetContent() const;
 		size_t		GetStatusCode() const;
 
 };
