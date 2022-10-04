@@ -10,7 +10,6 @@
    servercontext to serve the request with.
 */
 
-
 #ifndef SERVER_SELECTION_HPP
 # define SERVER_SELECTION_HPP
 

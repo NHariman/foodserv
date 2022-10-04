@@ -3,15 +3,12 @@
 ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _target_config(target_config), _request_uri(target) {
 	_locationblock_uri = _target_config->GetLocationUri().GetUri();
 	_target_config->SetGenerateIndexBool(false);
-
     if (CheckReturn())
 		return ;
-
 	if (_target_config->GetAlias().empty() == false)
 		ReplaceAlias();
 	else if (_target_config->GetRoot().empty() == false)
 		AppendRoot();
-
 	if (LocationIsDirectory()) {
 		if (_target_config->GetCGIPass().IsSet() == true) {}
 		else if (!_target_config->GetAutoindex())
@@ -19,7 +16,6 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 		else
 			_path = SearchIndexFiles();
 	}
-
 	CleanUpPath();
 }
 

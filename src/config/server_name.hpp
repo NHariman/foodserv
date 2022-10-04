@@ -6,7 +6,7 @@
 /*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 16:13:59 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/09/05 17:19:20 by salbregh      ########   odam.nl         */
+/*   Updated: 2022/10/04 19:13:54 by salbregh      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ class ServerName {
 		ServerName(std::string server_name);
 		void 						SplitServerNames(std::string str);
 		std::vector<std::string>	GetServerNames();
-		void						PrintServerNamesVector();
 };
 
 #endif

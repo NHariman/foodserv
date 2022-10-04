@@ -10,7 +10,6 @@
    servercontext to serve the request with.
 */
 
-
 #include "server_selection.hpp"
 
 ServerSelection::ServerSelection(std::string host, std::string port, std::vector<ServerContext> serverblocks)
@@ -22,7 +21,6 @@ ServerSelection::ServerSelection(std::string host, std::string port, std::vector
 			SelectCompatibleServerNames(_host, _compatible_serverblocks);
 	}
 }
-
 
 bool	ServerSelection::SelectCompatiblePorts(std::string request_port_number) {
 	for (std::vector<ServerContext>::iterator it = _serverblocks.begin(); it != _serverblocks.end(); it++) {
