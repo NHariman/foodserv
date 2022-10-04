@@ -19,6 +19,7 @@ class ResponseHandler {
 		bool	Ready();
 		void	Send();
 		bool	IsDone() const;
+		bool	ErrorOccurred() const;
 		void	HandleError(Request& request);
 		void	HandleExpect(Request& request);
 		void	HandleRegular(Request& request);
@@ -31,6 +32,7 @@ class ResponseHandler {
 		ResponsePtr		_response;
 		FileHandler		_file_handler;
 		bool			_is_done;
+		bool			_error;
 
 		void				AssignResponseResolvedPath(std::string const& path = std::string());
 

@@ -32,10 +32,14 @@ void	Connection::Dispatch() {
 	if (_response_handler.Ready())
 		_response_handler.Send();
 
-	if (_response_handler.IsDone())
+	if (_response_handler.IsDone() || _response_handler.ErrorOccurred())
 		_close_connection = true;
 }
 
 Response const& Connection::DebugGetResponse() {
 	return	_response_handler.GetResponse();
+}
+
+bool	Connection::CanCloseConnection() const {
+	return _close_connection;
 }

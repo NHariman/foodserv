@@ -6,7 +6,7 @@
 #define MAX_CHUNKEXT_SIZE 8192 // used by ChunkedParser
 #define MAX_HEADER_SIZE	8192 // used by HeaderFieldParser
 #define MAX_URI_SIZE 8192 // used by RequestTargetParser
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 8192
 
 // file_handling.cpp
 bool	IsValidFile(std::string const& path);
