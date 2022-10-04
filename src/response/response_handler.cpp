@@ -225,3 +225,7 @@ void	ResponseHandler::FormResponse() {
 }
 
 #undef DEBUG // REMOVE
+
+bool	ResponseHandler::ErrorOccurred() const {
+	return _error;
+}

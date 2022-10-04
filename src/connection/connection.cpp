@@ -32,7 +32,7 @@ void	Connection::Dispatch() {
 	if (_response_handler.Ready())
 		_response_handler.Send(_fd); // can throw, should be caught in main
 
-	if (_response_handler.IsDone())
+	if (_response_handler.IsDone() || _response_handler.ErrorOccurred())
 		_close_connection = true;
 }
 
