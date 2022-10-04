@@ -23,7 +23,7 @@ CGI::CGI() : _pwd(), _valid_file(false), _status_code(0) {};
 
 // the most important function, returns true if setup was a success and false if it was a failure
 // set argv handles the file sorting and such
-bool		CGI::setup(Request *request) {
+bool		CGI::Setup(Request *request) {
 	_request = request;
 	_path = _pwd.GetCwd() + _TARGET.GetResolvedPath();
 	if (DEBUG) std::cout << "path: " << _path << std::endl;
@@ -46,7 +46,7 @@ void	CGI::SetExecStatusCode(int exit_code) {
 		_status_code = 200;
 }
 
-size_t		CGI::execute() {
+size_t		CGI::Execute() {
 	int fd_write[2];
 	int fd_read[2];
 	int pid;
@@ -75,10 +75,10 @@ size_t		CGI::GetStatusCode() const {
 	return _status_code;
 }
 
-std::string	CGI::getFileName() const {
+std::string	CGI::GetFileName() const {
 	return _file_name;
 }
-std::string CGI::getContent() const {
+std::string CGI::GetContent() const {
 	return _content;
 }
 

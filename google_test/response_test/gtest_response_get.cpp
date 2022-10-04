@@ -9,7 +9,7 @@ using namespace std;
 std::string	GetHTMLPageSize(string const& html_file_path);
 std::string	GetHTMLStringSize(char const* html_string);
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
+static NginxConfig config("../default.conf");
 
 TEST(ResponseGetTest, GetExistingFile) {
 	Connection connection(42, &config);

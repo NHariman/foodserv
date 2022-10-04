@@ -31,18 +31,18 @@ int	main(int ac, const char **av) {
 		std::cout << "Get CGI path: " << request.GetTargetConfig().GetCGIPass() << std::endl;
 
 		CGI cgi;
-		cgi.setup(&request);
+		cgi.Setup(&request);
 		std::cout << "setup status code value: " << cgi.GetStatusCode() << std::endl;
-		cgi.execute();
+		cgi.Execute();
 		std::cout << "execute status code value: " << cgi.GetStatusCode() << std::endl;
 		std::cout << "get content? " << std::endl;
-		std::cout << cgi.getContent() << std::endl;
+		std::cout << cgi.GetContent() << std::endl;
 		// std::cout << "cgi setup status: " << std::boolalpha << cgi.setup(&request) << std::endl;
 		// std::cout << "CGI execute status: " << std::endl;
 		// size_t status = cgi.execute();
 		// std::cout << "status: " << status << std::endl;
 		// std::cout << "Contents? " << std::endl;
-		// std::cout << cgi.getContent() << std::endl;
+		// std::cout << cgi.GetContent() << std::endl;
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << '\n';

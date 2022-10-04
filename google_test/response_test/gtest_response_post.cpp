@@ -13,7 +13,7 @@ std::string	GetHTMLStringSize(char const* html_string);
 // defined in gtest_response_expect.cpp
 string GetFileContent(string const& file_path);
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
+static NginxConfig config("../default.conf");
 static string FILE_TO_SEND = "assets/public/hello.txt";
 
 std::streampos	GetFileContentCount(string const& file_path) {

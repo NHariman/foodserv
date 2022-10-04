@@ -14,8 +14,8 @@ void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 	char* env[15];
 	memset(argv, 0, 3);
 	memset(env, 0, 15);
-	to_argv(argv);
-	to_env(env);
+	ToArgv(argv);
+	ToEnv(env);
 	
 	if (_request->GetMethod().compare("POST") == 0) { // for POST
 		dup2(fd_write[0], STDIN_FILENO);
