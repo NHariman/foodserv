@@ -6,7 +6,7 @@
 
 // Default constructor
 ResponseHandler::ResponseHandler()
-		:	_request(NULL), _is_done(false) {
+		:	_request(NULL), _is_done(false), _error(false) {
 	_response = ResponsePtr(new Response);
 }
 
@@ -21,6 +21,10 @@ void	ResponseHandler::Send() {
 	std::istream*	to_send = _response->GetCompleteResponse();
 
 	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+	
+	// send min of buffer_size or stream size
+	// check bytes returned from send
+	// if less than tried to send, erase up to bytes_sent
 
 	// if an Expect request was processed, a 2nd final response still has to be
 	// served once the message body is received.
@@ -287,3 +291,7 @@ std::string	ResponseHandler::GetAllowedMethodsString() {
 }
 
 #undef DEBUG // REMOVE
+
+bool	ResponseHandler::ErrorOccurred() const {
+	return _error;
+}
