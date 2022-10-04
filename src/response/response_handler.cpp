@@ -3,9 +3,9 @@
 
 #define DEBUG 0 // TODO: REMOVE
 
-// Config file constructor
-ResponseHandler::ResponseHandler(NginxConfig* config)
-		:	_config(config), _request(NULL), _is_done(false) {
+// Default constructor
+ResponseHandler::ResponseHandler()
+		:	_request(NULL), _is_done(false) {
 	_response = ResponsePtr(new Response);
 }
 

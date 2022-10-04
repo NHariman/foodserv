@@ -7,14 +7,12 @@
 #include "../err/error_responses.hpp"
 #include "../request/request.hpp"
 
-class NginxConfig;
-
 class ResponseHandler {
 	public:
 		typedef std::unique_ptr<Response>	ResponsePtr;
 
-		// Config file constructor
-		explicit ResponseHandler(NginxConfig* config);
+		// Default constructor
+		ResponseHandler();
 		// Destructor
 		~ResponseHandler();
 
@@ -28,7 +26,7 @@ class ResponseHandler {
 		Response const& GetResponse();
 
 	private:
-		NginxConfig*	_config;
+		// NginxConfig*	_config;
 		Request*		_request;
 		ResponsePtr		_response;
 		FileHandler		_file_handler;
