@@ -2,7 +2,7 @@ COMPILE = c++
 
 FLAGS = -Wall -Werror -Wextra -std=c++11
 
-MAIN = nginx_main.cpp
+MAIN = cgi_main.cpp
 
 #directories
 OBJDIR = obj
@@ -72,7 +72,7 @@ CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, 	cgi.cpp \
 											cgi_handler.cpp )
 
 RESPONSE = $(addprefix $(SRC_DIR)/$(RESP_DIR)/, file_handler.cpp \
-												response_handler_tmp.cpp \
+												response_handler.cpp \
 												response.cpp)
 
 ERROR = $(addprefix $(SRC_DIR)/$(ERR_DIR)/,	error_responses.cpp)
