@@ -2,7 +2,7 @@ COMPILE = c++
 
 FLAGS = -Wall -Werror -Wextra -std=c++11
 
-MAIN = cgi_main.cpp
+MAIN = docs/cgi_info/cgihandler_main.cpp
 
 #directories
 OBJDIR = obj
@@ -72,7 +72,7 @@ CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, 	cgi.cpp \
 											cgi_handler.cpp )
 
 RESPONSE = $(addprefix $(SRC_DIR)/$(RESP_DIR)/, file_handler.cpp \
-												response_handler.cpp \
+												response_handler_tmp.cpp \
 												response.cpp)
 
 ERROR = $(addprefix $(SRC_DIR)/$(ERR_DIR)/,	error_responses.cpp)
@@ -103,9 +103,9 @@ clean:
 
 fclean: clean
 	@$(RM) $(NAME) 
-	@$(RM) -rf google_test/nginx/build
-	@$(RM) -rf src/cgi/cgi_test/build
-	cp Makefile src/config/additional_info/tmp_makefile
+	@$(RM) -rf google_test/*/build
+	cp Makefile docs/config_info/tmp_makefile
+
 
 re: fclean all
 

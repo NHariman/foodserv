@@ -4,14 +4,14 @@
 #include <stdexcept>
 #include <vector>
 #include <cstring>
-#include "src/config/nginx_config.hpp"
-#include "src/basic_server/server.hpp"
-#include "src/resolved_target/server_selection.hpp"
-#include "src/config/setup.hpp"
-#include "src/resolved_target/target_config.hpp"
-#include "src/request/request.hpp"
-#include "src/response/response.hpp"
-#include "src/cgi/cgi_handler.hpp"
+#include "../../src/config/nginx_config.hpp"
+#include "../../src/basic_server/server.hpp"
+#include "../../src/resolved_target/server_selection.hpp"
+#include "../../src/config/setup.hpp"
+#include "../../src/resolved_target/target_config.hpp"
+#include "../../src/request/request.hpp"
+#include "../../src/response/response.hpp"
+#include "../../src/cgi/cgi_handler.hpp"
 
 
 int	main(int ac, const char **av) {

@@ -115,4 +115,19 @@ class WriteFailureException : public InternalError::exception
 		virtual ~WriteFailureException() throw() {}
 };
 
+// error classes if stream creation fails
+class CreateStreamFailureException : public InternalError::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		CreateStreamFailureException(std::string type) {
+			_err_string = "ERROR! Failed failed to convert " + type + " to stream.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~CreateStreamFailureException() throw() {}
+};
+
 #endif

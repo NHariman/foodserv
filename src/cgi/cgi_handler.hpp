@@ -19,6 +19,7 @@ class CGIHandler {
 		std::string			RetrieveBody(size_t start);
 		std::istream*		ToIStream(std::string body);
 		void				SetStatus(Response* response);
+		void				CreateBodyStream(std::string body);
 
 	public:
 		CGIHandler();
