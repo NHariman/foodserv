@@ -15,7 +15,7 @@
 #include "../request/request.hpp"
 #include "../utils/utils.hpp"
 #include "../utils/cgi_utils.hpp"
-#include "../err/c_exceptions.hpp"
+#include "../err/sys_exceptions.hpp"
 
 #include <vector>
 

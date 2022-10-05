@@ -59,9 +59,9 @@ add_executable(
 		../../src/resolved_target/target_config.cpp
 
     ../../src/cgi/cgi.cpp
-    ../../src/cgi/cgi_argv_envp.cpp 
+    cgi_argv_envp.cpp 
     ../../src/cgi/cgi_file_validation.cpp 
-    ../../src/cgi/cgi_parent_child.cpp 
+    cgi_parent_child.cpp 
     ../../src/cgi/cgi_pathfinder.cpp
 
     ../../src/utils/file_handling.cpp
@@ -69,8 +69,6 @@ add_executable(
     ../../src/utils/request_utils.cpp
     ../../src/utils/cgi_utils.cpp
 		../../src/utils/config_utils.cpp 
-
-    ../../src/err/
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(

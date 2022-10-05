@@ -1,11 +1,11 @@
-#include "cgi.hpp"
+#include "../../src/cgi/cgi.hpp"
 
 #include <fcntl.h>
 
 # define DEBUG 0
-# define POST_TEST 0
+# define POST_TEST 1
 
-# define POST_STRING "python=yes"
+# define POST_STRING "python=yes&kotlin=yes&first_name=niks"
 
 
 // child process executes the cgi
