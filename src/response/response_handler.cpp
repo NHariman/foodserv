@@ -186,7 +186,10 @@ bool	ResponseHandler::IsHandledByCGI() {
 void	ResponseHandler::HandleCGI() {
 	CGIHandler	cgi_handler;
 	std::istream* body_stream = cgi_handler.Execute(_request, *_response);
+<<<<<<< HEAD
 	_response->SetBodyStream(body_stream);
+=======
+>>>>>>> Moved Response forming functions out of ResponseHandler and into ResponseGenerator
 }
 
 // Assumes _response->_resolved_path has been set already.
@@ -225,7 +228,3 @@ void	ResponseHandler::FormResponse() {
 }
 
 #undef DEBUG // REMOVE
-
-bool	ResponseHandler::ErrorOccurred() const {
-	return _error;
-}
