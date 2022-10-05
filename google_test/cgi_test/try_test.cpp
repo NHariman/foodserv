@@ -274,7 +274,7 @@ TEST(CGITESTING_ONE_argument, valid) {
 	}
 }
 
-TEST(CGITESTING_two_arguments, req_directory_conf_directory) {
+TEST(CGITESTING_ONE_argument, req_directory_conf_directory) {
 	std::string get_content;
 	get_content = "Content-type:text/html\r\n\r\n<html><head><title>GeeksForGeeks - Get Method</title></head><body><h3>Hello You searched '' for ''<br>\nFew Matches Found!<br>\n<br>\nMatch 1<br>\nMatch 2<br>\nMatch 3<br>\nMatch 4<br>\netc.....</h3></body></html>";
 
@@ -290,7 +290,7 @@ TEST(CGITESTING_two_arguments, req_directory_conf_directory) {
 	}
 }
 
-TEST(CGITESTING_two_arguments, req_directory_conf_file) {
+TEST(CGITESTING_ONE_argument, req_directory_conf_file) {
 	std::string get_content;
 	get_content = "Content-type:text/html\r\n\r\n<html><head><title>GeeksForGeeks - Get Method</title></head><body><h3>Hello You searched '' for ''<br>\nFew Matches Found!<br>\n<br>\nMatch 1<br>\nMatch 2<br>\nMatch 3<br>\nMatch 4<br>\netc.....</h3></body></html>";
 
@@ -306,7 +306,7 @@ TEST(CGITESTING_two_arguments, req_directory_conf_file) {
 	}
 }
 
-TEST(CGITESTING_one_argument, req_file_conf_directory) {
+TEST(CGITESTING_ONE_argument, req_file_conf_directory) {
 	std::string get_content;
 	get_content = "Content-type:text/html\r\n\r\n<html><head><title>GeeksForGeeks - Get Method</title></head><body><h3>Hello You searched '' for ''<br>\nFew Matches Found!<br>\n<br>\nMatch 1<br>\nMatch 2<br>\nMatch 3<br>\nMatch 4<br>\netc.....</h3></body></html>";
 
@@ -322,7 +322,7 @@ TEST(CGITESTING_one_argument, req_file_conf_directory) {
 	}
 }
 
-TEST(CGITESTING_one_argument, req_file_conf_file) {
+TEST(CGITESTING_ONE_argument, req_file_conf_file) {
 	std::string get_content;
 	get_content = "Content-type:text/html\r\n\r\n<html><head><title>GeeksForGeeks - Get Method</title></head><body><h3>Hello You searched '' for ''<br>\nFew Matches Found!<br>\n<br>\nMatch 1<br>\nMatch 2<br>\nMatch 3<br>\nMatch 4<br>\netc.....</h3></body></html>";
 
@@ -352,7 +352,7 @@ TEST(CGITESTING_one_argument, wrong_extension_in_request) {
 	}
 }
 
-TEST(CGITESTING_one_argument, wrong_extension_in_config) {
+TEST(CGITESTING_ONE_argument, wrong_extension_in_config) {
 	std::string get_content;
 	get_content = "Content-type:text/html\r\n\r\n<html><head><title>GeeksForGeeks - Get Method</title></head><body><h3>Hello You searched 'Web' for 'music'<br>\nFew Matches Found!<br>\n<br>\nMatch 1<br>\nMatch 2<br>\nMatch 3<br>\nMatch 4<br>\netc.....</h3></body></html>";
 
@@ -366,7 +366,7 @@ TEST(CGITESTING_one_argument, wrong_extension_in_config) {
 	}
 }
 
-TEST(CGITESTING_one_argument, executable_not_found) {
+TEST(CGITESTING_ONE_argument, executable_incompatible) {
 	std::string get_content;
 	get_content = "Content-type:text/html\r\n\r\n<html><head><title>GeeksForGeeks - Get Method</title></head><body><h3>Hello You searched 'Web' for 'music'<br>\nFew Matches Found!<br>\n<br>\nMatch 1<br>\nMatch 2<br>\nMatch 3<br>\nMatch 4<br>\netc.....</h3></body></html>";
 
@@ -376,6 +376,6 @@ TEST(CGITESTING_one_argument, executable_not_found) {
 		request.Parse("GET /cgi-bin/get_query.pl?q=music&l=Web HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
-		EXPECT_THROW(get.Setup(&request), NotFoundException);
+		EXPECT_THROW(get.Setup(&request), MethodNotAllowedException);
 	}
 }

@@ -111,6 +111,7 @@ class CGI {
 		bool		ValidScript(std::string executable_path);
 		bool		IsExecutable(std::string path);
 		bool		IsValidPath(std::string executable_path);
+		std::string	RemoveQuery(std::string path);
 
 	public:
 		CGI();
