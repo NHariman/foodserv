@@ -29,7 +29,7 @@ class KernelEvents {
 		void	PrintConnectionMap() const;
 		// remove afterwards
 		void 	serveHTML(int s, std::string path);
-		void	recv_msg(int s);
+		void	recv_msg(int s, int read_filter_length);
 		void	write_msg(int s);
 	
 	public:
@@ -54,6 +54,13 @@ class KernelEvents {
 		public:
 			const char *what() const throw() {
 				return "ERROR! Failed to create socket.";
+			}
+	};
+
+	class RecvException : public std::exception {
+		public:
+			const char *what() const throw() {
+				return "ERROR! Invalid read from recv.";
 			}
 	};
 };

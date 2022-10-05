@@ -47,7 +47,7 @@ void		CGI::SetArgv() {
 		SetCGITwoArguments();
 }
 
-void 		CGI::to_argv(char **argv){
+void 		CGI::ToArgv(char **argv){
 	argv[0] = strdup(_argv[0].c_str());
 	if (_CGI.GetLen() == 2)
 		argv[1] = strdup(_argv[1].c_str());
@@ -55,7 +55,7 @@ void 		CGI::to_argv(char **argv){
 		argv[1] = NULL;
 	argv[2] = NULL;
 }
-void 		CGI::to_env(char **env){
+void 		CGI::ToEnv(char **env){
 	for (size_t i = 0; i < _env.size(); ++i) {
 		env[i] = strdup(_env[i].c_str());
 	}

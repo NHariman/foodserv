@@ -1,6 +1,6 @@
 #include "kernel_events.hpp"
 
-# define DEBUG 1
+# define DEBUG 0
 # define MAX_EVENTS 20
 
 #include "../request/request.hpp"
@@ -39,7 +39,7 @@ void	KernelEvents::KernelEventLoop() {
 		if (new_events == -1)
 			throw KeventErrorException();
 
-		std::cout << "Num events: " << new_events << std::endl;
+		if (DEBUG) std::cout << "Num events: " << new_events << std::endl;
 		
 		// _connection_map has all the client connections
 		// _listening_socket has all the socket fildes for the ports
@@ -57,11 +57,11 @@ void	KernelEvents::KernelEventLoop() {
 				AddToConnectionMap(client_fd);
 			}
 			else if (kev_trigger[i].filter == EVFILT_READ) {
-				std::cout << "READ" << std::endl;
-				recv_msg(kev_trigger[i].ident);
+				if (DEBUG) std::cout << "READ EVENT TRIGGERED" << std::endl;
+				recv_msg(kev_trigger[i].ident, kev_trigger[i].data);
 			}
 			else if (kev_trigger[i].filter == EVFILT_WRITE) {
-				std::cout << "WRITE" << std::endl;
+				if (DEBUG) std::cout << "WRITE EVENT TRIGGERED" << std::endl;
 				write_msg(kev_trigger[i].ident);
 			}
 
@@ -81,8 +81,6 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 		delete it->second;
 		_connection_map.erase(it);
 	}
-		// delete the connection
-	// and delete new Connection blabla
 
 	// add the client
 	Connection		*new_conn = new Connection(client_fd, _config_file);
@@ -141,11 +139,15 @@ void KernelEvents::serveHTML(int s, std::string file_path) {
 
 	file_path = file_path.substr(9);
 
+	/* 
+	**	target part is sketchy, this will be deleted and send to dispatch
+	*/ 
+
 	TargetConfig	*target = new TargetConfig();
 	target->Setup(_config_file, "localhost", "80", file_path);
 	std::string final_path = target->GetResolvedPath();
 
-	std::cout << "file : " << final_path << std::endl;
+	if (DEBUG) std::cout << "file path: " << final_path << std::endl;
 
     std::string		text;
     std::ifstream	read_file(final_path.c_str());
@@ -170,19 +172,33 @@ void KernelEvents::serveHTML(int s, std::string file_path) {
     read_file.close();
 }
 
-// this needs to be changed for receive
-void KernelEvents::recv_msg(int s) {
-	char buf[1000];
-	int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
-	if (bytes_read > 0) {
+/*
+**	Receive data sent to the socket fildes, and saves it into buffer
+**	The buffer is double checked with the read event data filter
+**	As this already knows how much to read.
+*/
+void KernelEvents::recv_msg(int s, int read_filter_length) {
+	std::string	full_request;
+	char 		buf[100];
+	int			bytes_read;
+	int			total_bytes_read = 0;
+
+	while ((bytes_read = recv(s, buf, sizeof(buf) - 1, 0)) > 0) {
 		buf[bytes_read] = 0;
-		std::cout << std::endl << "*************CLIENT REQUEST*************" << std::endl;
-		std::cout << buf << std::endl;
-		std::cout << "*************CLIENT REQUEST*************" << std::endl << std::endl;
+		full_request.append(buf);
+		total_bytes_read += bytes_read;
 	}
+
+	if (total_bytes_read != read_filter_length)
+		throw RecvException();
+
+	std::cout << std::endl << "************* START CLIENT REQUEST *************" << std::endl;
+	std::cout << full_request << std::endl;
+	std::cout << "************* END CLIENT REQUEST *************" << std::endl << std::endl;
+
 	std::map<int, Connection*>::const_iterator it2 = _connection_map.find(s);
 	if (it2 != _connection_map.end()) {
-		it2->second->Receive(buf);
+		it2->second->Receive(full_request.c_str());
 	}
 
 

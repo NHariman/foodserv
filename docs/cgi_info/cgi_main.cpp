@@ -12,17 +12,17 @@
 #include "src/request/request.hpp"
 #include "src/cgi/cgi.hpp"
 
+/* this is a quick test main for cgi, put in main directory before use */
+
 int	main(int ac, const char **av) {
 	try {
 		(void)ac;
 		(void)av;
 		//NginxConfig config("config_files/CGI_test.conf");
-		// NginxConfig config("config_files/cgi_testers/2_arg_cgi_no_exist.conf");
-		NginxConfig config("config_files/cgi_testers/CGI_GET.conf");
+		NginxConfig config("config_files/cgi_testers/CGI_test.conf");
 		
 		Request request(&config);
-		request.Parse("GET /cgi-bin/get_query.pl HTTP/1.1\r\nHost: localhost\n\n");
-		// request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("GET /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
 		std::cout << "Method: " << request.GetMethod() << std::endl;
 		std::cout << "TargetString: " << request.GetTargetString() << std::endl;
 		
@@ -32,9 +32,8 @@ int	main(int ac, const char **av) {
 
 		CGI cgi;
 		cgi.setup(&request);
-		std::cout << "setup status code value: " << cgi.GetStatusCode() << std::endl;
-		cgi.execute();
-		std::cout << "execute status code value: " << cgi.GetStatusCode() << std::endl;
+		int nb = cgi.execute();
+		std::cout << "execute value: " << nb << std::endl;
 		std::cout << "get content? " << std::endl;
 		std::cout << cgi.getContent() << std::endl;
 		// std::cout << "cgi setup status: " << std::boolalpha << cgi.setup(&request) << std::endl;

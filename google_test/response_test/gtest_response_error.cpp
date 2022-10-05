@@ -5,9 +5,9 @@
 
 using namespace std;
 
-#define CUSTOM_ERR_PATH "/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/assets/html/error/custom_error_test.html"
+#define CUSTOM_ERR_PATH "assets/html/error/custom_error_test.html"
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
+static NginxConfig config("../default.conf");
 
 // Helper function for getting HTML file length for comparison.
 std::string	GetHTMLPageSize(string const& html_file_path) {

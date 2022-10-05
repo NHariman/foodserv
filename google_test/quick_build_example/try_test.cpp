@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "../../src/config/nginx_config.hpp"
 // #include <gmock/gmock.h>
 
 int Factorial(int n);
@@ -30,4 +31,13 @@ TEST(FactorialTest, HandlesPositiveInput) {
   EXPECT_EQ(Factorial(2), 2);
   EXPECT_EQ(Factorial(3), 6);
   EXPECT_EQ(Factorial(8), 40320);
+}
+
+// Shows how to correctly path to a config file that you should have copied
+// into this test folder.
+// ".." is because the test executable is run from within build/.
+TEST(WebServTest, ThisIsHowYouTest) {
+	NginxConfig config("../default.conf");
+
+	(void)config;
 }

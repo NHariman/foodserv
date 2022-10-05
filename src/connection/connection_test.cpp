@@ -4,7 +4,7 @@
 Connection::Connection(int fd, NginxConfig* config)
 	:	_config(config),
 		_request(config),
-		_response_handler(config),
+		_response_handler(),
 		_fd(fd),
 		_close_connection(false) {
 			(void)_fd;

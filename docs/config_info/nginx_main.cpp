@@ -10,6 +10,8 @@
 #include "src/config/setup.hpp"
 #include "src/resolved_target/target_config.hpp"
 
+/* this is a quick main to test nginxconfig and targetconfig with */
+
 int	main(int ac, const char **av) {
 	try {
 		NginxConfig input_file(GetConfigLocation(ac, av));

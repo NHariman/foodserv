@@ -9,9 +9,9 @@ using namespace std;
 std::string	GetHTMLPageSize(string const& html_file_path);
 std::string	GetHTMLStringSize(char const* html_string);
 
-#define INDEX_PATH "/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/assets/index.html"
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
-static NginxConfig config_index("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/index.conf");
+#define INDEX_PATH "assets/index.html"
+static NginxConfig config("../default.conf");
+static NginxConfig config_index("../index.conf");
 
 TEST(ResponseIndexTest, AutoindexOn_ExistingIndexFile_Root) {
 	Connection connection(42, &config);
