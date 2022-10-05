@@ -1,7 +1,7 @@
 #include "kernel_events.hpp"
 
 # define DEBUG 0
-# define MAX_EVENTS 20
+# define MAX_EVENTS 128
 
 #include "../request/request.hpp"
 #include "../resolved_target/target_config.hpp"
@@ -30,7 +30,7 @@ void	KernelEvents::KeventInitListeningSockets() {
 
 void	KernelEvents::KernelEventLoop() {
 	int				new_events = 0;
-	struct kevent	kev_trigger[100];
+	struct kevent	kev_trigger[MAX_EVENTS];
 
 	// now we need to use our kevent, to listen for events to be triggered
 	// we add them to the triggered event list: kev_trigger
@@ -214,6 +214,9 @@ void	KernelEvents::write_msg(int s) {
 		// it->second->Dispatch();
 		serveHTML(s, it->second->GetRequestPath());
 		RemoveFromConnectionMap(s);
+		/*
+		**	CHECK connection->isDone/ close connection
+		*/
 	}
 }
 

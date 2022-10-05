@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   server_name.cpp                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/07/08 17:01:08 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/10/04 19:13:45 by salbregh      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "server_name.hpp"
 
 ServerName::ServerName(std::string server_name): _server_name(server_name) {
