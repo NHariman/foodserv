@@ -5,18 +5,18 @@ CGIHandler::CGIHandler() : _cgi(CGI()) {}
 // executes the CGI, sets the headers in the response class
 // takes the remaining body and converts it to an istream for further use
 // also sets status to 200 if it all went well, if not, it CGI would throw
-std::istream* 		CGIHandler::Execute(Request *request, Response *response) {
+std::istream* 		CGIHandler::Execute(Request *request, Response &response) {
 	size_t	header_bytes;
 	std::string body;
 
 	ExecuteCGI(request);
-	header_bytes = SetHeaders(response);
+	header_bytes = SetHeaders(&response);
 	body = RetrieveBody(header_bytes);
 	_body = body; // delete later
 	_content = CreateStreamFromString(body);
 	if (!_content)
 		throw CreateStreamFailureException("string");
-	SetStatus(response); // sets response status code to 200 (anything else would throw)
+	SetStatus(&response); // sets response status code to 200 (anything else would throw)
 	return _content;
 }
 

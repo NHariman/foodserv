@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream> // ifstream
+#include <memory> // shared_ptr
 #include <map>
 #include "../request/http_message.hpp"
 
@@ -16,6 +17,8 @@
 
 class Response : public HTTPMessage {
 	public:
+		typedef std::shared_ptr<Response>	pointer;
+
 		// Default constructor
 		Response();
 		// Assignment operator
