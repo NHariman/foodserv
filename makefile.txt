@@ -1,6 +1,6 @@
 COMPILE = c++
 
-FLAGS = -Wall -Werror -Wextra -std=c++11
+FLAGS = -Wall -Wextra -std=c++11 #-Werror
 
 MAIN = main.cpp
 
@@ -39,16 +39,21 @@ CONFIG = $(addprefix $(SRC_DIR)/$(CONFIG_DIR)/,	config_interface.cpp \
 												listen.cpp \
 												location_context.cpp \
 												nginx_config.cpp \
-												config_utils.cpp \
+												location_context_setters.cpp \
+												location_context_verification.cpp \
+												server_context_setters.cpp \
+												server_context_verification.cpp \
+												nginx_config_file_handler.cpp \
+												nginx_config_get_servers.cpp \
 												directive_validation/client_max_body_size.cpp \
 												directive_validation/allowed_methods.cpp \
 												directive_validation/autoindex.cpp \
-												directive_validation/error_page.cpp \
 												directive_validation/cgi_pass.cpp \
 												directive_validation/index.cpp \
 												directive_validation/location_uri.cpp \
 												directive_validation/return_dir.cpp \
-												directive_validation/root.cpp)
+												directive_validation/root.cpp \
+												directive_validation/cgi_pass_parser.cpp )
 
 
 SERVER_SELECTION = 	$(addprefix $(SRC_DIR)/$(SERV_SELECT)/,	server_selection.cpp \
@@ -60,12 +65,14 @@ UTILS = $(addprefix $(SRC_DIR)/$(UTILS_DIR)/, 	file_handling.cpp \
 												is_functions.cpp \
 												request_utils.cpp \
 												mime_types.cpp \
-												status_codes.cpp)
+												status_codes.cpp \
+												config_utils.cpp \
+												cgi_utils.cpp)
 
 SERV = $(addprefix $(SRC_DIR)/$(SERVER_DIR)/,	socket.cpp \
 												kernel_events.cpp)
 
-CON = $(addprefix $(SRC_DIR)/$(CON_DIR)/,		connection.cpp)
+CON = $(addprefix $(SRC_DIR)/$(CON_DIR)/,		connection_test.cpp) # temp conn function
 
 RESPONSE = $(addprefix $(SRC_DIR)/$(RESPONSE_DIR)/,	file_handler.cpp \
 													response_handler.cpp \
@@ -73,7 +80,14 @@ RESPONSE = $(addprefix $(SRC_DIR)/$(RESPONSE_DIR)/,	file_handler.cpp \
 
 ERROR = $(addprefix $(SRC_DIR)/err/,		error_responses.cpp)
 
-OFILES = $(SERV:.cpp=.o) $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(SERVER_SELECTION:.cpp=.o) $(UTILS:.cpp=.o) $(CON:.cpp=.o) $(RESPONSE:.cpp=.o) $(ERROR:.cpp=.o)
+CGI = $(addprefix $(SRC_DIR)/cgi/,			cgi_argv_envp.cpp \
+											cgi_file_validation.cpp \
+											cgi_handler.cpp \
+											cgi_parent_child.cpp \
+											cgi_pathfinder.cpp \
+											cgi.cpp)
+
+OFILES = $(SERV:.cpp=.o) $(CONFIG:.cpp=.o) $(MAIN:.cpp=.o) $(REQUEST:.cpp=.o) $(SERVER_SELECTION:.cpp=.o) $(UTILS:.cpp=.o) $(CON:.cpp=.o) $(RESPONSE:.cpp=.o) $(ERROR:.cpp=.o) $(CGI:.cpp=.o)
 
 NAME = webserv
 

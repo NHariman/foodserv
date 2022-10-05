@@ -201,7 +201,6 @@ void KernelEvents::recv_msg(int s, int read_filter_length) {
 		it2->second->Receive(full_request.c_str());
 	}
 
-
 	// register a write event for this event
 	struct kevent	kev_monitor;
 	EV_SET(&kev_monitor, s, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, NULL);
