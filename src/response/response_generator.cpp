@@ -46,10 +46,8 @@ void	ResponseGenerator::SetContentLength() {
 	std::istream* body_stream = _response->GetBodyStream();
 	if (body_stream != NULL
 			&& _response->GetField("Content-Length") == NO_VAL) {
-		body_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
-		std::streampos	size = body_stream->tellg(); // get position of cursor
-		_response->SetHeaderField("Content-Length", std::to_string(size));
-		body_stream->seekg(0); // restore cursor to beginning
+		size_t stream_size = GetStreamSize(body_stream);
+		_response->SetHeaderField("Content-Length", std::to_string(stream_size));
 	}
 }
 

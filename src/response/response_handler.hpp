@@ -15,9 +15,9 @@ class ResponseHandler {
 		~ResponseHandler();
 
 		bool	Ready();
-		void	Send();
 		bool	IsDone() const;
 		bool	ErrorOccurred() const;
+		void	Send(int fd);
 		void	HandleError(Request& request);
 		void	HandleExpect(Request& request);
 		void	HandleRegular(Request& request);
