@@ -2,13 +2,14 @@
 #include "response_generator.hpp"
 #include "../cgi/cgi_handler.hpp"
 #include "../utils/config_utils.hpp"
+#include <algorithm>
 #include <sys/socket.h> // send
 
 #define DEBUG 0 // TODO: REMOVE
 
 // Default constructor
 ResponseHandler::ResponseHandler()
-		:	_request(NULL), _is_done(false), _error(false) {
+		:	_request(NULL), _is_done(false) {
 	_response = Response::pointer(new Response);
 }
 
@@ -23,36 +24,39 @@ bool	ResponseHandler::IsDone() const {
 	return _is_done;
 }
 
-bool	ResponseHandler::ErrorOccurred() const {
-	return _error;
-}
-
 void	ResponseHandler::Send(int fd) {
 	std::istream*	to_send = _response->GetCompleteResponse();
 	char	buffer[BUFFER_SIZE];
 
-	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+	if (DEBUG) std::cout << "ResponseHandler:Send:\n[[" << to_send->rdbuf() << "]]\n";
 	
-	// send min of buffer_size or stream size
-	// check bytes returned from send
-	// if less than tried to send, erase up to bytes_sent
-	size_t send_size = std::min(BUFFER_SIZE, GetStreamSize(to_send));
-	if (to_send != 0) {
+	size_t send_size = std::min((size_t)BUFFER_SIZE, GetStreamSize(to_send));
+	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+	if (send_size != 0) {
 		to_send->read(buffer, send_size);
-		size_t bytes_sent = send(fd, buffer, send_size);
+		buffer[send_size] = '\0'; // stream::read doesn't append null terminator
+
+		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
+		if (DEBUG) std::cout << "Bytes read: " << to_send->gcount() << std::endl;
+
+		// save send return to check for error or less bytes sent than indicated
+		ssize_t bytes_sent = send(fd, buffer, send_size, 0);
+
 		if (bytes_sent < 0) {
-			_error = true;
-			// see if sys call failure error should be thrown here
-			return ;
+			// throw SendFailureException();
+			std::cout << "send failed: " << strerror(errno) << "\n"; // remove
 		}
+		if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
+
 		// shift position of next character to extract
-		to_send->seekg(std::min(to_send, bytes_sent));
+		to_send->seekg(std::min((size_t)send_size, bytes_sent));
 	}
 
 	// if an Expect request was processed, a 2nd final response still has to be
 	// served once the message body is received.
 	if (_response->GetStatusCode() == 100)
 		_response = Response::pointer(new Response); // create fresh Response object
+	// if no more bytes to send, close connection
 	else if (send_size == 0)
 		_is_done = true;
 }
