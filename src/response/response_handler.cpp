@@ -2,7 +2,7 @@
 #include "response_generator.hpp"
 #include "../cgi/cgi_handler.hpp"
 #include "../utils/config_utils.hpp"
-#include <algorithm>
+#include <algorithm> // min
 #include <sys/socket.h> // send
 
 #define DEBUG 0 // TODO: REMOVE
