@@ -1,4 +1,5 @@
 #include "response_handler.hpp"
+#include "response_generator.hpp"
 #include "../cgi/cgi_handler.hpp"
 #include "../utils/config_utils.hpp"
 
@@ -7,7 +8,7 @@
 // Default constructor
 ResponseHandler::ResponseHandler()
 		:	_request(NULL), _is_done(false), _error(false) {
-	_response = ResponsePtr(new Response);
+	_response = Response::pointer(new Response);
 }
 
 // Destructor
@@ -29,13 +30,17 @@ void	ResponseHandler::Send() {
 	// if an Expect request was processed, a 2nd final response still has to be
 	// served once the message body is received.
 	if (_response->GetStatusCode() == 100)
-		_response = ResponsePtr(new Response); // create fresh Response object
+		_response = Response::pointer(new Response); // create fresh Response object
 	else
 		_is_done = true;
 }
 
 bool	ResponseHandler::IsDone() const {
 	return _is_done;
+}
+
+bool	ResponseHandler::ErrorOccurred() const {
+	return _error;
 }
 
 void	ResponseHandler::HandleError(Request& request) {
@@ -162,7 +167,7 @@ bool	ResponseHandler::IsHandledByCGI() {
 
 void	ResponseHandler::HandleCGI() {
 	CGIHandler	cgi_handler;
-	std::istream* body_stream = cgi_handler.Execute(_request, &(*_response));
+	std::istream* body_stream = cgi_handler.Execute(_request, *_response);
 }
 
 // Assumes _response->_resolved_path has been set already.
@@ -194,104 +199,10 @@ FileHandler::Method ResponseHandler::DetermineMethod() {
 }
 
 void	ResponseHandler::FormResponse() {
-	SetStatusLine();
-	if (_response->GetStatusCode() != 100)
-		SetHeaders();
-	_response->SetComplete();
+	ResponseGenerator	response_generator;
 
+	response_generator.FormResponse(*_response, _request);
 	if (DEBUG) std::cout << "Response formed. Final status code: " << _response->GetStatusCode() << std::endl;
 }
 
-void	ResponseHandler::SetStatusLine() {
-	_response->SetHTTPVersion("HTTP/1.1");
-	if (_response->GetStatusCode() == 0)
-		_response->SetStatusCode(_request->GetStatusCode());
-	_response->SetReasonPhrase(GetReasonPhrase(_response->GetStatusCode()));
-}
-
-void	ResponseHandler::SetHeaders() {
-	SetAllow();
-	SetConnection();
-	SetContentLength();
-	SetContentType();
-	SetDate();
-	SetLocation();
-	SetServer();
-}
-
-// Allow is only set if returning a 405: Method Not Allowed error.
-void	ResponseHandler::SetAllow() {
-	if (_response->GetStatusCode() == 405)
-		_response->SetHeaderField("Allow", GetAllowedMethodsString());
-}
-
-// Connection: close is always sent unless it's a 100: Continue response.
-void	ResponseHandler::SetConnection() {
-	_response->SetHeaderField("Connection", "close");
-}
-
-void	ResponseHandler::SetContentLength() {
-	std::istream* body_stream = _response->GetBodyStream();
-	if (body_stream != NULL
-			&& _response->GetField("Content-Length") == NO_VAL) {
-		body_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
-		std::streampos	size = body_stream->tellg(); // get position of cursor
-		_response->SetHeaderField("Content-Length", std::to_string(size));
-		body_stream->seekg(0); // restore cursor to beginning
-	}
-}
-
-void	ResponseHandler::SetContentType() {
-	// check if there is payload & type not already set
-	if (_response->GetBodyStream() != NULL
-			&& _response->GetField("Content-Type") == NO_VAL) {
-		size_t	extension_start = _response->GetResolvedPath().find_last_of(".");
-		std::string	type;
-
-		type = GetType(_response->GetResolvedPath().substr(extension_start + 1));
-		if (type.empty()) // if no extension or unknown extension
-			type = "application/octet-stream";
-		_response->SetHeaderField("Content-Type", type);
-	}
-}
-
-void	ResponseHandler::SetDate() {
-	char	buf[100];
-	time_t	now = time(0);
-	struct tm	tm = *gmtime(&now);
-	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", &tm);
-
-	_response->SetHeaderField("Date", std::string(buf));
-}
-
-// Location only set if request is redirected or a POST request is successfully executed (201 created).
-void	ResponseHandler::SetLocation() {
-	int status_code = _response->GetStatusCode();
-	if (IsRedirectCode(status_code))
-		_response->SetHeaderField("Location", _response->GetResolvedPath());
-	else if (status_code == 201)
-		_response->SetHeaderField("Location", _request->GetTargetString());
-}
-
-void	ResponseHandler::SetServer() {
-	_response->SetHeaderField("Server", "foodserv/1.0");
-}
-
-// Used by SetAllow to set header value to comma-separated list of allowed methods.
-std::string	ResponseHandler::GetAllowedMethodsString() {
-	std::vector<std::string> methods_vec = _request->GetTargetConfig().GetAllowedMethods();
-	std::string	methods_str;
-
-	for (auto it = methods_vec.begin(); it != methods_vec.end(); it++) {
-		if (!methods_str.empty())
-			methods_str += ", ";
-		methods_str += *it;
-	}
-	return methods_str;
-}
-
 #undef DEBUG // REMOVE
-
-bool	ResponseHandler::ErrorOccurred() const {
-	return _error;
-}
