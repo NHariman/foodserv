@@ -2,6 +2,7 @@
 #include "response_generator.hpp"
 #include "../cgi/cgi_handler.hpp"
 #include "../utils/config_utils.hpp"
+#include <sys/socket.h> // send
 
 #define DEBUG 0 // TODO: REMOVE
 
@@ -18,29 +19,42 @@ bool	ResponseHandler::Ready() {
 	return _response->IsComplete();
 }
 
-void	ResponseHandler::Send() {
-	std::istream*	to_send = _response->GetCompleteResponse();
-
-	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
-	
-	// send min of buffer_size or stream size
-	// check bytes returned from send
-	// if less than tried to send, erase up to bytes_sent
-
-	// if an Expect request was processed, a 2nd final response still has to be
-	// served once the message body is received.
-	if (_response->GetStatusCode() == 100)
-		_response = Response::pointer(new Response); // create fresh Response object
-	else
-		_is_done = true;
-}
-
 bool	ResponseHandler::IsDone() const {
 	return _is_done;
 }
 
 bool	ResponseHandler::ErrorOccurred() const {
 	return _error;
+}
+
+void	ResponseHandler::Send(int fd) {
+	std::istream*	to_send = _response->GetCompleteResponse();
+	char	buffer[BUFFER_SIZE];
+
+	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+	
+	// send min of buffer_size or stream size
+	// check bytes returned from send
+	// if less than tried to send, erase up to bytes_sent
+	size_t send_size = std::min(BUFFER_SIZE, GetStreamSize(to_send));
+	if (to_send != 0) {
+		to_send->read(buffer, send_size);
+		size_t bytes_sent = send(fd, buffer, send_size);
+		if (bytes_sent < 0) {
+			_error = true;
+			// see if sys call failure error should be thrown here
+			return ;
+		}
+		// shift position of next character to extract
+		to_send->seekg(std::min(to_send, bytes_sent));
+	}
+
+	// if an Expect request was processed, a 2nd final response still has to be
+	// served once the message body is received.
+	if (_response->GetStatusCode() == 100)
+		_response = Response::pointer(new Response); // create fresh Response object
+	else if (send_size == 0)
+		_is_done = true;
 }
 
 void	ResponseHandler::HandleError(Request& request) {
@@ -168,6 +182,7 @@ bool	ResponseHandler::IsHandledByCGI() {
 void	ResponseHandler::HandleCGI() {
 	CGIHandler	cgi_handler;
 	std::istream* body_stream = cgi_handler.Execute(_request, *_response);
+	_response->SetBodyStream(body_stream);
 }
 
 // Assumes _response->_resolved_path has been set already.

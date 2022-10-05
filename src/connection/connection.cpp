@@ -30,7 +30,7 @@ void	Connection::Receive(char const* buffer) {
 
 void	Connection::Dispatch() {
 	if (_response_handler.Ready())
-		_response_handler.Send();
+		_response_handler.Send(_fd);
 
 	if (_response_handler.IsDone() || _response_handler.ErrorOccurred())
 		_close_connection = true;
