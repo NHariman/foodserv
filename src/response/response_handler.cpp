@@ -49,7 +49,7 @@ void	ResponseHandler::Send(int fd) {
 		if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
 
 		// shift position of next character to extract
-		to_send->seekg(std::min((size_t)send_size, bytes_sent));
+		to_send->seekg(std::min(send_size, (size_t)bytes_sent));
 	}
 
 	// if an Expect request was processed, a 2nd final response still has to be
