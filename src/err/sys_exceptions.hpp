@@ -1,12 +1,20 @@
-#ifndef C_EXCEPTIONS_HPP
+#ifndef SYS_EXCEPTIONS_HPP
 
-# define C_EXCEPTIONS_HPP
+# define SYS_EXCEPTIONS_HPP
 
 # include <iostream>
 #include <string>
 #include <exception>
 
-class PipeFailureException : public std::exception
+// exception interface for internal errors like pipe, read etc.
+namespace InternalError {
+	class exception : public std::exception {
+		public:
+			virtual const char* what() const throw() = 0;
+	};
+}
+
+class PipeFailureException : public InternalError::exception
 {
 	private:
 		std::string		_err_string;
@@ -20,7 +28,7 @@ class PipeFailureException : public std::exception
 		virtual ~PipeFailureException() throw() {}
 };
 
-class ForkFailureException : public std::exception
+class ForkFailureException : public InternalError::exception
 {
 	private:
 		std::string		_err_string;
@@ -34,7 +42,7 @@ class ForkFailureException : public std::exception
 		virtual ~ForkFailureException() throw() {}
 };
 
-class WaitFailureException : public std::exception
+class WaitFailureException : public InternalError::exception
 {
 	private:
 		std::string		_err_string;
@@ -48,7 +56,7 @@ class WaitFailureException : public std::exception
 		virtual ~WaitFailureException() throw() {}
 };
 
-class DupFailureException : public std::exception
+class DupFailureException : public InternalError::exception
 {
 	private:
 		std::string		_err_string;
@@ -65,7 +73,7 @@ class DupFailureException : public std::exception
 		virtual ~DupFailureException() throw() {}
 };
 
-class MemsetFailureException : public std::exception
+class MemsetFailureException : public InternalError::exception
 {
 	private:
 		std::string		_err_string;
@@ -79,7 +87,7 @@ class MemsetFailureException : public std::exception
 		virtual ~MemsetFailureException() throw() {}
 };
 
-class ReadFailureException : public std::exception
+class ReadFailureException : public InternalError::exception
 {
 	private:
 		std::string		_err_string;
@@ -93,7 +101,7 @@ class ReadFailureException : public std::exception
 		virtual ~ReadFailureException() throw() {}
 };
 
-class WriteFailureException : public std::exception
+class WriteFailureException : public InternalError::exception
 {
 	private:
 		std::string		_err_string;
@@ -105,6 +113,21 @@ class WriteFailureException : public std::exception
 			return (_err_string.c_str());
 		}
 		virtual ~WriteFailureException() throw() {}
+};
+
+// error classes if stream creation fails
+class CreateStreamFailureException : public InternalError::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		CreateStreamFailureException(std::string type) {
+			_err_string = "ERROR! Failed failed to convert " + type + " to stream.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~CreateStreamFailureException() throw() {}
 };
 
 #endif

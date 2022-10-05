@@ -15,7 +15,7 @@
 #include "../request/request.hpp"
 #include "../utils/utils.hpp"
 #include "../utils/cgi_utils.hpp"
-#include "../err/c_exceptions.hpp"
+#include "../err/sys_exceptions.hpp"
 
 #include <vector>
 
@@ -111,6 +111,7 @@ class CGI {
 		bool		ValidScript(std::string executable_path);
 		bool		IsExecutable(std::string path);
 		bool		IsValidPath(std::string executable_path);
+		std::string	RemoveQuery(std::string path);
 
 	public:
 		CGI();

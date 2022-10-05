@@ -20,49 +20,57 @@ enable_testing()
 add_executable(
   try_test # test executable name
   try_test.cpp
-  ../../request/chunked_parser.cpp 
-  ../../request/header_field_parser.cpp 
-  ../../request/request_line_parser.cpp 
-  ../../request/request_parser.cpp 
-  ../../request/request_target_parser.cpp 
-  ../../request/request_validator.cpp 
-  ../../request/request.cpp 
-  ../../request/uri_host_parser.cpp 
-  ../../request/uri.cpp 
+  ../../src/request/chunked_parser.cpp 
+  ../../src/request/header_field_parser.cpp 
+  ../../src/request/request_line_parser.cpp 
+  ../../src/request/request_parser.cpp 
+  ../../src/request/request_target_parser.cpp 
+  ../../src/request/request_validator.cpp 
+  ../../src/request/request.cpp 
+  ../../src/request/uri_host_parser.cpp 
+  ../../src/request/uri.cpp 
 
-    ../../config/config_interface.cpp 
-		../../config/setup.cpp 
-		../../config/server_name.cpp 
-		../../config/server_context.cpp 
-		../../config/listen.cpp 
-		../../config/location_context.cpp 
+    ../../src/config/config_interface.cpp 
+		../../src/config/setup.cpp 
+		../../src/config/server_name.cpp 
+		../../src/config/server_context.cpp
+    ../../src/config/server_context_verification.cpp
+    ../../src/config/server_context_setters.cpp
+		../../src/config/listen.cpp 
+		../../src/config/location_context.cpp 
+    ../../src/config/location_context_verification.cpp
+    ../../src/config/location_context_setters.cpp
 		nginx_config.cpp 
-		../../config/config_utils.cpp 
-		../../config/directive_validation/client_max_body_size.cpp 
-		../../config/directive_validation/allowed_methods.cpp 
-		../../config/directive_validation/autoindex.cpp 
-		../../config/directive_validation/error_page.cpp 
-		../../config/directive_validation/cgi_pass.cpp 
-		../../config/directive_validation/index.cpp 
-		../../config/directive_validation/location_uri.cpp 
-		../../config/directive_validation/return_dir.cpp 
-		../../config/directive_validation/root.cpp
+    ../../src/config/nginx_config_file_handler.cpp
+    ../../src/config/nginx_config_get_servers.cpp
+		../../src/config/directive_validation/client_max_body_size.cpp 
+		../../src/config/directive_validation/allowed_methods.cpp 
+		../../src/config/directive_validation/autoindex.cpp 
+		../../src/config/directive_validation/cgi_pass.cpp 
+    ../../src/config/directive_validation/cgi_pass_parser.cpp 
+		../../src/config/directive_validation/index.cpp 
+		../../src/config/directive_validation/location_uri.cpp 
+		../../src/config/directive_validation/return_dir.cpp 
+		../../src/config/directive_validation/root.cpp
 
-    ../../resolved_target/server_selection.cpp
-    ../../resolved_target/resolved_path.cpp
-		../../resolved_target/location_selection.cpp
-		../../resolved_target/target_config.cpp
+    ../../src/resolved_target/server_selection.cpp
+    ../../src/resolved_target/resolved_path.cpp
+		../../src/resolved_target/location_selection.cpp
+		../../src/resolved_target/target_config.cpp
 
-    ../cgi.cpp
-    ../cgi_argv_envp.cpp 
-    ../cgi_file_validation.cpp 
-    ../cgi_parent_child.cpp 
-    ../cgi_pathfinder.cpp
+    ../../src/cgi/cgi.cpp
+    ../../src/cgi/cgi_argv_envp.cpp 
+    ../../src/cgi/cgi_file_validation.cpp 
+    ../../src/cgi/cgi_parent_child.cpp 
+    ../../src/cgi/cgi_pathfinder.cpp
 
-    ../../utils/file_handling.cpp
-    ../../utils/is_functions.cpp
-    ../../utils/request_utils.cpp
-    ../../utils/cgi_utils.cpp
+    ../../src/utils/file_handling.cpp
+    ../../src/utils/is_functions.cpp
+    ../../src/utils/request_utils.cpp
+    ../../src/utils/cgi_utils.cpp
+		../../src/utils/config_utils.cpp 
+
+    ../../src/err/
 )
 # Link test executable against gtest or gtest_main or your own main (not recommended)
 target_link_libraries(

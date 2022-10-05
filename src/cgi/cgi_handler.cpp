@@ -9,15 +9,24 @@ std::istream* 		CGIHandler::Execute(Request *request, Response *response) {
 	size_t	header_bytes;
 	std::string body;
 
-	ExecuteCGI(request);
-	header_bytes = SetHeaders(response);
-	body = RetrieveBody(header_bytes);
-	_body = body; // delete later
+	try {
+		ExecuteCGI(request);
+		header_bytes = SetHeaders(response);
+		body = RetrieveBody(header_bytes);
+		_body = body; // delete later
+		CreateBodyStream(body);
+		SetStatus(response); // sets response status code to 200 (anything else would throw)
+		return _content;
+	}
+	catch (InternalError::exception &e) {
+		throw InternalServerErrorException();
+	}
+}
+
+void				CGIHandler::CreateBodyStream(std::string body) {
 	_content = CreateStreamFromString(body);
 	if (!_content)
 		throw CreateStreamFailureException("string");
-	SetStatus(response); // sets response status code to 200 (anything else would throw)
-	return _content;
 }
 
 void				CGIHandler::ExecuteCGI(Request *request) {

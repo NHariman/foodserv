@@ -12,16 +12,20 @@
 void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 	char * argv[3];
 	char* env[15];
-	memset(argv, 0, 3);
-	memset(env, 0, 15);
+	if (memset(argv, 0, 3) == NULL)
+		throw MemsetFailureException();
+	if (memset(env, 0, 15) == NULL)
+		throw MemsetFailureException();
 	ToArgv(argv);
 	ToEnv(env);
 	
 	if (_request->GetMethod().compare("POST") == 0) { // for POST
-		dup2(fd_write[0], STDIN_FILENO);
+		if (dup2(fd_write[0], STDIN_FILENO) == -1)
+			throw DupFailureException();
 	}
 	if (fd_read[1] != STDOUT_FILENO) {
-		dup2(fd_read[1], STDOUT_FILENO);
+		if (dup2(fd_read[1], STDOUT_FILENO) == -1)
+			throw DupFailureException();
 	}
 	if (_request->GetMethod().compare("POST") == 0) // POST
 		close(fd_write[1]);
@@ -56,7 +60,8 @@ void		CGI::RetrieveContent(int *fd_read){
 			break ;
 		std::string buf(buffer);
 		_content = _content + buf;
-		memset(buffer, 0, 1001);
+		if (memset(buffer, 0, 1001) == NULL)
+			throw MemsetFailureException();
 	}
 	if (count == -1) {
 			close (fd_read[0]);
