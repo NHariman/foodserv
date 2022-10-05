@@ -79,15 +79,17 @@ std::string	Response::GetFieldsAsString() const {
 // to the end of stream.
 // Combines response status line and body stream into a single stream for sending.
 std::istream*	Response::GetCompleteResponse() {
-	std::iostream* complete_stream = new std::stringstream(std::ios_base::app
-		| std::ios_base::in | std::ios_base::out);
-	std::string status_line = _http_version + " " + std::to_string(_status_code)
-		+ " " + _reason_phrase + "\r\n";
-	*complete_stream << status_line;
-	*complete_stream << GetFieldsAsString() + "\r\n";
-	if (_body_stream != NULL)
-		*complete_stream << _body_stream->rdbuf();
+	if (_send_stream == NULL) {
+		std::iostream* complete_stream = new std::stringstream(std::ios_base::app
+			| std::ios_base::in | std::ios_base::out);
+		std::string status_line = _http_version + " " + std::to_string(_status_code)
+			+ " " + _reason_phrase + "\r\n";
+		*complete_stream << status_line;
+		*complete_stream << GetFieldsAsString() + "\r\n";
+		if (_body_stream != NULL)
+			*complete_stream << _body_stream->rdbuf();
 
-	_send_stream = complete_stream;
+		_send_stream = complete_stream;
+	}
 	return _send_stream;
 }

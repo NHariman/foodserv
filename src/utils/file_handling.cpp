@@ -50,6 +50,13 @@ std::string	GetLastModified(std::string const& path) {
 	return std::string(buf);
 }
 
+size_t	GetStreamSize(std::istream* stream) {
+	stream->seekg(0, std::ios_base::end); // move cursor to end of stream
+	std::streampos	size = stream->tellg(); // get position of cursor
+	stream->seekg(0); // restore cursor to beginning
+	return size;
+}
+
 // Takes a string to open as a stringstream object (which inherits from iostream),
 // and returns a pointer to the heap-allocated object.
 std::istream*	CreateStreamFromString(std::string const& string_buffer) {
