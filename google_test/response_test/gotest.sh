@@ -36,5 +36,6 @@ cmake --build build | tee -a build_out # output cmake build to stdout & also fil
 # grab last line starting with [100%] and greps only the binary name
 bin_name=$(grep -E '^\[100%\]' build_out | tail -n 1 | grep -oE '[^ ]+$')
 rm -rf build_out
+rm -rf build/assets/
 cp -r assets build/ # UNCOMMENT if file/html assets needed for test
 choose_test "$1"
