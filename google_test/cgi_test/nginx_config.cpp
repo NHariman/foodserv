@@ -6,11 +6,11 @@
 /*   By: nhariman <nhariman@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/04 18:40:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/10/04 16:12:59 by nhariman      ########   odam.nl         */
+/*   Updated: 2022/10/05 17:41:36 by nhariman      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../config/nginx_config.hpp"
+#include "../../src/config/nginx_config.hpp"
 #include <stdexcept>
 #include <locale>
 
@@ -25,7 +25,7 @@
 NginxConfig::NginxConfig() : _amount_server_contexts(0) {
 	std::ifstream	config_file_fd;
 	if (DEBUG) std::cout << "default constructor" << std::endl;
-	config_file_fd.open("../../config_files/default.conf");
+	config_file_fd.open("config_files/default.conf");
 	if (config_file_fd.is_open()) 
 		LoadConfigFile(config_file_fd);
 	else

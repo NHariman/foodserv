@@ -31,11 +31,11 @@ int	main(int ac, const char **av) {
 		std::cout << "Get CGI path: " << request.GetTargetConfig().GetCGIPass() << std::endl;
 
 		CGI cgi;
-		cgi.setup(&request);
-		int nb = cgi.execute();
+		cgi.Setup(&request);
+		int nb = cgi.Execute();
 		std::cout << "execute value: " << nb << std::endl;
 		std::cout << "get content? " << std::endl;
-		std::cout << cgi.getContent() << std::endl;
+		std::cout << cgi.GetContent() << std::endl;
 		// std::cout << "cgi setup status: " << std::boolalpha << cgi.setup(&request) << std::endl;
 		// std::cout << "CGI execute status: " << std::endl;
 		// size_t status = cgi.execute();
