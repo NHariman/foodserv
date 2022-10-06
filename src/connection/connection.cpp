@@ -30,7 +30,7 @@ void	Connection::Receive(char const* buffer) {
 
 void	Connection::Dispatch() {
 	if (_response_handler.Ready())
-		_response_handler.Send();
+		_response_handler.Send(_fd); // can throw, should be caught in main
 
 	if (_response_handler.IsDone())
 		_close_connection = true;
@@ -38,4 +38,8 @@ void	Connection::Dispatch() {
 
 Response const& Connection::DebugGetResponse() {
 	return	_response_handler.GetResponse();
+}
+
+bool	Connection::CanCloseConnection() const {
+	return _close_connection;
 }

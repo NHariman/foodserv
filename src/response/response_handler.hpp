@@ -1,7 +1,6 @@
 #ifndef RESPONSE_HANDLER_HPP
 #define RESPONSE_HANDLER_HPP
 
-#include <memory> // unique_ptr
 #include "response.hpp"
 #include "file_handler.hpp"
 #include "../err/error_responses.hpp"
@@ -9,7 +8,6 @@
 
 class ResponseHandler {
 	public:
-		typedef std::unique_ptr<Response>	ResponsePtr;
 
 		// Default constructor
 		ResponseHandler();
@@ -17,8 +15,8 @@ class ResponseHandler {
 		~ResponseHandler();
 
 		bool	Ready();
-		void	Send();
 		bool	IsDone() const;
+		void	Send(int fd);
 		void	HandleError(Request& request);
 		void	HandleExpect(Request& request);
 		void	HandleRegular(Request& request);
@@ -27,10 +25,10 @@ class ResponseHandler {
 
 	private:
 		// NginxConfig*	_config;
-		Request*		_request;
-		ResponsePtr		_response;
-		FileHandler		_file_handler;
-		bool			_is_done;
+		Request*			_request;
+		Response::pointer	_response;
+		FileHandler			_file_handler;
+		bool				_is_done;
 
 		void				AssignResponseResolvedPath(std::string const& path = std::string());
 
@@ -51,20 +49,8 @@ class ResponseHandler {
 		void				HandleMethod();
 		FileHandler::Method	DetermineMethod();
 
-		// Response forming
+		// Make response
 		void				FormResponse();
-		void				SetStatusLine();
-		void				SetHeaders();
-
-		// Response header setting helpers
-		void				SetDate();
-		void				SetServer();
-		void				SetLocation();
-		void				SetContentType();
-		void				SetContentLength();
-		void				SetConnection();
-		void				SetAllow();
-		std::string			GetAllowedMethodsString();
 };
 
 #endif /* RESPONSE_HANDLER_HPP */

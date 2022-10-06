@@ -1,13 +1,16 @@
 #include "response_handler.hpp"
+#include "response_generator.hpp"
 #include "../cgi/cgi_handler.hpp"
 #include "../utils/config_utils.hpp"
+#include <algorithm>
+#include <sys/socket.h> // send
 
 #define DEBUG 0 // TODO: REMOVE
 
 // Default constructor
 ResponseHandler::ResponseHandler()
 		:	_request(NULL), _is_done(false) {
-	_response = ResponsePtr(new Response);
+	_response = Response::pointer(new Response);
 }
 
 // Destructor
@@ -17,21 +20,45 @@ bool	ResponseHandler::Ready() {
 	return _response->IsComplete();
 }
 
-void	ResponseHandler::Send() {
-	std::istream*	to_send = _response->GetCompleteResponse();
+bool	ResponseHandler::IsDone() const {
+	return _is_done;
+}
 
-	if (DEBUG) std::cout << "ResponseHandler:Send:\n" << to_send->rdbuf() << std::endl;
+void	ResponseHandler::Send(int fd) {
+	std::istream*	to_send = _response->GetCompleteResponse();
+	char	buffer[BUFFER_SIZE];
+
+	if (DEBUG) std::cout << "ResponseHandler:Send:\n[[" << to_send->rdbuf() << "]]\n";
+	
+	size_t send_size = std::min((size_t)BUFFER_SIZE, GetStreamSize(to_send));
+	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+	if (send_size != 0) {
+		to_send->read(buffer, send_size);
+		buffer[send_size] = '\0'; // stream::read doesn't append null terminator
+
+		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
+		if (DEBUG) std::cout << "Bytes read: " << to_send->gcount() << std::endl;
+
+		// save send return to check for error or less bytes sent than indicated
+		ssize_t bytes_sent = send(fd, buffer, send_size, 0);
+
+		if (bytes_sent < 0) {
+			// throw SendFailureException();
+			std::cout << "send failed: " << strerror(errno) << "\n"; // remove
+		}
+		if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
+
+		// shift position of next character to extract
+		to_send->seekg(std::min(send_size, (size_t)bytes_sent));
+	}
 
 	// if an Expect request was processed, a 2nd final response still has to be
 	// served once the message body is received.
 	if (_response->GetStatusCode() == 100)
-		_response = ResponsePtr(new Response); // create fresh Response object
-	else
+		_response = Response::pointer(new Response); // create fresh Response object
+	// if no more bytes to send, close connection
+	else if (send_size == 0)
 		_is_done = true;
-}
-
-bool	ResponseHandler::IsDone() const {
-	return _is_done;
 }
 
 void	ResponseHandler::HandleError(Request& request) {
@@ -158,7 +185,8 @@ bool	ResponseHandler::IsHandledByCGI() {
 
 void	ResponseHandler::HandleCGI() {
 	CGIHandler	cgi_handler;
-	std::istream* body_stream = cgi_handler.Execute(_request, &(*_response));
+	std::istream* body_stream = cgi_handler.Execute(_request, *_response);
+	_response->SetBodyStream(body_stream);
 }
 
 // Assumes _response->_resolved_path has been set already.
@@ -190,100 +218,10 @@ FileHandler::Method ResponseHandler::DetermineMethod() {
 }
 
 void	ResponseHandler::FormResponse() {
-	SetStatusLine();
-	if (_response->GetStatusCode() != 100)
-		SetHeaders();
-	_response->SetComplete();
+	ResponseGenerator	response_generator;
 
+	response_generator.FormResponse(*_response, _request);
 	if (DEBUG) std::cout << "Response formed. Final status code: " << _response->GetStatusCode() << std::endl;
-}
-
-void	ResponseHandler::SetStatusLine() {
-	_response->SetHTTPVersion("HTTP/1.1");
-	if (_response->GetStatusCode() == 0)
-		_response->SetStatusCode(_request->GetStatusCode());
-	_response->SetReasonPhrase(GetReasonPhrase(_response->GetStatusCode()));
-}
-
-void	ResponseHandler::SetHeaders() {
-	SetAllow();
-	SetConnection();
-	SetContentLength();
-	SetContentType();
-	SetDate();
-	SetLocation();
-	SetServer();
-}
-
-// Allow is only set if returning a 405: Method Not Allowed error.
-void	ResponseHandler::SetAllow() {
-	if (_response->GetStatusCode() == 405)
-		_response->SetHeaderField("Allow", GetAllowedMethodsString());
-}
-
-// Connection: close is always sent unless it's a 100: Continue response.
-void	ResponseHandler::SetConnection() {
-	_response->SetHeaderField("Connection", "close");
-}
-
-void	ResponseHandler::SetContentLength() {
-	std::istream* body_stream = _response->GetBodyStream();
-	if (body_stream != NULL
-			&& _response->GetField("Content-Length") == NO_VAL) {
-		body_stream->seekg(0, std::ios_base::end); // move cursor to end of stream
-		std::streampos	size = body_stream->tellg(); // get position of cursor
-		_response->SetHeaderField("Content-Length", std::to_string(size));
-		body_stream->seekg(0); // restore cursor to beginning
-	}
-}
-
-void	ResponseHandler::SetContentType() {
-	// check if there is payload & type not already set
-	if (_response->GetBodyStream() != NULL
-			&& _response->GetField("Content-Type") == NO_VAL) {
-		size_t	extension_start = _response->GetResolvedPath().find_last_of(".");
-		std::string	type;
-
-		type = GetType(_response->GetResolvedPath().substr(extension_start + 1));
-		if (type.empty()) // if no extension or unknown extension
-			type = "application/octet-stream";
-		_response->SetHeaderField("Content-Type", type);
-	}
-}
-
-void	ResponseHandler::SetDate() {
-	char	buf[100];
-	time_t	now = time(0);
-	struct tm	tm = *gmtime(&now);
-	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", &tm);
-
-	_response->SetHeaderField("Date", std::string(buf));
-}
-
-// Location only set if request is redirected or a POST request is successfully executed (201 created).
-void	ResponseHandler::SetLocation() {
-	int status_code = _response->GetStatusCode();
-	if (IsRedirectCode(status_code))
-		_response->SetHeaderField("Location", _response->GetResolvedPath());
-	else if (status_code == 201)
-		_response->SetHeaderField("Location", _request->GetTargetString());
-}
-
-void	ResponseHandler::SetServer() {
-	_response->SetHeaderField("Server", "foodserv/1.0");
-}
-
-// Used by SetAllow to set header value to comma-separated list of allowed methods.
-std::string	ResponseHandler::GetAllowedMethodsString() {
-	std::vector<std::string> methods_vec = _request->GetTargetConfig().GetAllowedMethods();
-	std::string	methods_str;
-
-	for (auto it = methods_vec.begin(); it != methods_vec.end(); it++) {
-		if (!methods_str.empty())
-			methods_str += ", ";
-		methods_str += *it;
-	}
-	return methods_str;
 }
 
 #undef DEBUG // REMOVE

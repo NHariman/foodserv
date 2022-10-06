@@ -33,6 +33,7 @@ cmake --build build | tee -a build_out # output cmake build to stdout & also fil
 # grab last line starting with [100%] and greps only the binary name
 bin_name=$(grep -E '^\[100%\]' build_out | tail -n 1 | grep -oE '[^ ]+$')
 rm build_out
+# rm -rf build/assets/ # UNCOMMENT if file/html assets needed for test
 # cp -r assets build/ # UNCOMMENT if file/html assets needed for test
 printf "${GREEN}\nPlease make sure necessary config files have been copied into this folder.${RESET}"
 choose_test "$1"

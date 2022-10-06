@@ -6,13 +6,14 @@
 #define MAX_CHUNKEXT_SIZE 8192 // used by ChunkedParser
 #define MAX_HEADER_SIZE	8192 // used by HeaderFieldParser
 #define MAX_URI_SIZE 8192 // used by RequestTargetParser
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 8192
 
 // file_handling.cpp
 bool	IsValidFile(std::string const& path);
 bool	IsValidDirectory(std::string const& path);
 int 	CreateFile(std::string const& file_path, bool close_after = false);
 std::string		GetLastModified(std::string const& path);
+size_t			GetStreamSize(std::istream* stream);
 std::istream*	CreateStreamFromString(std::string const& string_buffer);
 std::istream*	CreateStreamFromPath(std::string const& file_path);
 

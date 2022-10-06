@@ -24,7 +24,7 @@ class CGIHandler {
 	public:
 		CGIHandler();
 		~CGIHandler(){};
-		std::istream*	Execute(Request *request, Response *response);
+		std::istream*	Execute(Request *request, Response& response);
 		std::string		GetContent() const;
 		std::string		GetBody() const;
 };
