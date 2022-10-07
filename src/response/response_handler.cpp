@@ -28,12 +28,15 @@ void	ResponseHandler::Send(int fd) {
 	std::istream*	to_send = _response->GetCompleteResponse();
 	char	buffer[BUFFER_SIZE];
 
-	if (DEBUG) std::cout << "ResponseHandler:Send:\n[[" << to_send->rdbuf() << "]]\n";
-	
+	// if (DEBUG) std::cout << "ResponseHandler:Send:\n--START--" << to_send->rdbuf() << "--END--\n";
+
 	size_t send_size = std::min((size_t)BUFFER_SIZE, GetStreamSize(to_send));
 	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+
 	if (send_size != 0) {
 		to_send->read(buffer, send_size);
+		if (to_send->bad())
+			throw StreamReadFailureException();
 		buffer[send_size] = '\0'; // stream::read doesn't append null terminator
 
 		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
@@ -42,10 +45,9 @@ void	ResponseHandler::Send(int fd) {
 		// save send return to check for error or less bytes sent than indicated
 		ssize_t bytes_sent = send(fd, buffer, send_size, 0);
 
-		if (bytes_sent < 0) {
-			// throw SendFailureException();
-			std::cout << "send failed: " << strerror(errno) << "\n"; // remove
-		}
+		if (bytes_sent < 0)
+			throw SendFailureException();
+
 		if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
 
 		// shift position of next character to extract
@@ -90,7 +92,6 @@ void	ResponseHandler::HandleRegular(Request& request) {
 		return HandleRedirection();
 	try {
 		AssignResponseResolvedPath();
-		// check cgi
 		if (IsHandledByCGI())
 			HandleCGI();
 		else
@@ -156,12 +157,20 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 }
 
 void	ResponseHandler::HandleDefaultError(int error_code) {
-	std::string error_page_html(GetServerErrorPage(error_code));
-	std::istream* body_stream = CreateStreamFromString(error_page_html);
-
-	_response->SetBodyStream(body_stream);
-	_response->SetHeaderField("Content-Type", "text/html");
-	FormResponse();
+	try {
+		std::string error_page_html(GetServerErrorPage(error_code));
+		std::istream* body_stream = CreateStreamFromString(error_page_html);
+		if (body_stream == NULL)
+			throw InternalServerErrorException();
+		_response->SetBodyStream(body_stream);
+		_response->SetHeaderField("Content-Type", "text/html");
+		FormResponse();
+	}
+	catch (http::exception &e) {
+		_request->SetStatusCode(e.which());
+		if (DEBUG) std::cout << e.which() << " error encountered\n";
+		HandleError(*_request);
+	}
 }
 
 bool	ResponseHandler::IsRedirected() {
