@@ -15,16 +15,10 @@ int	main(int ac, const char **av) {
 
 		webserver.KernelEventLoop();
 
+		// TargetConfig target;
+		// target.Setup(&input_file, "localhost", "80", "/");
+		// std::cout << target.GetResolvedPath() << std::endl;
 		
-		// with the request received from the webserver 
-		// get the target values: servername, portnumber and requst uri.
-		// with this information, look which files have to be serverd
-		TargetConfig target;
-		target.Setup(&input_file, "localhost", "80", "/");
-
-		// tell the webserver that you are ready to write to the client,
-		// and give it the path to write to, serve file file.
-
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << '\n';
