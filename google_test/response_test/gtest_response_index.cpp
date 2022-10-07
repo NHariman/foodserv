@@ -9,7 +9,7 @@ using namespace std;
 std::string	GetHTMLPageSize(string const& html_file_path);
 std::string	GetHTMLStringSize(char const* html_string);
 
-#define INDEX_PATH "assets/index.html"
+#define INDEX_PATH "www/html/index.html"
 static NginxConfig config("../default.conf");
 static NginxConfig config_index("../index.conf");
 

@@ -49,7 +49,7 @@ void	KernelEvent::run_event_loop(int kq, int _listening_socket) {
 
 void KernelEvent::serveHTML(int s) {
     
-    const char *file_path = "../../HTML/index.html";
+    const char *file_path = "../../www/html/index.html";
 
     char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
                     "Connection: close\r\n"
