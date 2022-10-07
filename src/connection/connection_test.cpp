@@ -1,4 +1,4 @@
-#include "connection.hpp"
+#include "connection_test.hpp"
 
 // Socket fd & config file constructor
 Connection::Connection(int fd, NginxConfig* config)
@@ -19,6 +19,10 @@ Connection::~Connection() {
 void	Connection::Receive(char const* buffer) {
 	_request.Parse(buffer);
 
+    /* EXTRA SANNE */
+    _request_path = _request.GetTargetString();
+    /* end extra */
+
 	Request::Status	status = _request.GetRequestStatus();
 	// std::cout << "Connection::Receive: request status_code: " << _request.GetStatusCode() << std::endl;
 	switch(status) {
@@ -35,7 +39,7 @@ void	Connection::Receive(char const* buffer) {
 
 void	Connection::Dispatch() {
 	if (_response_handler.Ready())
-		_response_handler.Send(_fd); // can throw, should be caught in main
+		_response_handler.Send();
 
 	if (_response_handler.IsDone())
 		_close_connection = true;
@@ -45,6 +49,7 @@ Response const& Connection::DebugGetResponse() {
 	return	_response_handler.GetResponse();
 }
 
-bool	Connection::CanCloseConnection() const {
-	return _close_connection;
+/* EXTRA SANNE */
+std::string     Connection::GetRequestPath() {
+    return _request_path;
 }
