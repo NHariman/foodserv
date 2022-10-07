@@ -61,6 +61,8 @@ size_t	GetStreamSize(std::istream* stream) {
 // and returns a pointer to the heap-allocated object.
 std::istream*	CreateStreamFromString(std::string const& string_buffer) {
 	std::istream* stream = new std::stringstream(string_buffer);
+	if (!stream->good())
+		return NULL;
 	return stream;
 }
 
