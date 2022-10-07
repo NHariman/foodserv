@@ -130,48 +130,6 @@ void	KernelEvents::PrintConnectionMap() const {
 		std::cout << "client fd: " << it->first << std::endl;
 }
 
-// this needs to be changed for dispatch
-void KernelEvents::serveHTML(int s, std::string file_path) {
-    char htmlresponse[] = "HTTP/1.1 200 OK\r\n"
-                    "Connection: close\r\n"
-                    "Content-type: text/html\r\n"
-                    "\r\n";
-
-	file_path = file_path.substr(9);
-
-	/* 
-	**	target part is sketchy, this will be deleted and send to dispatch
-	*/ 
-
-	TargetConfig	*target = new TargetConfig();
-	target->Setup(_config_file, "localhost", "80", file_path);
-	std::string final_path = target->GetResolvedPath();
-
-	if (DEBUG) std::cout << "file path: " << final_path << std::endl;
-
-    std::string		text;
-    std::ifstream	read_file(final_path.c_str());
-
-    std::vector<char>	buf_vector;
-
-    for (size_t i = 0; i < sizeof(htmlresponse); i++)
-        buf_vector.push_back(htmlresponse[i]);
-
-    while (getline(read_file, text)) {
-        for (int i = 0; i < int(text.length()); i++) {
-            buf_vector.push_back(text[i]);
-        }
-    }
-
-    char *buf = new char[buf_vector.size()];
-
-    for (size_t i = 0; i < buf_vector.size(); i++) {
-        buf[i] = buf_vector.at(i);
-    }
-    send(s, buf, buf_vector.size(), 0);
-    read_file.close();
-}
-
 /*
 **	Receive data sent to the socket fildes, and saves it into buffer
 **	The buffer is double checked with the read event data filter
@@ -211,14 +169,12 @@ void KernelEvents::recv_msg(int s, int read_filter_length) {
 void	KernelEvents::write_msg(int s) {
 	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
 	if (it != _connection_map.end()) {
-		std::cout << "client: " << it->first << std::endl;
 		it->second->Dispatch();
-		// // serveHTML(s);
 
 		// it->second->Dispatch();
-		// serveHTML(s, it->second->GetRequestPath());
 		// if (it->second->CanCloseConnection())
 		RemoveFromConnectionMap(s);
+	
 		/*
 		**	CHECK connection->isDone/ close connection
 		*/
