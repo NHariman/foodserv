@@ -21,7 +21,10 @@ bool_index(false),
 bool_client_max_body_size(false),
 bool_error_page(false),
 bool_autoindex(false),
-bool_return_dir(false) {}
+bool_return_dir(false),
+_client_max_body_size(1),
+_autoindex(false),
+_return_dir() {}
 
 ConfigValues::ConfigValues(const ConfigValues& obj) : bool_root(obj.bool_root),
 bool_index(obj.bool_index),

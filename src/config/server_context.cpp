@@ -16,8 +16,14 @@
 // when two location blocks have the same uri
 // when multiple roots
 
-ServerContext::ServerContext(size_t *start, std::string config_file, size_t server_nb) : _server_nb(server_nb) {
+ServerContext::ServerContext(size_t *start, std::string config_file, size_t server_nb) : 
+ConfigValues(),
+_amount_location_context(0),
+bool_listen(false),
+bool_server_name(false),
+_server_nb(server_nb) {
 	InitChecklist();
+
 	GetDirectiveValuePairs(start, config_file);
 	CheckListVerification();
 }
@@ -25,16 +31,6 @@ ServerContext::ServerContext(size_t *start, std::string config_file, size_t serv
 ServerContext::ServerContext() {
 	InitChecklist();
 }
-
-ServerContext::ServerContext(const ServerContext& obj) : 	
-	ConfigValues(obj), 
-	amount_location_context(obj.amount_location_context),
-	bool_listen(obj.bool_listen),
-	bool_server_name(obj.bool_server_name),
-	_server_nb(obj._server_nb),
-	_location_contexts(obj._location_contexts),	
-	_listen(obj._listen),
-	_server_name(obj._server_name) {}
 
 ServerContext & ServerContext::operator=(const ServerContext& obj) {
     if (this == &obj) {
@@ -45,13 +41,13 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
 }
 
 void		ServerContext::InitChecklist() {
-    amount_location_context = 0;
-	bool_listen = false;
-	bool_server_name = false;
-	bool_root = false;
-	bool_index = false;
-	bool_client_max_body_size = false;
-	bool_error_page = false;
+    _amount_location_context = 0;
+
+	_root = "/var/www/html";
+	_client_max_body_size = 1;
+	_autoindex = false;
+	_listen.first = "80";
+	_listen.second = "0";
 }
 
 // sets the value in the right directive within the server class based off the IsDirective return value

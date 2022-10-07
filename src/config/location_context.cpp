@@ -23,7 +23,6 @@ _allowed_methods(AllowedMethods())
 LocationContext::LocationContext(std::string data) {
 	InitChecklist();
     GetDirectiveValuePairs(data);
-	CheckListVerification();
 }
 
 LocationContext& LocationContext::operator= (LocationContext const& location_context) {

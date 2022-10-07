@@ -28,7 +28,7 @@
 class ServerContext : public ConfigValues {
 	private:
 
-		size_t	amount_location_context;
+		size_t	_amount_location_context;
 		bool	bool_listen;
 		bool	bool_server_name;
 

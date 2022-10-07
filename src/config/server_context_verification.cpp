@@ -11,32 +11,12 @@ void			ServerContext::CheckListVerification(){
 		_location_contexts.push_back(default_location);
 		if (DEBUG) std::cerr << "added default location \"/\"" << std::endl;
 	}
-	if (bool_listen == false) {
-		_listen.first = "80"; // changed to string
-		_listen.second = "0"; // changed to string
-	}
-	if (bool_server_name == false) {
-		if (DEBUG) _server_name.push_back("localhost");
-	}
-	if (bool_root == false) {
-		_root = "/var/www/html";
-	}
 	if (bool_index == false) {
 		Index	input_value("index.php index.html index.htm index.nginx-debian.html");
 		_index = input_value.GetIndex();
 	}
-	if (bool_client_max_body_size == false) {
-		_client_max_body_size = 1;
-	}
-	if (bool_error_page == false) {
-		bool_error_page = false;
-	}
-	if (bool_autoindex == false) {
-		_autoindex = false;
-	}
-	if (bool_return_dir == false) {
-		ReturnDir value;
-		_return_dir = value;
+	if (bool_server_name == false) {
+		if (DEBUG) _server_name.push_back("localhost");
 	}
 }
 
