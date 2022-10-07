@@ -11,11 +11,23 @@ bool		CGI::FileLocationCompare(std::string file_one, std::string file_two) {
     return false;
 }
 
+std::string		CGI::RemoveQuery(std::string path) {
+	size_t end;
+	end = path.find_first_of('?');
+	return path.substr(0, end);
+}
+
 // checks if executable name is accurate regardless of prior path
 // used in: SetCGIOneArgument(), SetExecutablePath()
 bool		CGI::FileNameCompare(std::string file_one, std::string file_two) {
 	if (DEBUG) std::cout << "file one: " << file_one << std::endl;
 	if (DEBUG) std::cout << "file two: " << file_two << std::endl;
+	if (_request->GetMethod().compare("GET") == 0) {
+		file_one = RemoveQuery(file_one);
+		file_two = RemoveQuery(file_two);
+		if (DEBUG) std::cout << "file one after remove query: " << file_one << std::endl;
+		if (DEBUG) std::cout << "file two after remove query: " << file_two << std::endl;
+	}
 	size_t i = file_one.size() - 1;
 	size_t j = file_two.size() - 1;
 

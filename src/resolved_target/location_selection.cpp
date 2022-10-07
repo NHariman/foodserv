@@ -1,12 +1,5 @@
 #include "location_selection.hpp"
 
-/*
-	HOW THE MATCHING IS DONE
-	so basically we will only look for the prefix matches
-	so the request uri must AT LEAST match the nginx uri given
-	if multiple matches are find, we will choose the longest match
-*/
-
 LocationSelection::LocationSelection(ServerContext chosen_servercontext, std::string request_uri)
 	: _request_uri(request_uri), _server_context(chosen_servercontext) {
 	_location_context_vector = _server_context.GetLocationContexts();

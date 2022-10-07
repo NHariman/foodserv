@@ -20,6 +20,7 @@ set(EXEC fs_test) # test executable name
 
 file(GLOB SRCS CONFIGURE_DEPENDS
     "*.cpp"
+	"../../src/cgi/*.cpp"
     "../../src/config/*.cpp"
     "../../src/config/directive_validation/*.cpp"
 	"../../src/connection/*.cpp"

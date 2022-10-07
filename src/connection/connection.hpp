@@ -15,6 +15,7 @@ class Connection {
 
 		void	Receive(char const* buffer);
 		void	Dispatch();
+		bool	CanCloseConnection() const;
 		// debug
 		Response const& DebugGetResponse();
 

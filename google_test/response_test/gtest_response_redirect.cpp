@@ -5,8 +5,8 @@
 
 using namespace std;
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/default.conf");
-static NginxConfig config_redir("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/response_test/redirect.conf");
+static NginxConfig config("../default.conf");
+static NginxConfig config_redir("../redirect.conf");
 
 // Context:
 // /helloworld location block has a "return 307 localhost/hello" directive.

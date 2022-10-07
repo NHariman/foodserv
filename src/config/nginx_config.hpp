@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include "setup.hpp"
 #include "server_context.hpp"
 
 class NginxConfig {

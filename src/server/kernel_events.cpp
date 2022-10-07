@@ -212,8 +212,8 @@ void	KernelEvents::write_msg(int s) {
 	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
 	if (it != _connection_map.end()) {
 		std::cout << "client: " << it->first << std::endl;
-		// it->second->Dispatch();
-		serveHTML(s);
+		it->second->Dispatch();
+		// serveHTML(s);
 
 		RemoveFromConnectionMap(s);
 		// close(s);

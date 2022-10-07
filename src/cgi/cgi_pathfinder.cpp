@@ -34,6 +34,7 @@ std::string CGI::FindFile() {
 // if file, check if resolved path filename matches cgi executable path
 void		CGI::SetCGIOneArgument() {
 	_file_name = SetExecutablePath();
+	if (DEBUG) std::cout << "_request->GetTargetURI().GetParsedURI(): " << _request->GetTargetURI().GetParsedURI() << std::endl;
 	if (IsDirectory(_request->GetTargetURI().GetParsedURI()) == false && FileNameCompare(_request->GetTargetURI().GetParsedURI(), _file_name) == false) {
 		throw MethodNotAllowedException();
 	}

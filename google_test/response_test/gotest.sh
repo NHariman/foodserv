@@ -11,7 +11,7 @@ BLUEBG="\033[44m"
 WHITE="\033[1;97m"
 RESET="\033[0m"
 
-DEFAULT_CONF="../../../config_files/default.conf"
+DEFAULT_CONF="../default.conf" # should be absolute or relative to build folder from which test executable is run
 
 choose_test () {
     printf "\n${CYAN}"
@@ -19,10 +19,10 @@ choose_test () {
 	printf "${RESET}\n\n"
 	case $choice in
 		1)
-			cp -r assets build/ && cd build && ctest
+			cd build && ctest
 			;;
 		2)
-			cp -r assets build/ && cd build && ./$bin_name ${DEFAULT_CONF}
+			cd build && ./$bin_name #${DEFAULT_CONF}
 			;;
 		*) # any other input
 			exit 0
@@ -35,6 +35,7 @@ cmake .. -DBUILD_GMOCK=OFF -S . -B build
 cmake --build build | tee -a build_out # output cmake build to stdout & also file
 # grab last line starting with [100%] and greps only the binary name
 bin_name=$(grep -E '^\[100%\]' build_out | tail -n 1 | grep -oE '[^ ]+$')
-rm build_out
+rm -rf build_out
 rm -rf build/assets/
+cp -r assets build/ # UNCOMMENT if file/html assets needed for test
 choose_test "$1"

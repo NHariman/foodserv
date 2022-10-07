@@ -14,16 +14,17 @@ class CGIHandler {
 		std::string			_body;
 		std::istream 		*_content;
 
-		void				executeCGI(Request *request);
+		void				ExecuteCGI(Request *request);
 		size_t				SetHeaders(Response* response);
 		std::string			RetrieveBody(size_t start);
 		std::istream*		ToIStream(std::string body);
 		void				SetStatus(Response* response);
+		void				CreateBodyStream(std::string body);
 
 	public:
 		CGIHandler();
 		~CGIHandler(){};
-		std::istream*	execute(Request *request, Response *response);
+		std::istream*	Execute(Request *request, Response& response);
 		std::string		GetContent() const;
 		std::string		GetBody() const;
 };
