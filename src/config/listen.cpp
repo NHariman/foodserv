@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   listen.cpp                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: salbregh <salbregh@student.codam.nl>         +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/09/05 12:25:37 by salbregh      #+#    #+#                 */
-/*   Updated: 2022/09/05 12:25:38 by salbregh      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "listen.hpp"
 
 Listen::Listen(std::string listen) : _listen(listen), _port_number(DEFAULT_PORT), _ip_address(DEFAULT_IP) {

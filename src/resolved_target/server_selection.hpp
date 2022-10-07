@@ -1,15 +1,3 @@
-/*
- __      _____| |__  ___  ___ _ ____   __ 
- \ \ /\ / / _ \ '_ \/ __|/ _ \ '__\ \ / /   
-  \ V  V /  __/ |_) \__ \  __/ |   \ V /  
-   \_/\_/ \___|_.__/|___/\___|_|    \_/   
-   
-   The ServerSelection class takes as an argument all 
-   parsed servercontexes from the nginx configuration file. 
-   ServerSelection will then select the most compatible 
-   servercontext to serve the request with.
-*/
-
 #ifndef SERVER_SELECTION_HPP
 # define SERVER_SELECTION_HPP
 
