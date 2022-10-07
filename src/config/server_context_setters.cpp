@@ -1,7 +1,7 @@
 #include "server_context.hpp"
 
 void    ServerContext::SetLocation(std::string trimmed_value) {
-	amount_location_context++;
+	_amount_location_context++;
 	LocationContext	location(trimmed_value);
 	for (size_t i = 0 ; i < _location_contexts.size(); ++i){
 		if (_location_contexts[i].GetLocationUri().GetUri().compare(location.GetLocationUri().GetUri()) == 0)
@@ -28,7 +28,7 @@ void    ServerContext::SetServerName(std::string trimmed_value) {
 }
 
 void					ServerContext::CopyValues(const ServerContext& obj) {
-	amount_location_context = obj.amount_location_context;
+	_amount_location_context = obj._amount_location_context;
 	bool_listen = obj.bool_listen;
 	bool_server_name = obj.bool_server_name;
 	bool_root = obj.bool_return_dir;

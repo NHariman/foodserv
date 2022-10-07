@@ -43,7 +43,7 @@ class ServerContext : public ConfigValues {
 		void					GetDirectiveValuePairs(size_t *start_position, std::string config_file) override; // in this case i do not use override as i want to use it differently.
 		
 		// verification: in server_context_verification
-		void					CheckListVerification() override;
+		void					CheckListVerification();
 		bool					HasDefaultLocation(std::vector<LocationContext> locations);
 		int						IsDirective(std::string directive) override;
 		int         			GetDirective(std::string directive);

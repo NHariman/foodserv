@@ -5,9 +5,9 @@
 // checks if the necessary blocks have been set and otherwise prints a warning
 // if something MUST be set, we should throw an exception
 void			ServerContext::CheckListVerification(){
-	if (amount_location_context == 0 || HasDefaultLocation(_location_contexts) == false) {
+	if (_amount_location_context == 0 || HasDefaultLocation(_location_contexts) == false) {
 		LocationContext default_location;
-		amount_location_context++;
+		_amount_location_context++;
 		_location_contexts.push_back(default_location);
 		if (DEBUG) std::cerr << "added default location \"/\"" << std::endl;
 	}
@@ -27,7 +27,7 @@ bool						ServerContext::IsSet(std::string directive) {
 		throw InvalidDirectiveSetCheckException(_server_nb, directive);
 	switch (is_directive) {
 		case 0:
-			return amount_location_context;
+			return _amount_location_context;
 		case 1:
 			return bool_listen;
 		case 2:

@@ -28,7 +28,11 @@ _server_nb(server_nb) {
 	CheckListVerification();
 }
 
-ServerContext::ServerContext() {
+ServerContext::ServerContext():  ConfigValues(),
+_amount_location_context(0),
+bool_listen(false),
+bool_server_name(false),
+_server_nb(1) {
 	InitChecklist();
 }
 
