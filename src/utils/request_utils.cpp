@@ -1,4 +1,8 @@
 #include "request_utils.hpp"
+#include <algorithm> // transform
+#include <cctype> // isprint
+#include <iomanip> // setw
+#include <ios> // std::hex
 
 // Used by RequestTargetParser & URIHostParser to check if previously-read char
 // (that's been pushed to buffer) is `c`.
