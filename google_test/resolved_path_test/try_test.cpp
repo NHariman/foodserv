@@ -31,7 +31,7 @@ TEST(RootTest, ResolvedPathTesting) {
 	TargetConfig	target;
 {
 	target.Setup(&test, "localhost", "80", "/hoi");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/hoi");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/hoi");
 }
 {
 	target.Setup(&test, "localhost", "80", "/hoi/otherroot");
@@ -47,15 +47,15 @@ TEST(RootTest, ResolvedPathTesting) {
 }
 {
 	target.Setup(&test, "localhost", "80", "/dir/more");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/dir/more");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/dir/more");
 }
 {
 	target.Setup(&test, "localhost", "80", "/");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/otherpage.html");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/otherpage.html");
 }
 {
-	target.Setup(&test, "localhost", "8888", "/Desktop/foodserv/HTML/");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
+	target.Setup(&test, "localhost", "8888", "/Desktop/foodserv/www/html/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/index.html");
 }
 }
 
@@ -65,11 +65,11 @@ TEST(AliasTest, ResolvedPathTesting) {
 
 {
 	target.Setup(&test, "localhost", "80", "/html-pages/index.html");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/index.html");
 }
 {
 	target.Setup(&test, "localhost", "80", "/html-pages");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/index.html");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/index.html");
 }
 {
 	target.Setup(&test, "test", "888", "/pages/");
@@ -77,7 +77,7 @@ TEST(AliasTest, ResolvedPathTesting) {
 }
 {
 	target.Setup(&test, "test", "888", "/test2/index.html");
-	EXPECT_EQ(target.GetResolvedPath(), "/User/sannealbreghs/Desktop/foodserv/HTML/index.html");
+	EXPECT_EQ(target.GetResolvedPath(), "/User/sannealbreghs/Desktop/foodserv/www/html/index.html");
 }
 {
 	target.Setup(&test, "noname", "888", "/config_files/test_config/alias.conf");
@@ -90,17 +90,17 @@ TEST (AutoIndex, ResolvedPathTesting) {
 	TargetConfig	target;
 {
 	target.Setup(&test, "local", "666", "/");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/");
 	EXPECT_EQ(target.MustGenerateIndex(), true);
 }
 {
 	target.Setup(&test, "localhost", "8080", "/auto/on/");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/auto/on/");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/auto/on/");
 	EXPECT_EQ(target.MustGenerateIndex(), true);
 }
 {
 	target.Setup(&test, "localhost", "666", "/HTML/");
-	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/HTML/otherpage.html");
+	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/otherpage.html");
 	EXPECT_EQ(target.MustGenerateIndex(), false);
 }
 }

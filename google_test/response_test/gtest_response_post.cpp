@@ -14,7 +14,7 @@ std::string	GetHTMLStringSize(char const* html_string);
 string GetFileContent(string const& file_path);
 
 static NginxConfig config("../default.conf");
-static string FILE_TO_SEND = "assets/public/hello.txt";
+static string FILE_TO_SEND = "www/public/hello.txt";
 
 std::streampos	GetFileContentCount(string const& file_path) {
 	ifstream file(file_path);
@@ -28,7 +28,7 @@ TEST(ResponsePostTest, PostExistingFile) {
 	Connection connection(42, &config);
 	string message_body = GetFileContent(FILE_TO_SEND);
 	string req_dir = "/hello/";
-	string alias_dir = "assets/";
+	string alias_dir = "www/";
 	string req_target = "upload/existing.txt";
 
 	string req_str = "POST " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\n";
@@ -53,7 +53,7 @@ TEST(ResponsePostTest, PostNonExistantFile) {
 	Connection connection(42, &config);
 	string message_body = GetFileContent(FILE_TO_SEND);
 	string req_dir = "/hello/";
-	string alias_dir = "assets/";
+	string alias_dir = "www/";
 	string req_target = "upload/hello3.txt";
 
 	string req_str = "POST " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\n";
@@ -77,7 +77,7 @@ TEST(ResponsePostTest, PostNonExistantFile) {
 TEST(ResponsePostTest, PostNonExistantEmptyFile) {
 	Connection connection(42, &config);
 	string req_dir = "/hello/";
-	string alias_dir = "assets/";
+	string alias_dir = "www/";
 	string req_target = "upload/empty2.txt";
 
 	string req_str = "POST " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\n";

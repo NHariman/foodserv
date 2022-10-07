@@ -23,7 +23,7 @@ TEST(ResponseGetTest, GetExistingFile) {
 	EXPECT_EQ(response.GetField("Connection"), "close");
 	EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
-	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize("assets/public/hello.txt"));
+	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize("www/public/hello.txt"));
 }
 
 TEST(ResponseGetTest, GetNonExistantFile) {

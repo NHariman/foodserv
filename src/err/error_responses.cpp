@@ -492,7 +492,7 @@ STYLE_END CRLF
 "<head><title>Unknown Status Code</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>Unknown Status Code</h1></center><hr>" CRLF
-"<center><img src=\"img/cat_thonk.png\"></center>" CRLF
+"<center><img src=\"www/img/cat_thonk.png\"></center>" CRLF
 footer CRLF
 ;
 

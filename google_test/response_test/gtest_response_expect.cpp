@@ -10,7 +10,7 @@ using namespace std;
 std::streampos	GetFileContentCount(string const& file_path);
 
 static NginxConfig config("../default.conf");
-static string FILE_TO_SEND = "assets/public/hello.txt";
+static string FILE_TO_SEND = "www/public/hello.txt";
 
 string GetFileContent(string const& file_path) {
 	int fd = open(file_path.c_str(), O_RDONLY);
@@ -28,7 +28,7 @@ string GetFileContent(string const& file_path) {
 TEST(ResponseExpectTest, ExpectWithMessageBody) {
 	Connection connection(42, &config);
 	string req_dir = "/hello/";
-	string alias_dir = "assets/";
+	string alias_dir = "www/";
 	string req_target = "upload/hello2.txt";
 
 	string req_str = "POST " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n";
@@ -61,7 +61,7 @@ TEST(ResponseExpectTest, ExpectWithMessageBody) {
 TEST(ResponseExpectTest, ExpectWithNoMessage) {
 	Connection connection(42, &config);
 	string req_dir = "/hello/";
-	string alias_dir = "assets/";
+	string alias_dir = "www/";
 	string req_target = "upload/empty.txt";
 
 	string req_str = "POST " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\n\n";
