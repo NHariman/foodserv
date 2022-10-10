@@ -3,6 +3,7 @@
 #include "../../src/config/config_interface.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
 #include "../../src/request/request.hpp"
+#include "../../src/resolved_target/target_config.hpp"
 #include "../../src/cgi/cgi.hpp"
 # include <map>
 #include <string>
@@ -454,6 +455,13 @@ TEST(NginxConfigTest, valid) {
 	EXPECT_NO_THROW({
 		NginxConfig test("config_files/simple.conf");
 	});	
+	{
+		NginxConfig test("config_files/simple.conf");
+		TargetConfig target;
+		target.Setup(&test, "localhost", "80", "/");
+		EXPECT_EQ(target.GetRoot(), "/www/html");
+		EXPECT_EQ(target.GetMaxBodySize(), 1);
+	}
 	EXPECT_NO_THROW({
 		NginxConfig test("config_files/empty_location_block.conf");
 	});	
