@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <sys/socket.h> // send
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 // Default constructor
 ResponseHandler::ResponseHandler()
