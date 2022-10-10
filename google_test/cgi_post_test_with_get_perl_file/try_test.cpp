@@ -46,7 +46,6 @@ TEST(CGITesting, valid2) {
 	CGI test;
 	size_t result;
 	EXPECT_TRUE(test.Setup(&request));
-	std::cout << "status code after Setup: " << test.GetStatusCode() << std::endl;
 	result = test.Execute();
 	std::cout << "result: " << result << std::endl;
 	EXPECT_EQ(result, 200);
@@ -88,7 +87,7 @@ TEST(CGITESTING, invalid) {
 		Request request(&config);
 		request.Parse("GET /cgi-bin/test.py HTTP/1.1\r\nHost: localhost\n\n");
 		CGI test;
-		EXPECT_THROW({test.Setup(&request);}, MethodNotAllowedException);
+		EXPECT_THROW({test.Setup(&request);}, NotFoundException);
 	}
 	{
 		NginxConfig config("config_files/cgi_testers/2_arg_invalid_path.conf");
@@ -120,7 +119,7 @@ TEST(CGITESTING, invalid) {
 		Request request(&config);
 		request.Parse("GET /cgi-bin/test.py HTTP/1.1\r\nHost: localhost\n\n");
 		CGI blo;
-		EXPECT_THROW(blo.Setup(&request), MethodNotAllowedException);
+		EXPECT_THROW(blo.Setup(&request), NotFoundException);
 	}
 }
 
@@ -218,7 +217,7 @@ TEST(CGITESTING_two_arguments, wrong_extension_in_request) {
 		request.Parse("POST /cgi-bin/post_query.pe HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
-		EXPECT_THROW(get.Setup(&request), MethodNotAllowedException);
+		EXPECT_THROW(get.Setup(&request), NotFoundException);
 	}
 }
 
@@ -232,7 +231,7 @@ TEST(CGITESTING_two_arguments, wrong_extension_in_config) {
 		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
-		EXPECT_THROW(get.Setup(&request), MethodNotAllowedException);
+		EXPECT_THROW(get.Setup(&request), NotFoundException);
 	}
 }
 
@@ -345,7 +344,7 @@ TEST(CGITESTING_one_argument, wrong_extension_in_request) {
 		request.Parse("POST /cgi-bin/post_query.pe HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
-		EXPECT_THROW(get.Setup(&request), MethodNotAllowedException);
+		EXPECT_THROW(get.Setup(&request), NotFoundException);
 	}
 }
 
@@ -359,7 +358,7 @@ TEST(CGITESTING_ONE_argument, wrong_extension_in_config) {
 		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
-		EXPECT_THROW(get.Setup(&request), MethodNotAllowedException);
+		EXPECT_THROW(get.Setup(&request), NotFoundException);
 	}
 }
 
@@ -373,6 +372,6 @@ TEST(CGITESTING_ONE_argument, executable_incompatible) {
 		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
-		EXPECT_THROW(get.Setup(&request), MethodNotAllowedException);
+		EXPECT_THROW(get.Setup(&request), NotFoundException);
 	}
 }

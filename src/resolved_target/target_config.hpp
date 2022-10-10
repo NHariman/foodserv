@@ -14,6 +14,7 @@
 # define POST 1
 # define DELETE 2
 
+
 class ResolvedPath;
 
 /*
@@ -30,9 +31,9 @@ Variables inside TargetConfig, inherited from LocationContext and ConfigValues
 		ReturnDir					_return_dir;
 
 		// unique
-		ServerContext						_server;
-		LocationContext						_location;
-		std::string							_resolved_path;	
+
+		std::string							_resolved_path;
+		bool								_generate_index;
 
 		// all have getters	
 */
@@ -49,8 +50,6 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		bool								SetAutoindex(ServerContext *server, LocationContext *location);
 		ReturnDir							SetReturn(ServerContext *server, LocationContext *location);
 
-		ServerContext						_server;
-		LocationContext						_location;
 		std::string							_resolved_path;
 		bool								_generate_index;
 
@@ -58,9 +57,7 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 	public:
 		TargetConfig(){};
 		virtual ~TargetConfig(){};
-		TargetConfig&	operator= (TargetConfig const &obj);
 		void	Setup(NginxConfig *config, std::string host, std::string port, std::string target);
-
 		void	SetGenerateIndexBool(bool index);
 		
 		//getters
@@ -69,9 +66,6 @@ class TargetConfig : public LocationContext, virtual public ConfigValues {
 		std::string					GetResolvedPath() const;
 		bool						MustGenerateIndex() const;
 		std::vector<std::string>	GetAllowedMethods() const;
-
-		ServerContext				GetServer() const;
-		LocationContext				GetLocation() const;
 };
 
 #endif

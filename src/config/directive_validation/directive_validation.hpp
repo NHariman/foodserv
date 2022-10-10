@@ -11,5 +11,6 @@
 #include "location_uri.hpp"
 #include "return_dir.hpp"
 #include "../../utils/config_utils.hpp"
+#include "../../err/config_exceptions.hpp"
 
 #endif

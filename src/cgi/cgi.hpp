@@ -71,7 +71,6 @@ https://stackoverflow.com/questions/28921089/i-have-written-my-own-http-server-a
 
 class CGI {
 	private:
-		PWD		_pwd;
 		Request *_request;
 		std::vector<std::string> _env;
 		std::vector<std::string> _argv;
@@ -80,7 +79,6 @@ class CGI {
 		std::string	_file_name;
 		std::string _content;
 		std::string _path;
-		size_t		_status_code;
 
 		// in cgi.cpp
 		void	SetExecStatusCode(int exit_code);
@@ -119,9 +117,7 @@ class CGI {
 		// in cgi.cpp
 		bool    	Setup(Request *request); // also probably needs the request class to set ENVs with.
 		size_t    	Execute();
-		std::string	GetFileName() const;
 		std::string GetContent() const;
-		size_t		GetStatusCode() const;
 
 };
 

@@ -95,8 +95,7 @@ bool		CGI::HasExtension(std::string file_name) {
 // used in: IsValidPath()
 bool	CGI::ValidScript(std::string executable_path) {
 	if (_CGI.GetLen() == 1 && IsDirectory(_path) == false && IsValidFile(_path) == true && FileLocationCompare(_path, executable_path) == false) {
-		_status_code = 405;
-		throw MethodNotAllowedException(); // file location not the same
+		throw NotFoundException(); // file location not the same
 		return false;
 	}
 	else
@@ -108,11 +107,9 @@ bool	CGI::ValidScript(std::string executable_path) {
 // used in ValidPath();
 bool	CGI::IsExecutable(std::string path) {
 	if (IsValidFile(path) == false && IsValidDirectory(path) == false) {
-		_status_code = 404;
 		throw NotFoundException(); // file does not exist
 	}
 	if (access(path.c_str(), X_OK) && _CGI.GetLen() == 1) {
-		_status_code = 403;
 		throw ForbiddenException(); // cannot execute
 	}
 	return true;

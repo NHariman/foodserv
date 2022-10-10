@@ -3,6 +3,7 @@
 #include "../../src/config/config_interface.hpp"
 #include "../../src/config/directive_validation/directive_validation.hpp"
 #include "../../src/request/request.hpp"
+#include "../../src/resolved_target/target_config.hpp"
 #include "../../src/cgi/cgi.hpp"
 # include <map>
 #include <string>
@@ -446,77 +447,87 @@ TEST(ReturnTest, ValidInput){
 //////////////////////////////
 TEST(NginxConfigTest, valid) {
 	EXPECT_NO_THROW({
-		NginxConfig test("../../../config_files/default.conf");
+		NginxConfig test("config_files/default.conf");
 	});	
 	EXPECT_NO_THROW({
-		NginxConfig test("../../../config_files/multiple_servers.conf");
+		NginxConfig test("config_files/multiple_servers.conf");
 	});
 	EXPECT_NO_THROW({
-		NginxConfig test("../../../config_files/simple.conf");
+		NginxConfig test("config_files/simple.conf");
+	});	
+	{
+		NginxConfig test("config_files/simple.conf");
+		TargetConfig target;
+		target.Setup(&test, "localhost", "80", "/");
+		EXPECT_EQ(target.GetRoot(), "/www/html");
+		EXPECT_EQ(target.GetMaxBodySize(), 1);
+	}
+	EXPECT_NO_THROW({
+		NginxConfig test("config_files/empty_location_block.conf");
 	});	
 }
 
 TEST(NginxConfigTest, invalid) {
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/open_brackets.conf");}, NginxConfig::OpenBracketsException);
+		NginxConfig test("bad_config_files/open_brackets.conf");}, NginxConfig::OpenBracketsException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/outside_server.conf");}, NginxConfig::BadServerContextException);
+		NginxConfig test("bad_config_files/outside_server.conf");}, NginxConfig::BadServerContextException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/misspelled_server.conf");}, NginxConfig::BadServerContextException);
+		NginxConfig test("bad_config_files/misspelled_server.conf");}, NginxConfig::BadServerContextException);
 	EXPECT_THROW({
-		NginxConfig test("../../config_files/bad_config_files/dfhdkfh.conf");}, NginxConfig::InvalidFileLocationException);
+		NginxConfig test("bad_config_files/dfhdkfh.conf");}, NginxConfig::InvalidFileLocationException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/empty.conf");}, NginxConfig::NoServerContextsException);
+		NginxConfig test("bad_config_files/empty.conf");}, NginxConfig::NoServerContextsException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_listen");}, ServerContext::MultipleListensException);
+		NginxConfig test("bad_config_files/double_listen");}, MultipleListensException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_Server_name");}, ServerContext::MultipleServerNameException);
+		NginxConfig test("bad_config_files/double_Server_name");}, MultipleServerNameException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/bad_input");}, ConfigValues::InvalidDirectiveException);
+		NginxConfig test("bad_config_files/bad_input");}, InvalidDirectiveException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_location");}, ServerContext::DuplicateLocationUriException);
+		NginxConfig test("bad_config_files/double_location");}, DuplicateLocationUriException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_CMBS");}, ConfigValues::MultipleClientMaxBodySizeException);
+		NginxConfig test("bad_config_files/double_CMBS");}, MultipleClientMaxBodySizeException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/location_error_cmbs");}, ConfigValues::MultipleClientMaxBodySizeException);
+		NginxConfig test("bad_config_files/location_error_cmbs");}, MultipleClientMaxBodySizeException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_autoindex");}, ConfigValues::MultipleAutoindexException);
+		NginxConfig test("bad_config_files/double_autoindex");}, MultipleAutoindexException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/location_error_autoindex");}, ConfigValues::MultipleAutoindexException);
+		NginxConfig test("bad_config_files/location_error_autoindex");}, MultipleAutoindexException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_root");}, ConfigValues::MultipleRootException);
+		NginxConfig test("bad_config_files/double_root");}, MultipleRootException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/location_error_root");}, ConfigValues::MultipleRootException);
+		NginxConfig test("bad_config_files/location_error_root");}, MultipleRootException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_return");}, ConfigValues::MultipleReturnException);
+		NginxConfig test("bad_config_files/double_return");}, MultipleReturnException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/location_error_return");}, ConfigValues::MultipleReturnException);
+		NginxConfig test("bad_config_files/location_error_return");}, MultipleReturnException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_index");}, ConfigValues::MultipleIndexException);
+		NginxConfig test("bad_config_files/double_index");}, MultipleIndexException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/location_error_index");}, ConfigValues::MultipleIndexException);
+		NginxConfig test("bad_config_files/location_error_index");}, MultipleIndexException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/location_error_misspelling");}, ConfigValues::InvalidDirectiveException);
+		NginxConfig test("bad_config_files/location_error_misspelling");}, InvalidDirectiveException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/location_error_index");}, ConfigValues::MultipleIndexException);
+		NginxConfig test("bad_config_files/location_error_index");}, MultipleIndexException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_allowed_methods.conf");}, LocationContext::MultipleAllowedMethodsException);
+		NginxConfig test("bad_config_files/double_allowed_methods.conf");}, MultipleAllowedMethodsException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_alias.conf");}, LocationContext::MultipleAliasException);
+		NginxConfig test("bad_config_files/double_alias.conf");}, MultipleAliasException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/double_cgi.conf");}, LocationContext::MultipleCGIPassException);
+		NginxConfig test("bad_config_files/double_cgi.conf");}, MultipleCGIPassException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/root_alias.conf");}, LocationContext::RootAndAliasException);
+		NginxConfig test("bad_config_files/root_alias.conf");}, RootAndAliasException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/misspelled_error.conf");}, ConfigValues::InvalidDirectiveException);
+		NginxConfig test("bad_config_files/misspelled_error.conf");}, InvalidDirectiveException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/misspelled_listen.conf");}, ConfigValues::InvalidDirectiveException);
+		NginxConfig test("bad_config_files/misspelled_listen.conf");}, InvalidDirectiveException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/misspelled_index.conf");}, ConfigValues::InvalidDirectiveException);
+		NginxConfig test("bad_config_files/misspelled_index.conf");}, InvalidDirectiveException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/misspelled_client_max_body_size.conf");}, ConfigValues::InvalidDirectiveException);
+		NginxConfig test("bad_config_files/misspelled_client_max_body_size.conf");}, InvalidDirectiveException);
 	EXPECT_THROW({
-		NginxConfig test("../../../config_files/bad_config_files/misspelled_server.conf");}, NginxConfig::BadServerContextException);
+		NginxConfig test("bad_config_files/misspelled_server.conf");}, NginxConfig::BadServerContextException);
 	
 }
 

@@ -16,14 +16,24 @@
 		ReturnDir						_return_dir;
 */
 
-ConfigValues::ConfigValues() : bool_root(false),
+ConfigValues::ConfigValues() : 
+bool_root(false),
 bool_index(false),
 bool_client_max_body_size(false),
 bool_error_page(false),
 bool_autoindex(false),
-bool_return_dir(false) {}
+bool_return_dir(false),
+_root("/www/html"),
+_client_max_body_size(1),
+_error_page(),
+_autoindex(false),
+_return_dir(ReturnDir()) {
+		Index	input_value("index.php index.html index.htm index.nginx-debian.html");
+		_index = input_value.GetIndex();
+}
 
-ConfigValues::ConfigValues(const ConfigValues& obj) : bool_root(obj.bool_root),
+ConfigValues::ConfigValues(const ConfigValues& obj) : 
+bool_root(obj.bool_root),
 bool_index(obj.bool_index),
 bool_client_max_body_size(obj.bool_client_max_body_size),
 bool_error_page(obj.bool_error_page),
@@ -84,12 +94,14 @@ std::map<int, std::string>		ConfigValues::GetErrorPage() const {
 
 void    ConfigValues::SetRoot(std::string trimmed_value) {
 	bool_root = true;
+	_root.clear();
 	Root	root_value(trimmed_value);
 	_root = trimmed_value;
 }
 
 void    ConfigValues::SetIndex(std::string trimmed_value) {
 	bool_index = true;
+	_index.clear();
 	Index	index_value(trimmed_value);
 	_index = index_value.GetIndex();
 }

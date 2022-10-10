@@ -30,28 +30,6 @@ bool						LocationContext::IsSet(std::string directive) {
 	throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI());
 }
 
-void							LocationContext::CheckListVerification(){
-    if (bool_autoindex == false) {
-		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have an autoindex set. Default in Server context will be used." << std::endl;
-	}
-    if (bool_root == false) {
-		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a root set. Default in Server context will be used." << std::endl;
-	}
-	if (bool_index == false) {
-		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a index set. Default in Server context will be used." << std::endl;
-	}
-	if (bool_client_max_body_size == false) {
-		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a client_max_body_size set. Default in Server context will be used." << std::endl;
-	}
-	if (bool_allowed_methods == false) {
-		_allowed_methods = AllowedMethods();
-		if (DEBUG) std::cerr << "WARNING! " + _location_uri.GetURIClass().GetInputURI() + " does not have a allowed_methods set. Default (No methods allowed) have been set." << std::endl;
-	}
-	if (bool_cgi_pass == false) {
-		_cgi_pass = CGIPass();
-	}
-}
-
 int							LocationContext::GetDirective(std::string directive) {
     const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return", "alias"};
 

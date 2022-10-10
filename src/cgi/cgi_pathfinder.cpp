@@ -7,6 +7,7 @@
 std::string CGI::FindFile() {
 	struct dirent *directory;
 	std::string file;
+	size_t status_code = 404;
 	DIR *dr = opendir(_path.c_str());
 	if (dr == NULL) {
 		throw NotFoundException();
@@ -16,14 +17,14 @@ std::string CGI::FindFile() {
 			_file_name = directory->d_name;
 			file = _path + directory->d_name;
 			_valid_file = true;
-			_status_code = 200;
+			status_code = 200;
 			break ;
 		}
-		_status_code = 404;
+		status_code = 404;
 		_valid_file = false;
 	}
 	closedir(dr);
-	if (_status_code == 404)
+	if (status_code == 404)
 		throw NotFoundException();
 	return (file);
 }
@@ -36,7 +37,7 @@ void		CGI::SetCGIOneArgument() {
 	_file_name = SetExecutablePath();
 	if (DEBUG) std::cout << "_request->GetTargetURI().GetParsedURI(): " << _request->GetTargetURI().GetParsedURI() << std::endl;
 	if (IsDirectory(_request->GetTargetURI().GetParsedURI()) == false && FileNameCompare(_request->GetTargetURI().GetParsedURI(), _file_name) == false) {
-		throw MethodNotAllowedException();
+		throw NotFoundException();
 	}
 	_argv.push_back(_file_name);
 }
@@ -57,7 +58,7 @@ void	CGI::SetCGITwoArguments() {
 	else {
 		if (DEBUG) std::cout << "validate extension" << std::endl;
 		if (ValidateExtension(&second_arg) == false) // extension incompatible
-			throw MethodNotAllowedException();
+			throw NotFoundException();
 	}
 	_file_name = second_arg; // change _file_name to 2nd argument in argv
 	_argv.push_back(second_arg);
@@ -73,7 +74,7 @@ std::string CGI::SetExecutablePath() {
 			executable_path = MakeAbsolutePath(_CGI.GetExecutablePath(), _path); // path is not a file, so you can append the executable to it
 		else if (!IsDirectory(_path)) {
 			if (FileNameCompare(_path, _CGI.GetExecutablePath()) == false)
-				throw MethodNotAllowedException();
+				throw NotFoundException();
 			executable_path = _path; // path is a file, no need for appending
 		}
 		else
