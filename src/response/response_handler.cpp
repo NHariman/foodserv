@@ -118,6 +118,8 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 	else
 		resolved_path = path;
 
+	std::cout << "*** RESOLVED PATH: " << resolved_path << " ***" << std::endl;
+
 	if (resolved_path.empty())
 		throw NotFoundException();
 	else if (IsDirectory(resolved_path) && !IsValidDirectory(resolved_path))
@@ -130,6 +132,9 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 
 std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
 	std::map<int, std::string>	custom_error_pages;
+
+	std::cout << "CONTENT LENGTH: " << _response->GetField("Content-Length") << std::endl; 
+	std::cout << "IN ERROR" << std::endl;
 	
 	custom_error_pages = _request->GetTargetConfig().GetErrorPage();
 	auto custom_page = custom_error_pages.find(error_code);

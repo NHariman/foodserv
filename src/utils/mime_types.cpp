@@ -7,6 +7,7 @@ static std::map<std::string, std::string>	MIMETypes = {
 	{"abw", "application/x-abiword"},
 	{"arc", "application/x-freearc"},
 	{"avif", "image/avif"},
+	{"apng", "image/apng"},
 	{"avi", "video/x-msvideo"},
 	{"azw", "application/vnd.amazon.ebook"},
 	{"bin", "application/octet-stream"},
