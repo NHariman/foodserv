@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <sys/socket.h> // send
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 // Default constructor
 ResponseHandler::ResponseHandler()
@@ -132,9 +132,6 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 
 std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
 	std::map<int, std::string>	custom_error_pages;
-
-	std::cout << "CONTENT LENGTH: " << _response->GetField("Content-Length") << std::endl; 
-	std::cout << "IN ERROR" << std::endl;
 	
 	custom_error_pages = _request->GetTargetConfig().GetErrorPage();
 	auto custom_page = custom_error_pages.find(error_code);
