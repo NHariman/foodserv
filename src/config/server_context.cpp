@@ -17,23 +17,31 @@
 // when multiple roots
 
 ServerContext::ServerContext(size_t *start, std::string config_file, size_t server_nb) : 
-ConfigValues(),
 _amount_location_context(0),
 bool_listen(false),
 bool_server_name(false),
-_server_nb(server_nb) {
-	InitChecklist();
-
+_server_nb(server_nb),
+_listen("80", "0")
+{
+	_location_contexts.push_back(LocationContext());
+	_server_name.push_back("localhost");
 	GetDirectiveValuePairs(start, config_file);
-	CheckListVerification();
+	if (HasLocation("/") == false) {
+		LocationContext default_location;
+		_amount_location_context++;
+		_location_contexts.push_back(default_location);
+	}
 }
 
-ServerContext::ServerContext():  ConfigValues(),
+ServerContext::ServerContext():  
 _amount_location_context(0),
 bool_listen(false),
 bool_server_name(false),
-_server_nb(1) {
-	InitChecklist();
+_server_nb(0),
+_listen("80", "0")
+{
+	_location_contexts.push_back(LocationContext());
+	_server_name.push_back("localhost");
 }
 
 ServerContext & ServerContext::operator=(const ServerContext& obj) {
@@ -42,16 +50,6 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
 	}
 	CopyValues(obj);
 	return (*this);
-}
-
-void		ServerContext::InitChecklist() {
-    _amount_location_context = 0;
-
-	_root = "/var/www/html";
-	_client_max_body_size = 1;
-	_autoindex = false;
-	_listen.first = "80";
-	_listen.second = "0";
 }
 
 // sets the value in the right directive within the server class based off the IsDirective return value
@@ -68,9 +66,13 @@ void				ServerContext::SetValue(int directive, std::string value){
 	else {
 		switch(directive) {
 			case 1: {
+				if (bool_listen == true)
+					throw MultipleListensException(_server_nb);
 				return SetListen(trimmed_value);
 			}
 			case 2: {
+				if (bool_server_name == true)
+					throw MultipleServerNameException(_server_nb);
 				return SetServerName(trimmed_value);
 			}
 			case 3: {
@@ -144,14 +146,9 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 		}
 		key_end = config_file.find_first_of(" \t\n\v\f\r", key_start);
 		directive = IsDirective(config_file.substr(key_start, key_end - key_start));
-		if (directive == 0) {
-			FindLocationContext(directive, config_file, &value_end, key_end);
-		}
-		else {
-			FindValue(directive, config_file, &value_end, key_end);
-		}
+		i = FindValue(directive, config_file, key_end);
 		if (value_end != std::string::npos)
-			i = value_end + 1;
+			i++;
 	}
 	*start_position = i;
 }

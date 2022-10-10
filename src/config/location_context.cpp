@@ -10,18 +10,16 @@ bool_alias(false),
 _location_uri(LocationUri()),
 _cgi_pass(CGIPass()),
 _allowed_methods(AllowedMethods())
-{
-	InitChecklist();
-	bool_autoindex = false;
-	bool_root = false;
-	bool_index = false;
-	bool_client_max_body_size = false;
-	bool_error_page = false;
-	bool_return_dir = false;
-}
+{}
 
-LocationContext::LocationContext(std::string data) {
-	InitChecklist();
+LocationContext::LocationContext(std::string data) : 
+bool_uri(false),
+bool_cgi_pass(false),
+bool_allowed_methods(false),
+bool_alias(false),
+_location_uri(LocationUri()),
+_cgi_pass(CGIPass()),
+_allowed_methods(AllowedMethods()) {
     GetDirectiveValuePairs(data);
 }
 
@@ -32,16 +30,6 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
 	CopyValues(location_context);
     return (*this);
 }
-
-LocationContext::LocationContext(LocationContext const& location_context) : ConfigValues(location_context),
-bool_cgi_pass(location_context.bool_cgi_pass),
-bool_allowed_methods(location_context.bool_allowed_methods),
-bool_alias(location_context.bool_alias),
-_location_uri(location_context._location_uri),
-_cgi_pass(location_context._cgi_pass),
-_allowed_methods(location_context._allowed_methods),
-_alias(location_context._alias)
-{}
 
 void							LocationContext::SetValue(int directive, std::string input) {
 	std::string		value;
@@ -119,12 +107,7 @@ void							LocationContext::GetDirectiveValuePairs(std::string data) {
 		}
 		key_end = data.find_first_of(" \t\n\v\f\r", key_start);
 		directive = IsDirective(data.substr(key_start, key_end - key_start));
-		if (directive == 9) {
-			value_end = FindURI(directive, data, key_start, key_end);
-		}
-		else {
-			value_end = FindValue(directive, data, key_end);
-        }
+		value_end = FindValue(directive, data, key_start, key_end);
 		if (value_end != std::string::npos)
 			i = value_end + 1;
 	}
