@@ -155,7 +155,7 @@ void	HeaderFieldParser::PushFieldValue() {
 	std::string::iterator	start = buffer.begin();
 	std::string::iterator	end = buffer.end() - 1;
 
-	while (start != end && IsWhitespace(*end))
+	while (start < end && IsWhitespace(*end))
 		end--;
 	_message->SetHeaderField(_cur_field, std::string(start, end + 1));
 	buffer.clear();

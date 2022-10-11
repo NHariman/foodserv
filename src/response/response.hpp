@@ -35,6 +35,7 @@ class Response : public HTTPMessage {
 		std::string const&	GetResolvedPath() const;
 		std::string			GetFieldsAsString() const;
 		std::istream*		GetCompleteResponse();
+		std::string&		GetCompleteResponseString();
 
 		// Setters
 		void	SetBodyStream(std::istream* stream);
@@ -46,6 +47,7 @@ class Response : public HTTPMessage {
 	private:
 		std::istream*	_body_stream;
 		std::istream*	_send_stream;
+		std::string		_send_buffer;
 		std::string		_reason_phrase;
 		std::string		_request_target;
 		std::string		_resolved_path;

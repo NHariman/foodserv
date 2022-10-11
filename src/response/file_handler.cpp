@@ -198,6 +198,9 @@ void	FileHandler::WriteToFile(std::string const& file_path,
 		throw InternalServerErrorException();
 
 	file << content;
+	
+	if (file.fail())
+		throw InternalServerErrorException();
 }
 
 // Deletes file if a valid file has been targeted.
