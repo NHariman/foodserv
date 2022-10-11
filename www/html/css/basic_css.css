@@ -161,6 +161,15 @@ body {
   }
 }
 
+@media screen and (max-width: 1000px) {
+  .header {
+    height: 20%;
+  }
+  .topnav {
+    padding: 5%;
+  }
+}
+
 @keyframes spin {
 	from {
 		transform:rotate(0deg); 
