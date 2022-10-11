@@ -163,10 +163,10 @@ body {
 
 @media screen and (max-width: 1000px) {
   .header {
-    height: 20%;
+    height: 19.75%;
   }
   .topnav {
-    padding: 5%;
+    padding: 2%;
   }
 }
 

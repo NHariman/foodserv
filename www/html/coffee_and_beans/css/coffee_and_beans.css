@@ -145,15 +145,7 @@
       width:100%;       /* the image will now scale down as its parent gets smaller */
   }
 
-  /* ensures that the header doesn't overflow under the navigation bar */
-  @media screen and (max-width: 1000px) {
-    .header {
-      height: 20%;
-    }
-    .topnav {
-      padding: 5%;
-    }
-  }
+
   
   /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
   @media screen and (max-width: 800px) {
@@ -162,11 +154,23 @@
       padding: 0;
     }
   }
+
+  
   
   /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
   @media screen and (max-width: 400px) {
     .topnav a {
       float: none;
       width: 100%;
+    }
+  }
+
+  /* ensures that the header doesn't overflow under the navigation bar */
+  @media screen and (max-width: 1000px) {
+    .header {
+      height: 13%;
+    }
+    .topnav {
+      padding: 2%;
     }
   }
