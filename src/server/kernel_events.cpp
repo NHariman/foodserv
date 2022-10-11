@@ -1,6 +1,6 @@
 #include "kernel_events.hpp"
 
-# define DEBUG 0
+# define DEBUG 1
 # define MAX_EVENTS 128
 
 #include "../request/request.hpp"
@@ -169,11 +169,14 @@ void KernelEvents::recv_msg(int s, int read_filter_length) {
 void	KernelEvents::write_msg(int s) {
 	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
 	if (it != _connection_map.end()) {
+		std::cout << "KernelEvents:: about to Dispatch\n";
 		it->second->Dispatch();
-
+		std::cout << "KernelEvents:: after Dispatch\n";
 		// it->second->Dispatch();
-		// if (it->second->CanCloseConnection())
-		RemoveFromConnectionMap(s);
+		if (it->second->CanClose()) {
+			std::cout << "CanClose connection\n";
+			RemoveFromConnectionMap(s);
+		}
 	
 		/*
 		**	CHECK connection->isDone/ close connection

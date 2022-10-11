@@ -40,3 +40,21 @@ TEST(ResponseGetTest, GetNonExistantFile) {
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLStringSize(GetServerErrorPage(404)));
 }
+
+TEST(ResponseGetTest, GetImageFile) {
+	Connection connection(42, &config);
+
+	connection.Receive("GET /img/beans.png HTTP/1.1\r\nHost: localhost\n\n");
+	
+	Response const&	response = connection.DebugGetResponse();
+	EXPECT_EQ(response.GetStatusCode(), 200);
+	EXPECT_EQ(response.GetReasonPhrase(), "OK");
+	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
+	EXPECT_EQ(response.GetField("Connection"), "close");
+	EXPECT_EQ(response.GetField("Content-Type"), "image/png");
+	EXPECT_EQ(response.GetField("Location"), NO_VAL);
+	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize("www/img/beans.png"));
+	// response.GetBodyStream()->rdbuf();
+	// cout << "body stream gcount: " << response.GetBodyStream()->gcount() << endl;
+	// EXPECT_EQ(response.GetBodyStream()->rdbuf)
+}

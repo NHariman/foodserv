@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <sys/socket.h> // send
 
-#define DEBUG 0 // TODO: REMOVE
+#define DEBUG 1 // TODO: REMOVE
 
 // Default constructor
 ResponseHandler::ResponseHandler()
@@ -34,6 +34,7 @@ void	ResponseHandler::Send(int fd) {
 	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
 
 	if (send_size != 0) {
+		std::cout << "old pos in stream: " << to_send->tellg() << std::endl;
 		to_send->read(buffer, send_size);
 		if (to_send->bad())
 			throw StreamReadFailureException();
@@ -42,6 +43,9 @@ void	ResponseHandler::Send(int fd) {
 		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
 		if (DEBUG) std::cout << "Bytes read: " << to_send->gcount() << std::endl;
 
+		if (send_size > (size_t)to_send->gcount()) // if less was read than attempted
+			send_size = to_send->gcount();
+
 		// save send return to check for error or less bytes sent than indicated
 		ssize_t bytes_sent = send(fd, buffer, send_size, 0);
 
@@ -49,18 +53,23 @@ void	ResponseHandler::Send(int fd) {
 			throw SendFailureException();
 
 		if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
-
+		// std::cout << "pos in stream before seekg: " << to_send->tellg() << std::endl;
 		// shift position of next character to extract
-		to_send->seekg(std::min(send_size, (size_t)bytes_sent));
+		// to_send->seekg(std::min(send_size, (size_t)bytes_sent));
+		std::cout << "new pos in stream: " << to_send->tellg() << std::endl;
 	}
+	// if (DEBUG) std::cout << "send size at end is " << send_size << std::endl;
 
 	// if an Expect request was processed, a 2nd final response still has to be
 	// served once the message body is received.
 	if (_response->GetStatusCode() == 100)
 		_response = Response::pointer(new Response); // create fresh Response object
-	// if no more bytes to send, close connection
-	else if (send_size == 0)
+	// if less bytes read than max, stream is depleted and can close connection
+	else if (send_size < BUFFER_SIZE) {
+		if (DEBUG) std::cout << "response is done\n";
 		_is_done = true;
+	}
+	std::cout << "End of Send\n";
 }
 
 void	ResponseHandler::HandleError(Request& request) {
