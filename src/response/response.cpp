@@ -93,38 +93,19 @@ std::istream*	Response::GetCompleteResponse() {
 	}
 	return _send_stream;
 }
-#include <string.h>
+
 std::string&	Response::GetCompleteResponseString() {
 	if (_send_buffer.empty()) {
 		std::string status_line = _http_version + " " + std::to_string(_status_code)
 			+ " " + _reason_phrase + "\r\n";
 		_send_buffer.append(status_line);
 		_send_buffer.append(GetFieldsAsString() + "\r\n");
-		std::cout << "send_buf: [" << _send_buffer << "]\n";
-		std::cout << "size before body: " << _send_buffer.size() << std::endl;
 		if (_body_stream != NULL) {
-			// size_t body_size = GetStreamSize(_body_stream);
-			// std::cout << "body size: " << body_size << std::endl;
 			char read_buf[4096];
-			// _send_buffer.append(_body_stream->rdbuf());
 			while (_body_stream->read(read_buf, sizeof(read_buf)))
 				_send_buffer.append(read_buf, sizeof(read_buf));
 			_send_buffer.append(read_buf, _body_stream->gcount());
-
-			if (_body_stream->bad())
-				std::cerr << "Reading failed\n";
-			// std::cout << "Bytes read: " << _body_stream->gcount() << std::endl;
-			// std::cout << "read_buf size: " << strlen(read_buf) << std::endl;
-			// read_buf[body_size] = '\0';
-			// std::cout << "read_buf size: " << strlen(read_buf) << std::endl;
-			// try {
-			// 	_send_buffer.append(read_buf);
-			// }
-			// catch (...) {
-			// 	std::cerr << "appending body failed\n";
-			// }
 		}
-		std::cout << "size after body: " << _send_buffer.size() << std::endl;
 	}
 	return _send_buffer;
 }

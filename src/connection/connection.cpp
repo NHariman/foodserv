@@ -34,22 +34,11 @@ void	Connection::Receive(char const* buffer) {
 }
 
 void	Connection::Dispatch() {
-	if (_response_handler.Ready()) {
-		std::cout << "Dispatching response\n";
-		try {
-			_response_handler.Send(_fd); // can throw, should be caught in main
-			std::cout << "After Send\n";
-		}
-		catch (...) {
-			std::cerr << "Something went wrong with sending response\n";
-		}
-	}
+	if (_response_handler.Ready())
+		_response_handler.Send(_fd); // can throw, should be caught in main
 
-	std::cout << "Dispatched\n";
-	if (_response_handler.IsDone()) {
-		std::cout << "Close connection is true\n";
+	if (_response_handler.IsDone())
 		_close_connection = true;
-	}
 }
 
 Response const& Connection::DebugGetResponse() {

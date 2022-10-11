@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <sys/socket.h> // send
 
-#define DEBUG 1 // TODO: REMOVE
+#define DEBUG 0 // TODO: REMOVE
 
 // Default constructor
 ResponseHandler::ResponseHandler()
@@ -24,70 +24,69 @@ bool	ResponseHandler::IsDone() const {
 	return _is_done;
 }
 
-// void	ResponseHandler::Send(int fd) {
-// 	std::string& send_buffer = _response->GetCompleteResponseString();
-
-// 	size_t send_size = std::min((size_t)BUFFER_SIZE, send_buffer.size());
-// 	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
-// 	ssize_t bytes_sent = send(fd, send_buffer.c_str(), send_size, 0);
-// 	if (bytes_sent < 0) {
-// 		std::cout << "send failed\n";
-// 		throw SendFailureException();}
-// 	if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
-// 	if (_response->GetStatusCode() == 100)
-// 		_response = Response::pointer(new Response); // create fresh Response object
-// 	// if less bytes read than max, stream is depleted and can close connection
-// 	else if (bytes_sent == BUFFER_SIZE) {
-// 		std::cout << "erasing " << bytes_sent << " bytes\n";
-// 		send_buffer.erase(0, bytes_sent);
-// 		std::cout << "send_buffer size after erase: " << send_buffer.size() << std::endl;
-// 	}
-// 	else {
-// 	// else if (send_size == 0) {
-// 		if (DEBUG) std::cout << "response is done\n";
-// 		send_buffer.clear();
-// 		_is_done = true;
-// 	}
-// }
-
 void	ResponseHandler::Send(int fd) {
-	std::istream*	to_send = _response->GetCompleteResponse();
-	char	buffer[BUFFER_SIZE];
-	ssize_t bytes_sent = 0;
+	std::string& send_buffer = _response->GetCompleteResponseString();
 
-	// if (DEBUG) std::cout << "ResponseHandler:Send:\n--START--" << to_send->rdbuf() << "--END--\n";
-	size_t send_size = std::min((size_t)BUFFER_SIZE, GetStreamSize(to_send));
+	size_t send_size = std::min((size_t)BUFFER_SIZE, send_buffer.size());
 	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
 
-	if (send_size != 0) {
-		to_send->read(buffer, send_size);
-		if (to_send->bad())
-			throw StreamReadFailureException();
+	ssize_t bytes_sent = send(fd, send_buffer.c_str(), send_size, 0);
+	if (bytes_sent < 0)
+		throw SendFailureException();
 
-		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
-		if (DEBUG) std::cout << "bytes READ: " << to_send->gcount() << std::endl;
-
-		if (send_size > (size_t)to_send->gcount()) // if less was read than attempted
-			send_size = to_send->gcount();
-
-		// save send return to check for error or less bytes sent than indicated
-		bytes_sent = send(fd, buffer, send_size, 0);
-
-		if (bytes_sent < 0)
-			throw SendFailureException();
-
-		if (DEBUG) std::cout << "bytes SENT: " << bytes_sent << std::endl;
-	}
-	// if an Expect request was processed, a 2nd final response still has to be
-	// served once the message body is received.
+	if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
 	if (_response->GetStatusCode() == 100)
 		_response = Response::pointer(new Response); // create fresh Response object
-	// if less bytes read than max, stream is depleted and can close connection
-	else if (bytes_sent < BUFFER_SIZE) {
+
+	// if max size is being sent, buffer still contains more bytes to send,
+	// so erase what's been sent.
+	else if (bytes_sent == BUFFER_SIZE)
+		send_buffer.erase(0, bytes_sent);
+	else {
 		if (DEBUG) std::cout << "response is done\n";
+		send_buffer.clear();
 		_is_done = true;
 	}
 }
+
+// void	ResponseHandler::Send(int fd) {
+// 	std::istream*	to_send = _response->GetCompleteResponse();
+// 	char	buffer[BUFFER_SIZE];
+// 	ssize_t bytes_sent = 0;
+
+// 	// if (DEBUG) std::cout << "ResponseHandler:Send:\n--START--" << to_send->rdbuf() << "--END--\n";
+// 	size_t send_size = std::min((size_t)BUFFER_SIZE, GetStreamSize(to_send));
+// 	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+
+// 	if (send_size != 0) {
+// 		to_send->read(buffer, send_size);
+// 		if (to_send->bad())
+// 			throw StreamReadFailureException();
+
+// 		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
+// 		if (DEBUG) std::cout << "bytes READ: " << to_send->gcount() << std::endl;
+
+// 		if (send_size > (size_t)to_send->gcount()) // if less was read than attempted
+// 			send_size = to_send->gcount();
+
+// 		// save send return to check for error or less bytes sent than indicated
+// 		bytes_sent = send(fd, buffer, send_size, 0);
+
+// 		if (bytes_sent < 0)
+// 			throw SendFailureException();
+
+// 		if (DEBUG) std::cout << "bytes SENT: " << bytes_sent << std::endl;
+// 	}
+// 	// if an Expect request was processed, a 2nd final response still has to be
+// 	// served once the message body is received.
+// 	if (_response->GetStatusCode() == 100)
+// 		_response = Response::pointer(new Response); // create fresh Response object
+// 	// if less bytes read than max, stream is depleted and can close connection
+// 	else if (bytes_sent < BUFFER_SIZE) {
+// 		if (DEBUG) std::cout << "response is done\n";
+// 		_is_done = true;
+// 	}
+// }
 
 void	ResponseHandler::HandleError(Request& request) {
 	if (DEBUG) std::cout << "HandleError\n";
