@@ -1,10 +1,7 @@
 #ifndef EXCEPTION_HPP
 #define EXCEPTION_HPP
 
-#include <cctype> // isprint
 #include <exception>
-#include <iostream>
-#include <stdexcept>
 #include <string>
 #include "../utils/request_utils.hpp"
 

@@ -170,10 +170,11 @@ void	KernelEvents::write_msg(int s) {
 	std::map<int, Connection*>::const_iterator it = _connection_map.find(s);
 	if (it != _connection_map.end()) {
 		it->second->Dispatch();
-
 		// it->second->Dispatch();
-		// if (it->second->CanCloseConnection())
-		RemoveFromConnectionMap(s);
+		if (it->second->CanClose()) {
+			if (DEBUG) std::cout << "CLOSING connection\n";
+			RemoveFromConnectionMap(s);
+		}
 	
 		/*
 		**	CHECK connection->isDone/ close connection

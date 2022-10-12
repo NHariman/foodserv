@@ -7,7 +7,6 @@
 
 /*
 ** variables in this class:
-**		PWD		_pwd;
 ** 		Request *_request;
 ** 		std::vector<std::string> _env;
 ** 		std::vector<std::string> _argv;
@@ -19,19 +18,19 @@
 */
 
 
-CGI::CGI() : _pwd(), _valid_file(false), _status_code(0) {};
+CGI::CGI() : _valid_file(false) {};
 
 // the most important function, returns true if setup was a success and false if it was a failure
 // set argv handles the file sorting and such
 bool		CGI::Setup(Request *request) {
+	PWD pwd;
 	_request = request;
-	_path = _pwd.GetCwd() + _TARGET.GetResolvedPath();
+	_path = pwd.GetCwd() + _TARGET.GetResolvedPath();
 	if (DEBUG) std::cout << "path: " << _path << std::endl;
 	if (DEBUG) std::cout << "CGI: " << _CGI << std::endl;
 	SetArgv();
 	if (_valid_file == true) {
 		SetHeaders();
-		_status_code = 0;
 	}
 	if (DEBUG) printVector(_argv);
 	if (DEBUG) printVector(_env);
@@ -42,8 +41,6 @@ bool		CGI::Setup(Request *request) {
 void	CGI::SetExecStatusCode(int exit_code) {
 	if (exit_code > 0 || exit_code < 0)
 		throw BadGatewayException();
-	else
-		_status_code = 200;
 }
 
 size_t		CGI::Execute() {
@@ -68,16 +65,9 @@ size_t		CGI::Execute() {
 		exit_code = ParentProcess(fd_read, fd_write, pid);
 		SetExecStatusCode(exit_code);
 	}
-	return _status_code;
+	return 200;
 }
 
-size_t		CGI::GetStatusCode() const {
-	return _status_code;
-}
-
-std::string	CGI::GetFileName() const {
-	return _file_name;
-}
 std::string CGI::GetContent() const {
 	return _content;
 }

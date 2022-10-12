@@ -16,25 +16,33 @@
 // when two location blocks have the same uri
 // when multiple roots
 
-ServerContext::ServerContext(size_t *start, std::string config_file, size_t server_nb) : _server_nb(server_nb) {
-	InitChecklist();
+ServerContext::ServerContext(size_t *start, std::string config_file, size_t server_nb) : 
+_amount_location_context(0),
+bool_listen(false),
+bool_server_name(false),
+_server_nb(server_nb),
+_listen("80", "0")
+{
+	_location_contexts.push_back(LocationContext());
+	_server_name.push_back("localhost");
 	GetDirectiveValuePairs(start, config_file);
-	CheckListVerification();
+	if (HasLocation("/") == false) {
+		LocationContext default_location;
+		_amount_location_context++;
+		_location_contexts.push_back(default_location);
+	}
 }
 
-ServerContext::ServerContext() {
-	InitChecklist();
+ServerContext::ServerContext():  
+_amount_location_context(0),
+bool_listen(false),
+bool_server_name(false),
+_server_nb(0),
+_listen("80", "0")
+{
+	_location_contexts.push_back(LocationContext());
+	_server_name.push_back("localhost");
 }
-
-ServerContext::ServerContext(const ServerContext& obj) : 	
-	ConfigValues(obj), 
-	amount_location_context(obj.amount_location_context),
-	bool_listen(obj.bool_listen),
-	bool_server_name(obj.bool_server_name),
-	_server_nb(obj._server_nb),
-	_location_contexts(obj._location_contexts),	
-	_listen(obj._listen),
-	_server_name(obj._server_name) {}
 
 ServerContext & ServerContext::operator=(const ServerContext& obj) {
     if (this == &obj) {
@@ -42,16 +50,6 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
 	}
 	CopyValues(obj);
 	return (*this);
-}
-
-void		ServerContext::InitChecklist() {
-    amount_location_context = 0;
-	bool_listen = false;
-	bool_server_name = false;
-	bool_root = false;
-	bool_index = false;
-	bool_client_max_body_size = false;
-	bool_error_page = false;
 }
 
 // sets the value in the right directive within the server class based off the IsDirective return value
@@ -68,9 +66,13 @@ void				ServerContext::SetValue(int directive, std::string value){
 	else {
 		switch(directive) {
 			case 1: {
+				if (bool_listen == true)
+					throw MultipleListensException(_server_nb);
 				return SetListen(trimmed_value);
 			}
 			case 2: {
+				if (bool_server_name == true)
+					throw MultipleServerNameException(_server_nb);
 				return SetServerName(trimmed_value);
 			}
 			case 3: {
@@ -144,14 +146,9 @@ void          ServerContext::GetDirectiveValuePairs(size_t *start_position, std:
 		}
 		key_end = config_file.find_first_of(" \t\n\v\f\r", key_start);
 		directive = IsDirective(config_file.substr(key_start, key_end - key_start));
-		if (directive == 0) {
-			FindLocationContext(directive, config_file, &value_end, key_end);
-		}
-		else {
-			FindValue(directive, config_file, &value_end, key_end);
-		}
+		i = FindValue(directive, config_file, key_end);
 		if (value_end != std::string::npos)
-			i = value_end + 1;
+			i++;
 	}
 	*start_position = i;
 }

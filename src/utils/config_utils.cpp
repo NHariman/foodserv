@@ -1,6 +1,4 @@
 #include "config_utils.hpp"
-#include "../config/directive_validation/directive_validation.hpp"
-#include <iostream>
 
 size_t		ft_atosize_t(std::string value)
 {

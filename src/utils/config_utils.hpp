@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 
+#include "../config/directive_validation/directive_validation.hpp"
+#include <iostream>
+
 size_t	ft_atosize_t(std::string value);
 std::string	TrimValue(std::string value);
 std::vector<std::string>	ToStringVector(std::string str);

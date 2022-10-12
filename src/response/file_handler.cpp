@@ -1,5 +1,6 @@
 #include <cerrno> // erno
 #include <dirent.h> // DIR, dirent
+#include <stdio.h> // remove
 #include "file_handler.hpp"
 #include "../utils/utils.hpp"
 #include "../err/exception.hpp"
@@ -31,7 +32,7 @@ std::string	FileHandler::GetExtension(std::string const& file_path) const {
 }
 
 void	FileHandler::GetFileHandlingError(void) {
-	if (errno == ENOENT)
+	if (errno == ENOENT || errno == EBADF)
 		throw NotFoundException();
 	else if (errno == EACCES)
 		throw ForbiddenException();
@@ -50,7 +51,7 @@ std::istream*	FileHandler::ExecuteMethod(Response& response, Method method) {
 		case Method::Post:
 			return ExecutePost(response);
 		case Method::Delete:
-			return NULL;
+			return ExecuteDelete(response);
 		default:
 			return NULL;
 	}
@@ -91,7 +92,11 @@ std::istream*	FileHandler::ExecuteGetGeneratedIndex(Response& response) {
 
 	response.SetStatusCode(200);
 	response.SetHeaderField("Content-Type", "text/html");
-	return CreateStreamFromString(index);
+
+	std::istream* stream = CreateStreamFromString(index);
+	if (stream == NULL)
+		throw InternalServerErrorException();
+	return stream;
 }
 
 // Gets subdirectory path for index page.
@@ -145,7 +150,10 @@ std::istream*	FileHandler::ExecutePost(Response& response) {
 
 	if (created) {
 		response.SetStatusCode(201);
-		return CreateStreamFromString("File successfully created\n");
+		std::istream* stream = CreateStreamFromString("File successfully created\n");
+		if (stream == NULL)
+			throw InternalServerErrorException();
+		return stream;
 	}
 	else {
 		response.SetStatusCode(200);
@@ -170,6 +178,16 @@ bool	FileHandler::ValidSubDirectory(std::string const& file_path) {
 		return IsValidDirectory(dir_path);
 }
 
+// Check if file does not exist yet. If so, creates file.
+bool	FileHandler::CreateFileIfNeeded(std::string const& file_path) {
+	if (!IsValidFile(file_path) && errno == ENOENT) {
+		if (CreateFile(file_path, true) < 0)
+			GetFileHandlingError();
+		return true;
+	}
+	return false;
+}
+
 // Opens file as an fstream object in io and append mode.
 // Appends message content into file.
 void	FileHandler::WriteToFile(std::string const& file_path,
@@ -180,16 +198,26 @@ void	FileHandler::WriteToFile(std::string const& file_path,
 		throw InternalServerErrorException();
 
 	file << content;
+	
+	if (file.fail())
+		throw InternalServerErrorException();
 }
 
-// Check if file does not exist yet. If so, creates file.
-bool	FileHandler::CreateFileIfNeeded(std::string const& file_path) {
-	if (!IsValidFile(file_path) && errno == ENOENT) {
-		if (CreateFile(file_path, true) < 0)
-			GetFileHandlingError();
-		return true;
-	}
-	return false;
+// Deletes file if a valid file has been targeted.
+std::istream*	FileHandler::ExecuteDelete(Response& response) {
+	std::string file_path = response.GetResolvedPath();
+
+	if (!IsValidFile(file_path))
+		GetFileHandlingError();
+	
+	if (remove(file_path.c_str()) < 0) // remove is portable alternative to unlink
+		throw InternalServerErrorException();
+
+	response.SetStatusCode(200);
+	std::istream* stream = CreateStreamFromString("File successfully deleted\n");
+	if (stream == NULL)
+		throw InternalServerErrorException();
+	return stream;
 }
 
 #undef DEBUG // REMOVE

@@ -25,41 +25,68 @@ bool	ResponseHandler::IsDone() const {
 }
 
 void	ResponseHandler::Send(int fd) {
-	std::istream*	to_send = _response->GetCompleteResponse();
-	char	buffer[BUFFER_SIZE];
+	std::string& send_buffer = _response->GetCompleteResponseString();
 
-	if (DEBUG) std::cout << "ResponseHandler:Send:\n[[" << to_send->rdbuf() << "]]\n";
-	
-	size_t send_size = std::min((size_t)BUFFER_SIZE, GetStreamSize(to_send));
+	size_t send_size = std::min((size_t)BUFFER_SIZE, send_buffer.size());
 	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
-	if (send_size != 0) {
-		to_send->read(buffer, send_size);
-		buffer[send_size] = '\0'; // stream::read doesn't append null terminator
 
-		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
-		if (DEBUG) std::cout << "Bytes read: " << to_send->gcount() << std::endl;
+	ssize_t bytes_sent = send(fd, send_buffer.c_str(), send_size, 0);
+	if (bytes_sent < 0)
+		throw SendFailureException();
 
-		// save send return to check for error or less bytes sent than indicated
-		ssize_t bytes_sent = send(fd, buffer, send_size, 0);
-
-		if (bytes_sent < 0) {
-			// throw SendFailureException();
-			std::cout << "send failed: " << strerror(errno) << "\n"; // remove
-		}
-		if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
-
-		// shift position of next character to extract
-		to_send->seekg(std::min(send_size, (size_t)bytes_sent));
-	}
-
-	// if an Expect request was processed, a 2nd final response still has to be
-	// served once the message body is received.
+	if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
 	if (_response->GetStatusCode() == 100)
 		_response = Response::pointer(new Response); // create fresh Response object
-	// if no more bytes to send, close connection
-	else if (send_size == 0)
+
+	// if max size is being sent, buffer still contains more bytes to send,
+	// so erase what's been sent.
+	else if (bytes_sent == BUFFER_SIZE)
+		send_buffer.erase(0, bytes_sent);
+	else {
+		if (DEBUG) std::cout << "response is done\n";
+		send_buffer.clear();
 		_is_done = true;
+	}
 }
+
+// void	ResponseHandler::Send(int fd) {
+// 	std::istream*	to_send = _response->GetCompleteResponse();
+// 	char	buffer[BUFFER_SIZE];
+// 	ssize_t bytes_sent = 0;
+
+// 	// if (DEBUG) std::cout << "ResponseHandler:Send:\n--START--" << to_send->rdbuf() << "--END--\n";
+// 	size_t send_size = std::min((size_t)BUFFER_SIZE, GetStreamSize(to_send));
+// 	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+
+// 	if (send_size != 0) {
+// 		to_send->read(buffer, send_size);
+// 		if (to_send->bad())
+// 			throw StreamReadFailureException();
+
+// 		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
+// 		if (DEBUG) std::cout << "bytes READ: " << to_send->gcount() << std::endl;
+
+// 		if (send_size > (size_t)to_send->gcount()) // if less was read than attempted
+// 			send_size = to_send->gcount();
+
+// 		// save send return to check for error or less bytes sent than indicated
+// 		bytes_sent = send(fd, buffer, send_size, 0);
+
+// 		if (bytes_sent < 0)
+// 			throw SendFailureException();
+
+// 		if (DEBUG) std::cout << "bytes SENT: " << bytes_sent << std::endl;
+// 	}
+// 	// if an Expect request was processed, a 2nd final response still has to be
+// 	// served once the message body is received.
+// 	if (_response->GetStatusCode() == 100)
+// 		_response = Response::pointer(new Response); // create fresh Response object
+// 	// if less bytes read than max, stream is depleted and can close connection
+// 	else if (bytes_sent < BUFFER_SIZE) {
+// 		if (DEBUG) std::cout << "response is done\n";
+// 		_is_done = true;
+// 	}
+// }
 
 void	ResponseHandler::HandleError(Request& request) {
 	if (DEBUG) std::cout << "HandleError\n";
@@ -90,7 +117,6 @@ void	ResponseHandler::HandleRegular(Request& request) {
 		return HandleRedirection();
 	try {
 		AssignResponseResolvedPath();
-		// check cgi
 		if (IsHandledByCGI())
 			HandleCGI();
 		else
@@ -158,12 +184,20 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 }
 
 void	ResponseHandler::HandleDefaultError(int error_code) {
-	std::string error_page_html(GetServerErrorPage(error_code));
-	std::istream* body_stream = CreateStreamFromString(error_page_html);
-
-	_response->SetBodyStream(body_stream);
-	_response->SetHeaderField("Content-Type", "text/html");
-	FormResponse();
+	try {
+		std::string error_page_html(GetServerErrorPage(error_code));
+		std::istream* body_stream = CreateStreamFromString(error_page_html);
+		if (body_stream == NULL)
+			throw InternalServerErrorException();
+		_response->SetBodyStream(body_stream);
+		_response->SetHeaderField("Content-Type", "text/html");
+		FormResponse();
+	}
+	catch (http::exception &e) {
+		_request->SetStatusCode(e.which());
+		if (DEBUG) std::cout << e.which() << " error encountered\n";
+		HandleError(*_request);
+	}
 }
 
 bool	ResponseHandler::IsRedirected() {

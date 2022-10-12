@@ -17,10 +17,10 @@ choose_test () {
 	printf "${RESET}\n\n"
 	case $choice in
 		1)
-			cd build && ctest
+			cp -r bad_config_files build && cp -r config_files build && cd build && ctest
 			;;
 		2)
-			cd build && ./$bin_name
+			cp -r bad_config_files build && cp -r config_files build && cd build && ./$bin_name
 			;;
 		*) # any other input
 			exit 0

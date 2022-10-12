@@ -45,6 +45,6 @@ Response const& Connection::DebugGetResponse() {
 	return	_response_handler.GetResponse();
 }
 
-bool	Connection::CanCloseConnection() const {
+bool	Connection::CanClose() const {
 	return _close_connection;
 }

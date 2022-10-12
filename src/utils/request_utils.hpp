@@ -1,9 +1,6 @@
 #ifndef REQUEST_UTILS_HPP
 #define REQUEST_UTILS_HPP
 
-#include <algorithm> // transform
-#include <iomanip> // setw
-#include <ios> // std::hex
 #include <iostream>
 #include <sstream> // stringstream
 

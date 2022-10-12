@@ -1,4 +1,5 @@
 #include "response.hpp"
+#include "../utils/utils.hpp"
 
 // Default constructor
 Response::Response() : HTTPMessage(), _body_stream(NULL), _send_stream(NULL), _complete(false) {}
@@ -81,16 +82,30 @@ std::string	Response::GetFieldsAsString() const {
 // If _send_stream is already initialized, simply returns the stream.
 std::istream*	Response::GetCompleteResponse() {
 	if (_send_stream == NULL) {
-		std::iostream* complete_stream = new std::stringstream(std::ios_base::app
-			| std::ios_base::in | std::ios_base::out);
+		std::iostream* complete_stream = new std::stringstream(std::ios_base::in | std::ios_base::out);
 		std::string status_line = _http_version + " " + std::to_string(_status_code)
 			+ " " + _reason_phrase + "\r\n";
 		*complete_stream << status_line;
 		*complete_stream << GetFieldsAsString() + "\r\n";
 		if (_body_stream != NULL)
 			*complete_stream << _body_stream->rdbuf();
-
 		_send_stream = complete_stream;
 	}
 	return _send_stream;
+}
+
+std::string&	Response::GetCompleteResponseString() {
+	if (_send_buffer.empty()) {
+		std::string status_line = _http_version + " " + std::to_string(_status_code)
+			+ " " + _reason_phrase + "\r\n";
+		_send_buffer.append(status_line);
+		_send_buffer.append(GetFieldsAsString() + "\r\n");
+		if (_body_stream != NULL) {
+			char read_buf[4096];
+			while (_body_stream->read(read_buf, sizeof(read_buf)))
+				_send_buffer.append(read_buf, sizeof(read_buf));
+			_send_buffer.append(read_buf, _body_stream->gcount());
+		}
+	}
+	return _send_buffer;
 }

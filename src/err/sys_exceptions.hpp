@@ -115,6 +115,34 @@ class WriteFailureException : public InternalError::exception
 		virtual ~WriteFailureException() throw() {}
 };
 
+class StreamReadFailureException : public InternalError::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		StreamReadFailureException() {
+			_err_string = "ERROR! Failed to read from stream.";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~StreamReadFailureException() throw() {}
+};
+
+class SendFailureException : public InternalError::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		SendFailureException() {
+			_err_string = "ERROR! Failed send().";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~SendFailureException() throw() {}
+};
+
 // error classes if stream creation fails
 class CreateStreamFailureException : public InternalError::exception
 {
