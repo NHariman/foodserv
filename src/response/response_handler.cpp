@@ -2,7 +2,7 @@
 #include "response_generator.hpp"
 #include "../cgi/cgi_handler.hpp"
 #include "../utils/config_utils.hpp"
-#include <algorithm>
+#include <algorithm> // min
 #include <sys/socket.h> // send
 
 #define DEBUG 0 // TODO: REMOVE
@@ -28,13 +28,13 @@ void	ResponseHandler::Send(int fd) {
 	std::string& send_buffer = _response->GetCompleteResponseString();
 
 	size_t send_size = std::min((size_t)BUFFER_SIZE, send_buffer.size());
-	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+	// if (DEBUG) std::cout << "send size is " << send_size << std::endl;
 
 	ssize_t bytes_sent = send(fd, send_buffer.c_str(), send_size, 0);
 	if (bytes_sent < 0)
 		throw SendFailureException();
 
-	if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
+	// if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
 	if (_response->GetStatusCode() == 100)
 		_response = Response::pointer(new Response); // create fresh Response object
 
@@ -151,7 +151,7 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 	else
 		_response->SetResolvedPath(resolved_path);
 	_response->SetRequestTarget(_request->GetTargetString());
-	if (DEBUG) std::cout << "path assigned to: " << _response->GetResolvedPath() << std::endl;
+	// if (DEBUG) std::cout << "path assigned to: " << _response->GetResolvedPath() << std::endl;
 }
 
 std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
