@@ -35,6 +35,7 @@ class RequestValidator {
 		bool	PreConfigValidate(Request& request);
 		int		SetupConfig(NginxConfig* config, Request const& request);
 		bool	PostConfigValidate(Request& request);
+		int		GetResolvedPath(Request& request);
 		bool	ValidHost(Request& request);
 		bool	ValidExpect(Request& request);
 		bool	ValidContentEncoding(std::string const& host);

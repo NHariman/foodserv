@@ -39,9 +39,6 @@ void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string p
 	_error_page = SetErrorPage(&server, &location);
 	_autoindex = SetAutoindex(&server, &location);
 	_return_dir = SetReturn(&server, &location);
-
-	ResolvedPath	resolved_path(this);
-	_resolved_path = resolved_path.GetResolvedPath();
 }
 
 /// private getters
@@ -118,3 +115,7 @@ std::string			TargetConfig::GetResolvedPath() const {
 bool				TargetConfig::MustGenerateIndex() const {
 	return _generate_index;
 }	
+
+void	TargetConfig::TargetConfig::SetResolvedPath(std::string resolved_path) {
+	_resolved_path = resolved_path;
+}

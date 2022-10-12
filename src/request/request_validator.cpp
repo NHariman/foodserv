@@ -16,7 +16,8 @@ HeaderStatus	RequestValidator::Process(Request& request) {
 	
 	if (PreConfigValidate(request)
 		&& SetupConfig(_config, request)
-		&& PostConfigValidate(request))
+		&& PostConfigValidate(request)
+		&& GetResolvedPath(request))
 		return _status;
 	return hv_Bad;
 }
@@ -39,6 +40,17 @@ int	RequestValidator::SetupConfig(NginxConfig* config,
 
 bool	RequestValidator::PostConfigValidate(Request& request) {
 	return (ValidContentLength(request) && ValidMethod(request.GetMethod()));
+}
+
+
+int	RequestValidator::GetResolvedPath(Request& request) {
+	ResolvedPath	resolved_path(_target_config);
+	std::string	target = request.GetTargetURI().GetPath();
+	std::string method = request.GetMethod();
+	std::string path = resolved_path.Resolve(target, method);
+
+	_target_config->SetResolvedPath(path);
+	return 1;
 }
 
 // Only exactly 1 Host definition is accepted.

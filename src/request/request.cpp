@@ -88,10 +88,6 @@ void	Request::SetTargetHost(std::string const& host) {
 	_target.SetHost(host);
 }
 
-// void	Request::SetResolvedTargetPath(std::string const& target_path) {
-// 	_target.SetPath(target_path);
-// }
-
 // Checks if double CRLF indicating end of header section is found
 // or message stage has been reached.
 bool	Request::CanParse() {

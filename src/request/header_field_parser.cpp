@@ -42,6 +42,7 @@ FieldState	HeaderFieldParser::GetNextState(size_t pos) {
 	// check if total header fields exceeds 8kb limit.
 	if (_bytes_read > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
+	
 	return (this->*table[cur_state])(input[pos]);
 }
 

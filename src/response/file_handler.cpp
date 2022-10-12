@@ -212,12 +212,14 @@ void	FileHandler::WriteToFile(std::string const& file_path,
 std::istream*	FileHandler::ExecuteDelete(Response& response) {
 	std::string file_path = response.GetResolvedPath();
 
+	if (DEBUG) std::cout << "Attempting to DELETE " << file_path << std::endl;
+
 	if (!IsValidFile(file_path))
 		GetFileHandlingError();
 
 	if (!IsRegularFile(file_path))
 		throw ForbiddenException();
-	
+
 	if (remove(file_path.c_str()) < 0) // remove is portable alternative to unlink
 		throw InternalServerErrorException();
 

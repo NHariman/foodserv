@@ -61,7 +61,7 @@ RequestLineState	RequestLineParser::MethodHandler() {
 	size_t	method_end = GetEndPos(input, ' ', pos);
 	
 	// if required space ending not found
-	if (method_end == pos)
+	if (method_end == std::string::npos)
 		throw BadRequestException("Request method missing single space delimiter");
 
 	std::string	method = input.substr(pos, method_end);
@@ -77,7 +77,7 @@ RequestLineState	RequestLineParser::TargetHandler() {
 	size_t	target_end = GetEndPos(input, ' ', pos);
 	
 	// if required space ending not found
-	if (target_end == pos) 
+	if (target_end == std::string::npos) 
 		throw BadRequestException("Request target missing single space delimiter");
 
 	_request->SetTarget(input.substr(pos, target_end)); // calls on RequestTargetParser

@@ -138,7 +138,7 @@ Response const&	ResponseHandler::GetResponse() {
 // Takes optional path argument for different path than request::resolved_path.
 void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 	std::string resolved_path;
-
+	
 	if (path.empty())
 		resolved_path = _request->GetTargetConfig().GetResolvedPath();
 	else
@@ -151,7 +151,7 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 	else
 		_response->SetResolvedPath(resolved_path);
 	_response->SetRequestTarget(_request->GetTargetString());
-	// if (DEBUG) std::cout << "path assigned to: " << _response->GetResolvedPath() << std::endl;
+	if (DEBUG) std::cout << "path assigned to: " << _response->GetResolvedPath() << std::endl;
 }
 
 std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
