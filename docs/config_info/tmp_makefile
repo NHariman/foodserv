@@ -2,7 +2,7 @@ COMPILE = c++
 
 FLAGS = -Wall -Werror -Wextra -std=c++11
 
-MAIN = docs/cgi_info/cgihandler_main.cpp
+MAIN = main.cpp
 
 #directories
 OBJDIR = obj
@@ -14,6 +14,8 @@ UTILS_DIR = utils
 CGI_DIR = cgi
 RESP_DIR = response
 ERR_DIR = err
+SERV_DIR = server
+CONN_DIR = connection
 DIR_VAL = directive_validation
 
 REQUEST = $(addprefix $(SRC_DIR)/$(REQ_DIR)/,	chunked_parser.cpp \
@@ -72,8 +74,14 @@ CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, 	cgi.cpp \
 											cgi_handler.cpp )
 
 RESPONSE = $(addprefix $(SRC_DIR)/$(RESP_DIR)/, file_handler.cpp \
-												response_handler_tmp.cpp \
+												response_handler.cpp \
+												response_generator.cpp\
 												response.cpp)
+
+CONNECTION = $(addprefix $(SRC_DIR)/$(CONN_DIR)/, connection.cpp)
+
+SERVER = $(addprefix $(SRC_DIR)/$(SERV_DIR)/, kernel_events.cpp \
+												socket.cpp)
 
 ERROR = $(addprefix $(SRC_DIR)/$(ERR_DIR)/,	error_responses.cpp)
 
@@ -85,6 +93,8 @@ OFILES =	$(CONFIG:.cpp=.o) \
 			$(UTILS:.cpp=.o) \
 			$(CGI:.cpp=.o) \
 			$(RESPONSE:.cpp=.o) \
+			$(CONNECTION:.cpp=.o) \
+			$(SERVER:.cpp=.o) \
 			$(ERROR:.cpp=.o)
 
 NAME = webserv

@@ -9,12 +9,12 @@ CGIPass::CGIPass(std::string input) : _is_set(true) {
 		throw TooManyArgumentsException();
 	else if (_len < 1)
 		throw NotEnoughArgumentsException();
-	// if (_len == 1) {
-	// 	OneArgument(input);
-	// }
-	// else {
-	// 	TwoArguments(input);
-	// }
+	if (_len == 1) {
+		OneArgument(input);
+	}
+	else {
+		TwoArguments(input);
+	}
 }
 
 CGIPass::CGIPass(CGIPass const &obj) : 
