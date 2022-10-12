@@ -17,6 +17,8 @@ Connection::~Connection() {
 }
 
 void	Connection::Receive(char const* buffer) {
+	_timer.Reset();
+
 	_request.Parse(buffer);
 
 	Request::Status	status = _request.GetRequestStatus();
@@ -34,6 +36,8 @@ void	Connection::Receive(char const* buffer) {
 }
 
 void	Connection::Dispatch() {
+	_timer.Reset();
+	
 	if (_response_handler.Ready())
 		_response_handler.Send(_fd); // can throw, should be caught in main
 
@@ -47,4 +51,8 @@ Response const& Connection::DebugGetResponse() {
 
 bool	Connection::CanClose() const {
 	return _close_connection;
+}
+
+bool	Connection::HasTimedOut() const {
+	return _timer.GetElapsed() > TIMEOUT_MS;
 }

@@ -7,6 +7,7 @@
 #define MAX_HEADER_SIZE	8192 // used by HeaderFieldParser
 #define MAX_URI_SIZE 8192 // used by RequestTargetParser
 #define BUFFER_SIZE 8192
+#define TIMEOUT_MS 30000 // 30 second timeout window for connection activity
 
 // file_handling.cpp
 bool	IsValidFile(std::string const& path);
