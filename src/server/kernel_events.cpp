@@ -30,8 +30,8 @@ void	KernelEvents::KeventInitListeningSockets() {
 
 void	KernelEvents::CloseHangingConnections() {
 	for (std::map<int, Connection*>::iterator it = _connection_map.begin(); it != _connection_map.end(); it++) {
-		// if (it->second->HasTimedOut())
-			// RemoveFromConnectionMap(it->first);
+		if (it->second->HasTimedOut())
+			RemoveFromConnectionMap(it->first);
 	}
 
 }

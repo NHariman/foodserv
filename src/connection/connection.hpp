@@ -4,7 +4,7 @@
 #include "../config/nginx_config.hpp"
 #include "../request/request.hpp"
 #include "../response/response_handler.hpp"
-// #include "response.hpp"
+#include "../utils/timer.hpp"
 
 class Connection {
 	public:
@@ -16,6 +16,7 @@ class Connection {
 		void	Receive(char const* buffer);
 		void	Dispatch();
 		bool	CanClose() const;
+		bool	HasTimedOut() const;
 		// debug
 		Response const& DebugGetResponse();
 
@@ -25,6 +26,7 @@ class Connection {
 		ResponseHandler	_response_handler;
 		int				_fd; // TODO: change to specific socket/connection_fd
 		bool			_close_connection;
+		Timer			_timer;
 };
 
 #endif /* CONNECTION_HPP */

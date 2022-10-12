@@ -22,8 +22,8 @@ class ConfigValues {
 		ReturnDir						_return_dir;
     
 	protected:
-       virtual int                      IsDirective(std::string directive) = 0;
-	   virtual void                     SetValue(int directive, std::string value) = 0;
+       virtual int                      IsDirective(std::string const directive) = 0;
+	   virtual void                     SetValue(int const directive, std::string value) = 0;
 
 	   	// setters
 		void							SetRoot(std::string trimmed_value);
