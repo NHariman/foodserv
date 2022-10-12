@@ -2,6 +2,7 @@
 #include "../../src/config/nginx_config.hpp"
 #include "../../src/connection/connection.hpp"
 #include "../../src/response/response.hpp"
+#include <string>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ TEST(ResponseGetTest, GetExistingFile) {
 	EXPECT_EQ(response.GetField("Content-Type"), "text/plain");
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize("www/public/hello.txt"));
+	EXPECT_EQ(GetStreamSize(response.GetBodyStream()), stol(GetHTMLPageSize("www/public/hello.txt")));
 }
 
 TEST(ResponseGetTest, GetNonExistantFile) {
@@ -39,6 +41,7 @@ TEST(ResponseGetTest, GetNonExistantFile) {
 	EXPECT_EQ(response.GetField("Content-Type"), "text/html");
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLStringSize(GetServerErrorPage(404)));
+	EXPECT_EQ(GetStreamSize(response.GetBodyStream()), stol(GetHTMLStringSize(GetServerErrorPage(404))));
 }
 
 TEST(ResponseGetTest, GetImageFile) {
@@ -54,7 +57,5 @@ TEST(ResponseGetTest, GetImageFile) {
 	EXPECT_EQ(response.GetField("Content-Type"), "image/png");
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize("www/img/beans.png"));
-	// response.GetBodyStream()->rdbuf();
-	// cout << "body stream gcount: " << response.GetBodyStream()->gcount() << endl;
-	// EXPECT_EQ(response.GetBodyStream()->rdbuf)
+	EXPECT_EQ(GetStreamSize(response.GetBodyStream()), stol(GetHTMLPageSize("www/img/beans.png")));
 }

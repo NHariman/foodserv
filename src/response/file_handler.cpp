@@ -16,6 +16,9 @@ std::istream*	FileHandler::GetFile(std::string const& file_path) {
 	if (!IsValidFile(file_path))
 		GetFileHandlingError();
 
+	if (IsValidDirectory(file_path)) // if file is actually directory
+		throw NotFoundException();
+
 	std::istream* file_stream = CreateStreamFromPath(file_path);
 	if (file_stream == NULL)
 		throw InternalServerErrorException();
@@ -62,7 +65,9 @@ std::istream*	FileHandler::ExecuteMethod(Response& response, Method method) {
 std::istream*	FileHandler::ExecuteGet(Response& response, bool error_page) {
 	if (DEBUG) std::cout << "ExecuteGet: path: " << response.GetResolvedPath() << std::endl;
 
-    std::istream*	file = GetFile(response.GetResolvedPath());
+	std::string file_path = response.GetResolvedPath();
+
+    std::istream*	file = GetFile(file_path);
 	if (!error_page)
 		response.SetStatusCode(200);
 	return file;
@@ -107,7 +112,7 @@ std::string	FileHandler::GetSubDirForIndex(std::string const& dir_path) {
 	size_t slash_last = dir_path.find_last_of("/");
 	if (slash_first == std::string::npos)
 		throw InternalServerErrorException();
-	
+
 	if (slash_first == slash_last)
 		return dir_path.substr(slash_first);
 	else
@@ -127,7 +132,7 @@ std::string	FileHandler::FormatLine(struct dirent* dir_entry, std::string const&
 
 	std::string	line = "<a href=\"" + path + file_name + "\">" + file_name + "</a>";
 	std::string	last_modified = GetLastModified(path + file_name);
-
+	
 	if (last_modified.empty())
 		throw InternalServerErrorException();
 	else
@@ -207,9 +212,14 @@ void	FileHandler::WriteToFile(std::string const& file_path,
 std::istream*	FileHandler::ExecuteDelete(Response& response) {
 	std::string file_path = response.GetResolvedPath();
 
+	if (DEBUG) std::cout << "Attempting to DELETE " << file_path << std::endl;
+
 	if (!IsValidFile(file_path))
 		GetFileHandlingError();
-	
+
+	if (!IsRegularFile(file_path))
+		throw ForbiddenException();
+
 	if (remove(file_path.c_str()) < 0) // remove is portable alternative to unlink
 		throw InternalServerErrorException();
 

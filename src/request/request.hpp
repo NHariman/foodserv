@@ -54,7 +54,6 @@ class Request : public HTTPMessage {
 		void				SetTarget(std::string const& target);
 		void				SetRequestStatus(Status status);
 		void				SetTargetHost(std::string const& host);
-		// void				SetResolvedTargetPath(std::string const& target_path);
 	
 		// friend class forward declaration allows RequestParser to
 		// access private variables of Request.

@@ -10,6 +10,7 @@
 
 // file_handling.cpp
 bool	IsValidFile(std::string const& path);
+bool	IsRegularFile(std::string const& path);
 bool	IsValidDirectory(std::string const& path);
 int 	CreateFile(std::string const& file_path, bool close_after = false);
 std::string		GetLastModified(std::string const& path);

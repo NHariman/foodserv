@@ -14,7 +14,6 @@ static NginxConfig config("../default.conf");
 TEST(ResponseDeleteTest, DeleteExistantFile) {
 	Connection connection(42, &config);
 	string req_dir = "/hello/";
-	string alias_dir = "www/";
 	string req_target = "upload/delete_me.txt";
 
 	string req_str = "DELETE " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\n\n";
@@ -33,7 +32,6 @@ TEST(ResponseDeleteTest, DeleteExistantFile) {
 TEST(ResponseDeleteTest, DeleteNonExistantFile) {
 	Connection connection(42, &config);
 	string req_dir = "/hello/";
-	string alias_dir = "www/";
 	string req_target = "upload/nonexistant.txt";
 
 	string req_str = "DELETE " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\n\n";
@@ -52,7 +50,6 @@ TEST(ResponseDeleteTest, DeleteNonExistantFile) {
 TEST(ResponseDeleteTest, DeleteNonExistantDir) {
 	Connection connection(42, &config);
 	string req_dir = "/hello/";
-	string alias_dir = "www/";
 	string req_target = "nonexistant/existing.txt";
 
 	string req_str = "DELETE " + req_dir + req_target + " HTTP/1.1\r\nHost: localhost\n\n";
@@ -66,4 +63,20 @@ TEST(ResponseDeleteTest, DeleteNonExistantDir) {
 	EXPECT_EQ(response.GetField("Content-Type"), "text/html");
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLStringSize(GetServerErrorPage(404)));
+}
+
+TEST(ResponseDeleteTest, DeleteSubdirDirectory) {
+	Connection connection(42, &config);
+
+	string req_str = "DELETE /hello/ HTTP/1.1\r\nHost: localhost\n\n";
+
+	connection.Receive(req_str.c_str());
+	Response const&	response = connection.DebugGetResponse();
+	EXPECT_EQ(response.GetStatusCode(), 403);
+	EXPECT_EQ(response.GetReasonPhrase(), "Forbidden");
+	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
+	EXPECT_EQ(response.GetField("Connection"), "close");
+	EXPECT_EQ(response.GetField("Content-Type"), "text/html");
+	EXPECT_EQ(response.GetField("Location"), NO_VAL);
+	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLStringSize(GetServerErrorPage(403)));
 }

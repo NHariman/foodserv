@@ -24,7 +24,6 @@ class ResponseHandler {
 		Response const& GetResponse();
 
 	private:
-		// NginxConfig*	_config;
 		Request*			_request;
 		Response::pointer	_response;
 		FileHandler			_file_handler;
