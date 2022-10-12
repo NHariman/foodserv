@@ -3,7 +3,7 @@
 # define DEBUG 0
 
 // use to check if a directive has been set
-bool						LocationContext::IsSet(std::string directive) {
+bool						LocationContext::IsSet(std::string const directive) {
 	int	is_directive = GetDirective(directive);
 	if (is_directive < 0 || is_directive > 8)
 		throw InvalidDirectiveSetCheckException(_location_uri.GetURIClass().GetInputURI());
@@ -30,7 +30,7 @@ bool						LocationContext::IsSet(std::string directive) {
 	throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI());
 }
 
-int							LocationContext::GetDirective(std::string directive) {
+int							LocationContext::GetDirective(std::string directive) const {
     const std::string	directives[] = {"autoindex", "root", "index", "client_max_body_size", "error_page", "cgi_pass", "allowed_methods", "return", "alias"};
 
     int	is_directive = std::find(directives, directives + 9, directive) - directives;
@@ -41,13 +41,68 @@ int								LocationContext::IsDirective(std::string directive) {
     if (bool_uri == false) {
 		return 9;
 	}
-	int	is_directive = GetDirective(directive);
+	const int	is_directive = GetDirective(directive);
 	if (is_directive < 0 || is_directive > 8){
-		std::cout << "directive fail: " << directive << std::endl;
 		throw InvalidDirectiveException(_location_uri.GetURIClass().GetInputURI(), directive);
 	}
 	else
 		return (is_directive);
+}
+
+
+void							LocationContext::DoubleDirectiveCheck(int const directive) {
+	
+	switch(directive) {
+		case 0: {
+			if (bool_autoindex == true)
+				throw MultipleAutoindexException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+		case 1: {
+			if (bool_root == true)
+				throw MultipleRootException(_location_uri.GetURIClass().GetInputURI());
+			if (bool_alias == true)
+				throw RootAndAliasException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+		case 2: {
+			if (bool_index == true)
+				throw MultipleIndexException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+		case 3: {
+			if (bool_client_max_body_size == true)
+				throw MultipleClientMaxBodySizeException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+        case 4: {
+			if (bool_error_page == true)
+				throw MultipleErrorPageException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+        case 5: {
+			if (bool_cgi_pass == true)
+				throw MultipleCGIPassException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+        case 6: {
+			if (bool_allowed_methods == true)
+				throw MultipleAllowedMethodsException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+        case 7: {
+			if (bool_return_dir == true)
+				throw MultipleReturnException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+        case 8: {
+			if (bool_alias == true)
+				throw MultipleAliasException(_location_uri.GetURIClass().GetInputURI());
+			if (bool_root == true)
+				throw RootAndAliasException(_location_uri.GetURIClass().GetInputURI());
+			return ;
+		}
+	}
 }
 
 void                LocationContext::CopyValues(LocationContext const& location_context) {

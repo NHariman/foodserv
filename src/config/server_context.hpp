@@ -40,12 +40,21 @@ class ServerContext : public ConfigValues {
 		//overridden base class functions
 		void					GetDirectiveValuePairs(size_t *start_position, std::string config_file); // in this case i do not use override as i want to use it differently.
 		
-		// verification: in server_context_verification
-		virtual int						IsDirective(std::string directive) override;
-		int         			GetDirective(std::string directive);
+		// wrappers for configvalues
+		void					SetServerRoot(std::string value);
+		void					SetServerIndex(std::string value);
+		void					SetServerCMBS(std::string value);
+		void					SetServerErrorPage(std::string value);
+		void					SetServerAutoindexDir(std::string value);
+		void					SetServerReturn(std::string value);
+
+		// verification: in server_context_verification (along with HasLocation)
+		virtual int				IsDirective(std::string const directive) override;
+		int         			GetDirective(std::string const directive);
+		void					DoubleDirectiveCheck(int const directive);
 		// setters
-		size_t					FindValue(int directive, std::string config_file, size_t key_end);
-		virtual void					SetValue(int directive, std::string value) override;
+		size_t					FindValue(int const directive, std::string config_file, size_t key_end);
+		virtual void			SetValue(int const directive, std::string value) override;
 		
 		void					SetLocation(std::string trimmed_value);
 		void					SetListen(std::string trimmed_value);
@@ -59,8 +68,8 @@ class ServerContext : public ConfigValues {
 		~ServerContext(){};
 		
 		// check if set
-		bool									HasLocation(std::string target);
-		virtual bool									IsSet(std::string key) override;
+		bool									HasLocation(std::string const target);
+		virtual bool							IsSet(std::string key) override;
 		//getters
 		std::vector<LocationContext>			GetLocationContexts() const;
 		std::pair<std::string, std::string>		GetListen() const;

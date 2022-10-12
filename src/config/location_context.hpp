@@ -21,11 +21,12 @@ class LocationContext : virtual public ConfigValues {
 		AllowedMethods				_allowed_methods;
 		std::string					_alias;
 
+		void						DoubleDirectiveCheck(int const directive);
 		void						GetDirectiveValuePairs(std::string data);
-		virtual int							IsDirective(std::string directive) override;
-		virtual void						SetValue(int directive, std::string input) override;
+		virtual int					IsDirective(std::string const directive) override;
+		virtual void				SetValue(int const directive, std::string input) override;
 
-		int							GetDirective(std::string directive);
+		int					GetDirective(std::string directive) const;
 
 		// setters
 		size_t				FindValue(int directive, std::string data, size_t key_start, size_t key_end);
@@ -33,6 +34,14 @@ class LocationContext : virtual public ConfigValues {
 		void				SetAlias(std::string value);
 		void				SetCGI(std::string value);
 		void				SetURI(std::string value);
+
+		// configvalues function pointers in order to use function pointer array
+		void				SetLocationAutoindexDir(std::string value);
+		void				SetLocationRoot(std::string value);
+		void				SetLocationIndex(std::string value);
+		void				SetLocationCMBS(std::string value);
+		void				SetLocationErrorPage(std::string value);
+		void				SetLocationReturn(std::string value);
 
 		void				CopyValues(LocationContext const& location_context);
 
