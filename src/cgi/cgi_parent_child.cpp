@@ -38,8 +38,8 @@ void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 // writes query to stdin of the child process
 void		CGI::WriteToPipe(int fd) {
 	ssize_t status;
-	if (POST_TEST == 0)
-		status = write(fd, _request->GetTargetURI().GetQuery().c_str(), _request->GetTargetURI().GetQuery().size());
+	if (POST_TEST == 0){
+		status = write(fd, _request->GetQuery().c_str(), _request->GetQuery().size());}
 	else {
 		std::string str(POST_STRING);
 		status = write(fd, str.c_str(), str.size());
