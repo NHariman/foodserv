@@ -186,6 +186,23 @@ class MultipleReturnException : public std::exception
 		virtual ~MultipleReturnException() throw() {}
 };
 
+class MultipleErrorPageException : public std::exception
+{
+	private:
+		std::string		_err_string;
+	public:
+		MultipleErrorPageException(size_t server) {
+			_err_string = "ERROR! Multiple error_page directives detected in Server Context: " + std::to_string(server) + " .";
+		}
+        MultipleErrorPageException(std::string uri) {
+			_err_string = "ERROR! Multiple error_page directives detected in Location Context:" + uri + ".";
+		}
+		const char *what() const throw() {
+			return (_err_string.c_str());
+		}
+		virtual ~MultipleErrorPageException() throw() {}
+};
+
 ///////////////////////////////
 // SERVER CONTEXT EXCEPTIONS //
 ///////////////////////////////
