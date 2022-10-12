@@ -3,9 +3,6 @@
 #include <fcntl.h>
 
 # define DEBUG 0
-# define POST_TEST 0
-
-# define POST_STRING "python=yes"
 
 
 // child process executes the cgi
@@ -37,14 +34,7 @@ void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 // FOR POST
 // writes query to stdin of the child process
 void		CGI::WriteToPipe(int fd) {
-	ssize_t status;
-	if (POST_TEST == 0){
-		status = write(fd, _request->GetQuery().c_str(), _request->GetQuery().size());}
-	else {
-		std::string str(POST_STRING);
-		status = write(fd, str.c_str(), str.size());
-	}
-	if (status == -1)
+	if ((write(fd, _request->GetQuery().c_str(), _request->GetQuery().size())) == -1)
 		throw WriteFailureException();
 }
 
@@ -93,5 +83,3 @@ int			CGI::ParentProcess(int *fd_read, int *fd_write, int pid) {
 }
 
 #undef DEBUG
-#undef POST_TEST
-#undef POST_STRING
