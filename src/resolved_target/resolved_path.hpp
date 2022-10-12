@@ -17,21 +17,18 @@ class ResolvedPath {
 		std::string		_request_uri;
 
         
-        bool    CheckReturn();
-        void    AppendRoot();
-        void	ReplaceAlias();
-
-		// int		CharOccurence(std::string str, char c);
+        bool			CheckReturn();
+        void			AppendRoot();
+        void	        ReplaceAlias();
+        void            CleanUpPath();
+        std::string     SearchIndexFiles();
+        void	        RequestIsValidDirectory();
+        bool	        LocationIsDirectory() const;
 
     public:
         ResolvedPath(TargetConfig *target_config);
         std::string	    Resolve(std::string target, std::string method);
         std::string     GetResolvedPath() const;
-        void	        RequestIsValidDirectory();
-        std::string     SearchIndexFiles();
-        void            CleanUpPath();
-        bool	        LocationIsDirectory() const;
-
 };
 
 #endif
