@@ -25,10 +25,9 @@ class KernelEvents {
 		void	AddToConnectionMap(int fd);
 		void	RemoveFromConnectionMap(int fd);
 		void	PrintConnectionMap() const;
-		// remove afterwards
-		void 	serveHTML(int s, std::string path);
-		void	recv_msg(int s, int read_filter_length);
-		void	write_msg(int s);
+		void	CloseHangingConnections();
+		void	ReceiveRequest(int s, int read_filter_length);
+		void	SendResponse(int s);
 	
 	public:
 		KernelEvents(NginxConfig *nginx_config, std::vector<int> listening_sockets);
