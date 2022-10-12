@@ -97,7 +97,7 @@ OFILES =	$(CONFIG:.cpp=.o) \
 			$(SERVER:.cpp=.o) \
 			$(ERROR:.cpp=.o)
 
-NAME = executable
+NAME = foodserv
 
 all: $(NAME)
 
