@@ -461,6 +461,9 @@ TEST(NginxConfigTest, valid) {
 		target.Setup(&test, "localhost", "80", "/");
 		EXPECT_EQ(target.GetRoot(), "/www/html");
 		EXPECT_EQ(target.GetMaxBodySize(), 1);
+		EXPECT_FALSE(target.IsAllowedMethod("GET"));
+		EXPECT_FALSE(target.IsAllowedMethod("POST"));
+		EXPECT_FALSE(target.IsAllowedMethod("DELETE"));
 	}
 	EXPECT_NO_THROW({
 		NginxConfig test("config_files/empty_location_block.conf");
