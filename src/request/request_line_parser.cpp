@@ -114,11 +114,12 @@ RequestLineState	RequestLineParser::VersionEndHandler() {
 
 // Returns position of `to_find` within string `s` in terms of its distance from
 // `start`, so value can be used immediately with `substr()`, skipping arithmetic.
-// If no such character is found in string, returns `start`;
+// If no such character is found in string, returns string::npos;
 size_t	RequestLineParser::GetEndPos(std::string const& s, char to_find, size_t start) {
 	size_t	end = s.find_first_of(to_find, start);
+
 	if (end == std::string::npos || end == start)
-		return start;
+		return std::string::npos;
 	return end - start;
 }
 
@@ -126,9 +127,9 @@ size_t	RequestLineParser::GetCRLFPos(std::string const& input, size_t pos) {
 	size_t	nl_pos = GetEndPos(input, '\n', pos);
 	size_t	cr_pos = GetEndPos(input, '\r', pos);
 
-	if (nl_pos == pos)
+	if (nl_pos == std::string::npos)
 		throw BadRequestException("Request line missing line break");
-	
+
 	// if \r is found and precedes \n
 	if (cr_pos != pos && (nl_pos - cr_pos == 1))
 		return cr_pos;
