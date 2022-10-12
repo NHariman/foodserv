@@ -1,9 +1,6 @@
 #include "cgi.hpp"
 
 # define DEBUG 0
-# define POST_TEST 0
-
-# define POST_STRING "python=yes"
 
 /*
 ** variables in this class:
@@ -73,4 +70,3 @@ std::string CGI::GetContent() const {
 }
 
 #undef DEBUG
-#undef POST_TEST
