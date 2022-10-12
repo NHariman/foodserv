@@ -64,7 +64,8 @@ UTILS = 	$(addprefix $(SRC_DIR)/$(UTILS_DIR)/,	file_handling.cpp \
 													cgi_utils.cpp \
 													config_utils.cpp \
 													status_codes.cpp\
-													mime_types.cpp)
+													mime_types.cpp \
+													timer.cpp)
 
 CGI = $(addprefix $(SRC_DIR)/$(CGI_DIR)/, 	cgi.cpp \
 											cgi_argv_envp.cpp \

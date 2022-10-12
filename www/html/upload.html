@@ -15,14 +15,11 @@
 </div> 
 
 <div class="topnav">
-  <a href="index.html">go back to index</a>
   <a href="otherpage.html">other page</a>
   <a href="get_cgi.html">GetCGI test</a>
   <a href="post_cgi.html">PostCGI test</a>
-  <a href="upload.html">Upload test</a>
   <a href="food/index.html" target="_blank">Food Blog</a>
   <a href="coffee_and_beans/index.html" target="_blank">Coffee Beans</a>
-  <a href="cat_book.html">Book of Cats</a>
   <a href="https://profile.intra.42.fr/" style="float:right" target="_blank">intra</a>
 </div>
 
@@ -32,21 +29,14 @@
     <div class="card">
       <p><h2>BEANS</h2>
         <h5>BEANS BEANS BEANS</h5></p>
-	      <img src="/img/beans_flip_gif.gif" class="spin">
-      <p>Beans beans beans. Beans beans beans beans beans. Beans.</p>
-      <p></p>
-      <p>Beans beans beans. Beans beans beans beans beans. Beans.Beans beans beans. Beans beans beans beans beans. Beans.Beans beans beans. Beans beans beans beans beans. Beans.Beans beans beans. Beans beans beans beans beans. Beans.Beans beans beans. Beans beans beans beans beans. Beans.Beans beans beans. Beans beans beans beans beans. Beans.Beans beans beans. Beans beans beans beans beans. Beans.Beans beans beans. Beans beans beans beans beans. Beans.
-        <br>
-        <h4><b>Beans:</b></h4>
-        <lu>
-          <li>beans </li>
-          <li>beans </li>
-          <li>beans</li>
-        </lu>
-      </p>
-    </div>
-
-
+        <h2>UPLOAD YOUR BEANS HERE</h2>
+        <form action="/upload.php" method="post" enctype="multipart/form-data">
+          Select image to upload:
+          <input type="file" name="fileToUpload" id="fileToUpload">
+          <input type="submit" value="Upload Image" name="submit">
+        </form>
+        <img src="/img/beans_flip_gif.gif" class="spin">
+</div>
 
   </div>
   <div class="rightcolumn">
