@@ -40,7 +40,7 @@ void    TargetConfig::Setup(NginxConfig *config, std::string host, std::string p
 	_autoindex = SetAutoindex(&server, &location);
 	_return_dir = SetReturn(&server, &location);
 
-	ResolvedPath	resolved_path(this, target);
+	ResolvedPath	resolved_path(this);
 	_resolved_path = resolved_path.GetResolvedPath();
 }
 

@@ -24,7 +24,8 @@ class ResolvedPath {
 		// int		CharOccurence(std::string str, char c);
 
     public:
-        ResolvedPath(TargetConfig *target_config, std::string target);
+        ResolvedPath(TargetConfig *target_config);
+        std::string	    Resolve(std::string target, std::string method);
         std::string     GetResolvedPath() const;
         void	        RequestIsValidDirectory();
         std::string     SearchIndexFiles();
