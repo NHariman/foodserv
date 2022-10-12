@@ -52,59 +52,38 @@ ServerContext & ServerContext::operator=(const ServerContext& obj) {
 	return (*this);
 }
 
+void					ServerContext::SetServerRoot(std::string value) {ConfigValues::SetRoot(value);}
+void					ServerContext::SetServerIndex(std::string value) {ConfigValues::SetIndex(value);}
+void					ServerContext::SetServerCMBS(std::string value) {ConfigValues::SetCMBS(value);}
+void					ServerContext::SetServerErrorPage(std::string value) {ConfigValues::SetErrorPage(value);}
+void					ServerContext::SetServerAutoindexDir(std::string value) {ConfigValues::SetAutoindexDir(value);}
+void					ServerContext::SetServerReturn(std::string value) {ConfigValues::SetReturn(value);}
+
 // sets the value in the right directive within the server class based off the IsDirective return value
 void				ServerContext::SetValue(int directive, std::string value){
 	std::string		trimmed_value;
+
+	void (ServerContext::*set_directive[])(std::string) = {
+		&ServerContext::SetLocation,
+		&ServerContext::SetListen,
+		&ServerContext::SetServerName,
+		&ServerContext::SetServerRoot,
+		&ServerContext::SetServerIndex,
+		&ServerContext::SetServerCMBS,
+		&ServerContext::SetServerErrorPage,
+		&ServerContext::SetServerAutoindexDir,
+		&ServerContext::SetServerReturn,
+		nullptr
+	};
 
 	if (value.compare("") == 0)
 		throw BadInputException(_server_nb);
 	trimmed_value = TrimValue(value);
 	if (DEBUG) std::cerr << "server context:\ndirective: " << directive << "\nvalue: " << trimmed_value << std::endl;
-	if (directive == 0) {
-		SetLocation(trimmed_value);
-	}
-	else {
-		switch(directive) {
-			case 1: {
-				if (bool_listen == true)
-					throw MultipleListensException(_server_nb);
-				return SetListen(trimmed_value);
-			}
-			case 2: {
-				if (bool_server_name == true)
-					throw MultipleServerNameException(_server_nb);
-				return SetServerName(trimmed_value);
-			}
-			case 3: {
-				if (bool_root == true)
-					throw MultipleRootException(_server_nb);
-				return SetRoot(trimmed_value);
-			}
-			case 4:{
-				if (bool_index == true)
-					throw MultipleIndexException(_server_nb);
-				return SetIndex(trimmed_value);
-			}
-			case 5:{
-				if (bool_client_max_body_size == true)
-					throw MultipleClientMaxBodySizeException(_server_nb);
-				return SetCMBS(trimmed_value);
-			}
-			case 6:{
-				return SetErrorPage(trimmed_value);
-			}
-			case 7: {
-				if (bool_autoindex == true)
-					throw MultipleAutoindexException(_server_nb);
-				return SetAutoindexDir(trimmed_value);
-			}
-            case 8: {
-				if (bool_return_dir == true)
-					throw MultipleReturnException(_server_nb);
-				return SetReturn(trimmed_value);
-			}
-		}
-	}
+
+	DoubleDirectiveCheck(directive);
+	(this->*set_directive[directive])(trimmed_value);
+
 }
 
 size_t						ServerContext::FindLocationContextEnd(std::string config_file, size_t start) {
