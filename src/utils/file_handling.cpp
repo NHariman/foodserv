@@ -14,13 +14,19 @@ bool	IsValidFile(std::string const& path) {
 	return false;
 }
 
+bool	IsRegularFile(std::string const& path) {
+	struct stat sb;
+
+	if (stat(path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+		return true;
+	return false;
+}
+
 bool	IsValidDirectory(std::string const& path) {
 	struct stat sb;
 
-	if (stat(path.c_str(), &sb) == 0) {
-		if (S_ISDIR(sb.st_mode))
-			return true;
-	}
+	if (stat(path.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
+		return true;
 	return false;
 }
 
