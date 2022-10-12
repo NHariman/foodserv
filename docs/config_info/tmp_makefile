@@ -97,7 +97,7 @@ OFILES =	$(CONFIG:.cpp=.o) \
 			$(SERVER:.cpp=.o) \
 			$(ERROR:.cpp=.o)
 
-NAME = webserv
+NAME = executable
 
 all: $(NAME)
 
