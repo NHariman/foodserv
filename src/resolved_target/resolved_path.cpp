@@ -1,15 +1,18 @@
 #include "resolved_path.hpp"
 
-ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _target_config(target_config), _request_uri(target) {
+ResolvedPath::ResolvedPath(TargetConfig *target_config) : _target_config(target_config) {}
+
+std::string	ResolvedPath::Resolve(std::string target, std::string method) {
+	_request_uri = target;
 	_locationblock_uri = _target_config->GetLocationUri().GetUri();
 	_target_config->SetGenerateIndexBool(false);
     if (CheckReturn())
-		return ;
+		return _path;
 	if (_target_config->GetAlias().empty() == false)
 		ReplaceAlias();
 	else if (_target_config->GetRoot().empty() == false)
 		AppendRoot();
-	if (LocationIsDirectory()) {
+	if (LocationIsDirectory() && method == "GET") {
 		if (_target_config->GetCGIPass().IsSet() == true) {}
 		else if (!_target_config->GetAutoindex())
 			_path = "";
@@ -17,6 +20,7 @@ ResolvedPath::ResolvedPath(TargetConfig *target_config, std::string target) : _t
 			_path = SearchIndexFiles();
 	}
 	CleanUpPath();
+	return _path;
 }
 
 bool	ResolvedPath::CheckReturn() {

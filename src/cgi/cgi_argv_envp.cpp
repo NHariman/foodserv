@@ -1,19 +1,12 @@
 #include "cgi.hpp"
 
 #define DEBUG 0
-#define POST_TEST 0
-
-# define POST_STRING "python=yes"
 
 // SETS HEADERS
 void 		CGI::SetHeaders() {
 
-	if (POST_TEST == 1) {
-			std::string str(POST_STRING);
-			_env.push_back("CONTENT_LENGTH=" + std::to_string(str.size()));
-	}
-	else if (!_request->GetTargetURI().GetQuery().empty() && !_request->GetMethod().compare("POST")) {
-			_env.push_back("CONTENT_LENGTH=" + std::to_string(_request->GetTargetURI().GetQuery().size()));
+	if (!_request->GetQuery().empty() && !_request->GetMethod().compare("POST")) {
+			_env.push_back("CONTENT_LENGTH=" + std::to_string(_request->GetQuery().size()));
 	}
 	if (_request->GetField("Content-Type").compare(NO_VAL) != 0)
 		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("CONTENT_TYPE"));
@@ -64,5 +57,3 @@ void 		CGI::ToEnv(char **env){
 
 
 #undef DEBUG
-#undef POST_TEST
-#undef POST_STRING

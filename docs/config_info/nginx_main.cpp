@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <vector>
 #include "src/config/nginx_config.hpp"
-#include "src/basic_server/server.hpp"
 #include "src/resolved_target/server_selection.hpp"
 #include "src/config/setup.hpp"
 #include "src/resolved_target/target_config.hpp"
