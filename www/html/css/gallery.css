@@ -7,3 +7,78 @@
 #wrapper img{
     width:100%;       /* the image will now scale down as its parent gets smaller */
 }
+
+.galleryleftcolumn{
+    float: left;
+  width: 5%;
+  padding: 5%;
+}
+
+/* Create two unequal columns that floats next to each other */
+/* Left column */
+.gallerymiddlecolumn {   
+  float: left;
+  width: 75%;
+}
+
+/* Right column */
+.galleryrightcolumn {
+  float: left;
+  width: 5%;
+  padding-left: 20px;
+}
+
+.catheader {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 14%;
+      padding: 30px;
+      text-align: center;
+      background-color: #89cff0;
+      background-image: url("https://bestpetsvet.com/wp-content/uploads/2019/02/cat-2146089_1280.jpg");
+      background-size: cover;
+      background-repeat: no-repeat;
+      filter: blur(3px);
+      -webkit-filter: blur(3px);
+    z-index: -1;
+  }
+
+  .cattopnav {
+    overflow: hidden;
+    background-color: rgb(33, 30, 29);
+  }
+
+  /* Style the topnav links */
+.cattopnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  /* Change color on hover */
+  .cattopnav a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+
+/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 2500px) {
+    .header-text, .gallerymiddlecolumn, .galleryrightcolumn, .galleryleftcolumn {   
+      width: 100%;
+      padding: 0;
+    }
+  }
+
+  @media screen and (max-width: 2499px) {
+    .catheader {
+      height: 14%;
+    }
+    .cattopnav {
+      padding: 2%;
+    }
+  }

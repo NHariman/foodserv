@@ -12,6 +12,7 @@
     font-size: 0.875em;
     text-align: center;
     background: #ebeced;
+    word-break: break-all;
   }
   
   /* Header/Blog Title */
