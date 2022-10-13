@@ -191,13 +191,10 @@ TEST(RequestMessageTest, ValidPOSTRequestQuery) {
 	EXPECT_EQ(request.GetQuery(), "name=Joe User&id=42");
 }
 
-TEST(RequestMessageTest, InvalidMessageNormal) {
+TEST(RequestMessageTest, InvalidMessageWithoutCE) {
 	// message without Content-Length
 	int status = ConstructAndGetStatus(POST_Req + "\r\nHello World!");
 	EXPECT_EQ(status, 411); // Length Required error
-
-	// TODO: add incomplete message check when connection is closed but content-length
-	// not reached
 }
 
 TEST(RequestMessageTest, InvalidMessageChunked) {

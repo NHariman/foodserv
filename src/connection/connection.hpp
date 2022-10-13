@@ -16,7 +16,7 @@ class Connection {
 		void	Receive(char const* buffer);
 		void	Dispatch();
 		bool	CanClose() const;
-		bool	HasTimedOut() const;
+		bool	HasTimedOut(double timeout = TIMEOUT_SEC) const;
 		// debug
 		Response const& DebugGetResponse();
 

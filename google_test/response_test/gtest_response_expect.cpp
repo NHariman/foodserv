@@ -95,3 +95,21 @@ TEST(ResponseExpectTest, ExpectCompleteBadRequest) {
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 }
 
+TEST(ResponseExpectTest, ExpectIncompleteRequest) {
+	Connection connection(42, &config);
+
+	string req_str = "POST /hello/upload/beep.txt HTTP/1.1\r\nHost: localhost\nExpect: 100-continue\nTransfer-Encoding: chunked\n\n";
+	connection.Receive(req_str.c_str());
+	
+	Response const&	response = connection.DebugGetResponse();
+	EXPECT_EQ(response.GetStatusCode(), 100);
+	EXPECT_EQ(response.GetReasonPhrase(), "Continue");
+	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
+	EXPECT_EQ(response.GetField("Connection"), NO_VAL);
+	EXPECT_EQ(response.GetField("Content-Type"), NO_VAL);
+	EXPECT_EQ(response.GetField("Location"), NO_VAL);
+	EXPECT_EQ(response.GetField("Content-Length"), NO_VAL);
+
+	sleep(3);
+	EXPECT_TRUE(connection.HasTimedOut(2));
+}
