@@ -1,6 +1,6 @@
 #include "cgi.hpp"
 
-# define DEBUG 0
+# define DEBUG 1
 
 /*
 ** variables in this class:
@@ -62,6 +62,7 @@ size_t		CGI::Execute() {
 		exit_code = ParentProcess(fd_read, fd_write, pid);
 		SetExecStatusCode(exit_code);
 	}
+	if (DEBUG) std::cout << "content: " << _content << std::endl;
 	return 200;
 }
 

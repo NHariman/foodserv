@@ -1,6 +1,6 @@
 #include "cgi.hpp"
 
-#define DEBUG 0
+#define DEBUG 1
 
 // FILE COMPARING
 // compares if the file locations are the same

@@ -87,7 +87,7 @@ STYLE_END CRLF
 "<head><title>400 Bad Request</title></head>" CRLF
 "<body>" CRLF
 "<center><h1>400 Bad Request</h1></center><hr>" CRLF
-"<center><img src=\"https://http.cat/309\"></center>" CRLF
+"<center><img src=\"https://http.cat/400\"></center>" CRLF
 footer CRLF
 ;
 
