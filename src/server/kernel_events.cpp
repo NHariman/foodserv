@@ -2,6 +2,7 @@
 
 # define DEBUG 0
 # define MAX_EVENTS 128
+# define TIMER 5000
 
 #include "../request/request.hpp"
 #include "../resolved_target/target_config.hpp"
@@ -26,6 +27,9 @@ void	KernelEvents::KeventInitListeningSockets() {
 		if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
 			throw KeventErrorException();
 	}
+	EV_SET(&kev_monitor, 1234, EVFILT_TIMER, EV_ADD | EV_ENABLE, 0, TIMER, NULL);
+	if (kevent(_kqueue, &kev_monitor, 1, NULL, 0, NULL) == -1)
+		throw KeventErrorException();
 }
 
 void	KernelEvents::CloseHangingConnections() {
@@ -47,7 +51,6 @@ void	KernelEvents::KernelEventLoop() {
 		if (new_events == -1)
 			throw KeventErrorException();
 
-		// ADD FUNCTION TO CHECK FOR TIME
 		CloseHangingConnections();
 
 		for (int i = 0; i < new_events; i++) {
