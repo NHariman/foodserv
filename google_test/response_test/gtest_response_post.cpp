@@ -133,6 +133,16 @@ TEST(ResponsePostTest, PostIncompleteRequest) {
 	EXPECT_FALSE(connection.HasTimedOut(3));
 	sleep(2);
 	EXPECT_TRUE(connection.HasTimedOut(3));
+
+	Response const&	response = connection.DebugGetResponse();
+	EXPECT_EQ(response.GetStatusCode(), 408);
+	EXPECT_EQ(response.GetReasonPhrase(), "Request Timeout");
+	EXPECT_EQ(response.GetField("Allow"), NO_VAL);
+	EXPECT_EQ(response.GetField("Connection"), "close");
+	EXPECT_EQ(response.GetField("Content-Type"), "text/html");
+	EXPECT_EQ(response.GetField("Location"), NO_VAL);
+	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLStringSize(GetServerErrorPage(408)));
+
 }
 
 // Checks if timer is correctly reset after more of request is received.
@@ -167,3 +177,4 @@ TEST(ResponsePostTest, PostChunkedRequest) {
 	std::streampos count = GetFileContentCount(alias_dir + req_target);
 	EXPECT_EQ(count, message_body.size());
 }
+

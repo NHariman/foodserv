@@ -26,7 +26,7 @@ class KernelEvents {
 		void	RemoveFromConnectionMap(int fd);
 		void	PrintConnectionMap() const;
 		void	CloseHangingConnections();
-		void	ReceiveRequest(int s, int read_filter_length);
+		void	ReceiveRequest(int s);
 		void	SendResponse(int s);
 	
 	public:

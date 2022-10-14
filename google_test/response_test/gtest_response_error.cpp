@@ -56,7 +56,6 @@ TEST(ResponseErrorTest, CustomError405) {
 	EXPECT_EQ(response.GetField("Content-Type"), "text/html");
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLPageSize(CUSTOM_ERR_PATH));
-	// std::cout << response.GetBodyStream()->rdbuf() << std::endl;
 }
 
 // 405 error test with disallowed method.
@@ -156,5 +155,3 @@ TEST(ResponseErrorTest, DefaultError505) {
 	EXPECT_EQ(response.GetField("Location"), NO_VAL);
 	EXPECT_EQ(response.GetField("Content-Length"), GetHTMLStringSize(GetServerErrorPage(505)));
 }
-
-// test POST (should set Location, return 201)
