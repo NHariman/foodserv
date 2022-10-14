@@ -34,6 +34,7 @@ size_t	Request::Parse(char const* buffer) {
 			CheckStatus();
 		}
 		catch (http::exception &e) {
+			std::cout << "bad request? " << e.what() << std::endl;
 			SetStatusCode(e.which());
 			_request_status = Status::Bad;
 		}

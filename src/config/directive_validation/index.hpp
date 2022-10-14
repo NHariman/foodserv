@@ -20,7 +20,7 @@ class Index {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Missing Arguments in allowed_methods block.";
+					return "ERROR! Missing Arguments in index block.";
 				}
 		};
 };
