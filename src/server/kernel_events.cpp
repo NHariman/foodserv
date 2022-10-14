@@ -150,8 +150,7 @@ void KernelEvents::ReceiveRequest(int s, int read_filter_length) {
 		total_bytes_read += bytes_read;
 	}
 
-	if (total_bytes_read != read_filter_length) {}
-	// 	throw RecvException();
+	(void)read_filter_length;
 
 	std::cout << std::endl << "************* START CLIENT REQUEST *************" << std::endl;
 	std::cout << full_request << std::endl;
