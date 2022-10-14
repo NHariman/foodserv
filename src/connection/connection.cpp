@@ -6,11 +6,7 @@ Connection::Connection(int fd, NginxConfig* config)
 		_request(config),
 		_response_handler(),
 		_fd(fd),
-		_close_connection(false) {
-			(void)_fd;
-			(void)_config;
-			(void)_close_connection;
-		}
+		_close_connection(false) {}
 
 // Destructor
 Connection::~Connection() {
@@ -53,6 +49,8 @@ bool	Connection::CanClose() const {
 	return _close_connection;
 }
 
-bool	Connection::HasTimedOut() const {
-	return _timer.GetElapsed() > TIMEOUT_MS;
+// Takes optional parameter `timeout` for testing.
+// Defaults to TIMEOUT_SEC macro set in utils.hpp.
+bool	Connection::HasTimedOut(double timeout) const {
+	return _timer.GetElapsed() > timeout;
 }

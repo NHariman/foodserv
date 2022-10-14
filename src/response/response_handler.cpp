@@ -209,6 +209,8 @@ bool	ResponseHandler::IsRedirected() {
 }
 
 void	ResponseHandler::HandleRedirection() {
+	if (DEBUG) std::cout << "HandleRedirection\n";
+
 	_response->SetResolvedPath(_request->GetTargetConfig().GetResolvedPath());
 	FormResponse();
 }
@@ -218,6 +220,8 @@ bool	ResponseHandler::IsHandledByCGI() {
 }
 
 void	ResponseHandler::HandleCGI() {
+	if (DEBUG) std::cout << "HandleCGI\n";
+
 	CGIHandler	cgi_handler;
 	std::istream* body_stream = cgi_handler.Execute(_request, *_response);
 	_response->SetBodyStream(body_stream);
@@ -225,6 +229,8 @@ void	ResponseHandler::HandleCGI() {
 
 // Assumes _response->_resolved_path has been set already.
 void	ResponseHandler::HandleMethod() {
+	if (DEBUG) std::cout << "HandleMethod\n";
+
 	FileHandler::Method method = DetermineMethod();
 	std::istream* body_stream = _file_handler.ExecuteMethod(*_response, method);
 	_response->SetBodyStream(body_stream);
