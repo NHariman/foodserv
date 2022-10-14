@@ -6,7 +6,9 @@ Connection::Connection(int fd, NginxConfig* config)
 		_request(config),
 		_response_handler(),
 		_fd(fd),
-		_close_connection(false) {}
+		_close_connection(false) {
+			_config = config;
+		}
 
 // Destructor
 Connection::~Connection() {

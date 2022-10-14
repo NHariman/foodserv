@@ -9,8 +9,8 @@ void 		CGI::SetHeaders() {
 			if (DEBUG) std::cout << "In GetQuery: " << _request->GetQuery() << std::endl;
 			_env.push_back("CONTENT_LENGTH=" + std::to_string(_request->GetQuery().size()));
 	}
-	if (_request->GetField("CONTENT_TYPE").compare(NO_VAL) != 0)
-		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("CONTENT_TYPE"));
+	if (_request->GetField("Content-Type").compare(NO_VAL) != 0)
+		_env.push_back("CONTENT_TYPE=" + 	_request->GetField("Content-Type"));
 	_env.push_back("DOCUMENT_ROOT=" + 	_TARGET.GetRoot());
 	if (_CGI.GetLen() == 1)
 		_env.push_back("PATH_INFO=" + _argv[0]);
