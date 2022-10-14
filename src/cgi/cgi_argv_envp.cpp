@@ -1,6 +1,6 @@
 #include "cgi.hpp"
 
-#define DEBUG 1
+#define DEBUG 0
 
 // SETS HEADERS
 void 		CGI::SetHeaders() {

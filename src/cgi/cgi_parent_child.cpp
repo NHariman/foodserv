@@ -2,7 +2,7 @@
 
 #include <fcntl.h>
 
-# define DEBUG 1
+# define DEBUG 0
 
 
 // child process executes the cgi

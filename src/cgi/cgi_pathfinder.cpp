@@ -1,6 +1,6 @@
 #include "cgi.hpp"
 
-#define DEBUG 1
+#define DEBUG 0
 
 // searches directory for file with the right extension and returns it
 // otherwise throws file not found
