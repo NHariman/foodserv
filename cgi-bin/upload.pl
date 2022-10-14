@@ -3,7 +3,7 @@
 
   $upload_dir = "www/upload"; #ensure this is writable by webserver user
 
-  $query = new CGI;
+  $query = CGI->new;
 
   if (!$query){
     print "could not find \$query";
