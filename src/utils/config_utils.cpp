@@ -64,6 +64,8 @@ size_t		CountArguments(std::string str) {
 		if (start == end)
 			break ;
 		arguments++;
+		if (end == std::string::npos)
+			break ;
 		i = end;
 	}
 	return (arguments);

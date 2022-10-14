@@ -80,11 +80,11 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	// we can delete the complete connection, make a new one with the same fd
 	// but then the new request (connection class)
 
-	// std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
-	// if (it != _connection_map.end()) {
-	// 	delete it->second;
-	// 	_connection_map.erase(it);
-	// }
+	std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
+	if (it != _connection_map.end()) {
+		delete it->second;
+		_connection_map.erase(it);
+	}
 
 	// add the client
 	Connection		*new_conn = new Connection(client_fd, _config_file);
