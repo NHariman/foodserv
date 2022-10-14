@@ -14,14 +14,14 @@ class Root {
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Missing Arguments in fastcgi_pass block.";
+					return "ERROR! Missing Arguments in root block.";
 				}
 		};
         class TooManyArgumentsException : public std::exception
 		{
 			public:
 				const char *what() const throw() {
-					return "ERROR! Too Many Arguments in fastcgi_pass block.";
+					return "ERROR! Too Many Arguments in root block.";
 				}
 		};
 };

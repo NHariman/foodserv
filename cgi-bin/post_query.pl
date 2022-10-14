@@ -81,4 +81,25 @@ print "<h3>Feedback: $feed_back</h3>";
 print "</body>";
 print "</html>";
    
-1;
+my $str = <<END;
+$first_name $last_name,
+Your order was:
+Python: $python_flag
+Java: $java_flag
+Perl: $perl_flag
+Swift: $swift_flag
+Payment Method: $payment_method
+First Time Customer: $first_time
+Feedback: $feed_back
+Thank you!
+END
+
+my $filename = "www/upload/$first_name.txt";
+
+open(FH, '>', $filename) or die $!;
+
+print FH $str;
+
+close(FH);
+
+print "Your receipt can be found at www/upload/$first_name.txt!\n";

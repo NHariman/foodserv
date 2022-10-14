@@ -16,11 +16,11 @@ std::istream* 		CGIHandler::Execute(Request *request, Response &response) {
 		_body = body; // delete later
 		CreateBodyStream(body);
 		SetStatus(&response); // sets response status code to 200 (anything else would throw)
-		return _content;
 	}
 	catch (InternalError::exception &e) {
 		throw InternalServerErrorException();
 	}
+	return _content;
 }
 
 void				CGIHandler::CreateBodyStream(std::string body) {

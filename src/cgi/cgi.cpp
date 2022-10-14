@@ -62,6 +62,7 @@ size_t		CGI::Execute() {
 		exit_code = ParentProcess(fd_read, fd_write, pid);
 		SetExecStatusCode(exit_code);
 	}
+	if (DEBUG) std::cout << "content: " << _content << std::endl;
 	return 200;
 }
 
