@@ -61,8 +61,6 @@ size_t		CountArguments(std::string str) {
 		if (start == std::string::npos)
 			return (arguments);
 		end = str.find_first_of(" \t\n\v\f\r", start);
-		if (start == end)
-			break ;
 		arguments++;
 		if (end == std::string::npos)
 			break ;
