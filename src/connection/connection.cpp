@@ -2,25 +2,30 @@
 
 // Socket fd & config file constructor
 Connection::Connection(int fd, NginxConfig* config)
-	:	_config(config),
-		_request(config),
+	:	_request(config),
 		_response_handler(),
-		_fd(fd),
-		_close_connection(false) {
-			_config = config;
-		}
+		_socket_fd(fd),
+		_state(State::Start),
+		_close_connection_immediate(false) {}
 
 // Destructor
 Connection::~Connection() {
 }
 
 void	Connection::Receive(char const* buffer) {
+	_state = State::Request;
+	
 	_timer.Reset();
 
 	_request.Parse(buffer);
 
 	Request::Status	status = _request.GetRequestStatus();
+	SetNextState(status);
 	// std::cout << "Connection::Receive: request status_code: " << _request.GetStatusCode() << std::endl;
+	// auto header_fields = _request.GetFields();
+	// for (auto it = header_fields.begin(); it != header_fields.end(); it++) {
+	// 	std::cout << it->first + ": " + it->second + "\n";
+	// }
 	switch(status) {
 		case Request::Status::Incomplete:
 			break;
@@ -34,13 +39,13 @@ void	Connection::Receive(char const* buffer) {
 }
 
 void	Connection::Dispatch() {
-	_timer.Reset();
-	
-	if (_response_handler.Ready())
-		_response_handler.Send(_fd); // can throw, should be caught in main
+	if (_response_handler.Ready()) {
+		_timer.Reset();
+		_response_handler.Send(_socket_fd);
+	}
 
 	if (_response_handler.IsDone())
-		_close_connection = true;
+		_state = State::Done;
 }
 
 Response const& Connection::DebugGetResponse() {
@@ -48,11 +53,41 @@ Response const& Connection::DebugGetResponse() {
 }
 
 bool	Connection::CanClose() const {
-	return _close_connection;
+	return _state == State::Done;
+}
+
+bool	Connection::CloseImmediately() const {
+	return _close_connection_immediate;
 }
 
 // Takes optional parameter `timeout` for testing.
 // Defaults to TIMEOUT_SEC macro set in utils.hpp.
-bool	Connection::HasTimedOut(double timeout) const {
-	return _timer.GetElapsed() > timeout;
+bool	Connection::HasTimedOut(double timeout) {
+	if (_timer.GetElapsed() > timeout) {
+		HandleTimeout();
+		return true;
+	}
+	return false;
+}
+
+void	Connection::HandleTimeout() {
+	if (_state == State::Start) {
+		_close_connection_immediate = true;
+		return ;
+	}
+	if (_state == State::CGI)
+		_request.SetStatusCode(504);
+	else
+		_request.SetStatusCode(408);
+	_response_handler.HandleError(_request);
+}
+
+// Changes internal State as needed for handling timeouts later.
+void	Connection::SetNextState(Request::Status status) {
+    if (status == Request::Status::Incomplete)
+		return;
+	else if (_request.GetTargetConfig().GetCGIPass().IsSet()) // CGI
+		_state = State::CGI;
+	else
+		_state = State::Response;
 }

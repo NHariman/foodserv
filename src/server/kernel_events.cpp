@@ -34,8 +34,9 @@ void	KernelEvents::KeventInitListeningSockets() {
 
 void	KernelEvents::CloseHangingConnections() {
 	for (std::map<int, Connection*>::iterator it = _connection_map.begin(); it != _connection_map.end(); it++) {
-		if (it->second->HasTimedOut())
+		if (it->second->HasTimedOut() && it->second->CloseImmediately()) {
 			RemoveFromConnectionMap(it->first);
+		}
 	}
 
 }
@@ -64,7 +65,7 @@ void	KernelEvents::KernelEventLoop() {
 				AddToConnectionMap(client_fd);
 			}
 			else if (kev_trigger[i].filter == EVFILT_READ) {
-				ReceiveRequest(kev_trigger[i].ident, kev_trigger[i].data);
+				ReceiveRequest(kev_trigger[i].ident);
 			}
 			else if (kev_trigger[i].filter == EVFILT_WRITE) {
 				SendResponse(kev_trigger[i].ident);
@@ -79,11 +80,11 @@ void	KernelEvents::AddToConnectionMap(int client_fd) {
 	// we can delete the complete connection, make a new one with the same fd
 	// but then the new request (connection class)
 
-	// std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
-	// if (it != _connection_map.end()) {
-	// 	delete it->second;
-	// 	_connection_map.erase(it);
-	// }
+	std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
+	if (it != _connection_map.end()) {
+		delete it->second;
+		_connection_map.erase(it);
+	}
 
 	// add the client
 	Connection		*new_conn = new Connection(client_fd, _config_file);
@@ -138,7 +139,7 @@ void	KernelEvents::PrintConnectionMap() const {
 **	The buffer is double checked with the read event data filter
 **	As this already knows how much to read.
 */
-void KernelEvents::ReceiveRequest(int s, int read_filter_length) {
+void KernelEvents::ReceiveRequest(int s) {
 	std::string	full_request;
 	char 		buf[100];
 	int			bytes_read;
@@ -149,9 +150,6 @@ void KernelEvents::ReceiveRequest(int s, int read_filter_length) {
 		full_request.append(buf);
 		total_bytes_read += bytes_read;
 	}
-
-	if (total_bytes_read != read_filter_length) {}
-	// 	throw RecvException();
 
 	std::cout << std::endl << "************* START CLIENT REQUEST *************" << std::endl;
 	std::cout << full_request << std::endl;

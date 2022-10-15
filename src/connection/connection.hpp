@@ -8,6 +8,14 @@
 
 class Connection {
 	public:
+		enum class State {
+			Start = 0,
+			Request,
+			Response,
+			CGI,
+			Done
+		};
+
 		// Socket fd & config file constructor
 		Connection(int fd, NginxConfig* config);
 		// Destructor
@@ -16,16 +24,20 @@ class Connection {
 		void	Receive(char const* buffer);
 		void	Dispatch();
 		bool	CanClose() const;
-		bool	HasTimedOut(double timeout = TIMEOUT_SEC) const;
+		bool	CloseImmediately() const;
+		bool	HasTimedOut(double timeout = TIMEOUT_SEC);
+		void	HandleTimeout();
+		void	SetNextState(Request::Status status);
+
 		// debug
 		Response const& DebugGetResponse();
 
 	private:
-		NginxConfig*	_config;
 		Request			_request;
 		ResponseHandler	_response_handler;
-		int				_fd; // TODO: change to specific socket/connection_fd
-		bool			_close_connection;
+		int				_socket_fd;
+		State			_state;
+		bool			_close_connection_immediate;
 		Timer			_timer;
 };
 

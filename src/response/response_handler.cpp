@@ -28,13 +28,16 @@ void	ResponseHandler::Send(int fd) {
 	std::string& send_buffer = _response->GetCompleteResponseString();
 
 	size_t send_size = std::min((size_t)BUFFER_SIZE, send_buffer.size());
-	// if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+
+	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
+	if (DEBUG) std::cout << "bytes READ: " << send_buffer.size() << std::endl;
 
 	ssize_t bytes_sent = send(fd, send_buffer.c_str(), send_size, 0);
 	if (bytes_sent < 0)
 		throw SendFailureException();
 
-	// if (DEBUG) std::cout << "bytes sent: " << bytes_sent << std::endl;
+	if (DEBUG) std::cout << "bytes SENT: " << bytes_sent << std::endl;
+
 	if (_response->GetStatusCode() == 100)
 		_response = Response::pointer(new Response); // create fresh Response object
 
@@ -62,7 +65,6 @@ void	ResponseHandler::Send(int fd) {
 // 		to_send->read(buffer, send_size);
 // 		if (to_send->bad())
 // 			throw StreamReadFailureException();
-
 // 		if (DEBUG) std::cout << "stream good: " << to_send->good() << " | eof: " << to_send->eof() << std::endl;
 // 		if (DEBUG) std::cout << "bytes READ: " << to_send->gcount() << std::endl;
 
@@ -71,7 +73,6 @@ void	ResponseHandler::Send(int fd) {
 
 // 		// save send return to check for error or less bytes sent than indicated
 // 		bytes_sent = send(fd, buffer, send_size, 0);
-
 // 		if (bytes_sent < 0)
 // 			throw SendFailureException();
 
