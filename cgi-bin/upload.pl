@@ -298,6 +298,7 @@ elsif (-e $upload_dir.$filename) {
 }
 elsif (index($contenttype, "image") > -1) {
 	print "this is an image. :(";
+  
 }
 else {
 	print "Your file has been uploaded to $upload_dir$filename\n<br>";
@@ -333,9 +334,18 @@ print "</div>
 if (index($contenttype, "text") < 0 && index($contenttype, "application/octet-stream") || (-e $upload_dir.$filename) || index($contenttype, "image") > -1) {
 	exit ;
 }
+elsif (index($contenttype, "image") > -1) {
+  my $upload_file = $upload_dir.$filename;
+  my $decoded= MIME::Base64::decode_base64($body);
+open my $fh, '>', $upload_file or die $!;
+binmode $fh;
+print $fh $decoded;
+close $fh
+}
+else {
 my $upload_file = $upload_dir.$filename;
 open(FH, '>', $upload_file) or die $!;
 print FH $body;
 close(FH);
-
+}
 1;
