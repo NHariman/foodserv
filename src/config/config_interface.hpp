@@ -22,8 +22,8 @@ class ConfigValues {
 		ReturnDir						_return_dir;
     
 	protected:
-       virtual int                      IsDirective(std::string const directive) = 0;
-	   virtual void                     SetValue(int const directive, std::string value) = 0;
+    	virtual int                      IsDirective(std::string const directive) = 0;
+		virtual void                     SetValue(int const directive, std::string value) = 0;
 
 	   	// setters
 		void							SetRoot(std::string trimmed_value);
@@ -33,25 +33,25 @@ class ConfigValues {
 		void							SetAutoindexDir(std::string trimmed_value);
 		void							SetReturn(std::string trimmed_value);
 
-	   ConfigValues();
-	   ConfigValues(const ConfigValues& obj);
-	   ConfigValues&	operator=(const ConfigValues& obj);
-	   virtual ~ConfigValues(){};
+		ConfigValues();
+		ConfigValues(const ConfigValues& obj);
+		ConfigValues&	operator=(const ConfigValues& obj);
+		virtual ~ConfigValues(){};
 
     public:
 	   	void								AddToErrorPageMap(std::map<int, std::string> *map, std::string input);
-       //getters
-       virtual std::string					GetRoot() const;
-       virtual std::vector<std::string>	    GetIndex() const;
-       virtual size_t						GetClientMaxBodySize() const;
-       virtual std::map<int, std::string>	GetErrorPage() const;
-       virtual bool						    GetAutoindex() const;
-       virtual ReturnDir                    GetReturn() const;
-       virtual bool							HasErrorPage() const;
-	   void									PrintErrorPage() const;
+    	//getters
+    	virtual std::string					GetRoot() const;
+    	virtual std::vector<std::string>	    GetIndex() const;
+    	virtual size_t						GetClientMaxBodySize() const;
+    	virtual std::map<int, std::string>	GetErrorPage() const;
+    	virtual bool						    GetAutoindex() const;
+    	virtual ReturnDir                    GetReturn() const;
+    	virtual bool							HasErrorPage() const;
+		void									PrintErrorPage() const;
 
 	   // checks if a directive has been set
-       virtual bool							IsSet(std::string directive) = 0;
+		virtual bool							IsSet(std::string directive) = 0;
 };
 
 #endif
