@@ -28,7 +28,7 @@ $contenttype = substr($content_disposition, $contenttype_start + length("Content
 
 $body = substr($buffer, $content_disposition_end);
 $body_end = index($body, $boundary);
-$body = substr($body, 0, $body_end - 2);
+$body = substr($body, 4, $body_end - 8);
 
 print "Content-type:text/html\r\n\r\n";
 print "<!DOCTYPE html>
@@ -288,7 +288,7 @@ print "<div class=\"topnav\">
   <div class=\"middlecolumn\">
     <div class=\"card\">";
 
-if (index($contenttype, "text") < 0 && index($contenttype, "application/octet-stream")) {
+if ((index($contenttype, "text") < 0 && index($contenttype, "application/octet-stream")) || index($contenttype, "image") > -1) {
 	print "Sorry, your content was not uploaded.<br>";
 	print "Please only upload text files.<br>";
 	print "</body></html>";
@@ -296,10 +296,12 @@ if (index($contenttype, "text") < 0 && index($contenttype, "application/octet-st
 elsif (-e $upload_dir.$filename) {
 	print "This file name already exists, please try a different file.<br>";
 }
-elsif (index($contenttype, "image") > -1) {
-	print "this is an image. :(";
-}
 else {
+  my $upload_file = $upload_dir.$filename;
+  open(FH, '>', $upload_file) or die $!;
+  print FH $body;
+  close(FH);
+
 	print "Your file has been uploaded to $upload_dir$filename\n<br>";
 	print "Content in body:<br>";
 	print "$body<br>";
@@ -329,13 +331,5 @@ print "</div>
 </div>
 </body></html>
 ";
-
-if (index($contenttype, "text") < 0 && index($contenttype, "application/octet-stream") || (-e $upload_dir.$filename) || index($contenttype, "image") > -1) {
-	exit ;
-}
-my $upload_file = $upload_dir.$filename;
-open(FH, '>', $upload_file) or die $!;
-print FH $body;
-close(FH);
 
 1;
