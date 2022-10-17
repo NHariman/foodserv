@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        ::::::::            */
-/*   server_context.hpp                                   :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: nhariman <nhariman@student.42.fr>            +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2022/06/20 20:35:37 by nhariman      #+#    #+#                 */
-/*   Updated: 2022/07/21 11:53:23 by nhariman      ########   odam.nl         */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef SERVER_CONTEXT_HPP
 # define SERVER_CONTEXT_HPP
 #include <iostream>
