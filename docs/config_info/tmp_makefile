@@ -103,7 +103,7 @@ NAME = foodserv
 all: $(NAME)
 
 $(NAME): $(OFILES) 
-	@$(COMPILE) $(FLAGS) $(OFILES) -o $@
+	@$(COMPILE) $(FLAGS) $(OFILES) -o $@ -g
 
 %.o: %.cpp
 	$(COMPILE) $(FLAGS) -c $< -o $@

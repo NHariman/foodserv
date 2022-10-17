@@ -33,9 +33,9 @@
       <p><h2>BEANS</h2>
         <h5>BEANS BEANS BEANS</h5></p>
         <h2>UPLOAD YOUR BEANS HERE</h2>
-        <form action="../cgi-bin/upload.pl" method="post" enctype="multipart/form-data">
-          Select file to upload:
-          <input type="file" name="uploaded_file" id="uploaded_file">
+        <form action="../cgi-bin/upload.pl" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+          Select a text file to upload:
+          <input type="file" name="uploaded_file" id="uploaded_file" accept=".txt,.cpp,.hpp,.md,.mD,.MD">
           <input type="submit" value="Uploadfile" name="submit">
         </form>
         <br><br><br><br>
