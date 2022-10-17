@@ -1,86 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="css/food.css">
-  
-  <title>food server - CGI POST</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/food.css">
+	<title>food server - CGI POST</title>
 </head>
 <body>
 
-  <div class="header"></div>
-  <div class="header-text"><h1>Food Server</h1>
-   <p>Serving Up Food Recommendations - CGI POST</p>
- </div> 
+	<div class="header"></div>
+<div class="header-text">
+	<h1>Food Server</h1>
+	<p>Serving Up Food Recommendations - CGI POST</p>
+</div> 
 
 <div class="topnav">
-  <a href="index.html">index</a>
-  <a href="breakfast.html">breakfast</a>
-  <a href="lunch.html">lunch</a>
-  <a href="dinner.html">dinner</a>
-  <a href="desserts.html">desserts</a>
-  <a href="get_cgi.html">GETCGI</a>
-  <a href="post_cgi.html">POSTCGI</a>
-  <a href="https://profile.intra.42.fr/" style="float:right" target="_blank">intra</a>
+	<a href="index.html">index</a>
+	<a href="breakfast.html">breakfast</a>
+	<a href="lunch.html">lunch</a>
+	<a href="dinner.html">dinner</a>
+	<a href="desserts.html">desserts</a>
+	<a href="get_cgi.html">GETCGI</a>
+	<a href="post_cgi.html">POSTCGI</a>
+	<a href="https://profile.intra.42.fr/" style="float:right" target="_blank">intra</a>
 </div>
 
 <div class="row">
 	<div class="leftcolumn"></div>
-  <div class="middlecolumn">
-    <div class="card" style="height: 1080px">
-        <b>Please Fill in the Information:</b><br>
-        <form action="../../cgi-bin/post_query.pl" method="post">
-        First Name:<br>
-        <input type="text" name="first_name" size="25" maxlength="100" placeholder="eg. Alex"><br>
-          
-        Last Name:<br>
-        <input type="text" name="last_name" size="25" maxlength="100" placeholder="eg. Noodle"><br>
-        <br>
-        Languages:<br>
-        <input type="checkbox" name="python" value="yes">Python
-        <input type="checkbox" name="java" value="yes">Java
-        <input type="checkbox" name="kotlin" value="yes">Kotlin
-        <input type="checkbox" name="perl" value="yes">Perl
-        <input type="checkbox" name="swift" value="yes">Swift
-        <br>
-        Payment: <select name=payment>
-        <option>---Select---</option>
-        <Option value="Paypal"> Paypal </option>
-        <Option value="Internet Banking"> Internet Banking </option>
-        <Option value="Credit Card"> Credict Card </option>
-        <Option value="Paytm"> Paytm </option>
-        </select><br>
-        <br>
-        First Time Customer?<br>
-        <input type="radio" name="first_time" value="Yes">Yes
-        <input type="radio" name="first_time" value="No">No<br>
-        <br>
-        Feedback:<br>
-        <textarea wrap= "virtual" name="feedback" cols="25" rows="3" placeholder="write here"></textarea><br>
-        <br>
-        <input type="submit" value="Place Order">
-        </form>
-    </div>
+	<div class="middlecolumn">
+		<div class="card" style="height: 1080px">
+				<b>Please Fill in the Information:</b><br>
+				<form action="../../cgi-bin/post_query.pl" method="post">
+				First Name:<br>
+				<input type="text" name="first_name" size="25" maxlength="100" placeholder="eg. Alex" required="required" pattern="[A-Za-z0-9]{1,}"><br>
+					
+				Last Name:<br>
+				<input type="text" name="last_name" size="25" maxlength="100" placeholder="eg. Noodle" required="required" pattern="[A-Za-z0-9]{1,}"><br>
+				<br>
+				Languages:<br>
+				<input type="checkbox" name="python" value="yes">Python
+				<input type="checkbox" name="java" value="yes">Java
+				<input type="checkbox" name="kotlin" value="yes">Kotlin
+				<input type="checkbox" name="perl" value="yes">Perl
+				<input type="checkbox" name="swift" value="yes">Swift
+				<br>
+				Payment: <select name=payment>
+				<option>---Select---</option>
+				<Option value="Paypal"> Paypal </option>
+				<Option value="Internet Banking"> Internet Banking </option>
+				<Option value="Credit Card"> Credict Card </option>
+				<Option value="Paytm"> Paytm </option>
+				</select><br>
+				<br>
+				First Time Customer?<br>
+				<input type="radio" name="first_time" value="Yes">Yes
+				<input type="radio" name="first_time" value="No">No<br>
+				<br>
+				Feedback:<br>
+				<textarea wrap= "virtual" name="feedback" cols="25" rows="3" placeholder="write here" required="required" pattern="[A-Za-z0-9]{1,}"></textarea><br>
+				<br>
+				<input type="submit" value="Place Order">
+				</form>
+		</div>
 
 
 
-  </div>
-  <div class="rightcolumn">
-    <div class="card">
-      <h2>About Me</h2>
-      <img src="/img/beans_flip_gif.gif" class="spin">
-      <p>In the beans-ness for good food.</p>
-    </div>
-    <div class="card">
-      <h3>Popular Post</h3>
-      (≧ヮ≦) 💕🥦<br>
-      ଘ(੭ ᐛ )♡ 🎂<br>
-      ( `−ㅿ−´)🍮<br>
-    </div>
-    <div class="card">
-      <img src="http://i.kinja-img.com/gawker-media/image/upload/s--Vei5oONc--/whey2gwjqbx21xu023qo.gif">
-    </div>
-  </div>
+	</div>
+	<div class="rightcolumn">
+		<div class="card">
+			<h2>About Me</h2>
+			<img src="/img/beans_flip_gif.gif" class="spin">
+			<p>In the beans-ness for good food.</p>
+		</div>
+		<div class="card">
+			<h3>Popular Post</h3>
+			(≧ヮ≦) 💕🥦<br>
+			ଘ(੭ ᐛ )♡ 🎂<br>
+			( `−ㅿ−´)🍮<br>
+		</div>
+		<div class="card">
+			<img src="http://i.kinja-img.com/gawker-media/image/upload/s--Vei5oONc--/whey2gwjqbx21xu023qo.gif">
+		</div>
+	</div>
 </div>
 <div class="footer">
 	<p><h2>Foodserv 1.0</h2></p>
