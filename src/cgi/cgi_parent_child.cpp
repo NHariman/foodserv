@@ -2,8 +2,6 @@
 
 #include <fcntl.h>
 
-# define DEBUG 0
-
 
 // child process executes the cgi
 void		CGI::ChildProcess(int *fd_read, int *fd_write) {
@@ -81,5 +79,3 @@ int			CGI::ParentProcess(int *fd_read, int *fd_write, int pid) {
     close (fd_read[0]);
 	return es;
 }
-
-#undef DEBUG

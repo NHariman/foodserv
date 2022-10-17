@@ -1,7 +1,5 @@
 #include "cgi.hpp"
 
-#define DEBUG 0
-
 // FILE COMPARING
 // compares if the file locations are the same
 // used in ValidScript();
@@ -20,13 +18,9 @@ std::string		CGI::RemoveQuery(std::string path) {
 // checks if executable name is accurate regardless of prior path
 // used in: SetCGIOneArgument(), SetExecutablePath()
 bool		CGI::FileNameCompare(std::string file_one, std::string file_two) {
-	if (DEBUG) std::cout << "file one: " << file_one << std::endl;
-	if (DEBUG) std::cout << "file two: " << file_two << std::endl;
 	if (_request->GetMethod().compare("GET") == 0) {
 		file_one = RemoveQuery(file_one);
 		file_two = RemoveQuery(file_two);
-		if (DEBUG) std::cout << "file one after remove query: " << file_one << std::endl;
-		if (DEBUG) std::cout << "file two after remove query: " << file_two << std::endl;
 	}
 	size_t i = file_one.size() - 1;
 	size_t j = file_two.size() - 1;
@@ -55,15 +49,12 @@ bool	CGI::ValidateExtension(std::string *file) {
 	// checks if extension of the location URI matches
 	// the allowed cgi_pass extension
 	// and then assignes it
-	if (DEBUG) std::cout << "_path in Validate Extension: " << _path << std::endl;
 	if (HasExtension(_path) == true) {
 		*file = _path;
 		_valid_file = true;
-		if (DEBUG) std::cout << "hasextension has been validated" << std::endl;
 		return true;
 	}
 	else {
-		if (DEBUG) std::cout << "bad?" << std::endl;
 		return false;
 	}
 }
@@ -74,15 +65,12 @@ bool		CGI::HasExtension(std::string file_name) {
 	size_t i = file_name.size() - 1;
 	size_t j = _CGI.GetFileExtension().size() - 1;
 
-	if (DEBUG) std::cout << "file_name in HasExtension: " << file_name << std::endl;
-	if (DEBUG) std::cout << "extension in HasExtension: " << _CGI.GetFileExtension() << std::endl;
 	while (j > 0 && i > 0) {
 		if (file_name[i] == _CGI.GetFileExtension().at(j)) {
 			j--;
 			i--;
 		}
 		else {
-			if (DEBUG) std::cout << "concluded false" << std::endl;
 			return false;
 		}
 	}
@@ -125,5 +113,3 @@ bool	CGI::IsValidPath(std::string executable_path) {
 	if (IsExecutable(executable_path) == false) {}
 	return true;
 }
-
-#undef DEBUG

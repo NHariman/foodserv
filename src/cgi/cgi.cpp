@@ -1,7 +1,5 @@
 #include "cgi.hpp"
 
-# define DEBUG 0
-
 /*
 ** variables in this class:
 ** 		Request *_request;
@@ -23,15 +21,10 @@ bool		CGI::Setup(Request *request) {
 	PWD pwd;
 	_request = request;
 	_path = pwd.GetCwd() + _TARGET.GetResolvedPath();
-	if (DEBUG) std::cout << "path: " << _path << std::endl;
-	if (DEBUG) std::cout << "CGI: " << _CGI << std::endl;
 	SetArgv();
 	if (_valid_file == true) {
 		SetHeaders();
 	}
-	if (DEBUG) printVector(_argv);
-	if (DEBUG) printVector(_env);
-	if (DEBUG) std::cout << "_valid_file " << std::boolalpha << _valid_file << std::endl;
 	return (_valid_file);
 }
 
@@ -40,6 +33,7 @@ void	CGI::SetExecStatusCode(int exit_code) {
 		throw BadGatewayException();
 }
 
+// actually executes the cgi and saves its contents for returning to the CGIHandler class
 size_t		CGI::Execute() {
 	int fd_write[2];
 	int fd_read[2];
@@ -62,12 +56,9 @@ size_t		CGI::Execute() {
 		exit_code = ParentProcess(fd_read, fd_write, pid);
 		SetExecStatusCode(exit_code);
 	}
-	if (DEBUG) std::cout << "content: " << _content << std::endl;
 	return 200;
 }
 
 std::string CGI::GetContent() const {
 	return _content;
 }
-
-#undef DEBUG

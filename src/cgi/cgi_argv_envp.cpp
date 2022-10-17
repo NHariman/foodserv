@@ -1,12 +1,9 @@
 #include "cgi.hpp"
 
-#define DEBUG 0
-
 // SETS HEADERS
 void 		CGI::SetHeaders() {
 
 	if (!_request->GetQuery().empty() && !_request->GetMethod().compare("POST")) {
-			if (DEBUG) std::cout << "In GetQuery: " << _request->GetQuery() << std::endl;
 			_env.push_back("CONTENT_LENGTH=" + std::to_string(_request->GetQuery().size()));
 	}
 	if (_request->GetField("Content-Type").compare(NO_VAL) != 0)
@@ -54,7 +51,3 @@ void 		CGI::ToEnv(char **env){
 		env[i] = strdup(_env[i].c_str());
 	}
 }
-
-
-
-#undef DEBUG

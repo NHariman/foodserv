@@ -1,21 +1,5 @@
 #include "server_context.hpp"
 
-#define DEBUG 0
-
-// error pages are hardcoded in the real nginx:
-// static char ngx_http_error_404_page[] =
-// "<html>" CRLF
-// "<head><title>404 Not Found</title></head>" CRLF
-// "<body>" CRLF
-// "<center><h1>404 Not Found</h1></center>" CRLF
-//;
-
-// when to throw:
-// when multiple listen blocks
-// when multiple client_max_body_size
-// when two location blocks have the same uri
-// when multiple roots
-
 ServerContext::ServerContext(size_t *start, std::string config_file, size_t server_nb) : 
 _amount_location_context(0),
 bool_listen(false),
@@ -79,8 +63,6 @@ void				ServerContext::SetValue(int directive, std::string value){
 	if (value.compare("") == 0)
 		throw BadInputException(_server_nb);
 	trimmed_value = TrimValue(value);
-	if (DEBUG) std::cerr << "server context:\ndirective: " << directive << "\nvalue: " << trimmed_value << std::endl;
-
 	DoubleDirectiveCheck(directive);
 	(this->*set_directive[directive])(trimmed_value);
 
@@ -154,5 +136,3 @@ std::string					ServerContext::GetPortNumber() const {
 std::vector<std::string>	ServerContext::GetServerNameVector() const {
     return _server_name;
 }
-
-#undef DEBUG

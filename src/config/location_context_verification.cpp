@@ -1,7 +1,5 @@
 #include "location_context.hpp"
 
-# define DEBUG 0
-
 // use to check if a directive has been set
 bool						LocationContext::IsSet(std::string const directive) {
 	int	is_directive = GetDirective(directive);
@@ -130,5 +128,3 @@ void                LocationContext::CopyValues(LocationContext const& location_
     _cgi_pass = location_context._cgi_pass;
 	_allowed_methods = location_context._allowed_methods;
 }
-
-#undef DEBUG

@@ -1,7 +1,5 @@
 #include "server_context.hpp"
 
-#define DEBUG 0
-
 // check if is set
 bool						ServerContext::IsSet(std::string directive) {
 	int	is_directive = GetDirective(directive);
@@ -75,6 +73,8 @@ void					ServerContext::DoubleDirectiveCheck(int const directive) {
 			return ;
 		}
 		case 6:{
+			if (bool_error_page == true)
+				throw MultipleErrorPageException(_server_nb);
 			return ;
 		}
 		case 7: {
@@ -98,5 +98,3 @@ bool					ServerContext::HasLocation(std::string const target) {
 	}
 	return false;
 }
-
-#undef DEBUG
