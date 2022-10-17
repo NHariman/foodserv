@@ -11,7 +11,6 @@
 class CGIHandler {
 	private:
 		CGI					_cgi;
-		std::string			_body;
 		std::istream 		*_content;
 
 		void				ExecuteCGI(Request *request);
@@ -26,7 +25,6 @@ class CGIHandler {
 		~CGIHandler(){};
 		std::istream*	Execute(Request *request, Response& response);
 		std::string		GetContent() const;
-		std::string		GetBody() const;
 };
 
 #endif

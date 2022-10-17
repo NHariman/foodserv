@@ -1,24 +1,15 @@
 #include "allowed_methods.hpp"
 
-#define DEBUG 0
-
 AllowedMethods::AllowedMethods() : _get(false), _post(false), _delete(false) {}
 
 AllowedMethods::AllowedMethods(std::string str) : _get(false), _post(false), _delete(false) {
 
-	if (DEBUG) std::cerr << "in allowed method constructor" << std::endl;
 	if (str.compare("") == 0)
 		throw MissingArgumentsException();
 	size_t	arguments = CountArguments(str);
 	if (arguments > 3)
 		throw TooManyArgumentsException();
 	_methods = ToStringVector(str);
-	if (DEBUG) {
-		std::cerr << "print vector:\n";
-		for (size_t i = 0; i < _methods.size(); i++) {
-			std::cerr << _methods.at(i) << std::endl;
-		}
-	}
 	ValidateMethods();
 }
 
@@ -58,7 +49,6 @@ void		AllowedMethods::ValidateMethods() {
 	for (size_t i = 0; i < _methods.size(); i++) {
 		if (_methods.at(i).empty())
 			break ;
-		if (DEBUG) std::cerr << "constuctor method found: " << _methods.at(i) << std::endl;
 		switch (IsValidHTTPMethod(_methods.at(i))) {
 			case 0:
 				_get = true;
@@ -72,5 +62,3 @@ void		AllowedMethods::ValidateMethods() {
 		}
 	}
 }
-
-#undef DEBUG

@@ -486,6 +486,8 @@ TEST(NginxConfigTest, invalid) {
 	EXPECT_THROW({
 		NginxConfig test("bad_config_files/double_Server_name");}, MultipleServerNameException);
 	EXPECT_THROW({
+		NginxConfig test("bad_config_files/double_errorpage.conf");}, MultipleErrorPageException);
+	EXPECT_THROW({
 		NginxConfig test("bad_config_files/bad_input");}, InvalidDirectiveException);
 	EXPECT_THROW({
 		NginxConfig test("bad_config_files/double_location");}, DuplicateLocationUriException);
@@ -531,7 +533,8 @@ TEST(NginxConfigTest, invalid) {
 		NginxConfig test("bad_config_files/misspelled_client_max_body_size.conf");}, InvalidDirectiveException);
 	EXPECT_THROW({
 		NginxConfig test("bad_config_files/misspelled_server.conf");}, NginxConfig::BadServerContextException);
-	
+	EXPECT_THROW({
+		NginxConfig test("bad_config_files/double_misspelled_server.conf");}, NginxConfig::BadServerContextException);
 }
 
 //////////////////////////////

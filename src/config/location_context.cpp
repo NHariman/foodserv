@@ -1,7 +1,5 @@
 #include "location_context.hpp"
 
-#define DEBUG 0
-
 LocationContext::LocationContext() :
 bool_uri(false),
 bool_cgi_pass(false),
@@ -31,6 +29,7 @@ LocationContext& LocationContext::operator= (LocationContext const& location_con
     return (*this);
 }
 
+// ensures configvalues setter functions can be called in locationcontext
 void				LocationContext::SetLocationAutoindexDir(std::string value){ConfigValues::SetAutoindexDir(value);}
 void				LocationContext::SetLocationRoot(std::string value){ConfigValues::SetRoot(value);}
 void				LocationContext::SetLocationIndex(std::string value){ConfigValues::SetIndex(value);}
@@ -38,6 +37,7 @@ void				LocationContext::SetLocationCMBS(std::string value){ConfigValues::SetCMB
 void				LocationContext::SetLocationErrorPage(std::string value){ConfigValues::SetErrorPage(value);}
 void				LocationContext::SetLocationReturn(std::string value){ConfigValues::SetReturn(value);}
 
+// sets values for directives
 void							LocationContext::SetValue(int const directive, std::string input) {
 	std::string		value;
 
@@ -56,7 +56,6 @@ void							LocationContext::SetValue(int const directive, std::string input) {
 	};
 
 	value = TrimValue(input);
-	if (DEBUG) std::cerr << "location context:\ndirective: " << directive << "\nvalue: " << value << std::endl;
 	DoubleDirectiveCheck(directive);
 	(this->*set_directive[directive])(value);
 
@@ -102,5 +101,3 @@ AllowedMethods						LocationContext::GetAllowedMethods() const {
 std::string LocationUri::GetInputURI() const {
 	return _uri.GetInputURI();
 }
-
-#undef DEBUG

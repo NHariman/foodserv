@@ -1,6 +1,5 @@
 #include "cgi.hpp"
 
-#define DEBUG 0
 
 // searches directory for file with the right extension and returns it
 // otherwise throws file not found
@@ -35,7 +34,6 @@ std::string CGI::FindFile() {
 // if file, check if resolved path filename matches cgi executable path
 void		CGI::SetCGIOneArgument() {
 	_file_name = SetExecutablePath();
-	if (DEBUG) std::cout << "_request->GetTargetURI().GetParsedURI(): " << _request->GetTargetURI().GetParsedURI() << std::endl;
 	if (IsDirectory(_request->GetTargetURI().GetParsedURI()) == false && FileNameCompare(_request->GetTargetURI().GetParsedURI(), _file_name) == false) {
 		throw NotFoundException();
 	}
@@ -56,7 +54,6 @@ void	CGI::SetCGITwoArguments() {
 		second_arg = FindFile();
 	}
 	else {
-		if (DEBUG) std::cout << "validate extension" << std::endl;
 		if (ValidateExtension(&second_arg) == false) // extension incompatible
 			throw NotFoundException();
 	}
@@ -84,9 +81,5 @@ std::string CGI::SetExecutablePath() {
 		executable_path = _CGI.GetExecutablePath(); // use absolute cgi path
 
 	IsValidPath(executable_path); // checks if the file exists and is executable
-	if (DEBUG) std::cout << "executable_path: " << executable_path << std::endl;
-	if (DEBUG) std::cout << std::boolalpha << _valid_file << std::endl;
 	return (executable_path);
 }
-
-#undef DEBUG

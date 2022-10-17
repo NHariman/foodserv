@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <locale>
 
-#define DEBUG 0
 
 // Constructor that takes a file and removes all comments and empty lines
 // and saves the string to a variable for passing to the ServerContext parser.
@@ -12,7 +11,6 @@
 
 NginxConfig::NginxConfig() : _amount_server_contexts(0) {
 	std::ifstream	config_file_fd;
-	if (DEBUG) std::cout << "default constructor" << std::endl;
 	config_file_fd.open("config_files/default.conf");
 	if (config_file_fd.is_open()) 
 		LoadConfigFile(config_file_fd);
@@ -55,4 +53,3 @@ std::vector<ServerContext>		NginxConfig::GetServers() const {
 	return this->_servers;
 }
 
-#undef DEBUG
