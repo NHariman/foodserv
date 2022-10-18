@@ -14,7 +14,9 @@
 </div> 
 
 <div class="topnav">
-	<a href="index.html">go back to index</a>
+	<a href="index.html">index</a>
+	<a href="/helloworld">test redirection internal</a>
+	<a href="/rickroll">GetRickrolled</a>
 	<a href="otherpage.html">other page</a>
 	<a href="get_cgi.html">GetCGI test</a>
 	<a href="post_cgi.html">PostCGI test</a>
@@ -26,6 +28,7 @@
 	<div class="middlecolumn">
 		<div class="card" style="height: 1080px">
 				<b>Please Fill in the Information:</b><br>
+				(This will error because POST is not allowed here)<br>
 				<form action="../cgi-bin/post_query.pl" method="post">
 					First Name:<br>
 					<input type="text" name="first_name" size="25" maxlength="100" placeholder="eg. Alex" required="required" pattern="[A-Za-z0-9]{1,}"><br>

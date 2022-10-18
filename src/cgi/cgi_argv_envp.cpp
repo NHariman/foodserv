@@ -22,7 +22,10 @@ void 		CGI::SetHeaders() {
 	_env.push_back("SCRIPT_FILENAME=" + _file_name);
 	_env.push_back("SCRIPT_NAME=" + 	_file_name);
 	_env.push_back("SERVER_NAME=" + 	_request->GetTargetURI().GetHost());
-	_env.push_back("SERVER_PORT=" + 	_request->GetTargetURI().GetPort()); // ask sanne for fix?
+	if (!_request->GetTargetURI().GetPort().empty())
+		_env.push_back("SERVER_PORT=" + 	_request->GetTargetURI().GetPort());
+	else
+		_env.push_back("SERVER_PORT=80");
 	_env.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	_env.push_back("SERVER_SOFTWARE=foodserv");
 }

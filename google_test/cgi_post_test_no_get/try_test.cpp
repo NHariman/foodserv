@@ -30,10 +30,6 @@ TEST(CGITesting, valid) {
 	CGI test;
 	EXPECT_TRUE(test.Setup(&request));
 	EXPECT_EQ(test.Execute(), 200);
-	size_t last_nl = test.GetContent().find_last_of('\n');
-	std::string test_content = test.GetContent().substr(0, last_nl + 1);
-	EXPECT_EQ(test_content, content);
-
 	EXPECT_EQ(test.GetContent(), content);
 }
 }
@@ -49,9 +45,6 @@ TEST(CGITesting, valid2) {
 	result = test.Execute();
 	std::cout << "result: " << result << std::endl;
 	EXPECT_EQ(result, 200);
-	size_t last_nl = test.GetContent().find_last_of('\n');
-	std::string test_content = test.GetContent().substr(0, last_nl + 1);
-	EXPECT_EQ(test_content, content);
 	EXPECT_EQ(test.GetContent(), content);
 }
 {
@@ -134,7 +127,7 @@ TEST(CGITESTING_two_arguments, valid) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST5.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -150,7 +143,7 @@ TEST(CGITESTING_two_arguments, req_directory_conf_directory) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST5.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -166,7 +159,7 @@ TEST(CGITESTING_two_arguments, req_directory_conf_file) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST6.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -182,7 +175,7 @@ TEST(CGITESTING_two_arguments, req_file_conf_directory) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST5.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -198,7 +191,7 @@ TEST(CGITESTING_two_arguments, req_file_conf_file) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST6.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -214,7 +207,7 @@ TEST(CGITESTING_two_arguments, wrong_extension_in_request) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST5.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pe HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pe HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
@@ -228,7 +221,7 @@ TEST(CGITESTING_two_arguments, wrong_extension_in_config) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST7.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: \n\rContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
@@ -242,7 +235,7 @@ TEST(CGITESTING_two_arguments, executable_not_found) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST8.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: \n\rContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
@@ -261,7 +254,7 @@ TEST(CGITESTING_ONE_argument, valid) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -277,7 +270,7 @@ TEST(CGITESTING_ONE_argument, req_directory_conf_directory) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -293,7 +286,7 @@ TEST(CGITESTING_ONE_argument, req_directory_conf_file) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST2.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -309,7 +302,7 @@ TEST(CGITESTING_ONE_argument, req_file_conf_directory) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -325,7 +318,7 @@ TEST(CGITESTING_ONE_argument, req_file_conf_file) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST2.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		get.Setup(&request);
@@ -341,7 +334,7 @@ TEST(CGITESTING_one_argument, wrong_extension_in_request) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST2.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pe HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pe HTTP/1.1\r\nHost: \n\rContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
@@ -355,7 +348,7 @@ TEST(CGITESTING_ONE_argument, wrong_extension_in_config) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST3.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: \n\rContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
@@ -369,7 +362,7 @@ TEST(CGITESTING_ONE_argument, executable_incompatible) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST4.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: \n\rContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 37\n\npython=yes&kotlin=yes&first_name=niks");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
