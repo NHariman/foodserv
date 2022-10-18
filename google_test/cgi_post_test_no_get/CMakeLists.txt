@@ -20,14 +20,14 @@ enable_testing()
 add_executable(
   try_test # test executable name
   try_test.cpp
-  ../../src/request/chunked_parser.cpp 
-  ../../src/request/header_field_parser.cpp 
-  ../../src/request/request_line_parser.cpp 
-  ../../src/request/request_parser.cpp 
-  ../../src/request/request_target_parser.cpp 
+  ../../src/request/parser/chunked_parser.cpp 
+  ../../src/request/parser/header_field_parser.cpp 
+  ../../src/request/parser/request_line_parser.cpp 
+  ../../src/request/parser/request_parser.cpp 
+  ../../src/request/parser/request_target_parser.cpp 
   ../../src/request/request_validator.cpp 
   ../../src/request/request.cpp 
-  ../../src/request/uri_host_parser.cpp 
+  ../../src/request/parser/uri_host_parser.cpp 
   ../../src/request/uri.cpp 
 
     ../../src/config/config_interface.cpp 

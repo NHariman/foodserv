@@ -1,6 +1,8 @@
 #include <cctype>
 #include <string>
 
+// Used by HTTPMessage class for header fields map as 3rd template parameter.
+// Allows for case-insensitive searching of header fields.
 struct	case_insensitive_less {
 	struct	ci_compare_less {
 		bool	operator() (unsigned char const& c1, unsigned char const& c2) const {

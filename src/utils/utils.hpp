@@ -3,11 +3,15 @@
 
 #include <iostream>
 
+// macros
 #define MAX_CHUNKEXT_SIZE 8192 // used by ChunkedParser
 #define MAX_HEADER_SIZE	8192 // used by HeaderFieldParser
 #define MAX_URI_SIZE 8192 // used by RequestTargetParser
-#define BUFFER_SIZE 8192
-#define TIMEOUT_SEC 60 // 60 second timeout window for connection activity
+#define BUFFER_SIZE 8192 // used by ResponseHandler
+#define TIMEOUT_SEC 60 // 60 second timeout window for connection activity; used by Connection::HasTimedOut
+
+// error.cpp
+void	error_exit(std::string const& error_message);
 
 // file_handling.cpp
 bool	IsValidFile(std::string const& path);

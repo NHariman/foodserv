@@ -1,8 +1,12 @@
 #include "request_parser.hpp"
-#include "request_validator.hpp"
-#include "request.hpp"
+#include "../request_validator.hpp"
+#include "../request.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
+
+// Default constructor
+RequestParser::RequestParser()
+	: AStateParser(r_RequestLine, r_Done), _config(NULL), _request(NULL) {}
 
 // Config constructor
 RequestParser::RequestParser(NginxConfig *config)
@@ -65,8 +69,8 @@ RequestState	RequestParser::RequestLineHandler() {
 	size_t	request_line_end = input.find_first_of('\n');
 	if (request_line_end == std::string::npos)
 		throw BadRequestException("Request line missing CRLF line break");
-	std::string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
 
+	std::string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
 	pos += _request_line_parser.Parse(*_request, request_line);
 	return r_HeaderField;
 }

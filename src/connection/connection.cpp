@@ -21,11 +21,6 @@ void	Connection::Receive(char const* buffer) {
 
 	Request::Status	status = _request.GetRequestStatus();
 	SetNextState(status);
-	// std::cout << "Connection::Receive: request status_code: " << _request.GetStatusCode() << std::endl;
-	// auto header_fields = _request.GetFields();
-	// for (auto it = header_fields.begin(); it != header_fields.end(); it++) {
-	// 	std::cout << it->first + ": " + it->second + "\n";
-	// }
 	switch(status) {
 		case Request::Status::Incomplete:
 			break;

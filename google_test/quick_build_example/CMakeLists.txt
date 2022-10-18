@@ -26,17 +26,10 @@ file(GLOB SRCS CONFIGURE_DEPENDS
 	"../../src/connection/*.cpp"
 	"../../src/err/*.cpp"
     "../../src/request/*.cpp"
+	"../../src/request/parser/*.cpp"
     "../../src/resolved_target/*.cpp"
 	"../../src/response/*.cpp"
     "../../src/utils/*.cpp"
-	"../../src/config/*.hpp"
-    "../../src/config/directive_validation/*.hpp"
-	"../../src/connection/*.hpp"
-	"../../src/err/*.hpp"
-    "../../src/request/*.hpp"
-    "../../src/resolved_target/*.hpp"
-	"../../src/response/*.hpp"
-    "../../src/utils/*.hpp"
 )
 
 add_executable(${EXEC})

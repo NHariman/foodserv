@@ -1,13 +1,5 @@
 #include "request.hpp"
-#include "request_line_parser.hpp"
-
-// Default constructor // TODO: Review use/removal
-Request::Request()
-	:	HTTPMessage(),
-		bytes_read(0),
-		msg_bytes_read(0),
-		max_body_size(1048576),
-		_request_status(Status::Incomplete) {}
+#include "parser/request_line_parser.hpp"
 
 // Config file constructor
 Request::Request(NginxConfig* config)

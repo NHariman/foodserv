@@ -1,5 +1,5 @@
 #include "header_field_parser.hpp"
-#include "http_message.hpp"
+#include "../http_message.hpp"
 #define DEBUG 0 // TODO: REMOVE
 /*
 	Transition table for header field parsing
@@ -11,7 +11,6 @@
 	{	x,		VS,		NM,		x,		x,		x,		x,		x		}, // Name
 	{	VS,		VL,		VL,		VL,		VL,		VL,		VL,		VL		}, // ValueStart
 	{	VL,		VL,		VL,		VL,		VE,		ST,		✓,		x		}, // Value
-	{	x,		x,		x,		x,		x,		ST,		x,		x		}  // ValueEnd
 */
 
 // Default constructor
@@ -145,7 +144,6 @@ FieldState	HeaderFieldParser::HandleCRLF(char c, FieldState next_state) {
 
 // Saves buffer to `cur_field` for use once value is parsed.
 void	HeaderFieldParser::PushFieldName() {
-	// NormalizeString(tolower, buffer, 0);
 	_cur_field = buffer;
 	buffer.clear();
 }

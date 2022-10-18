@@ -1,6 +1,6 @@
 #include "uri.hpp"
-#include "request_target_parser.hpp"
-#include "uri_host_parser.hpp"
+#include "parser/request_target_parser.hpp"
+#include "parser/uri_host_parser.hpp"
 
 // Default constructor
 URI::URI() {}

@@ -6,7 +6,7 @@
 #include "chunked_parser.hpp"
 #include "header_field_parser.hpp"
 #include "request_line_parser.hpp"
-#include "../err/exception.hpp"
+#include "../../err/exception.hpp"
 
 class Request;
 class NginxConfig;
@@ -26,6 +26,8 @@ enum RequestState {
 
 class RequestParser  : public AStateParser<RequestState> {
 	public:
+		// Default constructor
+		RequestParser();
 		// Config constructor
 		RequestParser(NginxConfig *config);
 		// Destructor
