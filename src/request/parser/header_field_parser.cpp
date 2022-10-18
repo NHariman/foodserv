@@ -1,6 +1,6 @@
 #include "header_field_parser.hpp"
 #include "../http_message.hpp"
-#define DEBUG 0 // TODO: REMOVE
+
 /*
 	Transition table for header field parsing
 	ST = f_Start, NM = f_Name, VS = f_ValueStart, VL = f_Value,
@@ -52,7 +52,6 @@ void	HeaderFieldParser::CheckInvalidState() const {
 
 // Header field may only start with TChar.
 FieldState	HeaderFieldParser::StartHandler(char c) {
-	if (DEBUG) std::cout << "[FP StartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	buffer.clear();
 	switch (c) {
@@ -74,8 +73,6 @@ FieldState	HeaderFieldParser::StartHandler(char c) {
 // Header field name may only be TChar with no whitespace before the ':'
 // signaling transition to field value.
 FieldState	HeaderFieldParser::NameHandler(char c) {
-	if (DEBUG) std::cout << "[FP NameHandler] at: [" << c << "]\n";
-
 	if (buffer.size() > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
@@ -95,7 +92,6 @@ FieldState	HeaderFieldParser::NameHandler(char c) {
 
 // Skips whitespace following colon but before value starts.
 FieldState	HeaderFieldParser::ValueStartHandler(char c) {
-	if (DEBUG) std::cout << "[FP ValueStartHandler] at: [" << c << "]\n";
 	skip_char = false;
 	if (IsWhitespace(c)) {
 		skip_char = true;
@@ -108,8 +104,6 @@ FieldState	HeaderFieldParser::ValueStartHandler(char c) {
 // Accepts VChar or whitespace for field value. If \r found,
 // returns ValueEnd state to check for valid CRLF sequence.
 FieldState	HeaderFieldParser::ValueHandler(char c) {
-	if (DEBUG) std::cout << "[FP ValueHandler] at: [" << c << "]\n";
-
 	if (buffer.size() > MAX_HEADER_SIZE)
 		throw RequestHeaderFieldsTooLargeException();
 	switch (c) {
@@ -159,4 +153,3 @@ void	HeaderFieldParser::PushFieldValue() {
 	_message->SetHeaderField(_cur_field, std::string(start, end + 1));
 	buffer.clear();
 }
-#undef DEBUG // REMOVE

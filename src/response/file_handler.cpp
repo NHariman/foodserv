@@ -5,8 +5,6 @@
 #include "../utils/utils.hpp"
 #include "../err/exception.hpp"
 
-#define DEBUG 0 // TODO: REMOVE
-
 FileHandler::FileHandler() {}
 
 FileHandler::~FileHandler() {}
@@ -63,8 +61,6 @@ std::istream*	FileHandler::ExecuteMethod(Response& response, Method method) {
 // Tries to retrieve file. Sets response status code when done
 // if not retrieving error page.
 std::istream*	FileHandler::ExecuteGet(Response& response, bool error_page) {
-	if (DEBUG) std::cout << "ExecuteGet: path: " << response.GetResolvedPath() << std::endl;
-
 	std::string file_path = response.GetResolvedPath();
 
     std::istream*	file = GetFile(file_path);
@@ -75,8 +71,6 @@ std::istream*	FileHandler::ExecuteGet(Response& response, bool error_page) {
 
 // Called when index must be served but index file is not found.
 std::istream*	FileHandler::ExecuteGetGeneratedIndex(Response& response) {
-	if (DEBUG) std::cout << "ExecuteGetGeneratedIndex: path: " << response.GetResolvedPath() << std::endl;
-
 	std::string	resolved_path = response.GetResolvedPath();
 
 	struct dirent*	dir_entry;
@@ -106,8 +100,6 @@ std::istream*	FileHandler::ExecuteGetGeneratedIndex(Response& response) {
 
 // Gets subdirectory path for index page.
 std::string	FileHandler::GetSubDirForIndex(std::string const& dir_path) {
-	if (DEBUG) std::cout << "GetSubDirForIndex\n";
-
 	size_t slash_first = dir_path.find_first_of("/");
 	size_t slash_last = dir_path.find_last_of("/");
 	if (slash_first == std::string::npos)
@@ -143,8 +135,7 @@ std::string	FileHandler::FormatLine(struct dirent* dir_entry, std::string const&
 // Creates file if it does not exist yet. 
 // If it does, append request message to file.
 std::istream*	FileHandler::ExecutePost(Response& response) {
-	if (DEBUG) std::cout << "Executing Post on file: " << response.GetResolvedPath() << "\n";
-	
+
 	std::string	file_path = response.GetResolvedPath();
 
 	if (!ValidSubDirectory(file_path))
@@ -212,8 +203,6 @@ void	FileHandler::WriteToFile(std::string const& file_path,
 std::istream*	FileHandler::ExecuteDelete(Response& response) {
 	std::string file_path = response.GetResolvedPath();
 
-	if (DEBUG) std::cout << "Attempting to DELETE " << file_path << std::endl;
-
 	if (!IsValidFile(file_path))
 		GetFileHandlingError();
 
@@ -229,5 +218,3 @@ std::istream*	FileHandler::ExecuteDelete(Response& response) {
 		throw InternalServerErrorException();
 	return stream;
 }
-
-#undef DEBUG // REMOVE

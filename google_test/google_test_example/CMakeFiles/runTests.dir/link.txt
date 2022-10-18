@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/runTests.dir/print_string.cpp.o CMakeFiles/runTests.dir/main.cpp.o  -o runTests  /usr/lib/x86_64-linux-gnu/libgtest.a -lpthread 
