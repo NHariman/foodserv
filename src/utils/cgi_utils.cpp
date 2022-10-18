@@ -8,7 +8,7 @@ bool	IsPath(std::string path){
 	return false;
 }
 
-void	printVector(std::vector<std::string> vec) {
+void	PrintVector(std::vector<std::string> vec) {
 	for (size_t i = 0; i < vec.size(); ++i) {
 		std::cout << vec[i] << std::endl;
 	}
@@ -19,8 +19,6 @@ bool	IsAbsolutePath(std::string path) {
 		return true;
 	return false;
 }
-
-
 
 std::string MakeAbsolutePath(std::string executable, std::string path) {
 	std::string new_path;

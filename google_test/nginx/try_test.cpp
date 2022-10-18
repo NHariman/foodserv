@@ -293,6 +293,9 @@ TEST(CMBSTest, ValidInputTests) {
 	EXPECT_NO_THROW({
 		ClientMaxBodySize test("2147483647M");
 	});
+	EXPECT_NO_THROW({
+		ClientMaxBodySize test("0");
+	});
 }
 
 TEST(CMBSTest, InvalidInputTests) {

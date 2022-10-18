@@ -261,7 +261,7 @@ TEST(CGITESTING_ONE_argument, valid) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl  python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		get.Setup(&request);
@@ -277,7 +277,7 @@ TEST(CGITESTING_ONE_argument, req_directory_conf_directory) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/ python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		get.Setup(&request);
@@ -293,7 +293,7 @@ TEST(CGITESTING_ONE_argument, req_directory_conf_file) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST2.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/ HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/  python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		get.Setup(&request);
@@ -309,7 +309,7 @@ TEST(CGITESTING_ONE_argument, req_file_conf_directory) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		get.Setup(&request);
@@ -325,7 +325,7 @@ TEST(CGITESTING_ONE_argument, req_file_conf_file) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST2.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		get.Setup(&request);
@@ -341,7 +341,7 @@ TEST(CGITESTING_one_argument, wrong_extension_in_request) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST2.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pe HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pe python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
@@ -355,7 +355,7 @@ TEST(CGITESTING_ONE_argument, wrong_extension_in_config) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST3.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
@@ -369,7 +369,7 @@ TEST(CGITESTING_ONE_argument, executable_incompatible) {
 	{
 		NginxConfig config("config_files/cgi_testers/CGI_POST4.conf");
 		Request request(&config);
-		request.Parse("POST /cgi-bin/post_query.pl HTTP/1.1\r\nHost: localhost\n\n");
+		request.Parse("POST /cgi-bin/post_query.pl python=yes&kotlin=yes&first_name=niks HTTP/1.1\r\nHost: localhost\n\n");
 
 		CGI get;
 		EXPECT_THROW(get.Setup(&request), NotFoundException);
