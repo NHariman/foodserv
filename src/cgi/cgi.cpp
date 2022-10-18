@@ -25,11 +25,6 @@ bool		CGI::Setup(Request *request) {
 	if (_valid_file == true) {
 		SetHeaders();
 	}
-	std::cout << "print vector _env:" << std::endl;
-	PrintVector(_env);
-	std::cout << "print vector _argv:" << std::endl;
-	PrintVector(_argv);
-	std::cout << "_valid_file: " << std::boolalpha << _valid_file << std::endl;
 	return (_valid_file);
 }
 
@@ -61,7 +56,6 @@ size_t		CGI::Execute() {
 		exit_code = ParentProcess(fd_read, fd_write, pid);
 		SetExecStatusCode(exit_code);
 	}
-	std::cout << "print content\n: " << _content << std::endl;
 	return 200;
 }
 

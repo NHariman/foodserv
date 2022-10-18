@@ -59,10 +59,8 @@ add_executable(
 		../../src/resolved_target/target_config.cpp
 
     ../../src/cgi/cgi.cpp
-    # cgi_argv_envp.cpp
     ../../src/cgi/cgi_argv_envp.cpp 
     ../../src/cgi/cgi_file_validation.cpp 
-    # cgi_parent_child.cpp
     ../../src/cgi/cgi_parent_child.cpp 
     ../../src/cgi/cgi_pathfinder.cpp
 

@@ -1,0 +1,10 @@
+dfadfdaf adfasdfadfadsf,
+Your order was:
+Python: NO
+Java: NO
+Perl: NO
+Swift: NO
+Payment Method: ---Select---
+First Time Customer: 
+Feedback: dafdfafa
+Thank you!

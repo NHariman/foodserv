@@ -20,7 +20,7 @@ choose_test () {
 			cp -r config_files build/ && cp -r cgi-bin build/ && cd build && ctest
 			;;
 		2)
-			cp -r config_files build/ && cp -r cgi-bin build/ && ./$bin_name
+			cp -r config_files build/ && cp -r cgi-bin build/ && cd build && ./$bin_name
 			;;
 		*) # any other input
 			exit 0
