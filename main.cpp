@@ -3,6 +3,7 @@
 #include "src/resolved_target/target_config.hpp"
 #include "src/server/socket.hpp"
 #include "src/server/kernel_events.hpp"
+#include "src/utils/utils.hpp"
 
 int	main(int ac, const char **av) {
 	try {
@@ -14,7 +15,7 @@ int	main(int ac, const char **av) {
 		webserver.KernelEventLoop();
 	}
 	catch (const std::exception& e) {
-		std::cerr << e.what() << '\n';
+		error_exit(e.what());
 	}
 	return (0);
 }

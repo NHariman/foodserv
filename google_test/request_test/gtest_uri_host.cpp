@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../../src/request/uri.hpp"
-#include "../../src/request/uri_host_parser.hpp"
+#include "../../src/request/parser/uri_host_parser.hpp"
 #include "../../src/err/exception.hpp"
 
 using namespace std;

@@ -20,23 +20,13 @@ set(EXEC fs_test) # test executable name
 
 file(GLOB SRCS CONFIGURE_DEPENDS
     "*.cpp"
-    "../../src/cgi/*.cpp"
     "../../src/config/*.cpp"
     "../../src/config/directive_validation/*.cpp"
-	"../../src/connection/*.cpp"
 	"../../src/err/*.cpp"
     "../../src/request/*.cpp"
+	"../../src/request/parser/*.cpp"
     "../../src/resolved_target/*.cpp"
-	"../../src/response/*.cpp"
     "../../src/utils/*.cpp"
-	"../../src/config/*.hpp"
-    "../../src/config/directive_validation/*.hpp"
-	"../../src/connection/*.hpp"
-	"../../src/err/*.hpp"
-    "../../src/request/*.hpp"
-    "../../src/resolved_target/*.hpp"
-	"../../src/response/*.hpp"
-    "../../src/utils/*.hpp"
 )
 
 add_executable(${EXEC})

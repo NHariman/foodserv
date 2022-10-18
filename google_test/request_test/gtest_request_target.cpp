@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../../src/request/uri.hpp"
-#include "../../src/request/request_target_parser.hpp"
+#include "../../src/request/parser/request_target_parser.hpp"
 #include "../../src/err/exception.hpp"
 
 TEST(RequestTargetTest, ParsePathSimple) {

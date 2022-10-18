@@ -1,5 +1,5 @@
 #include "uri_host_parser.hpp"
-#include "uri.hpp"
+#include "../uri.hpp"
 
 // Default constructor
 URIHostParser::URIHostParser()

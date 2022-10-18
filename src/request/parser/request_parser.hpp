@@ -6,7 +6,7 @@
 #include "chunked_parser.hpp"
 #include "header_field_parser.hpp"
 #include "request_line_parser.hpp"
-#include "../err/exception.hpp"
+#include "../../err/exception.hpp"
 
 class Request;
 class NginxConfig;

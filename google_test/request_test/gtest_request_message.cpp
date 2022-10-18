@@ -224,15 +224,6 @@ TEST(RequestMessageTest, InvalidMessageChunked) {
 	req_str = POST_Req + CHUNKED + "0;" + ext + "\r\n\r\n";
 	status = ConstructAndGetStatus(req_str);
 	EXPECT_EQ(status, 413); // Payload Too Large error
-
-	// // missing last CRLF
-	// req_str = POST_Req + CHUNKED + "4\r\nBye!\r\n0\r\n";
-	// status = ConstructAndGetStatus(req_str);
-	// EXPECT_EQ(status, 400); // Bad Request error
-
-	// req_str = POST_Req + CHUNKED + "0\r\n";
-	// status = ConstructAndGetStatus(req_str);
-	// EXPECT_EQ(status, 400); // Bad Request error;	// TODO: test once closed connection and incomplete request can be detected
 }
 
 TEST(RequestMessageTest, InvalidMessageChunkedSplit) {

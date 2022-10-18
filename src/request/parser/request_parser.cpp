@@ -1,10 +1,10 @@
 #include "request_parser.hpp"
-#include "request_validator.hpp"
-#include "request.hpp"
+#include "../request_validator.hpp"
+#include "../request.hpp"
 
 #define DEBUG 0 // TODO: REMOVE
 
-// Default constructor // TODO: Review use/removal
+// Default constructor
 RequestParser::RequestParser()
 	: AStateParser(r_RequestLine, r_Done), _config(NULL), _request(NULL) {}
 
@@ -53,7 +53,7 @@ void	RequestParser::PreParseCheck() {
 void	RequestParser::AfterParseCheck() {
 	// If there are more characters after ending token, assume body
 	// is present but not indicated by Content-Length header.
-	if (cur_state == r_Done && pos < input.size() - 1) { // TODO: check if Content-Length has not been indicated? (truncated message)
+	if (cur_state == r_Done && pos < input.size() - 1) {
 		if (_request->GetField("Content-Length") == NO_VAL)
 			throw LengthRequiredException();
 	}
@@ -69,8 +69,8 @@ RequestState	RequestParser::RequestLineHandler() {
 	size_t	request_line_end = input.find_first_of('\n');
 	if (request_line_end == std::string::npos)
 		throw BadRequestException("Request line missing CRLF line break");
-	std::string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
 
+	std::string	request_line = input.substr(0, request_line_end + 1); // includes LF in string for parsing
 	pos += _request_line_parser.Parse(*_request, request_line);
 	return r_HeaderField;
 }
@@ -80,7 +80,6 @@ RequestState	RequestParser::HeaderFieldHandler() {
 	if (DEBUG) std::cout << "[Field Handler] at: [" << input[pos] << "]\n";
 
 	std::string header_field = input.substr(pos);
-	// std::cout << "Header field: len (" << header_field.length() << ") [" << header_field << "]\n";
 	pos += _header_parser.Parse(*_request, header_field);
 	if (_header_parser.IsDone() == true) {
 		if (DEBUG) std::cout << "--- Header Field Parsing complete. ---\n";
@@ -115,7 +114,7 @@ RequestState	RequestParser::HeaderDoneHandler() {
 RequestState	RequestParser::MessageBodyHandler() {
 	if (DEBUG) std::cout << "[Message Body Handler] at: [" << input[pos] << "]\n";
 	
-	// _request->_msg_body += input.substr(pos, _request->content_length);
+	// appends input to whatever's been received previously.
 	std::string	new_message = _request->GetMessageBody()
 		+ input.substr(pos, _request->GetContentLength());
 	_request->SetMessageBody(new_message);

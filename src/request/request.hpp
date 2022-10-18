@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include "request_parser.hpp"
+#include "parser/request_parser.hpp"
 #include "http_message.hpp"
 #include "../resolved_target/target_config.hpp"
 
@@ -28,8 +28,6 @@ class Request : public HTTPMessage {
 
 		typedef std::map<std::string, std::string>	FieldsMap;
 
-		// Default constructor
-		Request();
 		// Config file constructor
 		explicit Request(NginxConfig* config);
 		// Destructor

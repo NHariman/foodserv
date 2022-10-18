@@ -33,14 +33,15 @@
 *.app
 
 .gitignore
-Makefile
 .DS_Store
 *.dSYM
 *.rpt
-./webserv
 tmp/
 *_tmp.cpp
 *_tmp.hpp
 build/
 build_out
-webserv_test
+webserv
+
+# remove before submission
+Makefile

@@ -33,7 +33,7 @@ int	RequestValidator::SetupConfig(NginxConfig* config,
 									Request const& request) {
 	std::string	host = request.GetTargetURI().GetHost();
 	std::string	port = request.GetTargetURI().GetPort();
-	std::string	target = request.GetTargetURI().GetPath(); // TODO: check if query is needed
+	std::string	target = request.GetTargetURI().GetPath();
 	_target_config->Setup(config, host, port, target);
 	return 1;
 }
