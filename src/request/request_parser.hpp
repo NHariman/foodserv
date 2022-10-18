@@ -26,8 +26,6 @@ enum RequestState {
 
 class RequestParser  : public AStateParser<RequestState> {
 	public:
-		// Default constructor
-		RequestParser();
 		// Config constructor
 		RequestParser(NginxConfig *config);
 		// Destructor
