@@ -33,7 +33,6 @@
 *.app
 
 .gitignore
-Makefile
 .DS_Store
 *.dSYM
 *.rpt
@@ -43,3 +42,6 @@ tmp/
 build/
 build_out
 webserv
+
+# remove before submission
+Makefile
