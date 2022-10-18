@@ -5,8 +5,6 @@
 #include <algorithm> // min
 #include <sys/socket.h> // send
 
-#define DEBUG 0 // TODO: REMOVE
-
 // Default constructor
 ResponseHandler::ResponseHandler()
 		:	_request(NULL), _is_done(false) {
@@ -29,14 +27,9 @@ void	ResponseHandler::Send(int fd) {
 
 	size_t send_size = std::min((size_t)BUFFER_SIZE, send_buffer.size());
 
-	if (DEBUG) std::cout << "send size is " << send_size << std::endl;
-	if (DEBUG) std::cout << "bytes READ: " << send_buffer.size() << std::endl;
-
 	ssize_t bytes_sent = send(fd, send_buffer.c_str(), send_size, 0);
 	if (bytes_sent < 0)
 		throw SendFailureException();
-
-	if (DEBUG) std::cout << "bytes SENT: " << bytes_sent << std::endl;
 
 	if (_response->GetStatusCode() == 100)
 		_response = Response::pointer(new Response); // create fresh Response object
@@ -46,15 +39,12 @@ void	ResponseHandler::Send(int fd) {
 	else if (bytes_sent == BUFFER_SIZE)
 		send_buffer.erase(0, bytes_sent);
 	else {
-		if (DEBUG) std::cout << "response is done\n";
 		send_buffer.clear();
 		_is_done = true;
 	}
 }
 
 void	ResponseHandler::HandleError(Request& request) {
-	if (DEBUG) std::cout << "HandleError\n";
-
 	_request = &request;
 	int	error_code = request.GetStatusCode();
 	
@@ -68,13 +58,10 @@ void	ResponseHandler::HandleError(Request& request) {
 void	ResponseHandler::HandleExpect(Request& request) {
 	_request = &request;
 
-	if (DEBUG) std::cout << "HandleExpect\n";
 	FormResponse();
 }
 
 void	ResponseHandler::HandleRegular(Request& request) {
-	if (DEBUG) std::cout << "HandleRegular\n";
-
 	_request = &request;
 
 	if (IsRedirected())
@@ -115,7 +102,6 @@ void	ResponseHandler::AssignResponseResolvedPath(std::string const& path) {
 	else
 		_response->SetResolvedPath(resolved_path);
 	_response->SetRequestTarget(_request->GetTargetString());
-	if (DEBUG) std::cout << "path assigned to: " << _response->GetResolvedPath() << std::endl;
 }
 
 std::string	ResponseHandler::FindCustomErrorPage(int error_code) {
@@ -140,7 +126,6 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 	}
 	catch (http::exception &e) {
 		_request->SetStatusCode(e.which());
-		if (DEBUG) std::cout << e.which() << " error encountered\n";
 		HandleError(*_request);
 	}
 }
@@ -157,8 +142,7 @@ void	ResponseHandler::HandleDefaultError(int error_code) {
 	}
 	catch (http::exception &e) {
 		_request->SetStatusCode(e.which());
-		if (DEBUG) std::cout << e.which() << " error encountered\n";
-		HandleError(*_request);
+	HandleError(*_request);
 	}
 }
 
@@ -173,8 +157,6 @@ bool	ResponseHandler::IsRedirected() {
 }
 
 void	ResponseHandler::HandleRedirection() {
-	if (DEBUG) std::cout << "HandleRedirection\n";
-
 	_response->SetResolvedPath(_request->GetTargetConfig().GetResolvedPath());
 	FormResponse();
 }
@@ -184,8 +166,6 @@ bool	ResponseHandler::IsHandledByCGI() {
 }
 
 void	ResponseHandler::HandleCGI() {
-	if (DEBUG) std::cout << "HandleCGI\n";
-
 	CGIHandler	cgi_handler;
 	std::istream* body_stream = cgi_handler.Execute(_request, *_response);
 	_response->SetBodyStream(body_stream);
@@ -193,8 +173,6 @@ void	ResponseHandler::HandleCGI() {
 
 // Assumes _response->_resolved_path has been set already.
 void	ResponseHandler::HandleMethod() {
-	if (DEBUG) std::cout << "HandleMethod\n";
-
 	FileHandler::Method method = DetermineMethod();
 	std::istream* body_stream = _file_handler.ExecuteMethod(*_response, method);
 	_response->SetBodyStream(body_stream);
@@ -225,7 +203,4 @@ void	ResponseHandler::FormResponse() {
 	ResponseGenerator	response_generator;
 
 	response_generator.FormResponse(*_response, _request);
-	if (DEBUG) std::cout << "Response formed. Final status code: " << _response->GetStatusCode() << std::endl;
 }
-
-#undef DEBUG // REMOVE

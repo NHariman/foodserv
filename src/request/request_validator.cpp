@@ -1,8 +1,6 @@
 #include "request_validator.hpp"
 #include "request.hpp"
 
-#define DEBUG 0 // TODO: REMOVE
-
 RequestValidator::RequestValidator(NginxConfig* config,
 									TargetConfig* target_config)
 	:	_status(hv_Done),
@@ -12,8 +10,6 @@ RequestValidator::RequestValidator(NginxConfig* config,
 RequestValidator::~RequestValidator() {}
 
 HeaderStatus	RequestValidator::Process(Request& request) {
-	if (DEBUG) std::cout << "RequestValidator::Process\n";
-	
 	if (PreConfigValidate(request)
 		&& SetupConfig(_config, request)
 		&& PostConfigValidate(request)
@@ -55,8 +51,6 @@ int	RequestValidator::GetResolvedPath(Request& request) {
 
 // Only exactly 1 Host definition is accepted.
 bool	RequestValidator::ValidHost(Request& request) {
-	if (DEBUG) std::cout << "ValidHost\n";
-
 	std::string	host = request.GetField("host");
 	if (host == NO_VAL)
 		throw BadRequestException("Host header mandatory");
@@ -76,8 +70,6 @@ bool	RequestValidator::ValidHost(Request& request) {
 
 // Only accepts "100-continue" for Expect header.
 bool	RequestValidator::ValidExpect(Request& request) {
-	if (DEBUG) std::cout << "ValidExpect\n";
-
 	std::string	expect = request.GetField("expect");
 
 	if (expect != NO_VAL) {
@@ -91,8 +83,6 @@ bool	RequestValidator::ValidExpect(Request& request) {
 
 // Does not accept any definition of Content-Encoding header.
 bool	RequestValidator::ValidContentEncoding(std::string const& content_encoding) {
-	if (DEBUG) std::cout << "ValidContentEncoding\n";
-
 	if (content_encoding != NO_VAL)
 		throw UnsupportedMediaTypeException();
 	else
@@ -111,8 +101,6 @@ static void	CheckAllowedMethod(std::string method, size_t content_length = 1) {
 
 // If Transfer-Encoding is define, only "chunked" value is accepted.
 bool	RequestValidator::ValidTransferEncoding(Request& request) {
-	if (DEBUG) std::cout << "ValidTransferEncoding\n";
-
 	std::string	transfer_encoding = request.GetField("transfer-encoding");
 
 	if (transfer_encoding != NO_VAL) {
@@ -165,8 +153,6 @@ static void	CheckIfTransferEncodingDefined(HeaderStatus status) {
 // and only for POST requests.
 // Sets `content_length` and `max_body_size` attributes within Request.
 bool	RequestValidator::ValidContentLength(Request& request) {
-	if (DEBUG) std::cout << "ValidContentLength\n";
-
 	std::string	content_length = request.GetField("content-length");
 
 	if (content_length != NO_VAL) {
@@ -183,13 +169,8 @@ bool	RequestValidator::ValidContentLength(Request& request) {
 }
 
 bool	RequestValidator::ValidMethod(std::string const& method) {
-	if (DEBUG) std::cout << "ValidMethod\n";
-	if (DEBUG) std::cout << "IsAllowedMethod returns: " <<  _target_config->IsAllowedMethod(method) << std::endl;
-
 	if	(_target_config->IsAllowedMethod(method) == false)
 		throw MethodNotAllowedException();
 	else
 		return true;
 }
-
-#undef DEBUG // REMOVE

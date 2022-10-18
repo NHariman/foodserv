@@ -58,7 +58,6 @@ class RequestParser  : public AStateParser<RequestState> {
 		RequestState	GetNextState(size_t pos) override;
 		void			CheckInvalidState() const override;
 		void			IncrementCounter() override;
-		void			PreParseCheck() override;
 		void			AfterParseCheck() override;
 };
 
