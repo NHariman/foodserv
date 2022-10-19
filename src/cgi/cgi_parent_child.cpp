@@ -32,7 +32,8 @@ void		CGI::ChildProcess(int *fd_read, int *fd_write) {
 // FOR POST
 // writes query to stdin of the child process
 void		CGI::WriteToPipe(int fd) {
-	if ((write(fd, _request->GetQuery().c_str(), _request->GetQuery().size())) == -1)
+	int status = write(fd, _request->GetQuery().c_str(), _request->GetQuery().size());
+	if (status == -1 || status != (int)_request->GetQuery().size())
 		throw WriteFailureException();
 }
 
@@ -55,6 +56,7 @@ void		CGI::RetrieveContent(int *fd_read){
 			close (fd_read[0]);
 			throw ReadFailureException();
 	}
+	std::cout << "print content: " << _content << std::endl;
 	return ;
 }
 
