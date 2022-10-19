@@ -13,40 +13,34 @@ TEST(ReturnTest, ResolvedPathTesting) {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "80", "/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), request.GetMethod());
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "/test/deze/shit");
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "/test/deze/shit");
 }
 
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "100", "/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), request.GetMethod());
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "/helemaal/onder");
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "/helemaal/onder");
 }
 
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "100", "/niks");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "/helemaal/onder");
+	EXPECT_EQ(resolved_path.Resolve("/niks", "GET"), "/helemaal/onder");
 }
 
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "8080", "/hoi");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "/test/return/in/location");
+	EXPECT_EQ(resolved_path.Resolve("/hoi", "GET"), "/test/return/in/location");
 }
-
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "8080", "/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "/test/return/in/location");
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "/test/return/in/location");
 }
 }
 
@@ -59,52 +53,51 @@ TEST(RootTest, ResolvedPathTesting) {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "80", "/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "../www/html/otherpage.html");
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "../www/html/otherpage.html");
 }
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "80", "/coffee_and_beans/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "../www/html/coffee_and_beans/otherpage.html");
+	EXPECT_EQ(resolved_path.Resolve("/coffee_and_beans/", "GET"), "../www/html/coffee_and_beans/otherpage.html");
 }
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "8080", "/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "../www/html/index.html");
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "../www/html/index.html");
 }
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "8080", "/coffee_and_beans/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "../www/html/coffee_and_beans/index.html");
+	EXPECT_EQ(resolved_path.Resolve("/coffee_and_beans/", "GET"), "../www/html/coffee_and_beans/index.html");
 }
-
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "test_second", "8080", "/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "../www/html/otherpage.html");
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "../www/html/otherpage.html");
 }
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "test_second", "8080", "/coffee_and_beans/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "../www/html/coffee_and_beans/otherpage.html");
+	EXPECT_EQ(resolved_path.Resolve("/coffee_and_beans/", "GET")
+, "../www/html/coffee_and_beans/otherpage.html");
 }
 
 {
 	TargetConfig target = request.GetTargetConfig();
 	target.Setup(&test, "localhost", "666", "/");
 	ResolvedPath	resolved_path(&target);
-	resolved_path.Resolve(request.GetTargetString(), "GET");
-	EXPECT_EQ(resolved_path.GetResolvedPath(), "../www/html/");
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "../www/html/index.html");
+}
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "localhost", "666", "/img/beans.png");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/img/beans.png", "GET"), "../www/img/beans.png");
 }
 }
 
@@ -114,20 +107,31 @@ TEST (AutoIndex, ResolvedPathTesting) {
 	Request	request(&test);
 {
 	TargetConfig target = request.GetTargetConfig();
-	target.Setup(&test, "localhost", "666", "/");
-	EXPECT_EQ(target.GetResolvedPath(), "");
-	EXPECT_EQ(target.MustGenerateIndex(), true);
+	target.Setup(&test, "localhost", "777", "/");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "");
+	EXPECT_EQ(target.MustGenerateIndex(), false);
+}
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "localhost", "777", "/");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/", "GET"), "");
+	EXPECT_EQ(target.MustGenerateIndex(), false);
 }
 
-// }
-// // {
-// // 	target.Setup(&test, "localhost", "8080", "/auto/on/");
-// // 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/auto/on/");
-// // 	EXPECT_EQ(target.MustGenerateIndex(), true);
-// // }
-// // {
-// // 	target.Setup(&test, "localhost", "666", "/HTML/");
-// // 	EXPECT_EQ(target.GetResolvedPath(), "/Users/sannealbreghs/Desktop/foodserv/www/html/otherpage.html");
-// // 	EXPECT_EQ(target.MustGenerateIndex(), false);
-// // }
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "localhost", "777", "/");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/", ""), "../www/html/");
+	EXPECT_EQ(target.MustGenerateIndex(), false);
+}
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "test_2", "777", "/coffee_and_beans/");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/coffee_and_beans/", "GET"), "../www/html/coffee_and_beans/");
+	EXPECT_EQ(target.MustGenerateIndex(), true);	
+}
 }
