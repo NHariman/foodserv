@@ -9,10 +9,11 @@ using namespace std;
 void    compareChosenServer(string expect_port, string chosen_port, vector<string> expect_servername, vector<string> chosen_servername) {
     EXPECT_EQ(expect_port, chosen_port);
     EXPECT_EQ(expect_servername.size(), chosen_servername.size());
-    if (expect_servername.size() != 0) {
+    if (expect_servername.size() != -1) {
         for (vector<string>::iterator it = expect_servername.begin(); it != expect_servername.end(); it++) {
-            for (vector<string>::iterator it2 = chosen_servername.begin(); it2 != chosen_servername.end(); it2++)
+            for (vector<string>::iterator it2 = chosen_servername.begin(); it2 != chosen_servername.end(); it2++) {
                 EXPECT_EQ(*it, *it2);
+			}
         }
     }
 }
@@ -27,7 +28,7 @@ TEST(ServerSelectionTest, TestConfig1) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "80";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -39,7 +40,7 @@ TEST(ServerSelectionTest, TestConfig1) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "80";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -51,7 +52,7 @@ TEST(ServerSelectionTest, TestConfig1) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "8080";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -63,7 +64,7 @@ TEST(ServerSelectionTest, TestConfig1) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "8080";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -75,7 +76,7 @@ TEST(ServerSelectionTest, TestConfig1) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "80";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -87,7 +88,7 @@ TEST(ServerSelectionTest, TestConfig1) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "80";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -102,7 +103,7 @@ TEST(ServerSelectionTest, TestConfig2) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "80";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }	
@@ -113,7 +114,7 @@ TEST(ServerSelectionTest, TestConfig2) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "80";
-     	vector<string> expect_servername; // empty
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -159,7 +160,7 @@ TEST(ServerSelectionTest, TestConfig2) {
         vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
     	string expect_port = "80";
-     	vector<string> expect_servername;
+     	vector<string> expect_servername{"localhost"};
 
         compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
     }
@@ -175,7 +176,7 @@ TEST(ServerSelectionTest, TestConfig3) {
 		vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
 		string			expect_port = "80";
-		vector<string>	expect_servername; // empty
+		vector<string>	expect_servername{"localhost"};
 
 		compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
 	}
@@ -199,7 +200,7 @@ TEST(ServerSelectionTest, TestConfig3) {
 		vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
 		string			expect_port = "80";
-		vector<string>	expect_servername;
+		vector<string>	expect_servername{"localhost"};
 
 		compareChosenServer(expect_port, chosen_port, expect_servername, chosen_servername);
 	}
@@ -227,7 +228,7 @@ TEST(ServerSelectionTest, TestConfig4) {
 		vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
 		string			expect_port = "80";
-		vector<string>	expect_servername;
+		vector<string>	expect_servername{"localhost"};
 	}
 
 	{
@@ -237,7 +238,7 @@ TEST(ServerSelectionTest, TestConfig4) {
 		vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
 		string			expect_port = "80";
-		vector<string>	expect_servername;
+		vector<string>	expect_servername{"localhost"};
 	}
 
 	{
@@ -247,7 +248,7 @@ TEST(ServerSelectionTest, TestConfig4) {
 		vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
 		string			expect_port = "80";
-		vector<string>	expect_servername;
+		vector<string>	expect_servername{"localhost"};
 	}
 
 	{
@@ -346,15 +347,15 @@ TEST(ServerSelectionTest, TestConfig4) {
 
 }
 
-// TEST SYNTAX
-// {
-// 	ServerSelection	select("nothing", "80", test3.GetServers());
+// // TEST SYNTAX
+// // {
+// // 	ServerSelection	select("nothing", "80", test3.GetServers());
 
-// 	string			chosen_port = select.GetChosenServerContext().GetPortNumber();
-// 	vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
+// // 	string			chosen_port = select.GetChosenServerContext().GetPortNumber();
+// // 	vector<string>	chosen_servername = select.GetChosenServerContext().GetServerNameVector();
 
-// 	string			expect_port = 
-// 	vector<string>	expect_servername =
+// // 	string			expect_port = 
+// // 	vector<string>	expect_servername =
 
-// 	compareChosenServer(expect_port, chosen_port. expect_servername, chosen_servername);
-// }
+// // 	compareChosenServer(expect_port, chosen_port. expect_servername, chosen_servername);
+// // }
