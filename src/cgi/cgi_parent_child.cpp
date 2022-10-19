@@ -56,7 +56,6 @@ void		CGI::RetrieveContent(int *fd_read){
 			close (fd_read[0]);
 			throw ReadFailureException();
 	}
-	std::cout << "print content: " << _content << std::endl;
 	return ;
 }
 
