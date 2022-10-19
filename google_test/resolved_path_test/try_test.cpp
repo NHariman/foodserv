@@ -135,3 +135,33 @@ TEST (AutoIndex, ResolvedPathTesting) {
 	EXPECT_EQ(target.MustGenerateIndex(), true);	
 }
 }
+
+// ALIAS TEST
+TEST (Alias, ResolvedPathTesting) {
+	NginxConfig		test("../config_files/alias.conf");
+	Request	request(&test);
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "localhost", "80", "/html-pages/index.html");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/html-pages/index.html", "GET"), "../www/html/index.html");
+}
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "localhost", "80", "/html-pages");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/html-pages", "GET"), "../www/html/index.html");
+}
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "localhost", "80", "/html-pages");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/html-pages", "GET"), "../www/html/index.html");
+}
+{
+	TargetConfig target = request.GetTargetConfig();
+	target.Setup(&test, "test_2", "80", "/www/crap/whoo/coffee_and_beans/otherpage.html");
+	ResolvedPath	resolved_path(&target);
+	EXPECT_EQ(resolved_path.Resolve("/www/crap/whoo/coffee_and_beans/otherpage.html", "GET"), "/www/html/www/crap/whoo/coffee_and_beans/otherpage.html");
+}
+}
