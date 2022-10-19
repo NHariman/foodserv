@@ -26,6 +26,7 @@ file(GLOB SRCS CONFIGURE_DEPENDS
 	"../../src/connection/*.cpp"
 	"../../src/err/*.cpp"
     "../../src/request/*.cpp"
+    "../../src/request/parser/*.cpp"
     "../../src/resolved_target/*.cpp"
 	"../../src/response/*.cpp"
     "../../src/utils/*.cpp"
