@@ -1,0 +1,194 @@
+* {
+	box-sizing: border-box;
+	border: 0;
+	margin: 0;
+
+}
+
+
+/* padding: 10px; */
+body {
+	font-family: verdana;
+	font-size: 0.875em;
+	text-align: center;
+	background: #ebeced;
+}
+
+/* Header/Blog Title */
+.header {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 14%;
+	padding: 30px;
+	text-align: center;
+	background-color: #0f0e0e;
+	background-image: url("https://cdn.windowsreport.com/wp-content/uploads/2020/03/Fix-error-code-0x80070005-1.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+	filter: blur(3px);
+	-webkit-filter: blur(3px);
+	z-index: -1;
+}
+
+.header-text {
+	background-color: rgba(0, 0, 0, 0);
+	color: rgb(247, 240, 235);
+	font-size: 2em;
+	padding: 30px;
+	text-align: center;
+	z-index: 2;
+}
+
+.header h1 {
+	font-size: 50px;
+}
+	
+/* Footer */
+.footer {
+	color: #dacac6;
+	padding: 20px;
+	text-align: center;
+	background: rgb(33, 30, 29);
+	margin-top: 20px;
+	left:0;
+	bottom:0;
+	width: 100%;
+	position: relative;
+}
+
+/* Style the top navigation bar */
+.topnav {
+	overflow: hidden;
+	background-color: rgb(33, 30, 29);
+}
+
+/* Style the topnav links */
+.topnav a {
+	float: left;
+	display: block;
+	color: #f2f2f2;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+	background-color: #ddd;
+	color: black;
+}
+
+.leftcolumn{
+	float: left;
+	width: 10%;
+	padding: 15%;
+}
+
+/* Create two unequal columns that floats next to each other */
+/* Left column */
+.middlecolumn {   
+	float: center;
+	width: 35%;
+	margin: auto; /* center */
+}
+
+/* Right column */
+.rightcolumn {
+	float: left;
+	width: 15%;
+	padding-left: 20px;
+}
+
+/* Fake image */
+.fakeimg {
+	background-color: #aaa;
+	width: 100%;
+	padding: 20px;
+}
+
+/* Add a card effect for articles */
+.card {
+	background-color: white;
+	padding: 20px;
+	margin-top: 20px;
+}
+
+.card img {
+	width: 85%;
+}
+
+.middlecolumn p {
+	margin: 0 auto;
+	text-align: justify;
+	width: 75%;
+	line-height: 1.65;
+	margin-bottom: 30px;
+}
+
+.middlecolumn li {
+	line-height: 2;
+}
+
+/* Clear floats after the columns */
+.row:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+#wrapper {
+	max-width: 200px; /* max-width doesn't behave correctly in legacy IE */
+	margin: 0 auto;
+}
+#wrapper img{
+	width:100%;       /* the image will now scale down as its parent gets smaller */
+}
+
+/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 800px) {
+	.header-text, .middlecolumn, .rightcolumn, .leftcolumn {   
+		width: 100%;
+		padding: 0;
+	}
+}
+
+/* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+@media screen and (max-width: 400px) {
+	.topnav a {
+		float: none;
+		width: 100%;
+	}
+}
+
+@keyframes spin {
+	from {
+		transform:rotate(0deg); 
+	}to {
+		transform:rotate(360deg);
+	}
+}
+
+.spin {
+	width: 5%;
+	animation-name: spin;
+	animation-duration: 4000ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+@keyframes move {
+	0%   {left:0px; top:0px;}
+	25%  {left:50%; top:0px;}
+	50%  {left:-50%; top:0px;}
+	75%  {left:50%; top:0px;}
+	100% {left:0px; top:0px;}
+}
+
+.move {
+	width: 50%;
+	height: 50%;
+	position: relative;
+	animation: move 5s linear 2s infinite alternate;
+}

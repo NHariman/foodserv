@@ -1,6 +1,4 @@
 #include "kernel_events.hpp"
-
-# define DEBUG 0
 # define MAX_EVENTS 128
 # define TIMER 5000
 
@@ -75,18 +73,12 @@ void	KernelEvents::KernelEventLoop() {
 }
 
 void	KernelEvents::AddToConnectionMap(int client_fd) {
-	// check if this client is already connected
-	// this means the client already exists, but has a new request
-	// we can delete the complete connection, make a new one with the same fd
-	// but then the new request (connection class)
-
 	std::map<int, Connection*>::iterator it = _connection_map.find(client_fd);
 	if (it != _connection_map.end()) {
 		delete it->second;
 		_connection_map.erase(it);
 	}
 
-	// add the client
 	Connection		*new_conn = new Connection(client_fd, _config_file);
 	_connection_map.insert(std::make_pair(client_fd, new_conn));
 
@@ -172,7 +164,6 @@ void	KernelEvents::SendResponse(int s) {
 	if (it != _connection_map.end()) {
 		it->second->Dispatch();
 		if (it->second->CanClose()) {
-			if (DEBUG) std::cout << "CLOSING connection\n";
 			RemoveFromConnectionMap(s);
 		}
 	}

@@ -17,7 +17,7 @@ TEST(OnlyIP, CorrectInput) {
 	EXPECT_EQ(test1.getPortNumber(), "80");
 
   Listen  test2("*");
-	EXPECT_EQ(test2.getIpNumber(), "0");
+	EXPECT_EQ(test2.getIpNumber(), "127.0.0.1");
 	EXPECT_EQ(test2.getPortNumber(), "80");
 
   Listen  test3("255.244.1.0");
@@ -27,17 +27,16 @@ TEST(OnlyIP, CorrectInput) {
 
 TEST(OnlyPort, CorrectInput) {
   Listen  test1("8000");
-	EXPECT_EQ(test1.getIpNumber(), "0");
+	EXPECT_EQ(test1.getIpNumber(), "127.0.0.1");
 	EXPECT_EQ(test1.getPortNumber(), "8000");
 
   Listen  test2("12345");
-  EXPECT_EQ(test2.getIpNumber(), "0");
+  EXPECT_EQ(test2.getIpNumber(), "127.0.0.1");
   EXPECT_EQ(test2.getPortNumber(), "12345");
 
   Listen  test3("999");
-  EXPECT_EQ(test3.getIpNumber(), "0");
+  EXPECT_EQ(test3.getIpNumber(), "127.0.0.1");
   EXPECT_EQ(test3.getPortNumber(), "999");
-
 }
 
 TEST(Both, CorrectInput) {
@@ -46,11 +45,11 @@ TEST(Both, CorrectInput) {
 	EXPECT_EQ(test1.getPortNumber(), "8000");
 
   Listen  test2("*:8000");
-	EXPECT_EQ(test2.getIpNumber(), "0");
+	EXPECT_EQ(test2.getIpNumber(), "127.0.0.1");
 	EXPECT_EQ(test2.getPortNumber(), "8000"); 
   
   Listen  test3("");
-	EXPECT_EQ(test3.getIpNumber(), "0");
+	EXPECT_EQ(test3.getIpNumber(), "127.0.0.1");
 	EXPECT_EQ(test3.getPortNumber(), "80");
 
   Listen  test4("255.244.1.0");
