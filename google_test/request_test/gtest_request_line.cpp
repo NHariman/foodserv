@@ -8,7 +8,7 @@ using namespace std;
 // defined in gtest_request_message.cpp
 int	ConstructAndGetStatus(std::string const& req_str);
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
+static NginxConfig config("../default.conf");
 
 TEST(RequestLineTest, ParseGet) {
 	Request request(&config);

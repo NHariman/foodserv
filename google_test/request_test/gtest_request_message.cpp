@@ -9,7 +9,7 @@ using namespace std;
 static string POST_Req = "POST /hello HTTP/1.1\r\nHost: localhost\r\n";
 static string CHUNKED = "Transfer-Encoding: chunked\n\n";
 
-static NginxConfig config("/Users/mjiam/Desktop/42_projects/webserv/foodserv/google_test/request_test/default.conf");
+static NginxConfig config("../default.conf");
 
 // Helper function that calls Request::Parse with c-string conversion of passed string.
 void	ParseChunked(Request& request, string const& req_str) {
