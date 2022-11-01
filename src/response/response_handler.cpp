@@ -125,8 +125,14 @@ void	ResponseHandler::HandleCustomError(std::string const& error_page_path) {
 		FormResponse();
 	}
 	catch (http::exception &e) {
-		_request->SetStatusCode(e.which());
-		HandleError(*_request);
+		int new_error_code = e.which();
+		// prevent infinite error loop with custom error pages
+		if (new_error_code == _request->GetStatusCode())
+			HandleDefaultError(new_error_code);
+		else {
+			_request->SetStatusCode(new_error_code);
+			HandleError(*_request);
+		}
 	}
 }
 
