@@ -1,6 +1,5 @@
-#include <cerrno> // erno
+#include <cerrno> // errno
 #include <dirent.h> // DIR, dirent
-#include <stdio.h> // remove
 #include "file_handler.hpp"
 #include "../utils/utils.hpp"
 #include "../err/exception.hpp"
