@@ -18,7 +18,7 @@ We made a [wiki](https://github.com/NHariman/foodserv/wiki) containing informati
 ### General info on programming web servers
 - [Intro to network programming](https://beej.us/guide/bgnet/html/#intro)
 - [Simple, clear introduction to writing an HTTP server](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
-- [Easy to read Mozilla explanations of HTTP workings](https://developer.mozilla.org/en-US/docs/Web/HTTP)
+- [Easy-to-read explanation of HTTP workings by Mozilla](https://developer.mozilla.org/en-US/docs/Web/HTTP)
 
 ### Sockets
 - [Socket Programming in C/C++](https://www.geeksforgeeks.org/socket-programming-cc/)
@@ -42,11 +42,15 @@ We made a [wiki](https://github.com/NHariman/foodserv/wiki) containing informati
 - [Full config example](https://www.nginx.com/resources/wiki/start/topics/examples/full/)
 - [fastCGI config example](https://www.nginx.com/resources/wiki/start/topics/examples/fastcgiexample/)
 
-### Request
+### Requests
 - [HTTP Request Parsing using a Finite State Machine](https://ieeexplore.ieee.org/document/6957302)
 - [HTTP header line breaks](https://stackoverflow.com/questions/5757290/http-header-line-break-style)
 - [Chunked transfer-encoding](https://en.wikipedia.org/wiki/Chunked_transfer_encoding)
 - [Boundary strings in POST file uploads](https://stackoverflow.com/questions/8659808/how-does-http-file-upload-work) (not handled by our server)
+
+### CGI
+- [Common Gateway Interface (CGI) – How it Works, Features & Applications](https://electricalfundablog.com/common-gateway-interface-cgi/)
+- [How the web works: HTTP and CGI explained](https://www.garshol.priv.no/download/text/http-tut.html)
 
 ### RFC
 - [7230: Message Syntax and Routing](https://datatracker.ietf.org/doc/html/rfc7230)
