@@ -1,6 +1,8 @@
 # foodserv
 webserv is a [42](https://www.42network.org/)/[Codam](https://www.codam.nl/) project about writing our own HTTP server in C++  
 This is a collaborative project between [nhariman](https://github.com/nhariman), [salbregh](https://github.com/salbregh), and [mjiam](https://github.com/MichelleJiam).  
+## Content
+- [Project Description](#description)
 
 ## Description
 This is a simple HTTP/1.1 web server that can handle GET, POST, and DELETE requests.  
