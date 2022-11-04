@@ -3,6 +3,10 @@ webserv is a [42](https://www.42network.org/)/[Codam](https://www.codam.nl/) pro
 This is a collaborative project between [nhariman](https://github.com/nhariman), [salbregh](https://github.com/salbregh), and [mjiam](https://github.com/MichelleJiam).  
 ## Content
 - [Project Description](#description)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Resources](#resources)
+- [About Us](#about-us)
 
 ## Description
 This is a simple HTTP/1.1 web server that can handle GET, POST, and DELETE requests.  
