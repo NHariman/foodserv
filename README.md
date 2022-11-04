@@ -1,11 +1,41 @@
 # foodserv
-A 42/Codam project about writing an HTTP/1.1 server in C++.  
-A collaborative project between [nhariman](https://github.com/nhariman), [salbregh](https://github.com/salbregh), and [mjiam](https://github.com/MichelleJiam).  
+webserv is a [42](https://www.42network.org/)/[Codam](https://www.codam.nl/) project about writing our own HTTP server in C++  
+This is a collaborative project between [nhariman](https://github.com/nhariman), [salbregh](https://github.com/salbregh), and [mjiam](https://github.com/MichelleJiam).  
 
 ## Description
+This is a simple HTTP/1.1 web server that can handle GET, POST, and DELETE requests.  
 
+Our webserver uses the same non-blocking, event-driven architecture [that nginx does](https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/). This allows the server to handle a high amount of requests with speed.  
+We use [`kqueue`](https://www.freebsd.org/cgi/man.cgi?query=kqueue&sektion=2) to handle the multiplexing, which means the server can only run on **Mac** machines.  
 
-Our webserver uses the same non-blocking, event-driven architecture that nginx does. This allows the server to handle a high amount of requests with speed. We use [`kqueue`](https://www.freebsd.org/cgi/man.cgi?query=kqueue&sektion=2) for this, which means the server can only run on Mac machines.
+Detailed project specifications can be found [here](docs/webserv.en.subject.pdf).
+
+## Usage
+### Configuration
+The server settings are configured through a `.conf` configuration file based on Nginx. The list of accepted directives can be found [here](https://github.com/NHariman/foodserv/wiki/Configuration-file).  
+
+### Build
+From the root of the repo, run `make && ./webserv` to build and start the web server.  
+The `webserv` executable takes an optional configuration file argument:  
+```console
+$ ./webserv [your_config_file.conf]
+```
+Otherwise the web server defaults to using the settings in `config_files/default.conf`.
+
+### Use
+The web server can be interfaced with through any browser or tools like curl and telnet.  
+If using the default configuration, navigating to `localhost` on port 80 (default), 4242, and 8080 showcases 3 different websites with different configuration settings.   
+
+> http://localhost/
+- Standard functionality  
+
+> http://localhost:4242/
+- Internal and external redirects  
+
+> http://localhost:8080/
+- Custom error pages
+- Autoindexing
+
 
 ## Documentation
 We made a [wiki](https://github.com/NHariman/foodserv/wiki) containing information about:
@@ -14,10 +44,14 @@ We made a [wiki](https://github.com/NHariman/foodserv/wiki) containing informati
 - implementation and research notes
 - code documentation
 
+## Non-Goals
+- Persistent connections
+- Accepting POST file uploads other than text files
+
 ## Resources
 ### General info on programming web servers
 - [Intro to network programming](https://beej.us/guide/bgnet/html/#intro)
-- [Simple, clear introduction to writing an HTTP server](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
+- [Simple, clear introduction to writing a basic HTTP server](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
 - [Easy-to-read explanation of HTTP workings by Mozilla](https://developer.mozilla.org/en-US/docs/Web/HTTP)
 
 ### Sockets
