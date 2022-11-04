@@ -55,6 +55,10 @@ We made a [wiki](https://github.com/NHariman/foodserv/wiki) containing informati
 - Accepting POST file uploads other than text files
 
 ## Resources
+### Testing
+- Testing was done using [GoogleTest](http://google.github.io/googletest/). Our tests can be found in the [`google_test`](google_test) folder.
+- A [script](google_test/quick_build_example/gotest.sh) for quickly setting up and running GoogleTest was prepared by Michelle. It requires CMake to be installed.
+
 ### General info on programming web servers
 - [Intro to network programming](https://beej.us/guide/bgnet/html/#intro)
 - [Simple, clear introduction to writing a basic HTTP server](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
